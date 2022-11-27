@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import com.diy.software.controllers.BagsControl;
 import com.diy.software.controllers.ItemsControl;
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.BagsControlListener;
 import com.jimmyselectronics.necchi.BarcodedItem;
@@ -20,7 +20,7 @@ import ca.powerutility.PowerGrid;
 
 public class TestBagsControl {
 	BagsControl bc;
-	SystemControl sc;
+	StationControl sc;
 	BagsListenerStub bls;
 	FakeDataInitializer fdi;
 	ItemsControl ic;
@@ -43,7 +43,7 @@ public class TestBagsControl {
 		item3 = items[2];
 		item4 = items[3];
 		
-		sc = new SystemControl(fdi);
+		sc = new StationControl(fdi);
 		ic = sc.getItemsControl();
 		bc = new BagsControl(sc);
 		bls = new BagsListenerStub();

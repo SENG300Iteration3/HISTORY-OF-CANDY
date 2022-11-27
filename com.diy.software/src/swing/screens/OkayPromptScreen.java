@@ -8,17 +8,17 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 
-import swing.GUI_Fonts;
-import swing.GUI_JLabel;
-import swing.Screen;
+import swing.styling.GUI_Fonts;
+import swing.styling.GUI_JLabel;
+import swing.styling.Screen;
 
 public class OkayPromptScreen extends Screen {
 	private JLabel promptLabel;
 	private JButton okayButton;
 
-	public OkayPromptScreen(final SystemControl systemControl, String prompt, final boolean navigateToInitialScreen) {
+	public OkayPromptScreen(final StationControl systemControl, String prompt, final boolean navigateToInitialScreen) {
 		super(systemControl);
 
 		this.promptLabel = new GUI_JLabel(prompt);
@@ -39,12 +39,5 @@ public class OkayPromptScreen extends Screen {
 			}
 		});
 		this.addLayer(okayButton, 100);
-	}
-
-	/* for testing purposes */
-	public static void main(String[] args) {
-		SystemControl sc = new SystemControl();
-		OkayPromptScreen gui = new OkayPromptScreen(sc, "This is a test prompt.", false);
-		gui.openInNewJFrame();
 	}
 }

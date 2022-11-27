@@ -1,9 +1,9 @@
 package com.diy.software.listeners;
 
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 import com.jimmyselectronics.opeechee.Card.CardData;
 
-public interface SystemControlListener {
+public interface StationControlListener {
 	
 	/**
 	 * An event announcing the lock state of the system
@@ -14,7 +14,7 @@ public interface SystemControlListener {
 	 * @param isLocked
 	 * 			Boolean value signifying locked status
 	 */
-	public void systemControlLocked(SystemControl systemControl, boolean isLocked);
+	public void systemControlLocked(StationControl systemControl, boolean isLocked);
 	
 	/**
 	 * An event announcing a payment has been made
@@ -25,7 +25,7 @@ public interface SystemControlListener {
 	 * @param cardData
 	 * 			CardData value for card that made payment
 	 */
-	public void paymentHasBeenMade(SystemControl systemControl, CardData cardData);
+	public void paymentHasBeenMade(StationControl systemControl, CardData cardData);
 	
 	/**
 	 * An event announcing a payment has been made
@@ -39,7 +39,7 @@ public interface SystemControlListener {
 	 * @param reason
 	 * 			String type reason for failure
 	 */
-	public void paymentHasBeenCanceled(SystemControl systemControl, CardData cardData, String reason);
+	public void paymentHasBeenCanceled(StationControl systemControl, CardData cardData, String reason);
 	
 	/**
 	 * An event announcing the system has entered the payment section has been made
@@ -47,7 +47,7 @@ public interface SystemControlListener {
 	 * @param systemControl
 	 * 			The default SystemControl unit for the current instance
 	 */
-	public void paymentsHaveBeenEnabled(SystemControl systemControl);
+	public void paymentsHaveBeenEnabled(StationControl systemControl);
 	
 	
 	/**
@@ -59,7 +59,7 @@ public interface SystemControlListener {
 	 * @param kind
 	 * 			Kind of card the pin pad is expecting (i.e. debit vs credit)
 	 */
-	public void initiatePinInput(SystemControl systemControl, String kind);
+	public void initiatePinInput(StationControl systemControl, String kind);
 	
 	/**
 	 * An event specifically for the main gui to perform a backtrack of screens
@@ -67,7 +67,7 @@ public interface SystemControlListener {
 	 * @param systemControl
 	 * 			The default SystemControl unit for the current instance
 	 */
-	public void triggerPanelBack(SystemControl systemControl);
+	public void triggerPanelBack(StationControl systemControl);
 	
 	
 	/**
@@ -76,7 +76,7 @@ public interface SystemControlListener {
 	 * @param systemControl
 	 * 			The default SystemControl unit for the current instance
 	 */
-	public void triggerInitialScreen(SystemControl systemControl);
+	public void triggerInitialScreen(StationControl systemControl);
 	
 	/**
 	 * An event specifically for the main gui to perform a screen push to the payment workflow
@@ -84,7 +84,7 @@ public interface SystemControlListener {
 	 * @param systemControl
 	 * 			The default SystemControl unit for the current instance
 	 */
-	public void triggerPaymentWorkflow(SystemControl systemControl);
+	public void triggerPaymentWorkflow(StationControl systemControl);
 
 	/**
 	 * An event specifically for the main gui to perform a screen push to the membership workflow\
@@ -92,6 +92,6 @@ public interface SystemControlListener {
 	 * @param systemControl
 	 * 			The default SystemControl unit for the current instance
 	 */
-	public void triggerMembershipWorkflow(SystemControl systemControl);
+	public void triggerMembershipWorkflow(StationControl systemControl);
 	
 }

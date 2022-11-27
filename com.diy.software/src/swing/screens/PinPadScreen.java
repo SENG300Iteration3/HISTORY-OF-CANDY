@@ -13,15 +13,15 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import com.diy.software.controllers.PinPadControl;
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.PinPadControlListener;
 
-import swing.GUI_Color_Palette;
-import swing.GUI_Fonts;
-import swing.GUI_JButton;
-import swing.GUI_JLabel;
-import swing.GUI_JPanel;
-import swing.Screen;
+import swing.styling.GUI_Color_Palette;
+import swing.styling.GUI_Fonts;
+import swing.styling.GUI_JButton;
+import swing.styling.GUI_JLabel;
+import swing.styling.GUI_JPanel;
+import swing.styling.Screen;
 
 public class PinPadScreen extends Screen implements PinPadControlListener {
 	private PinPadControl pinPadController;
@@ -40,7 +40,7 @@ public class PinPadScreen extends Screen implements PinPadControlListener {
 	JLabel message;
 	JTextField passcode;
 
-	public PinPadScreen(SystemControl sc) {
+	public PinPadScreen(StationControl sc) {
 		super(sc, HeaderText);
 		pinPadController = sc.getPinPadControl();
 		pinPadController.addListener(this);
@@ -147,14 +147,6 @@ public class PinPadScreen extends Screen implements PinPadControlListener {
 
 		/* Adding the panel to the window */
 		return pinPadButton;
-	}
-
-	/* Main for test purposes */
-	public static void main(String[] args) {
-		SystemControl sc = new SystemControl();
-		PinPadScreen pinPadPanel = new PinPadScreen(sc);
-
-		pinPadPanel.openInNewJFrame();
 	}
 
 }

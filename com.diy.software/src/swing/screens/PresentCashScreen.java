@@ -7,20 +7,20 @@ import java.awt.event.ActionListener;
 import javax.swing.SwingConstants;
 
 import com.diy.software.controllers.CashControl;
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.CashControlListener;
 
-import swing.GUI_Fonts;
-import swing.GUI_JButton;
-import swing.GUI_JLabel;
-import swing.Screen;
+import swing.styling.GUI_Fonts;
+import swing.styling.GUI_JButton;
+import swing.styling.GUI_JLabel;
+import swing.styling.Screen;
 
 public class PresentCashScreen extends Screen implements CashControlListener {
 
 	private GUI_JLabel prompt;
 	private GUI_JButton backButton;
 	
-	public PresentCashScreen(final SystemControl systemControl) {
+	public PresentCashScreen(final StationControl systemControl) {
 		super(systemControl);
 		
 		systemControl.getCashControl().enablePayments();
@@ -41,13 +41,6 @@ public class PresentCashScreen extends Screen implements CashControlListener {
 			}
 		});
 		this.addLayer(backButton, 100);
-	}
-	
-	/* for testing purposes */
-	public static void main(String[] args) {
-		SystemControl sc = new SystemControl();
-		PresentCashScreen gui = new PresentCashScreen(sc);
-		gui.openInNewJFrame();
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package swing;
+package swing.styling;
 
 public class GUI_Constants {
 

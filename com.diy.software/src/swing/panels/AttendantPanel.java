@@ -8,14 +8,14 @@ import javax.swing.JPanel;
 
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.BagsControl;
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
 
 public class AttendantPanel extends JPanel implements AttendantControlListener, BagsControlListener{
 
 	private static final long serialVersionUID = 1L;
-	private SystemControl sc;
+	private StationControl sc;
 	private BagsControl bc;
 	private AttendantControl ac;
 	private boolean cusAddedBags = false;
@@ -26,7 +26,7 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 	JLabel weightDisplayLabel, weightDescrepancyMssg;
 	GridBagConstraints grid = new GridBagConstraints();
 	
-	public AttendantPanel(SystemControl sc) {
+	public AttendantPanel(StationControl sc) {
 		super();
 		this.sc = sc;
 		bc = sc.getBagsControl();

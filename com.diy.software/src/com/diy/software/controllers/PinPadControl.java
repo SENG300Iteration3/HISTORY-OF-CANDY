@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import com.diy.software.listeners.PinPadControlListener;
 
 public class PinPadControl implements ActionListener {
-	private SystemControl sc;
+	private StationControl sc;
 	private String pin = "";
 	private ArrayList<PinPadControlListener> listeners;
 
-	public PinPadControl(SystemControl sc) {
+	public PinPadControl(StationControl sc) {
 		this.sc = sc;
 		this.listeners = new ArrayList<>();
 	}

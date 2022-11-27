@@ -1,10 +1,10 @@
 package swing.screens;
 
 import com.diy.software.controllers.PaymentControl;
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 
-import swing.Screen;
-import swing.GUI_JButton;
+import swing.styling.GUI_JButton;
+import swing.styling.Screen;
 
 public class PaymentScreen extends Screen {
 	private PaymentControl pc;
@@ -14,7 +14,7 @@ public class PaymentScreen extends Screen {
 	private GUI_JButton debitButton;
 	private GUI_JButton cancelButton;
 
-	public PaymentScreen(SystemControl sc) {
+	public PaymentScreen(StationControl sc) {
 		super(sc, "Select a payment method");
 
 		this.cashButton = makeCentralButton("Cash", this.width - 200, 100);

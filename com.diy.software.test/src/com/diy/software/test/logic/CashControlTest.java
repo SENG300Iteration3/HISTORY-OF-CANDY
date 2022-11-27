@@ -8,20 +8,20 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.diy.software.controllers.CashControl;
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.CashControlListener;
 import com.unitedbankingservices.banknote.BanknoteValidatorObserver;
 
 import ca.powerutility.PowerGrid;
 
 public class CashControlTest {
-	SystemControl sc;
+	StationControl sc;
 	CashControl cs;
 	BanknoteValidatorObserverStub bns;
 	
 	@Before
 	public void setUp() throws Exception {
-		sc = new SystemControl();
+		sc = new StationControl();
 		cs = new CashControl(sc);
 		bns = new BanknoteValidatorObserverStub();
 		

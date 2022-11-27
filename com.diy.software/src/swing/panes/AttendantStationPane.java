@@ -1,4 +1,4 @@
-package swing.screens;
+package swing.panes;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -9,19 +9,19 @@ import javax.swing.JLabel;
 
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.BagsControl;
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
 
-import swing.GUI_Color_Palette;
-import swing.GUI_Fonts;
-import swing.GUI_JButton;
-import swing.GUI_JLabel;
-import swing.Screen;
+import swing.styling.GUI_Color_Palette;
+import swing.styling.GUI_Fonts;
+import swing.styling.GUI_JButton;
+import swing.styling.GUI_JLabel;
+import swing.styling.Screen;
 
-public class AttendantScreen extends Screen implements AttendantControlListener, BagsControlListener {
+public class AttendantStationPane extends Screen implements AttendantControlListener, BagsControlListener {
 
-	private SystemControl sc;
+	private StationControl sc;
 	private BagsControl bc;
 	private AttendantControl ac;
 	private boolean cusAddedBags = false;
@@ -33,7 +33,7 @@ public class AttendantScreen extends Screen implements AttendantControlListener,
 
 	private static String HeaderText = "Attendant Screen";
 
-	public AttendantScreen(SystemControl sc) {
+	public AttendantStationPane(StationControl sc) {
 		super(sc, HeaderText);
 		this.sc = sc;
 		bc = sc.getBagsControl();
@@ -178,5 +178,4 @@ public class AttendantScreen extends Screen implements AttendantControlListener,
 		approveNoBagging.setEnabled(false);
 		weightDescrepancyMssg.setText("");
 	}
-
 }

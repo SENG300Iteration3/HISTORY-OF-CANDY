@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.diy.software.controllers.PinPadControl;
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 import com.diy.software.controllers.WalletControl;
 import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.PinPadControlListener;
@@ -20,7 +20,7 @@ import ca.powerutility.PowerGrid;
 
 public class TestPinPadControl {
 	
-	SystemControl sc;
+	StationControl sc;
 	FakeDataInitializer fdi;
 	PinPadControl ppc;
 	PinPadListenerStub ppls;
@@ -33,7 +33,7 @@ public class TestPinPadControl {
 		PowerGrid.engageUninterruptiblePowerSource();
 
 		fdi = new FakeDataInitializer();
-		sc = new SystemControl(fdi);
+		sc = new StationControl(fdi);
 		ppls = new PinPadListenerStub();
 		wls = new WalletListenerStub();
 		ppc = new PinPadControl(sc);

@@ -3,11 +3,11 @@ package swing.panels;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 import com.diy.software.controllers.CashControl;
 import com.diy.software.listeners.CashControlListener;
 
-public class DebugCashPanel extends JPanel implements CashControlListener {
+public class CustomerCashPanel extends JPanel implements CashControlListener {
   private static final long serialVersionUID = 1L;
   private CashControl cc;
   private JButton dollar100, dollar50, dollar20, dollar10, dollar5, dollar1;
@@ -15,7 +15,7 @@ public class DebugCashPanel extends JPanel implements CashControlListener {
 
   private boolean paymentsEnabled = false;
 
-  public DebugCashPanel(SystemControl sc) {
+  public CustomerCashPanel(StationControl sc) {
     super();
     cc = sc.getCashControl();
     cc.addListener(this);

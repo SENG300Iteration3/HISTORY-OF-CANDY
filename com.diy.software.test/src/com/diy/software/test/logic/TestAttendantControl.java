@@ -12,10 +12,10 @@ import org.junit.Test;
 
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.ItemsControl;
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.AttendantControlListener;
-import com.diy.software.listeners.SystemControlListener;
+import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.abagnale.ReceiptPrinterND;
 import com.jimmyselectronics.opeechee.Card.CardData;
@@ -25,7 +25,7 @@ import ca.ucalgary.seng300.simulation.InvalidArgumentSimulationException;
 
 public class TestAttendantControl {
     AttendantControl ac;
-    SystemControl sc;
+    StationControl sc;
     AttendantListenerStub als;
     FakeDataInitializer fdi;
     SystemControlListenerStub scl;
@@ -39,7 +39,7 @@ public class TestAttendantControl {
     	
 //    	FakeDataInitializer fdi = new FakeDataInitializer();
 //    	fdi.addProductAndBarcodeData();
-    	sc = new SystemControl();
+    	sc = new StationControl();
     	ic = new ItemsControl(sc);
     	ac = new AttendantControl(sc);
     	als = new AttendantListenerStub();
@@ -93,7 +93,7 @@ public class TestAttendantControl {
     public void testAddInk() throws OverloadException {
     	ac.addListener(als);
     	assertFalse(als.lowState);
-    	ac.addink();
+    	ac.addInk();
     	assertTrue(als.lowState);
     }
     
@@ -259,12 +259,12 @@ public class TestAttendantControl {
     @Test (expected = OverloadException.class)
     public void testAddInkOverload() throws OverloadException {
     	ac.addListener(als);
-    	ac.addink();
-    	ac.addink();
-    	ac.addink();
-    	ac.addink();
-    	ac.addink();
-    	ac.addink();
+    	ac.addInk();
+    	ac.addInk();
+    	ac.addInk();
+    	ac.addInk();
+    	ac.addInk();
+    	ac.addInk();
     	
     }
     
@@ -314,59 +314,59 @@ public class TestAttendantControl {
     }
 
 
-    public class SystemControlListenerStub implements SystemControlListener {
+    public class SystemControlListenerStub implements StationControlListener {
 
     	boolean locked = false;
 		@Override
-		public void systemControlLocked(SystemControl systemControl, boolean isLocked) {
+		public void systemControlLocked(StationControl systemControl, boolean isLocked) {
 			locked = isLocked;
 			
 		}
 
 		@Override
-		public void paymentHasBeenMade(SystemControl systemControl, CardData cardData) {
+		public void paymentHasBeenMade(StationControl systemControl, CardData cardData) {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void paymentHasBeenCanceled(SystemControl systemControl, CardData cardData, String reason) {
+		public void paymentHasBeenCanceled(StationControl systemControl, CardData cardData, String reason) {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void paymentsHaveBeenEnabled(SystemControl systemControl) {
+		public void paymentsHaveBeenEnabled(StationControl systemControl) {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void initiatePinInput(SystemControl systemControl, String kind) {
+		public void initiatePinInput(StationControl systemControl, String kind) {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void triggerPanelBack(SystemControl systemControl) {
+		public void triggerPanelBack(StationControl systemControl) {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void triggerInitialScreen(SystemControl systemControl) {
+		public void triggerInitialScreen(StationControl systemControl) {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void triggerPaymentWorkflow(SystemControl systemControl) {
+		public void triggerPaymentWorkflow(StationControl systemControl) {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void triggerMembershipWorkflow(SystemControl systemControl) {
+		public void triggerMembershipWorkflow(StationControl systemControl) {
 			// TODO Auto-generated method stub
 			
 		}

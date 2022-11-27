@@ -1,11 +1,11 @@
 package com.diy.software.test.logic;
 
 
-import com.diy.software.controllers.SystemControl;
-import com.diy.software.listeners.SystemControlListener;
+import com.diy.software.controllers.StationControl;
+import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.opeechee.Card.CardData;
 
-public class StubSystem implements SystemControlListener{
+public class StubSystem implements StationControlListener{
 	boolean locked = false;
 	boolean paymentStatus = false;
 	boolean triggerPaymentWorkflow = false;
@@ -13,61 +13,61 @@ public class StubSystem implements SystemControlListener{
 	
 
 	@Override
-	public void systemControlLocked(SystemControl systemControl, boolean isLocked) {
+	public void systemControlLocked(StationControl systemControl, boolean isLocked) {
 		this.locked = isLocked;
 		
 	}
 
 	@Override
-	public void paymentHasBeenMade(SystemControl systemControl, CardData cardData) {
+	public void paymentHasBeenMade(StationControl systemControl, CardData cardData) {
 		paymentStatus = true;
 		
 	}
 
 
 	@Override
-	public void paymentHasBeenCanceled(SystemControl systemControl, CardData cardData, String reason) {
+	public void paymentHasBeenCanceled(StationControl systemControl, CardData cardData, String reason) {
 		paymentStatus = false;
 		
 	}
 
 
 	@Override
-	public void paymentsHaveBeenEnabled(SystemControl systemControl) {
+	public void paymentsHaveBeenEnabled(StationControl systemControl) {
 		// TODO Auto-generated method stub
 		
 	}
 
 
 	@Override
-	public void initiatePinInput(SystemControl systemControl, String kind) {
+	public void initiatePinInput(StationControl systemControl, String kind) {
 		paymentType = kind;
 		
 	}
 
 
 	@Override
-	public void triggerPanelBack(SystemControl systemControl) {
+	public void triggerPanelBack(StationControl systemControl) {
 		// TODO Auto-generated method stub
 		
 	}
 
 
 	@Override
-	public void triggerInitialScreen(SystemControl systemControl) {
+	public void triggerInitialScreen(StationControl systemControl) {
 		// TODO Auto-generated method stub
 		
 	}
 
 
 	@Override
-	public void triggerPaymentWorkflow(SystemControl systemControl) {
+	public void triggerPaymentWorkflow(StationControl systemControl) {
 		triggerPaymentWorkflow  = true;
 		
 	}
 
 	@Override
-	public void triggerMembershipWorkflow(SystemControl systemControl) {
+	public void triggerMembershipWorkflow(StationControl systemControl) {
 		// TODO Auto-generated method stub
 		
 	}

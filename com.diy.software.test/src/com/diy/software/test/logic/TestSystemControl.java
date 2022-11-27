@@ -2,7 +2,7 @@ package com.diy.software.test.logic;
 
 import com.diy.software.util.Tuple;
 import com.diy.software.controllers.ItemsControl;
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 import com.diy.software.fakedata.FakeDataInitializer;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodedItem;
@@ -19,7 +19,7 @@ import org.junit.*;
 
 public class TestSystemControl {
 	
-	private SystemControl systemControl;
+	private StationControl systemControl;
 	private FakeDataInitializer fdi;
 	private StubSystem stub;
 	Barcode[] barcodes;
@@ -36,7 +36,7 @@ public class TestSystemControl {
 		
 		PowerGrid.engageUninterruptiblePowerSource();
 		
-		systemControl = new SystemControl();
+		systemControl = new StationControl();
 		stub = new StubSystem();
 		systemControl.register(stub);
 		ic = systemControl.getItemsControl();

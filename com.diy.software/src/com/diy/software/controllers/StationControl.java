@@ -9,7 +9,7 @@ import com.diy.hardware.external.CardIssuer;
 import com.diy.hardware.external.ProductDatabases;
 import com.diy.simulation.Customer;
 import com.diy.software.fakedata.FakeDataInitializer;
-import com.diy.software.listeners.SystemControlListener;
+import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.EmptyException;
@@ -37,7 +37,7 @@ import ca.powerutility.NoPowerException;
  * @author Calder Sloman
  *
  */
-public class SystemControl
+public class StationControl
 		implements BarcodeScannerListener, ElectronicScaleListener, CardReaderListener, ReceiptPrinterListener {
 	public FakeDataInitializer fakeData;
 	private double expectedCheckoutWeight = 0.0;
@@ -50,7 +50,7 @@ public class SystemControl
 
 	public String userMessage;
 
-	public ArrayList<SystemControlListener> listeners = new ArrayList<>();
+	public ArrayList<StationControlListener> listeners = new ArrayList<>();
 
 	/******** Control Classes ********/
 	private ItemsControl ic;
@@ -72,7 +72,7 @@ public class SystemControl
 	 * DoItYourselfStation as well as a set of listeners which are registered to the
 	 * hardware with the DIYStation.
 	 */
-	public SystemControl() {
+	public StationControl() {
 		customer = new Customer();
 		station = new DoItYourselfStation();
 		customer.useStation(station);
@@ -87,9 +87,9 @@ public class SystemControl
 
 		ic = new ItemsControl(this);
 		bc = new BagsControl(this);
-		ac = new AttendantControl(this);
 		mc = new MembershipControl(this);
 		cc = new CashControl(this);
+		ac = new AttendantControl(this);
 		
 
 		/*
@@ -110,7 +110,7 @@ public class SystemControl
 	/**
 	 * Constructor for injecting fake data
 	 */
-	public SystemControl(FakeDataInitializer fakeData) {
+	public StationControl(FakeDataInitializer fakeData) {
 		this();
 		this.fakeData = fakeData;
 		this.fakeData.addCardData();
@@ -129,14 +129,14 @@ public class SystemControl
 	/**
 	 * Registers a Listener for SystemControlListener
 	 */
-	public void register(SystemControlListener l) {
+	public void register(StationControlListener l) {
 		listeners.add(l);
 	}
 
 	/**
 	 * Removes a Listener for SystemControlListener
 	 */
-	public void unregister(SystemControlListener l) {
+	public void unregister(StationControlListener l) {
 		listeners.remove(l);
 	}
 
@@ -191,7 +191,7 @@ public class SystemControl
 				try {
 					this.station.handheldScanner.disable();
 					this.station.cardReader.disable();
-					for (SystemControlListener l : listeners) {
+					for (StationControlListener l : listeners) {
 						l.systemControlLocked(this, true);
 					}
 					isLocked = true;
@@ -217,7 +217,7 @@ public class SystemControl
 				try {
 					this.station.handheldScanner.enable();
 					this.station.cardReader.enable();
-					for (SystemControlListener l : listeners)
+					for (StationControlListener l : listeners)
 						l.systemControlLocked(this, false);
 					isLocked = false;
 				} catch (NoPowerException e) {
@@ -246,37 +246,37 @@ public class SystemControl
 	}
 
 	public void goBackOnUI() {
-		for (SystemControlListener l : listeners)
+		for (StationControlListener l : listeners)
 			l.triggerPanelBack(this);
 	}
 
 	public void goToInitialScreenOnUI() {
-		for (SystemControlListener l : listeners)
+		for (StationControlListener l : listeners)
 			l.triggerInitialScreen(this);
 	}
 
 	public void askForPin(String kind) {
-		for (SystemControlListener l : listeners)
+		for (StationControlListener l : listeners)
 			l.initiatePinInput(this, kind);
 	}
 
 	public void triggerUnknownReasonForPaymentFailScreen(String reason) {
 		if (reason == null || reason.isEmpty()) {
-			for (SystemControlListener l : listeners)
+			for (StationControlListener l : listeners)
 				l.paymentHasBeenCanceled(this, null, "Card data could not be read for an unknown reason");
 		} else {
-			for (SystemControlListener l : listeners)
+			for (StationControlListener l : listeners)
 				l.paymentHasBeenCanceled(this, null, reason);
 		}
 	}
 
 	public void startPaymentWorkflow() {
-		for (SystemControlListener l : listeners)
+		for (StationControlListener l : listeners)
 			l.triggerPaymentWorkflow(this);
 	}
 
 	public void startMembershipWorkflow() {
-		for (SystemControlListener l : listeners)
+		for (StationControlListener l : listeners)
 			l.triggerMembershipWorkflow(this);
 	}
 
@@ -334,19 +334,19 @@ public class SystemControl
 
 		long holdNum = bank.authorizeHold(cardNumber, amountOwed);
 		if (holdNum <= -1) {
-			for (SystemControlListener l : listeners) {
+			for (StationControlListener l : listeners) {
 				l.paymentHasBeenCanceled(this, data, "Could not authorize bank hold.");
 			}
 		} else if (bank.postTransaction(cardNumber, holdNum, amountOwed)) {
 			bank.releaseHold(cardNumber, holdNum);
 			this.ic.updateCheckoutTotal(-this.ic.getCheckoutTotal());
-			for (SystemControlListener l : listeners) {
+			for (StationControlListener l : listeners) {
 				l.paymentHasBeenMade(this, data);
 			}
 			ic.updateCheckoutTotal(0);
 			return;
 		}
-		for (SystemControlListener l : listeners) {
+		for (StationControlListener l : listeners) {
 			l.paymentHasBeenCanceled(this, data, "Payment failed.");
 		}
 	}
