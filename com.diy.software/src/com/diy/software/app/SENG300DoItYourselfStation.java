@@ -13,9 +13,16 @@ import swing.frames.CustomerStationGUI;
 
 public class SENG300DoItYourselfStation {
   public static void main(String[] args) {
+    int totalNumberOfStations;
+    try {
+      totalNumberOfStations = Integer.parseInt(args[0]);
+    } catch (Exception e) {
+      totalNumberOfStations = 3;
+    }
+    
     configureDoItYourselfStation();
     ArrayList<StationControl> stationControls = new ArrayList<>();
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < totalNumberOfStations; i++) {
       stationControls.add(new StationControl(new FakeDataInitializer()));
     }
     PaneControl pc = new PaneControl(stationControls);
