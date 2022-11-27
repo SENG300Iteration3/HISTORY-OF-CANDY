@@ -20,7 +20,7 @@ import com.jimmyselectronics.virgilio.ElectronicScale;
 import com.jimmyselectronics.virgilio.ElectronicScaleListener;
 
 public class ItemsControl implements ActionListener, BarcodeScannerListener, ElectronicScaleListener {
-	private SystemControl sc;
+	private StationControl sc;
 	private ArrayList<ItemsControlListener> listeners;
 	public ArrayList<Tuple<BarcodedProduct,Integer>> tempList = new ArrayList<>();
 	private ArrayList<Tuple<String, Double>> checkoutList = new ArrayList<>();
@@ -40,7 +40,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	private double scaleReceivedWeight;
 	
 
-	public ItemsControl(SystemControl sc) {
+	public ItemsControl(StationControl sc) {
 		this.sc = sc;
 		sc.station.handheldScanner.register(this);
 		sc.station.baggingArea.register(this);

@@ -8,12 +8,12 @@ import com.diy.software.util.Tuple;
 import com.diy.software.listeners.BagsControlListener;
 
 public class BagsControl implements ActionListener {
-	private SystemControl sc;
+	private StationControl sc;
 	private ArrayList<BagsControlListener> listeners;
 	private static final double abritraryWeightOfBags = 50;
 	private static final double abritraryPriceOfBags = 3.5;
 	
-	public BagsControl(SystemControl sc) {
+	public BagsControl(StationControl sc) {
 		this.sc = sc;
 		this.listeners = new ArrayList<>();
 	}

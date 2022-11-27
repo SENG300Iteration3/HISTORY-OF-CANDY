@@ -15,12 +15,12 @@ import com.jimmyselectronics.opeechee.CardReaderListener;
 
 
 public class WalletControl implements ActionListener, CardReaderListener {
-	private SystemControl sc;
+	private StationControl sc;
 	private ArrayList<WalletControlListener> listeners;
 	private String selectedCardKind;
 	private CardData currentCardData;
 
-	public WalletControl(SystemControl sc) {
+	public WalletControl(StationControl sc) {
 		this.sc = sc;
 		this.sc.station.cardReader.register(this);
 		this.listeners = new ArrayList<>();

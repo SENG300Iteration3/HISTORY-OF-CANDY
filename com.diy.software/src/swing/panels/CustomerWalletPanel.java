@@ -7,14 +7,14 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 import com.diy.software.controllers.WalletControl;
 import com.diy.software.listeners.WalletControlListener;
 import com.jimmyselectronics.opeechee.Card;
 
-import swing.GUI_Color_Palette;
+import swing.styling.GUI_Color_Palette;
 
-public class DebugWalletPanel extends JPanel implements WalletControlListener {
+public class CustomerWalletPanel extends JPanel implements WalletControlListener {
 
 	private static final long serialVersionUID = 1L;
 	private WalletControl wc;
@@ -24,7 +24,7 @@ public class DebugWalletPanel extends JPanel implements WalletControlListener {
 	private boolean aCardIsSelected = false;
 	private boolean paymentsEnabled = false;
 
-	public DebugWalletPanel(SystemControl sc) {
+	public CustomerWalletPanel(StationControl sc) {
 		super();
 		wc = sc.getWalletControl();
 		wc.addListener(this);

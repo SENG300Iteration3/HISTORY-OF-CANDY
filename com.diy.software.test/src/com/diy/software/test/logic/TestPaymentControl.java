@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.diy.software.controllers.PaymentControl;
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 import com.diy.software.enums.PaymentType;
 import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.PaymentControlListener;
@@ -19,7 +19,7 @@ import ca.powerutility.PowerGrid;
 
 public class TestPaymentControl {
 
-	SystemControl sc;
+	StationControl sc;
 	PaymentControl pc;
 	FakeDataInitializer fdi;
 	PaymentListenerStub pls;
@@ -30,7 +30,7 @@ public class TestPaymentControl {
 		PowerGrid.engageUninterruptiblePowerSource();
 		
 		fdi = new FakeDataInitializer();
-		sc = new SystemControl(fdi);
+		sc = new StationControl(fdi);
 		pls = new PaymentListenerStub();
 		pc = new PaymentControl(sc);
 		

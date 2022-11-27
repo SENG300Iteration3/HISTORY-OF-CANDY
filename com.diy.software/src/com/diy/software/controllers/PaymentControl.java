@@ -8,9 +8,9 @@ import com.diy.software.enums.PaymentType;
 import com.diy.software.listeners.PaymentControlListener;
 
 public class PaymentControl implements ActionListener {
-	private SystemControl sc;
+	private StationControl sc;
 	private ArrayList<PaymentControlListener> listeners;
-	public PaymentControl (SystemControl sc) {
+	public PaymentControl (StationControl sc) {
 		this.sc = sc;
 		this.listeners = new ArrayList<>();
 	}

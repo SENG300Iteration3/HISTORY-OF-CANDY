@@ -11,7 +11,7 @@ import org.junit.Test;
 import com.diy.software.util.Tuple;
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.ItemsControl;
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.ItemsControlListener;
@@ -24,7 +24,7 @@ import ca.powerutility.PowerGrid;
 
 public class ItemsControlTest {
 	ItemsControl itemsControl;
-	SystemControl systemControl;
+	StationControl systemControl;
 	StubItemsControl stub;
 	BarcodedItem item;
 	Barcode barcode;
@@ -37,7 +37,7 @@ public class ItemsControlTest {
 		
 		fdi = new FakeDataInitializer();
 		fdi.addProductAndBarcodeData();
-		systemControl = new SystemControl();
+		systemControl = new StationControl();
 		itemsControl = new ItemsControl(systemControl);
 		stub = new StubItemsControl();
 		itemsControl.addListener(stub);

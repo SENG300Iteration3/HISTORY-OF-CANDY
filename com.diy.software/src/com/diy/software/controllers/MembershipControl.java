@@ -8,12 +8,12 @@ import java.util.HashMap;
 import com.diy.software.listeners.MembershipControlListener;
 
 public class MembershipControl implements ActionListener {
-	private SystemControl sc;
+	private StationControl sc;
 	private ArrayList<MembershipControlListener> listeners;
 	private String memberNumber = "";
 	public String memberName;
 
-	public MembershipControl(SystemControl sc) {
+	public MembershipControl(StationControl sc) {
 		this.sc = sc;
 		this.listeners = new ArrayList<>();
 	}

@@ -6,18 +6,18 @@ import java.awt.event.ActionListener;
 
 import javax.swing.SwingConstants;
 
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 
-import swing.GUI_Fonts;
-import swing.GUI_JButton;
-import swing.GUI_JLabel;
-import swing.Screen;
+import swing.styling.GUI_Fonts;
+import swing.styling.GUI_JButton;
+import swing.styling.GUI_JLabel;
+import swing.styling.Screen;
 
 public class PresentCardScreen extends Screen {
 	private GUI_JLabel prompt;
 	private GUI_JButton backButton;
 
-	public PresentCardScreen(final SystemControl systemControl, String cardType) {
+	public PresentCardScreen(final StationControl systemControl, String cardType) {
 		super(systemControl);
 
 		systemControl.getWalletControl().enablePayments();
@@ -39,10 +39,4 @@ public class PresentCardScreen extends Screen {
 		this.addLayer(backButton, 100);
 	}
 
-	/* for testing purposes */
-	public static void main(String[] args) {
-		SystemControl sc = new SystemControl();
-		PresentCardScreen gui = new PresentCardScreen(sc, "TEST");
-		gui.openInNewJFrame();
-	}
 }

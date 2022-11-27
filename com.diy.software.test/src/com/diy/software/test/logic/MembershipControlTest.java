@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.diy.software.controllers.MembershipControl;
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.fakedata.MembershipDatabase;
 import com.diy.software.listeners.MembershipControlListener;
@@ -17,14 +17,14 @@ import com.diy.software.listeners.MembershipControlListener;
 public class MembershipControlTest {
 
 	public MembershipControl mc;
-	public SystemControl sc;
+	public StationControl sc;
 	public FakeDataInitializer fdi;
 	public MembershipControlListenerStub mcStub;
 
 	@Before
 	public void setUp() throws Exception {
 		fdi = new FakeDataInitializer();
-		sc = new SystemControl(fdi);
+		sc = new StationControl(fdi);
 		mc = new MembershipControl(sc);
 		mcStub = new MembershipControlListenerStub();
 		

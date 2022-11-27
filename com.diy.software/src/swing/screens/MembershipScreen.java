@@ -13,15 +13,15 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import com.diy.software.controllers.MembershipControl;
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.MembershipControlListener;
 
-import swing.GUI_Color_Palette;
-import swing.GUI_Fonts;
-import swing.GUI_JButton;
-import swing.GUI_JLabel;
-import swing.GUI_JPanel;
-import swing.Screen;
+import swing.styling.GUI_Color_Palette;
+import swing.styling.GUI_Fonts;
+import swing.styling.GUI_JButton;
+import swing.styling.GUI_JLabel;
+import swing.styling.GUI_JPanel;
+import swing.styling.Screen;
 
 public class MembershipScreen extends Screen implements MembershipControlListener{
 	private MembershipControl mc;
@@ -39,7 +39,7 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 
 	private static String HeaderText = "Membership";
 	
-	public MembershipScreen(SystemControl sc) {
+	public MembershipScreen(StationControl sc) {
 		super(sc, HeaderText);
 		mc = sc.getMembershipControl();
 		mc.addListener(this);

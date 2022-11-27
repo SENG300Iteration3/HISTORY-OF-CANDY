@@ -9,12 +9,12 @@ import javax.swing.JPanel;
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.BagsControl;
 import com.diy.software.controllers.ItemsControl;
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
 import com.diy.software.listeners.ItemsControlListener;
 
-public class DebugBagsPanel extends JPanel
+public class CustomerBagsPanel extends JPanel
 		implements BagsControlListener, ItemsControlListener, AttendantControlListener {
 
 	private static final long serialVersionUID = 1L;
@@ -25,7 +25,7 @@ public class DebugBagsPanel extends JPanel
 	JLabel addBagsLabel;
 	GridBagConstraints buttonGrid = new GridBagConstraints();
 
-	public DebugBagsPanel(SystemControl sc) {
+	public CustomerBagsPanel(StationControl sc) {
 		super();
 		bc = sc.getBagsControl();
 		bc.addListener(this);

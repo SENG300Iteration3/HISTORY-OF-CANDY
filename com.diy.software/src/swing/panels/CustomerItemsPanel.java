@@ -10,12 +10,12 @@ import javax.swing.JPanel;
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.BagsControl;
 import com.diy.software.controllers.ItemsControl;
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
 import com.diy.software.listeners.ItemsControlListener;
 
-public class DebugItemsPanel extends JPanel
+public class CustomerItemsPanel extends JPanel
 		implements ItemsControlListener, AttendantControlListener, BagsControlListener {
 
 	private static final long serialVersionUID = 1L;
@@ -27,7 +27,7 @@ public class DebugItemsPanel extends JPanel
 	GridBagConstraints buttonGrid = new GridBagConstraints();
 	JLabel weightDescrepancyMessage;
 
-	public DebugItemsPanel(SystemControl sc) {
+	public CustomerItemsPanel(StationControl sc) {
 		super();
 		ic = sc.getItemsControl();
 		ic.addListener(this);

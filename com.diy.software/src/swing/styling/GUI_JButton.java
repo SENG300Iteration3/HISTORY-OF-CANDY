@@ -1,4 +1,4 @@
-package swing;
+package swing.styling;
 
 import javax.swing.JButton;
 

@@ -1,4 +1,4 @@
-package swing;
+package swing.styling;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -10,10 +10,10 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 
 public abstract class Screen {
-	protected SystemControl systemControl;
+	protected StationControl systemControl;
 	private static int screenCount = 0;
 
 	private String headerTitle;
@@ -25,7 +25,7 @@ public abstract class Screen {
 	protected GUI_JPanel rootPanel;
 	protected GUI_JPanel centralPanel;
 
-	public Screen(SystemControl systemControl, String headerTitle, int width, int height) {
+	public Screen(StationControl systemControl, String headerTitle, int width, int height) {
 		this.systemControl = systemControl;
 
 		this.headerTitle = headerTitle.toUpperCase();
@@ -51,11 +51,11 @@ public abstract class Screen {
 		this.centralPanel.setLayout(new GridBagLayout());
 	}
 
-	public Screen(SystemControl systemControl, String headerTitle) {
+	public Screen(StationControl systemControl, String headerTitle) {
 		this(systemControl, headerTitle, GUI_Constants.SCREEN_WIDTH, GUI_Constants.SCREEN_HEIGHT);
 	}
 
-	public Screen(SystemControl systemControl) {
+	public Screen(StationControl systemControl) {
 		this(systemControl, "");
 	}
 

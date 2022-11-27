@@ -12,16 +12,17 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
 import com.diy.software.util.Tuple;
-import com.diy.software.controllers.ItemsControl;
-import com.diy.software.controllers.SystemControl;
-import com.diy.software.listeners.ItemsControlListener;
 
-import swing.GUI_Color_Palette;
-import swing.GUI_Fonts;
-import swing.GUI_JButton;
-import swing.GUI_JLabel;
-import swing.GUI_JPanel;
-import swing.Screen;
+import swing.styling.GUI_Color_Palette;
+import swing.styling.GUI_Fonts;
+import swing.styling.GUI_JButton;
+import swing.styling.GUI_JLabel;
+import swing.styling.GUI_JPanel;
+import swing.styling.Screen;
+
+import com.diy.software.controllers.ItemsControl;
+import com.diy.software.controllers.StationControl;
+import com.diy.software.listeners.ItemsControlListener;
 
 public class AddItemsScreen extends Screen implements ItemsControlListener {
 	private ItemsControl itemsControl;
@@ -31,7 +32,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 	protected GUI_JButton payBtn;
 	protected GUI_JButton memberBtn;
 
-	public AddItemsScreen(SystemControl systemControl) {
+	public AddItemsScreen(StationControl systemControl) {
 		super(systemControl, "Self Checkout");
 		this.itemsControl = systemControl.getItemsControl();
 		this.itemsControl.addListener(this);

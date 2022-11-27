@@ -22,12 +22,12 @@ import com.unitedbankingservices.coin.CoinValidatorObserver;
 
 public class CashControl implements BanknoteValidatorObserver, CoinValidatorObserver, CoinStorageUnitObserver,
     BanknoteStorageUnitObserver, ActionListener {
-  private SystemControl sc;
+  private StationControl sc;
   private ArrayList<CashControlListener> listeners;
   private long lastInsertedBanknote;
   private long lastInsertedCoin;
 
-  public CashControl(SystemControl sc) {
+  public CashControl(StationControl sc) {
     this.sc = sc;
     sc.station.banknoteValidator.attach(this);
     sc.station.coinValidator.attach(this);

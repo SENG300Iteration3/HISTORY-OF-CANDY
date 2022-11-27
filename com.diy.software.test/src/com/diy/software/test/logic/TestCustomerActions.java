@@ -11,20 +11,20 @@ import org.junit.Test;
 import com.diy.software.util.Tuple;
 import com.diy.simulation.Customer;
 import com.diy.software.controllers.ItemsControl;
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 import com.diy.software.fakedata.FakeDataInitializer;
 
 import ca.powerutility.PowerGrid;
 public class TestCustomerActions {
 	Customer customer;
-	SystemControl controller;
+	StationControl controller;
 	FakeDataInitializer fakeData;
 	
 	@Before
 	public void setup() {
 		
 		PowerGrid.engageUninterruptiblePowerSource();
-		controller = new SystemControl();
+		controller = new StationControl();
 		customer = controller.customer;
 		fakeData = new FakeDataInitializer();
 		fakeData.addProductAndBarcodeData();

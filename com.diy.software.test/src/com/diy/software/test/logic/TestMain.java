@@ -21,7 +21,7 @@ import com.diy.software.enums.PaymentType;
 import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.MembershipControlListener;
 import com.diy.software.listeners.PaymentControlListener;
-import com.diy.software.listeners.SystemControlListener;
+import com.diy.software.listeners.StationControlListener;
 import com.diy.software.listeners.WalletControlListener;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
@@ -43,7 +43,7 @@ import ca.powerutility.PowerGrid;
 public class TestMain {
 	/*-------------------------Initialized in Before---------------------------*/
 	Customer customer;
-	SystemControl controller;
+	StationControl controller;
 	SystemControlStub systemControlStub;
 	PaymentControlStub paymentControlStub;
 	WalletControlStub walletControlStub;
@@ -77,7 +77,7 @@ public class TestMain {
 		PowerGrid.engageUninterruptiblePowerSource();
 
 		fakeData = new FakeDataInitializer();
-		controller = new SystemControl(fakeData);
+		controller = new StationControl(fakeData);
 		cardReaderStub = new WalletControlStub();
 		
 		systemControlStub = new SystemControlStub(); 
@@ -914,59 +914,59 @@ public class TestMain {
 		
 	}
 
-	public class SystemControlStub implements SystemControlListener {
+	public class SystemControlStub implements StationControlListener {
 
 		@Override
-		public void paymentHasBeenMade(SystemControl systemControl, CardData cardData) {
+		public void paymentHasBeenMade(StationControl systemControl, CardData cardData) {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void paymentHasBeenCanceled(SystemControl systemControl, CardData cardData, String reason) {
+		public void paymentHasBeenCanceled(StationControl systemControl, CardData cardData, String reason) {
 			System.out.println("Payment canceled!");
 			flag = true;
 			
 		}
 
 		@Override
-		public void paymentsHaveBeenEnabled(SystemControl systemControl) {
+		public void paymentsHaveBeenEnabled(StationControl systemControl) {
 			
 			
 		}
 
 		@Override
-		public void initiatePinInput(SystemControl systemControl, String kind) {
+		public void initiatePinInput(StationControl systemControl, String kind) {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void triggerPanelBack(SystemControl systemControl) {
+		public void triggerPanelBack(StationControl systemControl) {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void triggerInitialScreen(SystemControl systemControl) {
+		public void triggerInitialScreen(StationControl systemControl) {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void triggerPaymentWorkflow(SystemControl systemControl) {
+		public void triggerPaymentWorkflow(StationControl systemControl) {
 			System.out.println("PAYMENT WORKFLOW!");
 			
 		}
 
 		@Override
-		public void systemControlLocked(SystemControl systemControl, boolean isLocked) {
+		public void systemControlLocked(StationControl systemControl, boolean isLocked) {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void triggerMembershipWorkflow(SystemControl systemControl) {
+		public void triggerMembershipWorkflow(StationControl systemControl) {
 			// TODO Auto-generated method stub
 			
 		}

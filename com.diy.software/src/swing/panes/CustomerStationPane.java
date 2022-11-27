@@ -1,26 +1,19 @@
-package swing.station;
+package swing.panes;
 
 
 import  com.diy.hardware.DoItYourselfStation;
 
-import java.awt.BorderLayout;
 import java.util.ArrayList;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.diy.software.controllers.PaymentControl;
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 import com.diy.software.enums.PaymentType;
-import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.PaymentControlListener;
-import com.diy.software.listeners.SystemControlListener;
+import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.opeechee.Card.CardData;
 
-import swing.GUI_Constants;
-import swing.GUI_JFrame;
-import swing.Screen;
-import swing.debug.DebugGUI;
 import swing.screens.AddItemsScreen;
 import swing.screens.BlockedPromptScreen;
 import swing.screens.MembershipScreen;
@@ -29,12 +22,12 @@ import swing.screens.PaymentScreen;
 import swing.screens.PinPadScreen;
 import swing.screens.PresentCardScreen;
 import swing.screens.PresentCashScreen;
+import swing.styling.Screen;
 
-public class StationGUI implements SystemControlListener, PaymentControlListener {
-	private SystemControl sc;
+public class CustomerStationPane implements StationControlListener, PaymentControlListener {
+	private StationControl sc;
 
-	private GUI_JFrame frame = new GUI_JFrame("Station GUI", GUI_Constants.SCREEN_WIDTH, GUI_Constants.SCREEN_HEIGHT);
-	private JPanel currentPanel;
+	private JPanel rooPanel, currentPanel;
 	private ArrayList<JPanel> panelStack;
 
 	/******** Panels ********/
@@ -47,37 +40,30 @@ public class StationGUI implements SystemControlListener, PaymentControlListener
 	private OkayPromptScreen okayPromptScreen;
 	private MembershipScreen membershipSceen;
 
-	public StationGUI(SystemControl sc) {
+	public CustomerStationPane(StationControl sc) {
 		this.sc = sc;
 
+		
 		/******** Register StationGUI in all listeners ********/
 		this.sc.register(this);
 		this.sc.getPaymentControl().addListener(this);
-
+		
 		/******** Initialize all Panels ********/
-		panelStack = new ArrayList<>();
-		addItemsScreen = new AddItemsScreen(sc);
-		pinPadScren = new PinPadScreen(sc);
-		paymentScreen = new PaymentScreen(sc);
-		currentPanel = new JPanel();
-		membershipSceen = new MembershipScreen(sc);
+		this.panelStack = new ArrayList<>();
+		this.addItemsScreen = new AddItemsScreen(sc);
+		this.pinPadScren = new PinPadScreen(sc);
+		this.paymentScreen = new PaymentScreen(sc);
+		this.membershipSceen = new MembershipScreen(sc);
+		this.currentPanel = new JPanel();
+		this.rooPanel = new JPanel();
+		this.rooPanel.add(currentPanel);
 
 		/******** Add initial panel to screen ********/
 		addScreenToStack(addItemsScreen);
-
-		/******** Frame Setup ********/
-		frame.setVisible(true);
-		frame.setLocation(1280, 0);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().add(currentPanel, BorderLayout.CENTER);
 	}
 
-	public static void main(String[] args) {
-		configureDiItYourselfStationAR();
-		SystemControl sc = new SystemControl(new FakeDataInitializer());
-		new StationGUI(sc);
-		new DebugGUI(sc);
-		new AttendantStationGUI(sc);
+	public JPanel getRootPanel() {
+		return rooPanel;
 	}
 
 	public static void configureDiItYourselfStationAR() {
@@ -96,26 +82,28 @@ public class StationGUI implements SystemControlListener, PaymentControlListener
 	}
 
 	private void addPanel(JPanel newPanel) {
-		frame.getContentPane().remove(currentPanel);
+		JPanel parent = (JPanel) currentPanel.getParent();
+		parent.remove(currentPanel);
 		currentPanel = newPanel;
-		frame.getContentPane().add(currentPanel);
-		frame.invalidate();
-		frame.validate();
-		frame.repaint();
+		parent.add(currentPanel);
+		parent.invalidate();
+		parent.validate();
+		parent.repaint();
 	}
 
 	private void removePanelFromStack() {
-		frame.getContentPane().remove(currentPanel);
+		JPanel parent = (JPanel) currentPanel.getParent();
+		parent.remove(currentPanel);
 		currentPanel = panelStack.get(panelStack.size() - 2);
-		frame.getContentPane().add(currentPanel);
-		frame.invalidate();
-		frame.validate();
-		frame.repaint();
+		parent.add(currentPanel);
+		parent.invalidate();
+		parent.validate();
+		parent.repaint();
 		panelStack.remove(panelStack.size() - 1);
 	}
 
 	@Override
-	public void systemControlLocked(SystemControl systemControl, boolean isLocked) {
+	public void systemControlLocked(StationControl systemControl, boolean isLocked) {
 		if (isLocked) {
 			blockedPromptScreen = new BlockedPromptScreen(systemControl,
 					"Item has been scanned. Please add it to the bagging area");
@@ -126,25 +114,25 @@ public class StationGUI implements SystemControlListener, PaymentControlListener
 	}
 
 	@Override
-	public void paymentHasBeenMade(SystemControl systemControl, CardData cardData) {
+	public void paymentHasBeenMade(StationControl systemControl, CardData cardData) {
 		okayPromptScreen = new OkayPromptScreen(systemControl, "Payment has been successfully made", true);
 		addPanel(okayPromptScreen.getRootPanel());
 	}
 
 	@Override
-	public void paymentHasBeenCanceled(SystemControl systemControl, CardData cardData, String reason) {
+	public void paymentHasBeenCanceled(StationControl systemControl, CardData cardData, String reason) {
 		okayPromptScreen = new OkayPromptScreen(systemControl, reason, false);
 		addPanel(okayPromptScreen.getRootPanel());
 	}
 
 	@Override
-	public void paymentsHaveBeenEnabled(SystemControl systemControl) {
+	public void paymentsHaveBeenEnabled(StationControl systemControl) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void initiatePinInput(SystemControl systemControl, String kind) {
+	public void initiatePinInput(StationControl systemControl, String kind) {
 		addScreenToStack(pinPadScren);
 	}
 
@@ -167,24 +155,24 @@ public class StationGUI implements SystemControlListener, PaymentControlListener
 	}
 
 	@Override
-	public void triggerPanelBack(SystemControl systemControl) {
+	public void triggerPanelBack(StationControl systemControl) {
 		removePanelFromStack();
 	}
 
 	@Override
-	public void triggerInitialScreen(SystemControl systemControl) {
+	public void triggerInitialScreen(StationControl systemControl) {
 		JPanel firstPanel = panelStack.get(0);
 		panelStack.clear();
 		addPanelToStack(firstPanel);
 	}
 
 	@Override
-	public void triggerPaymentWorkflow(SystemControl systemControl) {
+	public void triggerPaymentWorkflow(StationControl systemControl) {
 		addScreenToStack(paymentScreen);
 	}
 
 	@Override
-	public void triggerMembershipWorkflow(SystemControl systemControl) {
+	public void triggerMembershipWorkflow(StationControl systemControl) {
 		addScreenToStack(membershipSceen);
 	}
 }

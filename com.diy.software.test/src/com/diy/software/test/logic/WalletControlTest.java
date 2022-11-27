@@ -9,7 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.diy.software.controllers.SystemControl;
+import com.diy.software.controllers.StationControl;
 import com.diy.software.controllers.WalletControl;
 import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.WalletControlListener;
@@ -24,7 +24,7 @@ import ca.powerutility.PowerGrid;
 
 public class WalletControlTest {
 	WalletControl wc;
-	SystemControl sc;
+	StationControl sc;
 	ReaderStub readStub;
 	Card card1;
 	Card card2;
@@ -37,7 +37,7 @@ public class WalletControlTest {
 		
 		FakeDataInitializer fdi = new FakeDataInitializer();
 		fdi.addCardData();
-		sc = new SystemControl(fdi);
+		sc = new StationControl(fdi);
 		wc = new WalletControl(sc); 
 		readStub = new ReaderStub();
 		
