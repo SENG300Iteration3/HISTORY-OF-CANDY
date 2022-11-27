@@ -4,7 +4,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 
 import org.junit.After;
 import org.junit.Before;
@@ -17,7 +16,6 @@ import com.diy.software.controllers.SystemControl;
 import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.SystemControlListener;
-import com.jimmyselectronics.Item;
 import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.abagnale.ReceiptPrinterND;
 import com.jimmyselectronics.opeechee.Card.CardData;

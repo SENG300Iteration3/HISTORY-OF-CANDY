@@ -10,10 +10,8 @@ import org.junit.Test;
 import com.diy.software.controllers.CashControl;
 import com.diy.software.controllers.SystemControl;
 import com.diy.software.listeners.CashControlListener;
-import com.diy.software.listeners.MembershipControlListener;
 import com.unitedbankingservices.banknote.BanknoteValidatorObserver;
 
-import ca.powerutility.NoPowerException;
 import ca.powerutility.PowerGrid;
 
 public class CashControlTest {

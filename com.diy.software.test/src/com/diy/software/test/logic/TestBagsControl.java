@@ -4,13 +4,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.diy.software.util.Tuple;
 import com.diy.software.controllers.BagsControl;
 import com.diy.software.controllers.ItemsControl;
 import com.diy.software.controllers.SystemControl;

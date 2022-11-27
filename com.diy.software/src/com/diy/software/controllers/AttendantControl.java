@@ -15,7 +15,6 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	private SystemControl sc;
 	private ArrayList<AttendantControlListener> listeners;
 	String	attendantNotifications;
-	private boolean noBaggingApproved = false;
 
 	public AttendantControl(SystemControl sc) {
 		this.sc = sc;

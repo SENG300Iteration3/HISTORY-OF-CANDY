@@ -9,20 +9,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.diy.software.util.Tuple;
-import com.diy.hardware.DoItYourselfStation;
-import com.diy.hardware.external.ProductDatabases;
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.ItemsControl;
 import com.diy.software.controllers.SystemControl;
 import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.ItemsControlListener;
-import com.diy.software.test.logic.TestAttendantControl.AttendantListenerStub;
 import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.necchi.Numeral;
-import com.jimmyselectronics.virgilio.ElectronicScale;
 
 import ca.powerutility.PowerGrid;
 

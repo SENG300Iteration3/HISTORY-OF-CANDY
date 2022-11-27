@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.junit.*;
@@ -20,7 +19,6 @@ import com.diy.simulation.Customer;
 import com.diy.software.controllers.*;
 import com.diy.software.enums.PaymentType;
 import com.diy.software.fakedata.FakeDataInitializer;
-import com.diy.software.fakedata.MembershipDatabase;
 import com.diy.software.listeners.MembershipControlListener;
 import com.diy.software.listeners.PaymentControlListener;
 import com.diy.software.listeners.SystemControlListener;
@@ -40,8 +38,6 @@ import com.jimmyselectronics.opeechee.CardReader;
 import com.jimmyselectronics.virgilio.ElectronicScale;
 import com.jimmyselectronics.virgilio.ElectronicScaleListener;
 
-import ca.powerutility.NoPowerException;
-import ca.powerutility.PowerSurge;
 import ca.powerutility.PowerGrid;
 
 public class TestMain {
