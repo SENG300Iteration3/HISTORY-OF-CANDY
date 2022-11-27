@@ -61,7 +61,7 @@ public class TestCustomerActions {
 		
 		int i = 0;
 		while((!controlStub.locked) && i < 25) {
-			customer.scanItem();
+			customer.scanItem(true);
 			i++;
 		}
 		customer.placeItemInBaggingArea();

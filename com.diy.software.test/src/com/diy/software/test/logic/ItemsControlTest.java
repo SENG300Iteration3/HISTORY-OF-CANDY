@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.diy.software.util.Tuple;
-import com.diy.hardware.DoItYourselfStationAR;
+import com.diy.hardware.DoItYourselfStation;
 import com.diy.hardware.external.ProductDatabases;
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.ItemsControl;
@@ -49,19 +49,19 @@ public class ItemsControlTest {
 		itemTuple = new Tuple<String, Double>("Can of Beans", (double)2);
 		barcode = new Barcode(new Numeral[] { Numeral.one, Numeral.two, Numeral.three, Numeral.four });
 		
-		systemControl.station.scanner.register(itemsControl);
-		systemControl.station.scanner.plugIn();
-		systemControl.station.scanner.turnOff();
-		systemControl.station.scanner.turnOn();
-		systemControl.station.scanner.enable();
+		systemControl.station.handheldScanner.register(itemsControl);
+		systemControl.station.handheldScanner.plugIn();
+		systemControl.station.handheldScanner.turnOff();
+		systemControl.station.handheldScanner.turnOn();
+		systemControl.station.handheldScanner.enable();
 	}
 	
 	@After
 	public void teardown() {
 		PowerGrid.reconnectToMains();
-		systemControl.station.scanner.disable();
-		systemControl.station.scanner.turnOff();
-		systemControl.station.scanner.unplug();
+		systemControl.station.handheldScanner.disable();
+		systemControl.station.handheldScanner.turnOff();
+		systemControl.station.handheldScanner.unplug();
 	}
 	
 	@Test
@@ -69,7 +69,7 @@ public class ItemsControlTest {
 		stub.bagging = true;
 		stub.selected = true;
 		
-		itemsControl.weightChanged(systemControl.station.scale, 5);
+		itemsControl.weightChanged(systemControl.station.baggingArea, 5);
 		
 		assertFalse(stub.bagging);
 		assertFalse(stub.selected);
@@ -78,7 +78,7 @@ public class ItemsControlTest {
 		
 		stub.bagging = true;
 		stub.selected = true;
-		itemsControl.weightChanged(systemControl.station.scale, 5);
+		itemsControl.weightChanged(systemControl.station.baggingArea, 5);
 		assertTrue(stub.bagging);
 		assertTrue(stub.selected);
 	}
@@ -90,7 +90,7 @@ public class ItemsControlTest {
 		stub2.bagging = true;
 		stub2.selected = true;
 		
-		itemsControl.weightChanged(systemControl.station.scale, 5);
+		itemsControl.weightChanged(systemControl.station.baggingArea, 5);
 		
 		assertTrue(stub2.bagging);
 		assertTrue(stub2.selected);
@@ -99,7 +99,7 @@ public class ItemsControlTest {
 		
 		stub.bagging = true;
 		stub.selected = true;
-		itemsControl.weightChanged(systemControl.station.scale, 5);
+		itemsControl.weightChanged(systemControl.station.baggingArea, 5);
 		assertFalse(stub2.bagging);
 		assertFalse(stub2.selected);
 	}
@@ -192,7 +192,7 @@ public class ItemsControlTest {
 	public void testScanCurrentItemScanFail() {
 		systemControl.customer.shoppingCart.add(item);
 		systemControl.customer.selectNextItem();
-		systemControl.station.scanner.disable();
+		systemControl.station.handheldScanner.disable();
 		stub.bagging = true;
 		while(stub.bagging){
 			stub.bagging = false;
@@ -242,7 +242,7 @@ public class ItemsControlTest {
 		while (loop) {
 			itemsControl.placeItemOnScale();
 			try {
-				if (systemControl.station.scale.getCurrentWeight() >= 1.123 && systemControl.station.scale.getCurrentWeight() <= 1.123 + 0.1) {
+				if (systemControl.station.baggingArea.getCurrentWeight() >= 1.123 && systemControl.station.baggingArea.getCurrentWeight() <= 1.123 + 0.1) {
 					itemsControl.removeLastBaggedItem();
 					stub.bagging = true;
 					stub.selected = true;
@@ -269,7 +269,7 @@ public class ItemsControlTest {
 		while (!stub.removeItem) {
 			itemsControl.placeItemOnScale();
 			if (!stub.removeItem) {
-				systemControl.station.scale.remove(heavyItem);
+				systemControl.station.baggingArea.remove(heavyItem);
 				systemControl.customer.shoppingCart.add(heavyItem);
 				systemControl.customer.selectNextItem();
 			}
@@ -278,8 +278,8 @@ public class ItemsControlTest {
 		assertFalse(systemControl.expectedWeightMatchesActualWeight(100));
 		
 		try {
-			assertTrue(systemControl.station.scale.getCurrentWeight() >= itemsControl.getWrongBaggedItem().getWeight());
-			assertTrue(systemControl.station.scale.getCurrentWeight() - 1 <= itemsControl.getWrongBaggedItem().getWeight());
+			assertTrue(systemControl.station.baggingArea.getCurrentWeight() >= itemsControl.getWrongBaggedItem().getWeight());
+			assertTrue(systemControl.station.baggingArea.getCurrentWeight() - 1 <= itemsControl.getWrongBaggedItem().getWeight());
 		} catch (OverloadException e) {
 		}
 		
@@ -295,8 +295,8 @@ public class ItemsControlTest {
 		
 		
 		try {
-			System.out.println(systemControl.station.scale.getCurrentWeight());
-			assertTrue(systemControl.station.scale.getCurrentWeight() >= itemsControl.getWrongBaggedItem().getWeight());
+			System.out.println(systemControl.station.baggingArea.getCurrentWeight());
+			assertTrue(systemControl.station.baggingArea.getCurrentWeight() >= itemsControl.getWrongBaggedItem().getWeight());
 		} catch (OverloadException e) {
 		}
 		stub.selected = true;
@@ -306,7 +306,7 @@ public class ItemsControlTest {
 		assertFalse(stub.selected);
 		assertFalse(stub.bagging);
 		try {
-			assertTrue(systemControl.station.scale.getCurrentWeight() <= 1);
+			assertTrue(systemControl.station.baggingArea.getCurrentWeight() <= 1);
 		} catch (OverloadException e) {
 		}
 		
@@ -343,7 +343,7 @@ public class ItemsControlTest {
 	@Test
 	public void testBarcodeScanned() {
 		assertFalse(stub.bagging);
-		itemsControl.barcodeScanned(systemControl.station.scanner, null);
+		itemsControl.barcodeScanned(systemControl.station.handheldScanner, null);
 		assertTrue(stub.bagging);
 	}
 
@@ -352,7 +352,7 @@ public class ItemsControlTest {
 	public void testWeightChanged() {
 		stub.bagging = true;
 		stub.selected = true;
-		itemsControl.weightChanged(systemControl.station.scale, 1);
+		itemsControl.weightChanged(systemControl.station.baggingArea, 1);
 		assertFalse(stub.bagging);
 		assertFalse(stub.selected);
 	}
@@ -550,13 +550,13 @@ public class ItemsControlTest {
 	
 	@Test
 	public void testOverload() {
-		itemsControl.overload(systemControl.station.scale);
+		itemsControl.overload(systemControl.station.baggingArea);
 		assertTrue(itemsControl.userMessage.equals("Weight on scale has been overloaded, weight limit is: 5000.0"));
 	}
 	
 	@Test
 	public void testOutOfOverload() {
-		itemsControl.outOfOverload(systemControl.station.scale);
+		itemsControl.outOfOverload(systemControl.station.baggingArea);
 		assertTrue(itemsControl.userMessage.equals("Excessive weight removed, continue scanning"));
 	}
 	

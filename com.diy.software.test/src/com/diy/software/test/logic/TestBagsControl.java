@@ -86,7 +86,7 @@ public class TestBagsControl {
 		bc.addListener(bls);
 		double lastItemWeight = sc.getWeightOfLastItemAddedToBaggingArea();
 		double lastExpectedWeight = sc.getExpectedWeight();
-		assertFalse(sc.station.scanner.isDisabled());
+		assertFalse(sc.station.handheldScanner.isDisabled());
 		assertFalse(sc.station.cardReader.isDisabled());
 		assertFalse(bls.customerAwaitingBags);
 		
@@ -94,7 +94,7 @@ public class TestBagsControl {
 		
 		assertTrue(lastExpectedWeight != sc.getExpectedWeight());
 		assertTrue(lastItemWeight != sc.getWeightOfLastItemAddedToBaggingArea());
-		assertTrue(sc.station.scanner.isDisabled());
+		assertTrue(sc.station.handheldScanner.isDisabled());
 		assertTrue(sc.station.cardReader.isDisabled());
 		assertTrue(bls.customerAwaitingBags);
 	}
@@ -104,13 +104,13 @@ public class TestBagsControl {
 		sc.unblockStation();
 		bc.addListener(bls);
 		
-		assertFalse(sc.station.scanner.isDisabled());
+		assertFalse(sc.station.handheldScanner.isDisabled());
 		assertFalse(sc.station.cardReader.isDisabled());
 		assertFalse(bls.attendantVerifyBags);
 		
 		bc.ownBagsPlacedInBaggingArea();
 		
-		assertTrue(sc.station.scanner.isDisabled());
+		assertTrue(sc.station.handheldScanner.isDisabled());
 		assertTrue(sc.station.cardReader.isDisabled());
 		assertTrue(bls.attendantVerifyBags);
 	}
@@ -135,13 +135,13 @@ public class TestBagsControl {
 		bc.addListener(bls);
 		ActionEvent e =  new ActionEvent(this,0,"add bags");
 		
-		assertFalse(sc.station.scanner.isDisabled());
+		assertFalse(sc.station.handheldScanner.isDisabled());
 		assertFalse(sc.station.cardReader.isDisabled());
 		assertFalse(bls.customerAwaitingBags);
 		
 		bc.actionPerformed(e);
 		
-		assertTrue(sc.station.scanner.isDisabled());
+		assertTrue(sc.station.handheldScanner.isDisabled());
 		assertTrue(sc.station.cardReader.isDisabled());
 		assertTrue(bls.customerAwaitingBags);
 	}
@@ -152,13 +152,13 @@ public class TestBagsControl {
 		bc.addListener(bls);
 		ActionEvent e =  new ActionEvent(this,0,"done adding bags");
 		
-		assertFalse(sc.station.scanner.isDisabled());
+		assertFalse(sc.station.handheldScanner.isDisabled());
 		assertFalse(sc.station.cardReader.isDisabled());
 		assertFalse(bls.attendantVerifyBags);
 		
 		bc.actionPerformed(e);
 		
-		assertTrue(sc.station.scanner.isDisabled());
+		assertTrue(sc.station.handheldScanner.isDisabled());
 		assertTrue(sc.station.cardReader.isDisabled());
 		assertTrue(bls.attendantVerifyBags);
 	}
@@ -185,7 +185,7 @@ public class TestBagsControl {
 		bc.addListener(bls);
 		ActionEvent e =  null;
 		
-		assertFalse(sc.station.scanner.isDisabled());
+		assertFalse(sc.station.handheldScanner.isDisabled());
 		assertFalse(sc.station.cardReader.isDisabled());
 		assertFalse(bls.attendantVerifyBags);
 		assertFalse(bls.customerAwaitingBags);
@@ -200,14 +200,14 @@ public class TestBagsControl {
 		bc.addListener(bls);
 		ActionEvent e =  new ActionEvent(this,0,"");
 		
-		assertFalse(sc.station.scanner.isDisabled());
+		assertFalse(sc.station.handheldScanner.isDisabled());
 		assertFalse(sc.station.cardReader.isDisabled());
 		assertFalse(bls.attendantVerifyBags);
 		assertFalse(bls.customerAwaitingBags);
 		
 		bc.actionPerformed(e);
 		
-		assertFalse(sc.station.scanner.isDisabled());
+		assertFalse(sc.station.handheldScanner.isDisabled());
 		assertFalse(sc.station.cardReader.isDisabled());
 		assertFalse(bls.attendantVerifyBags);
 		assertFalse(bls.customerAwaitingBags);
@@ -220,14 +220,14 @@ public class TestBagsControl {
 		bc.addListener(bls);
 		ActionEvent e =  new ActionEvent(this,0,null);
 		
-		assertFalse(sc.station.scanner.isDisabled());
+		assertFalse(sc.station.handheldScanner.isDisabled());
 		assertFalse(sc.station.cardReader.isDisabled());
 		assertFalse(bls.attendantVerifyBags);
 		assertFalse(bls.customerAwaitingBags);
 		
 		bc.actionPerformed(e);
 		
-		assertFalse(sc.station.scanner.isDisabled());
+		assertFalse(sc.station.handheldScanner.isDisabled());
 		assertFalse(sc.station.cardReader.isDisabled());
 		assertFalse(bls.attendantVerifyBags);
 		assertFalse(bls.customerAwaitingBags);

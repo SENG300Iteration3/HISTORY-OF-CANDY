@@ -19,7 +19,7 @@ import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.SystemControlListener;
 import com.jimmyselectronics.Item;
 import com.jimmyselectronics.OverloadException;
-import com.jimmyselectronics.abagnale.ReceiptPrinterD;
+import com.jimmyselectronics.abagnale.ReceiptPrinterND;
 import com.jimmyselectronics.opeechee.Card.CardData;
 
 import ca.powerutility.PowerGrid;
@@ -31,7 +31,7 @@ public class TestAttendantControl {
     AttendantListenerStub als;
     FakeDataInitializer fdi;
     SystemControlListenerStub scl;
-    ReceiptPrinterD rp;
+    ReceiptPrinterND rp;
     ItemsControl ic;
 
 
@@ -175,13 +175,13 @@ public class TestAttendantControl {
     	ac.addListener(als);
     	sc.blockStation();
     	assertFalse(als.getAttendantBags());
-    	assertTrue(sc.station.scanner.isDisabled());
+    	assertTrue(sc.station.handheldScanner.isDisabled());
     	assertTrue(sc.station.cardReader.isDisabled());
     	
     	ac.approveBagsAdded();
     	
     	assertTrue(als.getAttendantBags());
-    	assertFalse(sc.station.scanner.isDisabled());
+    	assertFalse(sc.station.handheldScanner.isDisabled());
     	assertFalse(sc.station.cardReader.isDisabled());
     }
    
@@ -191,13 +191,13 @@ public class TestAttendantControl {
     	sc.unblockStation();
     	ac.addListener(als);
     	assertFalse(als.getAttendantBags());
-    	assertFalse(sc.station.scanner.isDisabled());
+    	assertFalse(sc.station.handheldScanner.isDisabled());
     	assertFalse(sc.station.cardReader.isDisabled());
     	
     	ac.approveBagsAdded();
     	
     	assertTrue(als.getAttendantBags());
-    	assertFalse(sc.station.scanner.isDisabled());
+    	assertFalse(sc.station.handheldScanner.isDisabled());
     	assertFalse(sc.station.cardReader.isDisabled());
     }
     
@@ -206,13 +206,13 @@ public class TestAttendantControl {
     	ActionEvent e = new ActionEvent(this, 0, null);
     	ac.addListener(als);
     	sc.blockStation();
-    	assertTrue(sc.station.scanner.isDisabled());
+    	assertTrue(sc.station.handheldScanner.isDisabled());
     	assertTrue(sc.station.cardReader.isDisabled());
     	assertFalse(als.getAttendantBags());
     	
     	ac.actionPerformed(e);
     	
-    	assertTrue(sc.station.scanner.isDisabled());
+    	assertTrue(sc.station.handheldScanner.isDisabled());
     	assertTrue(sc.station.cardReader.isDisabled());
     	assertFalse(als.getAttendantBags());
     }
@@ -224,14 +224,14 @@ public class TestAttendantControl {
     	sc.blockStation();
     	ac.addListener(als);
     	
-    	assertTrue(sc.station.scanner.isDisabled());
+    	assertTrue(sc.station.handheldScanner.isDisabled());
     	assertTrue(sc.station.cardReader.isDisabled());
     	assertFalse(als.getAttendantBags());
     	
     	ac.actionPerformed(e);
     	
     	assertTrue(als.getAttendantBags());
-    	assertFalse(sc.station.scanner.isDisabled());
+    	assertFalse(sc.station.handheldScanner.isDisabled());
     	assertFalse(sc.station.cardReader.isDisabled());
     }
     
@@ -240,7 +240,7 @@ public class TestAttendantControl {
     	ActionEvent e = null;
     	sc.blockStation();
     	ac.addListener(als);
-    	assertTrue(sc.station.scanner.isDisabled());
+    	assertTrue(sc.station.handheldScanner.isDisabled());
     	assertTrue(sc.station.cardReader.isDisabled());
     	assertFalse(als.getAttendantBags());
     	ac.actionPerformed(e);

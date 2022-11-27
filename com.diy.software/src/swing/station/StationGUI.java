@@ -1,7 +1,7 @@
 package swing.station;
 
 
-import  com.diy.hardware.DoItYourselfStationAR;
+import  com.diy.hardware.DoItYourselfStation;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
@@ -81,8 +81,8 @@ public class StationGUI implements SystemControlListener, PaymentControlListener
 	}
 
 	public static void configureDiItYourselfStationAR() {
-		DoItYourselfStationAR.configureBanknoteDenominations(new int [] {100, 50, 20, 10, 5, 1});
-    DoItYourselfStationAR.configureCoinDenominations(new long [] {200, 100, 25, 10, 5, 1});
+		DoItYourselfStation.configureBanknoteDenominations(new int [] {100, 50, 20, 10, 5, 1});
+    DoItYourselfStation.configureCoinDenominations(new long [] {200, 100, 25, 10, 5, 1});
 	}
 
 	private void addScreenToStack(Screen newScreen) {

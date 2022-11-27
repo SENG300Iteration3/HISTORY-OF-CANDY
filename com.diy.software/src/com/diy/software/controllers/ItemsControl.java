@@ -42,8 +42,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 	public ItemsControl(SystemControl sc) {
 		this.sc = sc;
-		sc.station.scanner.register(this);
-		sc.station.scale.register(this);
+		sc.station.handheldScanner.register(this);
+		sc.station.baggingArea.register(this);
 		this.listeners = new ArrayList<>();
 	}
 	
@@ -133,10 +133,12 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 	}
 
+	// TODO: scanItem now differtiates between using handheldScanner and mainScanner
+	// ALSO: note that a new weight area called scanningArea exists now to grab weight of items during general scanning phase
 	public void scanCurrentItem() {
 		baggingAreaTimerStart = System.currentTimeMillis();
 		scanSuccess = false;
-		sc.customer.scanItem();
+		sc.customer.scanItem(true);
 		if (!scanSuccess) {
 			// if scanSuccess is still false after listeners have been called, we can show
 			// an alert showing a failed scan if time permits.
@@ -158,7 +160,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			scaleReceivedWeight = wrongBaggedItem.getWeight();
 			removedWrongBaggedItem = false;
 			sc.customer.placeItemInBaggingArea();
-			sc.station.scale.add(wrongBaggedItem);
+			sc.station.baggingArea.add(wrongBaggedItem);
 			
 		}
 		
@@ -187,7 +189,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	public void removeLastBaggedItem() {
 		sc.unblockStation();
 		removedWrongBaggedItem = true;
-		sc.station.scale.remove(wrongBaggedItem);
+		sc.station.baggingArea.remove(wrongBaggedItem);
 		for (ItemsControlListener l : listeners)
 			l.awaitingItemToBeSelected(this);
 	}
@@ -305,7 +307,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 	@Override
 	public void overload(ElectronicScale scale) {
-		userMessage = "Weight on scale has been overloaded, weight limit is: " + sc.station.scale.getWeightLimit();
+		userMessage = "Weight on scale has been overloaded, weight limit is: " + sc.station.baggingArea.getWeightLimit();
 	}
 
 	@Override

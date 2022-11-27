@@ -96,7 +96,7 @@ public class TestMain {
 
 		customer = controller.customer;
 		electronicScaleStub = new ElectronicScaleStub();
-		controller.station.scale.register(electronicScaleStub);
+		controller.station.baggingArea.register(electronicScaleStub);
 
 		ppc = controller.getPinPadControl();
 		//ArrayList<Barcode> barcodes = controller.getBarcodes();
@@ -152,7 +152,7 @@ public class TestMain {
 		BarcodedItem bitem = (BarcodedItem)item;
 		BarcodedProduct product = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(bitem.getBarcode());
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 
 		assertTrue(ic.getCheckoutTotal() == product.getPrice());
 
@@ -168,7 +168,7 @@ public class TestMain {
 		BarcodedItem bitem = (BarcodedItem)item;
 		BarcodedProduct product = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(bitem.getBarcode());
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 
 		assertTrue(controller.getExpectedWeight() == product.getExpectedWeight());
 
@@ -191,7 +191,7 @@ public class TestMain {
 	@Test
 	public void testAskForPinWithAValidCard() {
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 		customer.placeItemInBaggingArea();
 		
 		
@@ -223,7 +223,7 @@ public class TestMain {
 	/*---These tests interact with the hardware to test the system controller---*/
 	@Test
 	public void scanWhileBlocked() {
-		BarcodeScanner scanner = controller.station.scanner;
+		BarcodeScanner scanner = controller.station.handheldScanner;
 		controller.blockStation();
 		assertFalse(scanner.scan(fakeData.getItems()[1]));
 		controller.unblockStation();
@@ -248,7 +248,7 @@ public class TestMain {
 			expected += barcodedItem.getWeight();
 
 			customer.selectNextItem();
-			customer.scanItem();
+			customer.scanItem(true);
 		}
 	
 		assertTrue("sum is "+controller.getExpectedWeight() + " expected is "+expected, controller.getExpectedWeight() == expected);
@@ -268,7 +268,7 @@ public class TestMain {
 		assertTrue(sum1 == sum2);
 
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 
 		assertTrue(sum1 == controller.getExpectedWeight());
 	}
@@ -278,14 +278,14 @@ public class TestMain {
 		int sizeBefore = customer.shoppingCart.size();
 		Item item = customer.shoppingCart.get(0);
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 		customer.placeItemInBaggingArea();
 
 		assertTrue(customer.shoppingCart.size() == sizeBefore-1);
-		double weightBefore = controller.station.scale.getCurrentWeight();
-		assertTrue(controller.station.scale.getCurrentWeight() != 0);
+		double weightBefore = controller.station.baggingArea.getCurrentWeight();
+		assertTrue(controller.station.baggingArea.getCurrentWeight() != 0);
 		controller.removeItem(item);
-		assertTrue(controller.station.scale.getCurrentWeight() != weightBefore);
+		assertTrue(controller.station.baggingArea.getCurrentWeight() != weightBefore);
 	}
 
 	@Test
@@ -329,7 +329,7 @@ public class TestMain {
 		customer.shoppingCart.add(null);
 
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 	}
 
 	/**
@@ -346,7 +346,7 @@ public class TestMain {
 		
 		assertEquals("Size is not 0", 0, list.size());
 
-		customer.scanItem();
+		customer.scanItem(true);
 		customer.placeItemInBaggingArea();
 		update();
 		list = checkoutList;
@@ -371,7 +371,7 @@ public class TestMain {
 
 		assertTrue("Total is wrong!", 0 == checkoutListTotal);
 
-		customer.scanItem();
+		customer.scanItem(true);
 		update();
 
 		double total = checkoutListTotal;
@@ -391,16 +391,16 @@ public class TestMain {
 		
 		double sumOfScannedWeights = 0;
 		
-		customer.scanItem();
+		customer.scanItem(true);
 		sumOfScannedWeights += fakeData.getItems()[0].getWeight();
 		
-		assertFalse("Station is not locked after scanning an item!", controller.station.scanner.isDisabled());
+		assertFalse("Station is not locked after scanning an item!", controller.station.handheldScanner.isDisabled());
 		double expectedWeight = controller.getExpectedWeight();
 		assertTrue(controller.expectedWeightMatchesActualWeight(sumOfScannedWeights));
 		assertTrue("expected weight does not equal sum of scanned weights!", sumOfScannedWeights == expectedWeight);
 		
 		controller.bagItem(fakeData.getItems()[0]);
-		assertTrue("Station is locked even after adding correct item to bagging area!", controller.station.scanner.isDisabled());
+		assertTrue("Station is locked even after adding correct item to bagging area!", controller.station.handheldScanner.isDisabled());
 	}
 	
 	
@@ -414,7 +414,7 @@ public class TestMain {
 	@Test
 	public void testElectronicScale() {
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 		
 		controller.bagItem(fakeData.getItems()[0]);
 		assertTrue(itemInScale);
@@ -423,7 +423,7 @@ public class TestMain {
 	@Test(expected = IOException.class)
 	public void testInvalidPinCreditCardAMEX() throws IOException {
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 		customer.placeItemInBaggingArea();
 		customer.selectCard(customer.wallet.cards.get(0).kind);
 		customer.insertCard("0000");
@@ -431,7 +431,7 @@ public class TestMain {
 	@Test(expected = IOException.class)
 	public void testInvalidPinCreditCardVisa() throws IOException {
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 		customer.placeItemInBaggingArea();
 		customer.selectCard(customer.wallet.cards.get(1).kind);
 		customer.insertCard("0000");
@@ -439,7 +439,7 @@ public class TestMain {
 	@Test(expected = IOException.class)
 	public void testInvalidPinCreditCardMC() throws IOException {
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 		customer.placeItemInBaggingArea();
 		customer.selectCard(customer.wallet.cards.get(2).kind);
 		customer.insertCard("0000");
@@ -447,7 +447,7 @@ public class TestMain {
 	@Test(expected = IOException.class)
 	public void testNullPin() throws IOException {
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 		customer.placeItemInBaggingArea();
 		customer.selectCard(customer.wallet.cards.get(1).kind);
 		customer.insertCard("0000");
@@ -456,7 +456,7 @@ public class TestMain {
 	@Test
 	public void testPayingWithAMEXCorrectlyInsert() throws IOException {
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 		customer.placeItemInBaggingArea();
 		
 		
@@ -476,7 +476,7 @@ public class TestMain {
 	@Test
 	public void testPayingWithVISACorrectlyInsert() throws IOException {
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 		customer.placeItemInBaggingArea();
 		
 		
@@ -499,7 +499,7 @@ public class TestMain {
 	@Test
 	public void testPayingWithMCCorrectlyInsert() throws IOException {
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 		customer.placeItemInBaggingArea();
 		
 		assertTrue(ic.getCheckoutTotal() != 0);
@@ -515,7 +515,7 @@ public class TestMain {
 	@Test
 	public void testPayingWithAMEXCorrectlySwipe() throws IOException {
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 		customer.placeItemInBaggingArea();
 		
 		
@@ -536,7 +536,7 @@ public class TestMain {
 	@Test
 	public void testPayingWithVISACorrectlySwipe() throws IOException {
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 		customer.placeItemInBaggingArea();
 		
 		
@@ -557,7 +557,7 @@ public class TestMain {
 	@Test
 	public void testPayingWithMCCorrectlySwipe() throws IOException {
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 		customer.placeItemInBaggingArea();
 		
 		
@@ -578,7 +578,7 @@ public class TestMain {
 	@Test
 	public void testPayingWithAMEXCorrectlyTap() throws IOException {
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 		customer.placeItemInBaggingArea();
 		
 		
@@ -599,7 +599,7 @@ public class TestMain {
 	@Test
 	public void testPayingWithVISACorrectlyTap() throws IOException {
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 		customer.placeItemInBaggingArea();
 		
 		
@@ -616,7 +616,7 @@ public class TestMain {
 	@Test
 	public void testPayingWithMCCorrectlyTap() throws IOException {
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 		customer.placeItemInBaggingArea();
 		
 		
@@ -636,7 +636,7 @@ public class TestMain {
 		BarcodedItem bitem = (BarcodedItem)item;
 		BarcodedProduct product = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(bitem.getBarcode());
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 		customer.placeItemInBaggingArea();
 
 		System.out.println(product.getExpectedWeight());
@@ -671,7 +671,7 @@ public class TestMain {
 	@Test
 	public void testRecieptPrinting() {
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 		customer.placeItemInBaggingArea();
 
 		controller.station.printer.turnOn();
@@ -684,7 +684,7 @@ public class TestMain {
 	@Test
 	public void testRecieptPrinterEmptyString() {
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 		customer.placeItemInBaggingArea();
 
 		controller.station.printer.turnOn();
@@ -696,7 +696,7 @@ public class TestMain {
 	@Test
 	public void testRecieptPrinterOverloadString() {
 		customer.selectNextItem();
-		customer.scanItem();
+		customer.scanItem(true);
 		customer.placeItemInBaggingArea();
 
 		controller.station.printer.turnOn();
@@ -706,11 +706,11 @@ public class TestMain {
 
 	@Test
 	public void testOverload() {
-		controller.overload(controller.station.scale);
-		assertTrue(controller.station.scanner.isDisabled());
+		controller.overload(controller.station.baggingArea);
+		assertTrue(controller.station.handheldScanner.isDisabled());
 
-		controller.outOfOverload(controller.station.scale);
-		assertFalse(controller.station.scanner.isDisabled());
+		controller.outOfOverload(controller.station.baggingArea);
+		assertFalse(controller.station.handheldScanner.isDisabled());
 	}
 
 	@Test
@@ -794,27 +794,23 @@ public class TestMain {
 	public class CardSwipeDataStub implements CardData {
 
 		@Override
-		public String getKind() {
-			// TODO Auto-generated method stub
-			return "AMEX";
-		}
-
-		@Override
 		public String getNumber() {
-			// TODO Auto-generated method stub
 			return "0000000000000000";
 		}
 
 		@Override
 		public String getCardholder() {
-			// TODO Auto-generated method stub
 			return "Test Card";
 		}
 
 		@Override
 		public String getCVV() {
-			// TODO Auto-generated method stub
 			return "000";
+		}
+
+		@Override
+		public String getType() {
+			return "AMEX";
 		}
 		
 	}
