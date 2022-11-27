@@ -53,7 +53,7 @@ public class TestSystemControl {
 	@Test
 	public void addNewBarcodeTest() {
 		assertTrue(ic.getCheckoutList().size() == 0);
-		while(!systemControl.station.scanner.scan(items[0])) {}
+		while(!systemControl.station.handheldScanner.scan(items[0])) {}
 		assertTrue(ic.getCheckoutList().size() == 1);
 	}
 	
@@ -93,10 +93,10 @@ public class TestSystemControl {
 		 *  and the system will be locked
 		 */
 		assertFalse(systemControl.station.cardReader.isDisabled());
-		assertFalse(systemControl.station.scanner.isDisabled());
-		systemControl.station.scale.add(item);
+		assertFalse(systemControl.station.handheldScanner.isDisabled());
+		systemControl.station.baggingArea.add(item);
 		assertTrue(systemControl.station.cardReader.isDisabled());
-		assertTrue(systemControl.station.scanner.isDisabled());
+		assertTrue(systemControl.station.handheldScanner.isDisabled());
 	}
 	
 	
@@ -166,8 +166,8 @@ public class TestSystemControl {
 	
 	public void scanAndBagItems() {
 		for (BarcodedItem item : items) {
-			while(!systemControl.station.scanner.scan(item)) {}
-			systemControl.station.scale.add(item);
+			while(!systemControl.station.handheldScanner.scan(item)) {}
+			systemControl.station.baggingArea.add(item);
 			
 		}
 	}

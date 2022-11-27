@@ -3,7 +3,6 @@ package com.diy.software.test.logic;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -14,7 +13,6 @@ import com.diy.simulation.Customer;
 import com.diy.software.controllers.ItemsControl;
 import com.diy.software.controllers.SystemControl;
 import com.diy.software.fakedata.FakeDataInitializer;
-import com.jimmyselectronics.OverloadException;
 
 import ca.powerutility.PowerGrid;
 public class TestCustomerActions {
@@ -61,7 +59,7 @@ public class TestCustomerActions {
 		
 		int i = 0;
 		while((!controlStub.locked) && i < 25) {
-			customer.scanItem();
+			customer.scanItem(true);
 			i++;
 		}
 		customer.placeItemInBaggingArea();

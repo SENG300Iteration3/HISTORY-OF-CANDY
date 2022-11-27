@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
-import com.diy.hardware.DoItYourselfStationAR;
+import com.diy.hardware.DoItYourselfStation;
 import com.diy.hardware.external.CardIssuer;
 import com.diy.hardware.external.ProductDatabases;
 import com.diy.simulation.Customer;
@@ -45,7 +45,7 @@ public class SystemControl
 	private double weightOfLastItemAddedToBaggingArea = 0.0;
 
 	public Customer customer;
-	public DoItYourselfStationAR station; // make private after being done testing
+	public DoItYourselfStation station; // make private after being done testing
 	// NEVER USED -- private Double amountOwed = 0.0;
 
 	public String userMessage;
@@ -74,12 +74,12 @@ public class SystemControl
 	 */
 	public SystemControl() {
 		customer = new Customer();
-		station = new DoItYourselfStationAR();
+		station = new DoItYourselfStation();
 		customer.useStation(station);
 
 		station.printer.register(this);
-		station.scanner.register(this);
-		station.scale.register(this);
+		station.handheldScanner.register(this);
+		station.baggingArea.register(this);
 		station.cardReader.register(this);
 
 		station.plugIn();
@@ -189,7 +189,7 @@ public class SystemControl
 			boolean loop = true;
 			while (loop) {
 				try {
-					this.station.scanner.disable();
+					this.station.handheldScanner.disable();
 					this.station.cardReader.disable();
 					for (SystemControlListener l : listeners) {
 						l.systemControlLocked(this, true);
@@ -198,7 +198,7 @@ public class SystemControl
 				} catch (NoPowerException e) {
 					System.out.println(e.getMessage());
 				} finally {
-					if (this.station.scanner.isPoweredUp())
+					if (this.station.handheldScanner.isPoweredUp())
 						loop = false;
 				}
 			}
@@ -215,7 +215,7 @@ public class SystemControl
 			boolean loop = true;
 			while (loop) {
 				try {
-					this.station.scanner.enable();
+					this.station.handheldScanner.enable();
 					this.station.cardReader.enable();
 					for (SystemControlListener l : listeners)
 						l.systemControlLocked(this, false);
@@ -223,7 +223,7 @@ public class SystemControl
 				} catch (NoPowerException e) {
 					System.out.println(e.getMessage());
 				} finally {
-					if (this.station.scanner.isPoweredUp())
+					if (this.station.handheldScanner.isPoweredUp())
 						loop = false;
 				}
 				// System.out.println("Station Unlocked"); // Remove before release
@@ -367,7 +367,7 @@ public class SystemControl
 	 * @param itemRemoved
 	 */
 	public void removeItem(Item itemRemoved) {
-		station.scale.remove(itemRemoved);
+		station.baggingArea.remove(itemRemoved);
 	}
 
 	/**
@@ -428,7 +428,7 @@ public class SystemControl
 
 	@Override
 	public void overload(ElectronicScale scale) {
-		userMessage = "Weight on scale has been overloaded, weight limit is: " + station.scale.getWeightLimit();
+		userMessage = "Weight on scale has been overloaded, weight limit is: " + station.baggingArea.getWeightLimit();
 
 	}
 

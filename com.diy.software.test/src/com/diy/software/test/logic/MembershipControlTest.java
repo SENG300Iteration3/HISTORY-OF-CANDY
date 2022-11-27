@@ -3,7 +3,6 @@ package com.diy.software.test.logic;
 import static org.junit.Assert.*;
 
 import java.awt.event.ActionEvent;
-import java.util.HashMap;
 
 import org.junit.After;
 import org.junit.Before;

@@ -4,12 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Currency;
-import java.util.List;
 
-import com.diy.software.util.Tuple;
 import com.diy.software.listeners.CashControlListener;
 import com.unitedbankingservices.DisabledException;
 import com.unitedbankingservices.TooMuchCashException;

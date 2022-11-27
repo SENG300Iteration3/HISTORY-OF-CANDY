@@ -8,15 +8,9 @@ import javax.swing.JPanel;
 
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.BagsControl;
-import com.diy.software.controllers.ItemsControl;
 import com.diy.software.controllers.SystemControl;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
-import com.diy.software.listeners.ItemsControlListener;
-import com.jimmyselectronics.AbstractDevice;
-import com.jimmyselectronics.AbstractDeviceListener;
-import com.jimmyselectronics.virgilio.ElectronicScale;
-import com.jimmyselectronics.virgilio.ElectronicScaleListener;
 
 public class AttendantPanel extends JPanel implements AttendantControlListener, BagsControlListener{
 
@@ -25,7 +19,6 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 	private BagsControl bc;
 	private AttendantControl ac;
 	private boolean cusAddedBags = false;
-	private double weightToDisplay = 0.0;
 	JButton approveAddedBagsButton;
 	JButton addInkToPrinterButton;
 	JButton addPaperToPrinterButton;

@@ -22,7 +22,6 @@ public class FakeDataInitializerTest {
 	private Card c1;
 	private Card c2;
 	private Card c3;
-	private Card c4;
 	
 	@Before
 	public void setUp() throws Exception {
