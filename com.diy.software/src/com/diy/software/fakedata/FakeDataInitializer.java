@@ -73,10 +73,8 @@ public class FakeDataInitializer {
 		fakebank.addCardData("0000000000004321", "Tony Stark", expire_date, "111", AMOUNT_AVAILABLE);
 		fakebank.addCardData("0000000000009999", "Natasha Romanoff", expire_date, "222", AMOUNT_AVAILABLE);
 		fakebank.addCardData("1234", "Itadori", expire_date, "000", AMOUNT_AVAILABLE);
-	}
-	
-	public void addGiftcardData() {
-		card4 = new Card("GiftCard", "00001234", "Jimmy James", null, null, false, false);
+		
+		card4 = new Card(GiftcardDatabase.CompanyGiftCard, "00001234", "Jimmy James", null, null, false, false);
 		GiftcardDatabase.giftcardMap.put("00001234", 50.00);
 	}
 	
