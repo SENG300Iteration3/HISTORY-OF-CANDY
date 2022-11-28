@@ -111,6 +111,9 @@ public class WalletControl implements ActionListener, CardReaderListener {
 		String c = e.getActionCommand();
 		try {
 			switch (c) {
+			case "cc3":
+				selectCard("GiftCard");
+				break;
 			case "cc2":
 				selectCard("MAST");
 				break;
