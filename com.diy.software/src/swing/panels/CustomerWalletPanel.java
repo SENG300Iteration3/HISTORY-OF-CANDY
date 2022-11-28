@@ -18,8 +18,8 @@ public class CustomerWalletPanel extends JPanel implements WalletControlListener
 
 	private static final long serialVersionUID = 1L;
 	private WalletControl wc;
-	JRadioButton cc1, cc2, cc3;
-	JButton insertOrEjectButton, tapButton, swipeButton;
+	JRadioButton cc1, cc2, cc3, m;
+	JButton insertOrEjectButton, tapButton, swipeButton, scanMemButton;
 
 	private boolean aCardIsSelected = false;
 	private boolean paymentsEnabled = false;
@@ -36,6 +36,9 @@ public class CustomerWalletPanel extends JPanel implements WalletControlListener
 		cc2.setActionCommand("cc1");
 		cc3 = new JRadioButton(cards.get(2).kind);
 		cc3.setActionCommand("cc2");
+		
+		m = new JRadioButton(cards.get(3).kind);
+		m.setActionCommand("m");
 
 		insertOrEjectButton = new JButton("insert");
 		insertOrEjectButton.setActionCommand("insert");
@@ -51,12 +54,18 @@ public class CustomerWalletPanel extends JPanel implements WalletControlListener
 		swipeButton.setActionCommand("swipe");
 		swipeButton.addActionListener(wc);
 		swipeButton.setEnabled(false);
+		
+		scanMemButton = new JButton("scan membership card");
+		scanMemButton.setActionCommand("scan");
+		scanMemButton.addActionListener(wc); //CORRECT CONTROLLER?
+		scanMemButton.setEnabled(false);
 
 		cc1.setSelected(true);
 
 		cc1.addActionListener(wc);
 		cc2.addActionListener(wc);
 		cc3.addActionListener(wc);
+		m.addActionListener(wc); //CORRECT CONTROLLER
 
 		ButtonGroup ccButtonGroup = new ButtonGroup();
 		ccButtonGroup.add(cc1);
@@ -68,9 +77,11 @@ public class CustomerWalletPanel extends JPanel implements WalletControlListener
 		this.add(cc1);
 		this.add(cc2);
 		this.add(cc3);
+		this.add(m);
 		this.add(insertOrEjectButton);
 		this.add(tapButton);
 		this.add(swipeButton);
+		this.add(scanMemButton);
 	}
 
 	private void updateButtonStates() {
