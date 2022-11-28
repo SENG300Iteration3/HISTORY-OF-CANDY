@@ -288,9 +288,6 @@ public class StationControl
 	}
 	
 	public void cancelMembershipCardInput() {
-		for (StationControlListener l : listeners) {
-			l.membershipCardInputCanceled(this);
-		}
 		wc.membershipCardInputCanceled();
 	}
 

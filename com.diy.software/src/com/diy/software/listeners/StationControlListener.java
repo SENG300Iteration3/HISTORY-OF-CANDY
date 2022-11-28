@@ -51,17 +51,6 @@ public interface StationControlListener {
 	
 	
 	public void startMembershipCardInput(StationControl systemControl);
-	/**
-	 * An event announcing that the customer has selected to scan or swipe their membership card
-	 * @param systemControl
-	 */
-	public void membershipCardInputEnabled(StationControl systemControl);
-	
-	/**
-	 * An event announcing that the customer has canceled selected to scan or swipe their membership card
-	 * @param systemControl
-	 */
-	public void membershipCardInputCanceled(StationControl systemControl);
 	
 	/**
 	 * An event meant to prompt the user for pin input for when a card has been inserted
