@@ -15,18 +15,22 @@ import swing.styling.GUI_JButton;
 import swing.styling.GUI_JLabel;
 import swing.styling.Screen;
 
-public class PresentCashScreen extends Screen implements CashControlListener {
+public class PresentGiftCardOrCashScreen extends Screen implements CashControlListener {
 
 	private GUI_JLabel prompt;
 	private GUI_JButton backButton;
+	private boolean isGiftCard;
 	
-	public PresentCashScreen(final StationControl systemControl) {
+	public PresentGiftCardOrCashScreen(final StationControl systemControl, boolean isGiftCard) {
 		super(systemControl);
 		
 		systemControl.getCashControl().enablePayments();
 		systemControl.getCashControl().addListener(this);
 
-		this.prompt = new GUI_JLabel("Please insert $" + systemControl.getItemsControl().getCheckoutTotal());
+		this.isGiftCard = isGiftCard;
+
+		cashInserted(null);
+		
 		prompt.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		prompt.setHorizontalAlignment(SwingConstants.CENTER);
 		prompt.setPreferredSize(new Dimension(this.width - 200, 100));
@@ -57,6 +61,10 @@ public class PresentCashScreen extends Screen implements CashControlListener {
 
 	@Override
 	public void cashInserted(CashControl cc) {
-		this.prompt.setText("Please insert $" + systemControl.getItemsControl().getCheckoutTotal());
+		if (isGiftCard) {
+			this.prompt = new GUI_JLabel("Please swipe gift card. Total remaining: $" + systemControl.getItemsControl().getCheckoutTotal());
+		} else {
+			this.prompt = new GUI_JLabel("Please insert $" + systemControl.getItemsControl().getCheckoutTotal());
+		}
 	}
 }
