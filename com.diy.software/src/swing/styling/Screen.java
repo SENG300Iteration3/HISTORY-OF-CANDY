@@ -45,7 +45,7 @@ public abstract class Screen {
 
 		this.centralPanel = new GUI_JPanel();
 		this.centralPanel.setOpaque(false);
-		this.centralPanel.setPreferredSize(new Dimension(this.width - 200, this.height));
+		this.centralPanel.setPreferredSize(new Dimension(this.width - 200, this.height - 130));
 		this.rootPanel.add(this.centralPanel, BorderLayout.CENTER);
 
 		this.centralPanel.setLayout(new GridBagLayout());
