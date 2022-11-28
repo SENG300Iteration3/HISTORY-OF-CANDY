@@ -120,6 +120,9 @@ public class WalletControl implements ActionListener, CardReaderListener {
 			case "cc0":
 				selectCard("AMEX");
 				break;
+			case "m":
+				selectCard("MEMBERSHIP");
+				break;
 			case "insert":
 				disablePayments();
 				sc.askForPin(c);

@@ -68,7 +68,7 @@ public class FakeDataInitializer {
 		fakebank.addCardData("0000000000001234", "Stephen Strange", expire_date, "000", AMOUNT_AVAILABLE);
 		fakebank.addCardData("0000000000004321", "Tony Stark", expire_date, "111", AMOUNT_AVAILABLE);
 		fakebank.addCardData("0000000000009999", "Natasha Romanoff", expire_date, "222", AMOUNT_AVAILABLE);
-		fakebank.addCardData("1234", "Itadori", expire_date, "000", 0.0);
+		fakebank.addCardData("1234", "Itadori", expire_date, "000", AMOUNT_AVAILABLE);
 	}
 	
 	public Barcode[] getBarcodes() {
@@ -80,7 +80,7 @@ public class FakeDataInitializer {
 	}
 	
 	public Card[] getCards() {
-		return new Card[] {card1, card2, card3};
+		return new Card[] {card1, card2, card3, card4};
 	}
 	
 	public CardIssuer getCardIssuer() {
