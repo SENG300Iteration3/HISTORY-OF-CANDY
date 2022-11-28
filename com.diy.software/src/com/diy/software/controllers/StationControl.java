@@ -338,11 +338,13 @@ public class StationControl
 			Double dif = amountOnCard - amountOwed;
 			if(dif >= 0) {
 				GiftcardDatabase.giftcardMap.put(cardNumber, dif);
-				//TODO: update amount owed to 0
-				//TODO: notify GUI of successful payment
+				ic.updateCheckoutTotal(-amountOwed);
+				for (StationControlListener l : listeners) {
+					l.paymentHasBeenMade(this, data);
+				}
 			}else {
 				GiftcardDatabase.giftcardMap.put(cardNumber, 0.0);
-				//TODO: update amount owed to -1*dif
+				ic.updateCheckoutTotal(-amountOnCard);
 				//TODO: nofity GUI that amountOwed has changed
 			}
 		}
