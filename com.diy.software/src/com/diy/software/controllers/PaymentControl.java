@@ -37,6 +37,9 @@ public class PaymentControl implements ActionListener {
 			case "debit":
 				startPaymentProcess(PaymentType.Debit);
 				break;
+			case "giftcard":
+				startPaymentProcess(PaymentType.GiftCard);
+				break;
 			default:
 				sc.goBackOnUI();
 				break;
