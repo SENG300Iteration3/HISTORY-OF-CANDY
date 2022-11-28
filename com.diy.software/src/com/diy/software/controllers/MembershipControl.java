@@ -69,7 +69,8 @@ public class MembershipControl implements ActionListener {
 					}
 					break;
 				case "scan swipe membership":
-					//TODO
+					for (MembershipControlListener l : listeners)
+						l.scanSwipeSelected(this);
 					break;
 				default:
 					break;

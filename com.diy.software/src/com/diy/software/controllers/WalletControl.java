@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.MissingResourceException;
 
+import com.diy.software.listeners.MembershipControlListener;
 import com.diy.software.listeners.WalletControlListener;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
@@ -205,5 +206,18 @@ public class WalletControl implements ActionListener, CardReaderListener {
 	public void cardDataRead(CardReader reader, CardData data) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	public void membershipCardInputEnabled() {
+		for (WalletControlListener l : listeners) {
+			l.membershipCardInputEnabled(this);
+		}
+	}
+
+	public void membershipCardInputCanceled() {
+		for (WalletControlListener l : listeners) {
+			l.membershipCardInputCanceled(this);
+		}
+		
 	}
 }

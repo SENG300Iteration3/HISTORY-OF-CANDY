@@ -279,6 +279,20 @@ public class StationControl
 		for (StationControlListener l : listeners)
 			l.triggerMembershipWorkflow(this);
 	}
+	
+	//TODO - modify following two methods
+	public void startMembershipCardInput() {
+		for (StationControlListener l : listeners)
+			l.startMembershipCardInput(this);
+		wc.membershipCardInputEnabled();
+	}
+	
+	public void cancelMembershipCardInput() {
+		for (StationControlListener l : listeners) {
+			l.membershipCardInputCanceled(this);
+		}
+		wc.membershipCardInputCanceled();
+	}
 
 	@Override
 	public void enabled(AbstractDevice<? extends AbstractDeviceListener> device) {

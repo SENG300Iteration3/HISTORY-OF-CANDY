@@ -22,6 +22,7 @@ import swing.screens.PaymentScreen;
 import swing.screens.PinPadScreen;
 import swing.screens.PresentCardScreen;
 import swing.screens.PresentCashScreen;
+import swing.screens.PresentMembershipCardScreen;
 import swing.styling.Screen;
 
 public class CustomerStationPane implements StationControlListener, PaymentControlListener {
@@ -39,6 +40,7 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	private BlockedPromptScreen blockedPromptScreen;
 	private OkayPromptScreen okayPromptScreen;
 	private MembershipScreen membershipSceen;
+	private PresentMembershipCardScreen presentMembershipCardScreen;
 
 	public CustomerStationPane(StationControl sc) {
 		this.sc = sc;
@@ -129,6 +131,19 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	public void paymentsHaveBeenEnabled(StationControl systemControl) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	public void startMembershipCardInput(StationControl systemControl) {
+		presentMembershipCardScreen = new PresentMembershipCardScreen(sc);
+		addScreenToStack(presentMembershipCardScreen);
+	}
+	
+	public void membershipCardInputEnabled(StationControl systemControl) {
+		//TODO - REMOVE THIS METHOD
+	}
+	
+	public void membershipCardInputCanceled(StationControl systemControl) {
+		//TODO - REMOVE THIS METHOD 
 	}
 
 	@Override
