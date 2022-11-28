@@ -68,6 +68,9 @@ public class MembershipControl implements ActionListener {
 						checkMembership(memNum);
 					}
 					break;
+				case "scan swipe membership":
+					//TODO
+					break;
 				default:
 					break;
 			}
