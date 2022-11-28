@@ -214,22 +214,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 	}
 
-	// Add Item by Browsing UC
-//		1. Customer I/O: Displays the visual catalogue, allowing the customer to browse through it.
-//		2. Customer I/O: The customer selects the product of interest.
-//		3. Customer I/O: Signals to the customer to place the item in the Bagging Area.
-//		4. Customer I/O: Signals to the System that an item is to be added, indicating the information about 
-//		the item.
-//		5. System: Blocks the self-checkout system from further customer interaction.
-//		6. Bagging Area: Signals to the System that the weight has changed.
-//		7. System: Unblocks the self-checkout system.
-
-	// Approach: Catalog will be buttons will product description on it, clicking a
-	// button will
-//		return string description which will then be used to search the product database. Then the 
-//		appropriate action will performed if it is produce vs barcode product. The the dollar value 
-//		and weight will be added
-
 	private Barcode searchBarcodedProductDatabase(String strProductName) {
 		Barcode result = null;
 		for (Entry<Barcode, BarcodedProduct> entry : ProductDatabases.BARCODED_PRODUCT_DATABASE.entrySet()) {
@@ -252,6 +236,20 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		return result;
 	}
 
+// Add Item by Browsing UC
+//	1. Customer I/O: Displays the visual catalogue, allowing the customer to browse through it.
+//	2. Customer I/O: The customer selects the product of interest.
+//	3. Customer I/O: Signals to the customer to place the item in the Bagging Area.
+//	4. Customer I/O: Signals to the System that an item is to be added, indicating the information about 
+//	the item.
+//	5. System: Blocks the self-checkout system from further customer interaction.
+//	6. Bagging Area: Signals to the System that the weight has changed.
+//	7. System: Unblocks the self-checkout system.
+
+// Approach: Catalog will be buttons will product description on it, clicking a
+// button will return string description which will then be used to search the product database. Then the 
+//	appropriate action will performed if it is produce vs barcode product. The the dollar value 
+//	and weight will be added
 	public void addItemByBrowsing(String strProductName) {
 		Barcode barcodeIdentifier = null;
 		PriceLookUpCode PLUCodeIdentifier = null;
