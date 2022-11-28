@@ -39,7 +39,7 @@ import ca.powerutility.NoPowerException;
  *
  */
 public class StationControl
-		implements BarcodeScannerListener, ElectronicScaleListener, CardReaderListener, ReceiptPrinterListener {
+		implements BarcodeScannerListener, ElectronicScaleListener, ReceiptPrinterListener {
 	public FakeDataInitializer fakeData;
 	private double expectedCheckoutWeight = 0.0;
 	private double bagWeight = 0.0;
@@ -60,6 +60,7 @@ public class StationControl
 	private WalletControl wc;
 	private MembershipControl mc;
 	private CashControl cc;
+	private CardControl cd;
 
 	private boolean isLocked = false;
 	public String memberName;
@@ -81,7 +82,6 @@ public class StationControl
 		station.printer.register(this);
 		station.handheldScanner.register(this);
 		station.baggingArea.register(this);
-		station.cardReader.register(this);
 
 		station.plugIn();
 		station.turnOn();
@@ -91,6 +91,7 @@ public class StationControl
 		mc = new MembershipControl(this);
 		cc = new CashControl(this);
 		ac = new AttendantControl(this);
+		cd = new CardControl(this);
 		
 
 		/*
@@ -171,6 +172,10 @@ public class StationControl
 
 	public CashControl getCashControl() {
 		return cc;
+	}
+	
+	public CardControl getCardControl() {
+		return cd;
 	}
 
 	public void updateWeightOfLastItemAddedToBaggingArea(double weight) {
@@ -297,72 +302,15 @@ public class StationControl
 	public void turnedOff(AbstractDevice<? extends AbstractDeviceListener> device) {
 	}
 
-	@Override
-	public void cardInserted(CardReader reader) {
-
-	}
-
-	@Override
-	public void cardRemoved(CardReader reader) {
-
-	}
-
-	@Override
-	public void cardTapped(CardReader reader) {
-		// TODO: implement
-	}
-
-	@Override
-	public void cardSwiped(CardReader reader) {
-		// TODO: implement
-	}
-
-	@Override
-	// <<<<<<< HEAD
-	/*
-	 * Reads the data from the card and pays for the transaction using the card. On
-	 * success, the amount owed will be updated to 0.0 and the hold placed on the
-	 * card will be resolved. paymentSuccess is set to true. On failure by the bank
-	 * being unable to authorize a hold, the amount due will not change.
-	 * paymentSuccess is set to false. On failure by the bank being unable to post
-	 * the transaction, the card's credit limit will not change. paymentSuccess is
-	 * set to false.
-	 */
-	public void cardDataRead(CardReader reader, CardData data) {
-		Double amountOwed = this.ic.getCheckoutTotal();
-		String cardNumber = data.getNumber();
-		CardIssuer bank = fakeData.getCardIssuer();
-		
-		if(data.getType().equals(GiftcardDatabase.CompanyGiftCard)) {
-			Double amountOnCard = GiftcardDatabase.giftcardMap.get(cardNumber);
-			Double dif = amountOnCard - amountOwed;
-			if(dif >= 0) {
-				GiftcardDatabase.giftcardMap.put(cardNumber, dif);
-				ic.updateCheckoutTotal(-amountOwed);
-				for (StationControlListener l : listeners) {
-					l.paymentHasBeenMade(this, data);
-				}
-			}else {
-				GiftcardDatabase.giftcardMap.put(cardNumber, 0.0);
-				ic.updateCheckoutTotal(-amountOnCard);
-				//TODO: nofity GUI that amountOwed has changed
-			}
+	//for the CardControl to say that a payment has been successful
+	public void paymentHasBeenMade(CardData data) {
+		for (StationControlListener l : listeners) {
+			l.paymentHasBeenMade(this, data);
 		}
-
-		long holdNum = bank.authorizeHold(cardNumber, amountOwed);
-		if (holdNum <= -1) {
-			for (StationControlListener l : listeners) {
-				l.paymentHasBeenCanceled(this, data, "Could not authorize bank hold.");
-			}
-		} else if (bank.postTransaction(cardNumber, holdNum, amountOwed)) {
-			bank.releaseHold(cardNumber, holdNum);
-			this.ic.updateCheckoutTotal(-this.ic.getCheckoutTotal());
-			for (StationControlListener l : listeners) {
-				l.paymentHasBeenMade(this, data);
-			}
-			ic.updateCheckoutTotal(0);
-			return;
-		}
+	}
+	
+	//for the CardControl to say that the payment was cancelled
+	public void paymentHasBeenCanceled(CardData data) {
 		for (StationControlListener l : listeners) {
 			l.paymentHasBeenCanceled(this, data, "Payment failed.");
 		}
