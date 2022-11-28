@@ -23,6 +23,8 @@ public class CustomerWalletPanel extends JPanel implements WalletControlListener
 
 	private boolean aCardIsSelected = false;
 	private boolean paymentsEnabled = false;
+	private boolean onMembershipScreen = false;
+	private boolean membershipCardSelected = false;
 
 	public CustomerWalletPanel(StationControl sc) {
 		super();
@@ -71,6 +73,7 @@ public class CustomerWalletPanel extends JPanel implements WalletControlListener
 		ccButtonGroup.add(cc1);
 		ccButtonGroup.add(cc2);
 		ccButtonGroup.add(cc3);
+		ccButtonGroup.add(m);
 		ccButtonGroup.clearSelection();
 
 		this.setBackground(GUI_Color_Palette.DARK_BLUE);
@@ -85,14 +88,36 @@ public class CustomerWalletPanel extends JPanel implements WalletControlListener
 	}
 
 	private void updateButtonStates() {
-		insertOrEjectButton.setEnabled(aCardIsSelected && paymentsEnabled);
-		tapButton.setEnabled(aCardIsSelected && paymentsEnabled);
-		swipeButton.setEnabled(aCardIsSelected && paymentsEnabled);
+		if (membershipCardSelected) {
+			if (onMembershipScreen) {
+				swipeButton.setEnabled(true);
+				scanMemButton.setEnabled(true);
+				insertOrEjectButton.setEnabled(false);
+				tapButton.setEnabled(false);
+			} else {
+				swipeButton.setEnabled(false);
+				scanMemButton.setEnabled(false);
+				insertOrEjectButton.setEnabled(false);
+				tapButton.setEnabled(false);
+			}
+		} else {
+			insertOrEjectButton.setEnabled(aCardIsSelected && paymentsEnabled);
+			tapButton.setEnabled(aCardIsSelected && paymentsEnabled);
+			swipeButton.setEnabled(aCardIsSelected && paymentsEnabled);
+			scanMemButton.setEnabled(false);
+		}
 	}
 
 	@Override
 	public void cardHasBeenSelected(WalletControl wc) {
 		aCardIsSelected = true;
+		membershipCardSelected = false;
+		updateButtonStates();
+	}
+	
+	@Override
+	public void membershipCardHasBeenSelected(WalletControl wc) {
+		membershipCardSelected = true;
 		updateButtonStates();
 	}
 

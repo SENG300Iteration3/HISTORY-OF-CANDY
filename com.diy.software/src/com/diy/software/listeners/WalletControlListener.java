@@ -6,6 +6,8 @@ public interface WalletControlListener {
 	
 	public void cardHasBeenSelected(WalletControl wc);
 	
+	public void membershipCardHasBeenSelected(WalletControl wc);
+	
 	public void cardPaymentsEnabled(WalletControl wc);
 	
 	public void cardPaymentsDisabled(WalletControl wc);

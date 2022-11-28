@@ -54,8 +54,14 @@ public class WalletControl implements ActionListener, CardReaderListener {
 		}
 		selectedCardKind = kind;
 		sc.customer.selectCard(kind);
-		for (WalletControlListener l : listeners)
-			l.cardHasBeenSelected(this);
+		for (WalletControlListener l : listeners) {
+			if (selectedCardKind == "MEMBERSHIP") {
+				l.membershipCardHasBeenSelected(this);
+			} else {
+				l.cardHasBeenSelected(this);
+			}
+		}
+			
 	}
 
 	public void insertCard(String pin) {
