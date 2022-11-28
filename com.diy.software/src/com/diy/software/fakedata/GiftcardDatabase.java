@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class GiftcardDatabase {
 	
 	/*
-	 * The name of the 
+	 * The name of the compy gift card, used for Cards "type" value
 	 */
 	public static final String CompanyGiftCard = "GiftCard";
 	
