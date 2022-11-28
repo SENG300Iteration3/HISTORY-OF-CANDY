@@ -9,6 +9,7 @@ import swing.styling.Screen;
 public class PaymentScreen extends Screen {
 	private PaymentControl pc;
 
+	private GUI_JButton giftCardButton;
 	private GUI_JButton cashButton;
 	private GUI_JButton creditButton;
 	private GUI_JButton debitButton;
@@ -16,6 +17,9 @@ public class PaymentScreen extends Screen {
 
 	public PaymentScreen(StationControl sc) {
 		super(sc, "Select a payment method");
+
+		this.giftCardButton = makeCentralButton("Gift Card", this.width - 200, 100);
+		this.addLayer(giftCardButton, 0);
 
 		this.cashButton = makeCentralButton("Cash", this.width - 200, 100);
 		this.addLayer(cashButton, 0);
@@ -31,10 +35,12 @@ public class PaymentScreen extends Screen {
 
 		pc = sc.getPaymentControl();
 
+		giftCardButton.setActionCommand("giftCard");
 		cashButton.setActionCommand("cash");
 		creditButton.setActionCommand("credit");
 		debitButton.setActionCommand("debit");
 
+		giftCardButton.addActionListener(pc);
 		cashButton.addActionListener(pc);
 		creditButton.addActionListener(pc);
 		debitButton.addActionListener(pc);

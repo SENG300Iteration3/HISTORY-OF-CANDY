@@ -28,6 +28,9 @@ public class PaymentControl implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String c = e.getActionCommand();
 		switch (c) {
+			case "giftCard":
+				startPaymentProcess(PaymentType.GiftCard);
+				break;
 			case "cash":
 				startPaymentProcess(PaymentType.Cash);
 				break;
@@ -36,9 +39,6 @@ public class PaymentControl implements ActionListener {
 				break;
 			case "debit":
 				startPaymentProcess(PaymentType.Debit);
-				break;
-			case "giftcard":
-				startPaymentProcess(PaymentType.GiftCard);
 				break;
 			default:
 				sc.goBackOnUI();
