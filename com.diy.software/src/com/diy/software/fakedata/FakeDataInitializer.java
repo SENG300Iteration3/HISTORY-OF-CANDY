@@ -10,6 +10,7 @@ import com.diy.hardware.PLUCodedProduct;
 import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.external.CardIssuer;
 import com.diy.hardware.external.ProductDatabases;
+import com.diy.software.controllers.AttendantLogin;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.necchi.Numeral;
@@ -83,6 +84,13 @@ public class FakeDataInitializer {
 		MembershipDatabase.membershipMap.put(1235, "Tanjiro");
 		MembershipDatabase.membershipMap.put(1236, "Nezuko");
 		MembershipDatabase.membershipMap.put(1237, "Zenitsu");
+	}
+	
+	public void addFakeAttendantLogin() {
+		AttendantLogin.loginMap.put("A1", "password");
+		AttendantLogin.loginMap.put("A2", "wordpass");
+		AttendantLogin.loginMap.put("A3", "Password1");
+		AttendantLogin.loginMap.put("A4", "12345");
 	}
 	
 	public void addCardData() {
