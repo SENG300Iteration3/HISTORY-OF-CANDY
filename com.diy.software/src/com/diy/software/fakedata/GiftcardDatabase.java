@@ -8,6 +8,11 @@ import java.util.HashMap;
 public class GiftcardDatabase {
 	
 	/*
+	 * The name of the 
+	 */
+	public static final String CompanyGiftCard = "GiftCard";
+	
+	/*
 	 * Hashmap holding all giftcard data
 	 */
 	public static final HashMap<String, Double> giftcardMap = new HashMap<String, Double>();
