@@ -23,7 +23,7 @@ public class CustomerWalletPanel extends JPanel implements WalletControlListener
 
 	private boolean aCardIsSelected = false;
 	private boolean paymentsEnabled = false;
-	private boolean onMembershipScreen = false;
+	private boolean membershipCardInputEnabled = false;
 	private boolean membershipCardSelected = false;
 
 	public CustomerWalletPanel(StationControl sc) {
@@ -89,7 +89,7 @@ public class CustomerWalletPanel extends JPanel implements WalletControlListener
 
 	private void updateButtonStates() {
 		if (membershipCardSelected) {
-			if (onMembershipScreen) {
+			if (membershipCardInputEnabled) {
 				swipeButton.setEnabled(true);
 				scanMemButton.setEnabled(true);
 				insertOrEjectButton.setEnabled(false);
@@ -113,6 +113,16 @@ public class CustomerWalletPanel extends JPanel implements WalletControlListener
 		aCardIsSelected = true;
 		membershipCardSelected = false;
 		updateButtonStates();
+	}
+	
+	@Override
+	public void membershipCardInputEnabled(WalletControl wc) {
+		membershipCardInputEnabled = true;
+	}
+	
+	@Override
+	public void membershipCardInputCanceled(WalletControl walletControl) {
+		membershipCardInputEnabled = false;
 	}
 	
 	@Override
@@ -153,4 +163,6 @@ public class CustomerWalletPanel extends JPanel implements WalletControlListener
 		insertOrEjectButton.setActionCommand("insert");
 		updateButtonStates();
 	}
+
+	
 }

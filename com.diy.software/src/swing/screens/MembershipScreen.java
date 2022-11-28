@@ -16,6 +16,7 @@ import javax.swing.JTextField;
 import com.diy.software.controllers.MembershipControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.MembershipControlListener;
+import com.diy.software.listeners.StationControlListener;
 
 import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Fonts;
@@ -40,6 +41,8 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 	private JTextField numberEntry;
 	private JLabel memberMssg = new JLabel("");
 	GUI_JPanel numberInputPanel;
+	
+	private PresentMembershipCardScreen scanSwipeScreen;
 
 	private static String HeaderText = "Membership";
 	
@@ -173,5 +176,11 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 	@Override
 	public void memberFieldHasBeenUpdated(MembershipControl mc, String memberNumber) {
 		numberEntry.setText(memberNumber);
+	}
+	
+	@Override
+	public void scanSwipeSelected(MembershipControl mc) {
+		super.systemControl.startMembershipCardInput();
+		
 	}
 }
