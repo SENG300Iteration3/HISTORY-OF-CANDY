@@ -58,6 +58,10 @@ public class CardControl implements CardReaderListener{
 	 * set to false.
 	 */
 	public void cardDataRead(CardReader reader, CardData data) {
+		if(fakeData == null) {
+			fakeData = sc.getFakeData();
+		}
+		
 		Double amountOwed = sc.getItemsControl().getCheckoutTotal();
 		String cardNumber = data.getNumber();
 		CardIssuer bank = fakeData.getCardIssuer();

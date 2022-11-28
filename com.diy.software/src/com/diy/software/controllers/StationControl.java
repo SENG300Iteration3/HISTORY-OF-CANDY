@@ -137,6 +137,10 @@ public class StationControl
 		for (Item i : this.fakeData.getItems())
 			customer.shoppingCart.add(i);
 	}
+	
+	public FakeDataInitializer getFakeData() {
+		return fakeData;
+	}
 
 	/**
 	 * Registers a Listener for SystemControlListener
