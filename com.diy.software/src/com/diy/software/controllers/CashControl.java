@@ -142,14 +142,14 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
    */
   @Override
   public void validBanknoteDetected(BanknoteValidator validator, Currency currency, long value) {
-    lastInsertedBanknote = value;
-    try {
-      sc.station.banknoteStorage.receive(new Banknote(Currency.getInstance("CAD"), value));
-    } catch (DisabledException e) {
-      e.printStackTrace();
-    } catch (TooMuchCashException e) {
-      e.printStackTrace();
-    }
+    //lastInsertedBanknote = value;
+    //try {
+      //sc.station.banknoteStorage.receive(new Banknote(Currency.getInstance("CAD"), value));
+    //} catch (DisabledException e) {
+      //e.printStackTrace();
+    //} catch (TooMuchCashException e) {
+      //e.printStackTrace();
+    //}
   }
 
   /**
