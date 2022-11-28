@@ -8,6 +8,7 @@ import com.diy.software.controllers.StationControl;
 import com.diy.software.fakedata.FakeDataInitializer;
 
 import swing.frames.AttendantStationGUI;
+import swing.frames.CatalogPrototypeGUI;
 import swing.frames.CustomerActionsGUI;
 import swing.frames.CustomerStationGUI;
 
@@ -29,6 +30,7 @@ public class SENG300DoItYourselfStation {
     new AttendantStationGUI(pc);
     new CustomerStationGUI(pc);
     new CustomerActionsGUI(pc);
+    new CatalogPrototypeGUI();
   }
 
   public static void configureDoItYourselfStation() {
