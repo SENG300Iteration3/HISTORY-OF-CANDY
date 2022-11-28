@@ -137,14 +137,6 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 		presentMembershipCardScreen = new PresentMembershipCardScreen(sc);
 		addScreenToStack(presentMembershipCardScreen);
 	}
-	
-	public void membershipCardInputEnabled(StationControl systemControl) {
-		//TODO - REMOVE THIS METHOD
-	}
-	
-	public void membershipCardInputCanceled(StationControl systemControl) {
-		//TODO - REMOVE THIS METHOD 
-	}
 
 	@Override
 	public void initiatePinInput(StationControl systemControl, String kind) {
