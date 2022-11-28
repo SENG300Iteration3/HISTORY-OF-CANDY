@@ -18,8 +18,7 @@ public class FakeDataInitializer {
 	private Barcode barcode1, barcode2, barcode3, barcode4;
 	private BarcodedItem item1, item2, item3, item4;
 	private BarcodedProduct bp1, bp2, bp3, bp4;
-	private Card card1, card2, card3;
-	private Card card4, card5;
+	private Card card1, card2, card3, card4;
 	private CardIssuer fakebank;
 	private final Double AMOUNT_AVAILABLE = 1000.0;
 	Calendar expire_date = Calendar.getInstance();
@@ -68,14 +67,9 @@ public class FakeDataInitializer {
 		fakebank.addCardData("0000000000001234", "Stephen Strange", expire_date, "000", AMOUNT_AVAILABLE);
 		fakebank.addCardData("0000000000004321", "Tony Stark", expire_date, "111", AMOUNT_AVAILABLE);
 		fakebank.addCardData("0000000000009999", "Natasha Romanoff", expire_date, "222", AMOUNT_AVAILABLE);
-	}
-	
-	public void addGiftcardData() {
-		card4 = new Card("GiftCard", "00001234", "Jimmy James", null, null, false, false);
-		card5 = new Card("GiftCard", "00004321", "Gerald Gregory", null, null, false, false);
 		
+		card4 = new Card("GiftCard", "00001234", "Jimmy James", null, null, false, false);
 		GiftcardDatabase.giftcardMap.put("00001234", 50.00);
-		GiftcardDatabase.giftcardMap.put("00004321", 20.00);
 	}
 	
 	public Barcode[] getBarcodes() {
@@ -87,11 +81,7 @@ public class FakeDataInitializer {
 	}
 	
 	public Card[] getCards() {
-		return new Card[] {card1, card2, card3};
-	}
-	
-	public Card[] getGiftcards() {
-		return new Card[] {card4, card5};
+		return new Card[] {card1, card2, card3, card4};
 	}
 	
 	public CardIssuer getCardIssuer() {
