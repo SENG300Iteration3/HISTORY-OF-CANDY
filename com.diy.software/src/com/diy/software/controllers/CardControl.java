@@ -74,6 +74,7 @@ public class CardControl implements CardReaderListener{
 				sc.getItemsControl().updateCheckoutTotal(-amountOnCard);
 				//TODO: tell customer that their card wasn't enough maybe?
 			}
+			return;
 		}
 
 		long holdNum = bank.authorizeHold(cardNumber, amountOwed);
