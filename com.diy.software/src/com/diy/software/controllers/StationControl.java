@@ -88,6 +88,8 @@ public class StationControl
 
 		station.plugIn();
 		station.turnOn();
+		
+		fillStation();
 
 		ic = new ItemsControl(this);
 		bc = new BagsControl(this);
