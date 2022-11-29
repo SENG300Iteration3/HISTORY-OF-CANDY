@@ -3,6 +3,7 @@ package com.diy.software.controllers;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Currency;
 
 import com.diy.software.listeners.AttendantControlListener;
 import com.jimmyselectronics.AbstractDevice;
@@ -10,11 +11,17 @@ import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.abagnale.IReceiptPrinter;
 import com.jimmyselectronics.abagnale.ReceiptPrinterListener;
+import com.unitedbankingservices.TooMuchCashException;
+import com.unitedbankingservices.banknote.Banknote;
+import com.unitedbankingservices.banknote.BanknoteStorageUnit;
+
+import ca.ucalgary.seng300.simulation.SimulationException;
 
 public class AttendantControl implements ActionListener, ReceiptPrinterListener {
 
 	private StationControl sc;
 	private ArrayList<AttendantControlListener> listeners;
+	private Currency currency;
 	String attendantNotifications;
 
 	public AttendantControl(StationControl sc) {
@@ -82,6 +89,32 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		sc.getItemsControl().removeLastBaggedItem();
 		for (AttendantControlListener l : listeners)
 			l.initialState();
+	}
+	
+	/*
+	 * Updates banknotes in station to be used for change and notifies cash controller
+	 * 
+	 * @param unit
+	 * 		the unit that needs to be updated
+	 */
+	public void adjustBanknotesForChange(BanknoteStorageUnit unit) throws SimulationException, TooMuchCashException {
+		//TODO: Implement further
+		sc.getCashControl().disablePayments();
+		
+//		unit.unload();
+//		sc.getCashControl().banknotesUnloaded(unit);
+		
+		Banknote one = new Banknote(currency, 1);
+		Banknote five = new Banknote(currency, 5);
+		Banknote ten = new Banknote(currency, 10);
+		Banknote twenty = new Banknote(currency, 20);
+		Banknote fifty = new Banknote(currency, 50);
+		Banknote oneHundred = new Banknote(currency, 100);
+		
+		unit.load(one, five, ten, twenty, fifty, oneHundred);
+		
+		sc.getCashControl().banknotesLoaded(unit);
+		sc.getCashControl().enablePayments();
 	}
 
 	/**
