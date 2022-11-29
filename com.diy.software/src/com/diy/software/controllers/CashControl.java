@@ -346,7 +346,7 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 			}
 		}
 		
-		sc.station.banknoteOutput.dispense();
+		sc.station.banknoteOutput.dispense(); //dispenses all banknotes
 		
 		for(int i = 0; i < coins.size(); i++) { //returns all of the coins that you have accounted for
 			int times = returnCoins.get(i);
