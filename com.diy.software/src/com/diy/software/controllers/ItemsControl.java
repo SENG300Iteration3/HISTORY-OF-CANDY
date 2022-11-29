@@ -32,8 +32,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	private ArrayList<Tuple<String, Double>> checkoutList = new ArrayList<>();
 	private double checkoutListTotal = 0.0;
 
-	private boolean scanSuccess = true, weighSuccess = true;
-
+	private boolean scanSuccess = true, weighSuccess = true, inCatalog = false;
 	public String userMessage = "";
 	private long baggingAreaTimerStart;
 	private long baggingAreaTimerEnd;
@@ -77,6 +76,9 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			price = (double) barcodedProduct.getPrice();
 			this.addItemToCheckoutList(new Tuple<String, Double>(barcodedProduct.getDescription(), price));
 			this.updateCheckoutTotal(price);
+			
+			sc.updateExpectedCheckoutWeight(sc.weightOfItemScanned);
+			sc.updateWeightOfLastItemAddedToBaggingArea(sc.weightOfItemScanned);
 		} else {
 			System.err.println("Scanned item is not in product database!");
 		}
@@ -158,9 +160,13 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		baggingAreaTimerEnd = System.currentTimeMillis();
 		// placing an item could potentially fail so allow for retries
 		// simulating a 40% chance of putting wrong item on the scale
+		
+		
 		if (random.nextDouble(0.0, 1.0) > PROBABILITY_OF_BAGGING_WRONG_ITEM) {
+			System.out.println("HERE");
 			weighSuccess = true;
 			sc.customer.placeItemInBaggingArea();
+			
 
 		} else {
 			// simulation weight discrepancy
@@ -250,65 +256,85 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 // button will return string description which will then be used to search the product database. Then the 
 //	appropriate action will performed if it is produce vs barcode product. The the dollar value 
 //	and weight will be added
-	public void addItemByBrowsing(String strProductName) {
+	private void addItemByBrowsing(String strProductName) {
 		Barcode barcodeIdentifier = null;
 		PriceLookUpCode PLUCodeIdentifier = null;
 
+		boolean isItemSelected = false;
+
 		barcodeIdentifier = searchBarcodedProductDatabase(strProductName);
+		System.out.println(barcodeIdentifier);
+
 		// Assumes that there are only two types of Products: (1) BarcodedProduct and
 		// (2) PLUCodedProduct
 		if (barcodeIdentifier == null) {
 			PLUCodeIdentifier = searchPLUCodedProductDatabase(strProductName);
 
 			// FIXME: Call add item by PLU code method
+			isItemSelected = true;
+
 		} else {
-			// FIXME: Call add item by barcode code method
 			addScannedItemToCheckoutList(barcodeIdentifier);
+			isItemSelected = true;
 		}
-		for (ItemsControlListener l : listeners)
-			l.awaitingItemToBePlacedInBaggingArea(this);
+		if (isItemSelected) {
+			sc.goBackOnUI();
+			
+			inCatalog = false;
+		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String c = e.getActionCommand();
-		try {
-			switch (c) {
-			case "pick up":
-				System.out.println("Customer picks up next item");
-				pickupNextItem();
-				break;
-			case "scan":
-				System.out.println("Customer scans next item");
-				scanCurrentItem();
-				break;
-			case "put back":
-				System.out.println("Customer put back current item");
-				putUnscannedItemBack();
-				break;
-			case "bag":
-				System.out.println("Customer put item in bagging area");
-				placeItemOnScale();
-				break;
-			case "removeFromScale":
-				System.out.println("Customer requests to not bag last item from scale");
-				requestNoBagging();
-				break;
-			case "pay":
-				System.out.println("Starting payment workflow");
-				sc.startPaymentWorkflow();
-				break;
-			case "member":
-				sc.startMembershipWorkflow();
-				break;
-			case "catalog":
-				sc.startCatalogWorkflow();
-				break;
-			default:
-				break;
-			}
-		} catch (Exception ex) {
 
+		System.out.println(c);
+
+		if (inCatalog) {
+			addItemByBrowsing(c);
+		} else {
+
+			try {
+				switch (c) {
+				case "pick up":
+					System.out.println("Customer picks up next item");
+					pickupNextItem();
+					break;
+				case "scan":
+					System.out.println("Customer scans next item");
+					scanCurrentItem();
+					break;
+				case "put back":
+					System.out.println("Customer put back current item");
+					putUnscannedItemBack();
+					break;
+				case "bag":
+					System.out.println("Customer put item in bagging area");
+					placeItemOnScale();
+					break;
+				case "removeFromScale":
+					System.out.println("Customer requests to not bag last item from scale");
+					requestNoBagging();
+					break;
+				case "pay":
+					System.out.println("Starting payment workflow");
+					sc.startPaymentWorkflow();
+					break;
+				case "member":
+					sc.startMembershipWorkflow();
+					break;
+				case "catalog":
+					inCatalog = true;
+
+					sc.startCatalogWorkflow();
+					break;
+				default:
+					break;
+				}
+
+			} catch (Exception ex) {
+
+			}
 		}
 	}
 
