@@ -9,6 +9,9 @@ import com.diy.software.listeners.MembershipControlListener;
 import com.diy.software.listeners.WalletControlListener;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
+import com.jimmyselectronics.necchi.Barcode;
+import com.jimmyselectronics.necchi.BarcodedItem;
+import com.jimmyselectronics.necchi.Numeral;
 import com.jimmyselectronics.opeechee.Card;
 import com.jimmyselectronics.opeechee.Card.CardData;
 import com.jimmyselectronics.opeechee.CardReader;
@@ -19,6 +22,7 @@ public class WalletControl implements ActionListener, CardReaderListener {
 	private StationControl sc;
 	private ArrayList<WalletControlListener> listeners;
 	private String selectedCardKind;
+	private Card selectedCard;
 	private CardData currentCardData;
 
 	public WalletControl(StationControl sc) {
@@ -54,6 +58,15 @@ public class WalletControl implements ActionListener, CardReaderListener {
 			sc.customer.replaceCardInWallet();
 		}
 		selectedCardKind = kind;
+		
+		//TODO: if there a better way to do this?
+		for (Card card : sc.customer.wallet.cards) {
+			if (card.kind == kind) {
+				selectedCard = card;
+				break;
+			}
+		}
+		
 		sc.customer.selectCard(kind);
 		for (WalletControlListener l : listeners) {
 			if (selectedCardKind == "MEMBERSHIP") {
@@ -112,6 +125,38 @@ public class WalletControl implements ActionListener, CardReaderListener {
 		for (WalletControlListener l : listeners)
 			l.cardPaymentsDisabled(this);
 	}
+	
+	private void scanCard() {
+		String number = selectedCard.number;
+		Numeral[] code = new Numeral [number.length()];
+		
+		// Converting string number into Numeral array
+		for (int i = 0; i < number.length(); i++) {
+			Numeral digit = Numeral.valueOf(toByteDigit(number.charAt(i)));
+			code[i] = digit;
+		}
+		Barcode barcode = new Barcode(code);
+		BarcodedItem item = new BarcodedItem(barcode, 1);
+		
+		sc.station.mainScanner.scan(item);
+	}
+	
+	private byte toByteDigit(char c) {
+		byte b;
+		switch (c) {
+			case '0':	return b = 0;
+			case '1':	return b = 1;
+			case '2':	return b = 2;
+			case '3':	return b = 3;
+			case '4':	return b = 4;
+			case '5':	return b = 5;
+			case '6':	return b = 6;
+			case '7':	return b = 7;
+			case '8':	return b = 8;
+			case '9':	return b = 9;
+			default:	return b = -1;
+		}
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -144,6 +189,9 @@ public class WalletControl implements ActionListener, CardReaderListener {
 				break;
 			case "remove":
 				sc.station.cardReader.remove();
+				break;
+			case "scan":
+				scanCard();
 				break;
 			default:
 				break;
