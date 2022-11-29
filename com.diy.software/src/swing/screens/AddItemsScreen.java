@@ -198,6 +198,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 		GUI_JButton btn = new GUI_JButton(text.toUpperCase());
 		btn.setFont(GUI_Fonts.TITLE);
 
+		//Fix border formatting for the left side of the buttons
 		if (!Objects.equals(parent.getName(), "Right Panel")) {
 			btn.setBorder(BorderFactory.createMatteBorder(10, left_padding, 10, 20, GUI_Color_Palette.DARK_BLUE));
 		} else {
