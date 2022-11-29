@@ -52,6 +52,8 @@ public interface StationControlListener {
 	
 	public void startMembershipCardInput(StationControl systemControl);
 	
+	public void membershipCardInputFinished(StationControl systemControl);
+	
 	/**
 	 * An event meant to prompt the user for pin input for when a card has been inserted
 	 * 

@@ -339,26 +339,34 @@ public class StationControl
 	 * set to false.
 	 */
 	public void cardDataRead(CardReader reader, CardData data) {
-		Double amountOwed = this.ic.getCheckoutTotal();
-		String cardNumber = data.getNumber();
-		CardIssuer bank = fakeData.getCardIssuer();
+		if (data.getType() == "MEMBERSHIP") {
+			mc.checkMembership(Integer.parseInt(data.getNumber()));
+			for (StationControlListener l : listeners) {
+				l.membershipCardInputFinished(this);
+			}
+			//TODO - take down the PresentMembershipCardScreen
+		} else {
+			Double amountOwed = this.ic.getCheckoutTotal();
+			String cardNumber = data.getNumber();
+			CardIssuer bank = fakeData.getCardIssuer();
 
-		long holdNum = bank.authorizeHold(cardNumber, amountOwed);
-		if (holdNum <= -1) {
-			for (StationControlListener l : listeners) {
-				l.paymentHasBeenCanceled(this, data, "Could not authorize bank hold.");
+			long holdNum = bank.authorizeHold(cardNumber, amountOwed);
+			if (holdNum <= -1) {
+				for (StationControlListener l : listeners) {
+					l.paymentHasBeenCanceled(this, data, "Could not authorize bank hold.");
+				}
+			} else if (bank.postTransaction(cardNumber, holdNum, amountOwed)) {
+				bank.releaseHold(cardNumber, holdNum);
+				this.ic.updateCheckoutTotal(-this.ic.getCheckoutTotal());
+				for (StationControlListener l : listeners) {
+					l.paymentHasBeenMade(this, data);
+				}
+				ic.updateCheckoutTotal(0);
+				return;
 			}
-		} else if (bank.postTransaction(cardNumber, holdNum, amountOwed)) {
-			bank.releaseHold(cardNumber, holdNum);
-			this.ic.updateCheckoutTotal(-this.ic.getCheckoutTotal());
 			for (StationControlListener l : listeners) {
-				l.paymentHasBeenMade(this, data);
+				l.paymentHasBeenCanceled(this, data, "Payment failed.");
 			}
-			ic.updateCheckoutTotal(0);
-			return;
-		}
-		for (StationControlListener l : listeners) {
-			l.paymentHasBeenCanceled(this, data, "Payment failed.");
 		}
 	}
 

@@ -137,6 +137,12 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 		presentMembershipCardScreen = new PresentMembershipCardScreen(sc);
 		addScreenToStack(presentMembershipCardScreen);
 	}
+	
+	
+	public void membershipCardInputFinished(StationControl systemControl) {
+		triggerPanelBack(systemControl);
+		
+	}
 
 	@Override
 	public void initiatePinInput(StationControl systemControl, String kind) {
