@@ -1,8 +1,4 @@
-INDEX VERSION 1.131+C:\Users\Jessy\Desktop\SENG-300-Iteration-3\.metadata\.plugins\org.eclipse.jdt.core
+INDEX VERSION 1.131+C:\Users\jessy\Desktop\SENG-300-Iteration-3\.metadata\.plugins\org.eclipse.jdt.core
 2200119732.index
-3693987969.index
-808508758.index
-2057124836.index
 1865797976.index
 3651686180.index
-1509799344.index
