@@ -14,6 +14,9 @@ import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.necchi.Numeral;
 import com.jimmyselectronics.opeechee.Card;
 import com.jimmyselectronics.opeechee.Card.CardData;
+
+import swing.screens.OkayPromptScreen;
+
 import com.jimmyselectronics.opeechee.CardReader;
 import com.jimmyselectronics.opeechee.CardReaderListener;
 
@@ -138,7 +141,10 @@ public class WalletControl implements ActionListener, CardReaderListener {
 		Barcode barcode = new Barcode(code);
 		BarcodedItem item = new BarcodedItem(barcode, 1);
 		
-		sc.station.mainScanner.scan(item);
+		boolean scanSuccessful = sc.station.mainScanner.scan(item);
+		if (!scanSuccessful) {
+			sc.triggerMembershipCardInputFailScreen("Scan Failed. Please Try Again.");
+		}
 	}
 	
 	private byte toByteDigit(char c) {
