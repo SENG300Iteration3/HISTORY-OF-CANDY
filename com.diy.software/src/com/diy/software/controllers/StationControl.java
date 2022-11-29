@@ -275,6 +275,7 @@ public class StationControl
 	public void triggerMembershipCardInputFailScreen(String reason) {
 		for (StationControlListener l : listeners)
 			l.paymentHasBeenCanceled(this, null, reason);
+		wc.membershipCardInputCanceled();
 	}
 
 	public void startPaymentWorkflow() {
@@ -353,6 +354,7 @@ public class StationControl
 				l.membershipCardInputFinished(this);
 			}
 			membershipInput = false;
+			wc.membershipCardInputCanceled();
 		} else {
 			Double amountOwed = this.ic.getCheckoutTotal();
 			String cardNumber = data.getNumber();
@@ -475,6 +477,7 @@ public class StationControl
 				l.membershipCardInputFinished(this);
 			}
 			membershipInput = false;
+			wc.membershipCardInputCanceled();
 		} else {
 			weightOfItemScanned = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
 			// Add the barcode to the ArrayList within itemControl
