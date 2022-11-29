@@ -279,6 +279,11 @@ public class StationControl
 		for (StationControlListener l : listeners)
 			l.triggerMembershipWorkflow(this);
 	}
+	
+	public void startCatalogWorkflow() {
+		for (StationControlListener l : listeners)
+			l.triggerBrowsingCatalog(this);
+	}
 
 	@Override
 	public void enabled(AbstractDevice<? extends AbstractDeviceListener> device) {

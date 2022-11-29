@@ -13,6 +13,7 @@ import javax.swing.border.EmptyBorder;
 
 import com.diy.software.util.Tuple;
 
+import swing.panels.CatalogPanel;
 import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Fonts;
 import swing.styling.GUI_JButton;
@@ -31,6 +32,9 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 	protected GUI_JPanel scannedPanel;
 	protected GUI_JButton payBtn;
 	protected GUI_JButton memberBtn;
+	protected GUI_JButton catalogBtn;
+	
+	private CatalogPanel catalogPanel;
 
 	public AddItemsScreen(StationControl systemControl) {
 		super(systemControl, "Self Checkout");
@@ -66,7 +70,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 		totalPanelBg.setPreferredSize(new Dimension(this.width - 200, 80));
 		totalPanelBg.setBorder(BorderFactory.createMatteBorder(0, 20, 20, 20, GUI_Color_Palette.DARK_BLUE));
 		this.addLayer(totalPanelBg, 0);
-
+				
 		JPanel buttonPanel = new JPanel(new GridLayout(1, 3));
 		buttonPanel.setPreferredSize(new Dimension(this.width - 200, 80));
 		this.addLayer(buttonPanel, 30);
@@ -78,6 +82,10 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 		this.memberBtn = makeButton("enter member id", buttonPanel);
 		this.memberBtn.setActionCommand("member");
 		this.memberBtn.addActionListener(itemsControl);
+		
+		this.catalogBtn = makeButton("Catalog", buttonPanel);
+		this.catalogBtn.setActionCommand("catalog");
+		this.catalogBtn.addActionListener(itemsControl);
 	}
 
 	public void invalidateAllScannedItems() {

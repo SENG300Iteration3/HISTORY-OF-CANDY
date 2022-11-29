@@ -263,7 +263,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			// FIXME: Call add item by PLU code method
 		} else {
 			// FIXME: Call add item by barcode code method
+			addScannedItemToCheckoutList(barcodeIdentifier);
 		}
+		for (ItemsControlListener l : listeners)
+			l.awaitingItemToBePlacedInBaggingArea(this);
 	}
 
 	@Override
@@ -297,6 +300,9 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				break;
 			case "member":
 				sc.startMembershipWorkflow();
+				break;
+			case "catalog":
+				sc.startCatalogWorkflow();
 				break;
 			default:
 				break;
