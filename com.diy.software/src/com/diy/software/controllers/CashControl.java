@@ -10,6 +10,8 @@ import com.diy.software.listeners.CashControlListener;
 import com.unitedbankingservices.DisabledException;
 import com.unitedbankingservices.TooMuchCashException;
 import com.unitedbankingservices.banknote.Banknote;
+import com.unitedbankingservices.banknote.BanknoteDispensationSlotObserver;
+import com.unitedbankingservices.banknote.BanknoteInsertionSlotObserver;
 import com.unitedbankingservices.banknote.BanknoteStorageUnit;
 import com.unitedbankingservices.banknote.BanknoteStorageUnitObserver;
 import com.unitedbankingservices.banknote.BanknoteValidator;
@@ -21,7 +23,7 @@ import com.unitedbankingservices.coin.CoinValidator;
 import com.unitedbankingservices.coin.CoinValidatorObserver;
 
 public class CashControl implements BanknoteValidatorObserver, CoinValidatorObserver, CoinStorageUnitObserver,
-    BanknoteStorageUnitObserver, ActionListener {
+    BanknoteStorageUnitObserver, BanknoteInsertionSlotObserver, BanknoteDispensationSlotObserver, ActionListener {
   private StationControl sc;
   private ArrayList<CashControlListener> listeners;
   private long lastInsertedBanknote;
