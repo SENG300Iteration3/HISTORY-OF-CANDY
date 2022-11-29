@@ -83,6 +83,15 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		for (AttendantControlListener l : listeners)
 			l.initialState();
 	}
+	
+	/**
+	 * fills up the coin slot and then signal cash controller that everything is okay
+	 */
+	public void adjustCoinsForChange() {
+		//take system out of service
+		sc.getCashControl().disablePayments();
+	}
+	
 
 	/**
 	 * based on the button clicked, the switch controls the GUI to react to user
