@@ -8,9 +8,12 @@ import java.util.Currency;
 
 import com.diy.software.listeners.CashControlListener;
 import com.unitedbankingservices.DisabledException;
+import com.unitedbankingservices.OutOfCashException;
 import com.unitedbankingservices.TooMuchCashException;
 import com.unitedbankingservices.banknote.Banknote;
+import com.unitedbankingservices.banknote.BanknoteDispensationSlot;
 import com.unitedbankingservices.banknote.BanknoteDispensationSlotObserver;
+import com.unitedbankingservices.banknote.BanknoteInsertionSlot;
 import com.unitedbankingservices.banknote.BanknoteInsertionSlotObserver;
 import com.unitedbankingservices.banknote.BanknoteStorageUnit;
 import com.unitedbankingservices.banknote.BanknoteStorageUnitObserver;
@@ -26,8 +29,9 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
     BanknoteStorageUnitObserver, BanknoteInsertionSlotObserver, BanknoteDispensationSlotObserver, ActionListener {
   private StationControl sc;
   private ArrayList<CashControlListener> listeners;
-  private long lastInsertedBanknote;
-  private long lastInsertedCoin;
+  private boolean coinsFull;
+  private boolean notesFull;
+  private ArrayList<Integer> notesToReturn;
 
   public CashControl(StationControl sc) {
     this.sc = sc;
@@ -36,6 +40,11 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
     sc.station.banknoteStorage.attach(this);
     sc.station.coinStorage.attach(this);
     this.listeners = new ArrayList<>();
+    
+    coinsFull = false;
+    notesFull = false;
+    
+    notesToReturn = new ArrayList<Integer>();
   }
 
   public void addListener(CashControlListener listener) {
@@ -62,51 +71,35 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
     for (CashControlListener listener : listeners) 
       listener.cashInserted(this);
   }
-
-  // USECASE
-  // 1. Cash I/O: Signals the insertion of coins and banknotes to the System.
-  // 2. System: Reduces the remaining amount due by the value of the inserted
-  // cash.
-  // 3. System: Signals to the Customer I/O the updated amount due after the
-  // insertion of each coin or
-  // banknote.
-  // 4. Customer I/O: Updates the amount due displayed to the customer.
-
-  // EXCEPTIONS
-  // 1. If the customer inserts cash that is deemed unacceptable, this will be
-  // returned to the customer
-  // without involving the System, presumably handled in hardware.
-
-  // 2. If insufficient change is available,the attendant should be signalled as
-  // to the change still due to the
-  // customer and the station should be suspended so that maintenance can be
-  // conducted on it.
-
-  // To dispense change, it will be neccessary to store the value of the coins
-  // that enter the machine.
-
-  /**
-   * Announces that a coin has been added to the indicated storage unit.
-   * 
-   * @param unit
-   *             The storage unit where the event occurred.
+  
+  /*
+   * returns true if the coinInput can be enabled, false otherwise
    */
-  @Override
-  public void coinAdded(CoinStorageUnit unit) {
-    sc.getItemsControl().updateCheckoutTotal(-(double)lastInsertedCoin/100.0);
-    cashInserted();
+  public boolean enableCoins() {
+	  if(!coinsFull) {
+		  sc.station.coinSlot.enable();
+		  return true;
+	  }
+	  return false;
   }
-
-  /**
-   * Announces that a banknote has been added to the indicated storage unit.
-   * 
-   * @param unit
-   *             The storage unit where the event occurred.
+  
+  public void disableCoins() {
+	  sc.station.coinSlot.disable();
+  }
+  
+  /*
+   * return true if the noteInput can be enabled, false otherwise
    */
-  @Override
-  public void banknoteAdded(BanknoteStorageUnit unit) {
-    sc.getItemsControl().updateCheckoutTotal(-lastInsertedBanknote);
-    cashInserted();
+  public boolean enableNotes() {
+	  if(!notesFull) {
+		  sc.station.banknoteInput.enable();
+		  return true;
+	  }
+	  return false;
+  }
+  
+  public void disableNotes() {
+	  sc.station.banknoteInput.disable();
   }
 
   /**
@@ -121,14 +114,8 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 
   @Override
   public void validCoinDetected(CoinValidator validator, long value) {
-    lastInsertedCoin = value;
-    try{
-      sc.station.coinStorage.receive(new Coin(Currency.getInstance("CAD"), value));
-    } catch (TooMuchCashException e) {
-      e.printStackTrace();
-    } catch (DisabledException e) {
-      e.printStackTrace();
-    }
+	  sc.getItemsControl().updateCheckoutTotal(-(double)value/100.0);
+	  cashInserted();
   }
 
   /**
@@ -144,14 +131,8 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
    */
   @Override
   public void validBanknoteDetected(BanknoteValidator validator, Currency currency, long value) {
-    lastInsertedBanknote = value;
-    try {
-      sc.station.banknoteStorage.receive(new Banknote(Currency.getInstance("CAD"), value));
-    } catch (DisabledException e) {
-      e.printStackTrace();
-    } catch (TooMuchCashException e) {
-      e.printStackTrace();
-    }
+	  sc.getItemsControl().updateCheckoutTotal(-value);
+	  cashInserted();
   }
 
   /**
@@ -163,7 +144,7 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
    */
   @Override
   public void invalidBanknoteDetected(BanknoteValidator validator) {
-
+	  //TODO: notify GUI that the banknote was rejected
   }
 
   /**
@@ -175,15 +156,8 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
    */
   @Override
   public void invalidCoinDetected(CoinValidator validator) {
-
+	//TODO: notify GUI that the coin was rejected
   }
-
-  /**
-   * Announces that the indicated coin dispenser is full of coins.
-   * 
-   * @param dispenser
-   *                  The dispenser where the event occurred.
-   */
 
   /**
    * Announces that the indicated banknote storage unit is full of banknotes.
@@ -193,17 +167,8 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
    */
   @Override
   public void banknotesFull(BanknoteStorageUnit unit) {
-  }
-
-  /**
-   * Announces that the indicated storage unit has been loaded with banknotes.
-   * Used to simulate direct, physical loading of the unit.
-   * 
-   * @param unit
-   *             The storage unit where the event occurred.
-   */
-  @Override
-  public void banknotesLoaded(BanknoteStorageUnit unit) {
+	  notesFull = true;
+	  sc.station.banknoteInput.disable();
   }
 
   /**
@@ -215,6 +180,7 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
    */
   @Override
   public void banknotesUnloaded(BanknoteStorageUnit unit) {
+	  notesFull = false;
   }
 
   /**
@@ -225,18 +191,8 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
    */
   @Override
   public void coinsFull(CoinStorageUnit unit) {
-    System.out.println("Coin storage Unit is too full of coins >//<");
-  }
-
-  /**
-   * Announces that the indicated storage unit has been loaded with coins. Used to
-   * simulate direct, physical loading of the unit.
-   * 
-   * @param unit
-   *             The storage unit where the event occurred.
-   */
-  @Override
-  public void coinsLoaded(CoinStorageUnit unit) {
+    coinsFull = true;
+    sc.station.coinSlot.disable();
   }
 
   /**
@@ -248,7 +204,32 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
    */
   @Override
   public void coinsUnloaded(CoinStorageUnit unit) {
-    System.out.println("Coin storage Unit emptied of coins >//<");
+    coinsFull = false;
+  }
+  
+  
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    String c = e.getActionCommand();
+    try {
+      if (c.startsWith("d")) {
+        Banknote banknote = new Banknote(Currency.getInstance("CAD"), Long.parseLong(c.split(" ")[1]));
+        if (sc.station.banknoteValidator.hasSpace()) {
+          sc.station.banknoteValidator.receive(banknote);
+        } else {
+          System.out.println("Banknote storage unit is full");
+        }
+      }else if (c.startsWith("c")) {
+        Coin coin = new Coin(Currency.getInstance("CAD"), Long.parseLong(c.split(" ")[1]));
+        if (sc.station.coinValidator.hasSpace()) {
+          sc.station.coinValidator.receive(coin);
+        } else {
+          System.out.println("Coin storage unit is full");
+        }
+      }
+    } catch (Exception ex) {
+      System.err.println("Error: " + ex.getMessage());
+    }
   }
 
   // STUFF FOR CHANGE (leftover money kind)
@@ -383,29 +364,5 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 //  }
   
   // Future Iterations ^^
-
-  @Override
-  public void actionPerformed(ActionEvent e) {
-    String c = e.getActionCommand();
-    try {
-      if (c.startsWith("d")) {
-        Banknote banknote = new Banknote(Currency.getInstance("CAD"), Long.parseLong(c.split(" ")[1]));
-        if (sc.station.banknoteValidator.hasSpace()) {
-          sc.station.banknoteValidator.receive(banknote);
-        } else {
-          System.out.println("Banknote storage unit is full");
-        }
-      }else if (c.startsWith("c")) {
-        Coin coin = new Coin(Currency.getInstance("CAD"), Long.parseLong(c.split(" ")[1]));
-        if (sc.station.coinValidator.hasSpace()) {
-          sc.station.coinValidator.receive(coin);
-        } else {
-          System.out.println("Coin storage unit is full");
-        }
-      }
-    } catch (Exception ex) {
-      System.err.println("Error: " + ex.getMessage());
-    }
-  }
 
 }
