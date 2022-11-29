@@ -2,8 +2,10 @@ package swing.screens;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import com.diy.software.util.Tuple;
@@ -29,7 +31,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 
 	protected GUI_JButton requestNoBaggingBtn;
 	protected GUI_JButton addOwnBagsBtn;
-	protected GUI_JButton doneAddingOwnBagsBtn;
+
 	protected GUI_JButton purchaseOwnBagsBtn;
 	protected GUI_JButton addItemByPLUBtn;
 	protected GUI_JButton searchCatalogueBtn;
@@ -78,8 +80,6 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 		itemScrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
 		//this.addLayer(itemScrollPane, 0);
 
-
-
 		this.scannedPanel = new GUI_JPanel();
 		scannedPanel.setLayout(new GridLayout(20, 1));
 		itemScrollPane.getViewport().add(scannedPanel);
@@ -101,29 +101,42 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 
 		mainPanel.add(leftSidePanel, BorderLayout.CENTER);
 
-
 		JPanel rightSidePanel = new JPanel();
+
+		//Set a name so that in makeButton() we can call the proper border dimensions
+		rightSidePanel.setName("Right Panel");
 
 		rightSidePanel.setPreferredSize(new Dimension(400, 400));
 
 		BoxLayout boxlayout2 = new BoxLayout(rightSidePanel, BoxLayout.Y_AXIS);
-		rightSidePanel.setBorder(new EmptyBorder(new Insets(0, 20, 0, 0)));
 
 		rightSidePanel.setLayout(boxlayout2);
 
-
 		mainPanel.add(rightSidePanel, BorderLayout.EAST);
-
 
 		//Adding buttons to the right side of the frame
 
-		this.addOwnBagsBtn = makeButton("Add Own Bags", rightSidePanel);
+		rightSidePanel.setBorder(new EmptyBorder(0, 50, 0, 0));
 
-		this.requestNoBaggingBtn = makeButton("Request No Bagging", rightSidePanel);
+		this.addOwnBagsBtn = makeButton("Add Own Bags", rightSidePanel);
+		addOwnBagsBtn.setMaximumSize(new Dimension(360, itemCheckoutHeader.getMinimumSize().height));
+		System.out.println(rightSidePanel.getComponentCount());
+
+		rightSidePanel.add(Box.createRigidArea(new Dimension(0,30)));
+
+		this.requestNoBaggingBtn = makeButton("Request No Bag", rightSidePanel);
+		requestNoBaggingBtn.setMaximumSize(new Dimension(360, itemCheckoutHeader.getMinimumSize().height));
+		System.out.println(rightSidePanel.getComponentCount());
+
+		rightSidePanel.add(Box.createRigidArea(new Dimension(0,30)));
 
 		this.purchaseOwnBagsBtn = makeButton("Purchase Bags", rightSidePanel);
+		purchaseOwnBagsBtn.setMaximumSize(new Dimension(360, itemCheckoutHeader.getMinimumSize().height));
+
+		rightSidePanel.add(Box.createRigidArea(new Dimension(0,30)));
 
 		this.addItemByPLUBtn = makeButton("Add Item by PLU", rightSidePanel);
+		addItemByPLUBtn.setMaximumSize(new Dimension(360, itemCheckoutHeader.getMinimumSize().height));
 
 		this.addLayer(mainPanel, 0);
 
@@ -186,7 +199,13 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 
 		GUI_JButton btn = new GUI_JButton(text.toUpperCase());
 		btn.setFont(GUI_Fonts.TITLE);
-		btn.setBorder(BorderFactory.createMatteBorder(10, left_padding, 10, 20, GUI_Color_Palette.DARK_BLUE));
+
+		if (!Objects.equals(parent.getName(), "Right Panel")) {
+			btn.setBorder(BorderFactory.createMatteBorder(10, left_padding, 10, 20, GUI_Color_Palette.DARK_BLUE));
+		} else {
+			btn.setBorder(BorderFactory.createMatteBorder(10, 20, 10, 20, GUI_Color_Palette.DARK_BLUE));
+
+		}
 		btn.setBackground(GUI_Color_Palette.DARK_BROWN);
 		btn.setOpaque(true);
 		parent.add(btn);
