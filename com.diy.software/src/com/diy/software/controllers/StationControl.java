@@ -63,6 +63,7 @@ public class StationControl
 	private boolean isLocked = false;
 	public String memberName;
 	public double weightOfItemScanned;
+	private boolean membershipInput = false;
 
 	private PinPadControl ppc;
 	private PaymentControl pc;
@@ -78,6 +79,7 @@ public class StationControl
 		customer.useStation(station);
 
 		station.printer.register(this);
+		station.mainScanner.register(this);
 		station.handheldScanner.register(this);
 		station.baggingArea.register(this);
 		station.cardReader.register(this);
@@ -280,15 +282,16 @@ public class StationControl
 			l.triggerMembershipWorkflow(this);
 	}
 	
-	//TODO - modify following two methods
 	public void startMembershipCardInput() {
 		for (StationControlListener l : listeners)
 			l.startMembershipCardInput(this);
 		wc.membershipCardInputEnabled();
+		membershipInput = true;
 	}
 	
 	public void cancelMembershipCardInput() {
 		wc.membershipCardInputCanceled();
+		membershipInput = false;
 	}
 
 	@Override
@@ -344,7 +347,7 @@ public class StationControl
 			for (StationControlListener l : listeners) {
 				l.membershipCardInputFinished(this);
 			}
-			//TODO - take down the PresentMembershipCardScreen
+			membershipInput = false;
 		} else {
 			Double amountOwed = this.ic.getCheckoutTotal();
 			String cardNumber = data.getNumber();
@@ -461,16 +464,24 @@ public class StationControl
 	// FIXME: only barcoded products have barcodes, product only have price/weight
 	@Override
 	public void barcodeScanned(BarcodeScanner barcodeScanner, Barcode barcode) {
-		weightOfItemScanned = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
-		// Add the barcode to the ArrayList within itemControl
-		this.ic.addScannedItemToCheckoutList(barcode);
-		// Set the expected weight in SystemControl
-		this.updateExpectedCheckoutWeight(weightOfItemScanned);
-		this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
-		// Call method within SystemControl that handles the rest of the item scanning
-		// procedure
-		this.blockStation();
-		// Trigger the GUI to display "place the scanned item in the Bagging Area"
+		if (membershipInput) {
+			mc.checkMembership(Integer.parseInt(barcode.toString()));
+			for (StationControlListener l : listeners) {
+				l.membershipCardInputFinished(this);
+			}
+			membershipInput = false;
+		} else {
+			weightOfItemScanned = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
+			// Add the barcode to the ArrayList within itemControl
+			this.ic.addScannedItemToCheckoutList(barcode);
+			// Set the expected weight in SystemControl
+			this.updateExpectedCheckoutWeight(weightOfItemScanned);
+			this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
+			// Call method within SystemControl that handles the rest of the item scanning
+			// procedure
+			this.blockStation();
+			// Trigger the GUI to display "place the scanned item in the Bagging Area"
+		}
 	}
 
 	/**
