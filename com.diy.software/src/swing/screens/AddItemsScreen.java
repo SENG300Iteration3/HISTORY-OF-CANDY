@@ -125,7 +125,6 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 
 		this.requestNoBaggingBtn = makeButton("Request No Bag", rightSidePanel);
 		requestNoBaggingBtn.setMaximumSize(new Dimension(360, itemCheckoutHeader.getMinimumSize().height));
-		System.out.println(rightSidePanel.getComponentCount());
 
 		rightSidePanel.add(Box.createRigidArea(new Dimension(0,30)));
 
