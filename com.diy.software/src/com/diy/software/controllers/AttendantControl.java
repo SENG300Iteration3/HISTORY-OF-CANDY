@@ -15,6 +15,8 @@ import com.jimmyselectronics.abagnale.ReceiptPrinterListener;
 import com.unitedbankingservices.TooMuchCashException;
 import com.unitedbankingservices.banknote.Banknote;
 import com.unitedbankingservices.banknote.BanknoteStorageUnit;
+import com.unitedbankingservices.coin.Coin;
+import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import ca.ucalgary.seng300.simulation.SimulationException;
 
@@ -23,6 +25,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	private StationControl sc;
 	private ArrayList<AttendantControlListener> listeners;
 	private Currency currency;
+	private CoinStorageUnit unit;
 	String attendantNotifications;
 
 	public AttendantControl(StationControl sc) {
@@ -193,10 +196,92 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	
 	/**
 	 * fills up the coin slot and then signal cash controller that everything is okay
+	 *
+	 *@param unit
+	 *		the unit that needs to be filled up
+	 * @throws TooMuchCashException 
+	 * @throws SimulationException 
+
 	 */
-	public void adjustCoinsForChange() {
+	public void adjustCoinsForChange(CoinStorageUnit unit) throws SimulationException, TooMuchCashException  {
+		
+		this.unit = unit;
 		//take system out of service
+		int AMOUNT = 10; //AMOUNT IM NOT SURE, FOR NOW 10 OF EACH TYPE OF COINS 
+		
 		sc.getCashControl().disablePayments();
+		
+		Coin nickelToAdd = new Coin(5);
+		Coin dimeToAdd = new Coin(10);
+		Coin quaterToAdd = new Coin(25);
+		Coin loonieToAdd = new Coin(100);
+		Coin toonieToAdd = new Coin(200);
+		
+		
+		List<Coin> unloadedCoins = unit.unload();
+		
+		int nCounter = countCoin(5,unloadedCoins);
+		int dCounter = countCoin(10,unloadedCoins);
+		int qCounter = countCoin(25,unloadedCoins);
+		int lCounter = countCoin(100,unloadedCoins);
+		int tCounter = countCoin(200,unloadedCoins);
+		
+		int nAmount = AMOUNT - nCounter;
+		int dAmount = AMOUNT - dCounter;
+		int qAmount = AMOUNT - qCounter;
+		int lAmount = AMOUNT - lCounter;
+		int tAmount = AMOUNT - tCounter;
+		
+		addCoin(nAmount,nickelToAdd);
+		addCoin(dAmount,dimeToAdd);
+		addCoin(qAmount,quaterToAdd);
+		addCoin(lAmount,loonieToAdd);
+		addCoin(tAmount,toonieToAdd);
+		
+		
+		//notify cash controller that the unit has been filled
+		sc.getCashControl().coinsLoaded(unit);
+		
+		for (AttendantControlListener l : listeners)
+			l.initialState();
+	}
+	
+	/**
+	 * counts how many coins of this type is
+	 * @param value
+	 * 		the value of the coin to count
+	 * 
+	 * @param coins
+	 * 		the list to count the coin from
+	 * 
+	 * @return
+	 * 		returns the amount of coins counted
+	 */
+	public int countCoin(long value, List<Coin> coins) {
+		int count = 0;
+		for(Coin c : coins) {
+			if(c.getValue() == value) {
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	/**
+	 * add the specified amount of coins to a list to add to dispenser
+	 * 
+	 * @param amount
+	 * 		amount of coin to add
+	 * 
+	 * @param coin 
+	 * 		the coin type to add
+	 * @throws TooMuchCashException 
+	 * @throws SimulationException 
+	 */
+	public void addCoin(int amount,Coin coin) throws SimulationException, TooMuchCashException{
+		for(int i = 0; i < amount; i++) {
+			unit.load(coin);
+		}
 	}
 	
 
