@@ -27,210 +27,251 @@ import com.unitedbankingservices.coin.CoinValidatorObserver;
 
 public class CashControl implements BanknoteValidatorObserver, CoinValidatorObserver, CoinStorageUnitObserver,
     BanknoteStorageUnitObserver, BanknoteInsertionSlotObserver, BanknoteDispensationSlotObserver, ActionListener {
-  private StationControl sc;
-  private ArrayList<CashControlListener> listeners;
-  private boolean coinsFull;
-  private boolean notesFull;
-  private ArrayList<Integer> notesToReturn;
+	private StationControl sc;
+	private ArrayList<CashControlListener> listeners;
+	private boolean coinsFull;
+	private boolean notesFull;
+	private ArrayList<Integer> notesToReturn;
 
-  public CashControl(StationControl sc) {
-    this.sc = sc;
-    sc.station.banknoteValidator.attach(this);
-    sc.station.coinValidator.attach(this);
-    sc.station.banknoteStorage.attach(this);
-    sc.station.coinStorage.attach(this);
-    this.listeners = new ArrayList<>();
+	public CashControl(StationControl sc) {
+		this.sc = sc;
+		sc.station.banknoteValidator.attach(this);
+		sc.station.coinValidator.attach(this);
+		sc.station.coinStorage.attach(this);
+		sc.station.banknoteStorage.attach(this);
+		sc.station.banknoteInput.attach(this);
+		sc.station.banknoteOutput.attach(this);
+		this.listeners = new ArrayList<>();
     
-    coinsFull = false;
-    notesFull = false;
+		coinsFull = false;
+		notesFull = false;
     
-    notesToReturn = new ArrayList<Integer>();
-  }
+		notesToReturn = new ArrayList<Integer>();
+	}
 
-  public void addListener(CashControlListener listener) {
-    listeners.add(listener);
-  }
+	public void addListener(CashControlListener listener) {
+		listeners.add(listener);
+	}
 
-  public void removeListener(CashControlListener listener) {
-    listeners.remove(listener);
-  }
+	public void removeListener(CashControlListener listener) {
+		listeners.remove(listener);
+	}
 
-  public void enablePayments() {
-    for (CashControlListener listener : listeners) {
-      listener.cashInsertionEnabled(this);
-    }
-  }
-
-  public void disablePayments() {
-    for (CashControlListener listener : listeners) {
-      listener.cashInsertionDisabled(this);
-    }
-  }
-
-  private void cashInserted() {
-    for (CashControlListener listener : listeners) 
-      listener.cashInserted(this);
-  }
+	private void coinsEnabled() {
+		for(CashControlListener listener : listeners)
+			listener.coinInsertionEnabled(this);
+	}
   
-  /*
-   * returns true if the coinInput can be enabled, false otherwise
-   */
-  public boolean enableCoins() {
-	  if(!coinsFull) {
-		  sc.station.coinSlot.enable();
-		  return true;
-	  }
-	  return false;
-  }
+	private void notesEnabled() {
+		for(CashControlListener listener : listeners)
+			listener.noteInsertionEnabled(this);
+	}
   
-  public void disableCoins() {
-	  sc.station.coinSlot.disable();
-  }
+	private void coinsDisabled() {
+		for(CashControlListener listener : listeners)
+			listener.coinInsertionDisabled(this);
+	}
   
-  /*
-   * return true if the noteInput can be enabled, false otherwise
-   */
-  public boolean enableNotes() {
-	  if(!notesFull) {
-		  sc.station.banknoteInput.enable();
-		  return true;
-	  }
-	  return false;
-  }
+	private void notesDisabled() {
+		for(CashControlListener listener : listeners)
+			listener.noteInsertionDisabled(this);
+	}
   
-  public void disableNotes() {
-	  sc.station.banknoteInput.disable();
-  }
+	private void cashInserted() {
+		for(CashControlListener listener : listeners)
+			listener.cashInserted(this);
+	}
 
-  /**
-   * An event announcing that the indicated coin has been detected and determined
-   * to be valid.
-   * 
-   * @param validator
-   *                  The device on which the event occurred.
-   * @param value
-   *                  The value of the coin.
-   */
+	private void cashRejected() {
+		for (CashControlListener listener : listeners) 
+			listener.cashRejected(this);
+	}
+  
+	private void changeReturned() {
+		for (CashControlListener listener : listeners) 
+			listener.changeReturned(this);
+	}
+  
+	/*
+	 * returns true if the coinInput can be enabled, false otherwise
+	 */
+	private void enableCoins() {
+		if(!coinsFull && sc.getItemsControl().getCheckoutTotal() > 0) {
+			sc.station.coinSlot.enable();
+			coinsEnabled();
+		}
+	}
+  
+	private void disableCoins() {
+		sc.station.coinSlot.disable();
+		coinsDisabled();
+	}
+  
+	/*
+	 * return true if the noteInput can be enabled, false otherwise
+	 */
+	private void enableNotes() {
+		if(!notesFull && sc.getItemsControl().getCheckoutTotal() > 0) {
+			sc.station.banknoteInput.enable();
+			notesEnabled();
+		}
+	}
+  
+	private void disableNotes() {
+		sc.station.banknoteInput.disable();
+		notesDisabled();
+	}
+  
+	public void enablePayments() {
+		enableNotes();
+		enableCoins();
+	}
+  
+	public void disablePayments() {
+		disableNotes();
+		disableCoins();
+	}
 
-  @Override
-  public void validCoinDetected(CoinValidator validator, long value) {
-	  sc.getItemsControl().updateCheckoutTotal(-(double)value/100.0);
-	  cashInserted();
-  }
+	/**
+	 * An event announcing that the indicated coin has been detected and determined
+	 * to be valid.
+	 * 
+	 * @param validator
+	 *                  The device on which the event occurred.
+	 * @param value
+	 *                  The value of the coin.
+	 */
+	@Override
+	public void validCoinDetected(CoinValidator validator, long value) {
+		sc.getItemsControl().updateCheckoutTotal(-(double)value/100.0);
+		if(sc.getItemsControl().getCheckoutTotal() < 0) {
+			returnChange();
+		}
+		cashInserted();
+	}
 
-  /**
-   * An event announcing that the indicated banknote has been detected and
-   * determined to be valid.
-   * 
-   * @param validator
-   *                  The device on which the event occurred.
-   * @param currency
-   *                  The kind of currency of the inserted banknote.
-   * @param value
-   *                  The value of the inserted banknote.
-   */
-  @Override
-  public void validBanknoteDetected(BanknoteValidator validator, Currency currency, long value) {
-	  sc.getItemsControl().updateCheckoutTotal(-value);
-	  cashInserted();
-  }
+	/**
+	 * An event announcing that the indicated banknote has been detected and
+	 * determined to be valid.
+	 * 
+	 * @param validator
+	 *                  The device on which the event occurred.
+	 * @param currency
+	 *                  The kind of currency of the inserted banknote.
+	 * @param value
+	 *                  The value of the inserted banknote.
+	 */
+	@Override
+	public void validBanknoteDetected(BanknoteValidator validator, Currency currency, long value) {
+		sc.getItemsControl().updateCheckoutTotal(-value);
+		if(sc.getItemsControl().getCheckoutTotal() < 0) {
+			returnChange();
+		}
+		cashInserted();
+	}
 
-  /**
-   * An event announcing that the indicated banknote has been detected and
-   * determined to be invalid.
-   * 
-   * @param validator
-   *                  The device on which the event occurred.
-   */
-  @Override
-  public void invalidBanknoteDetected(BanknoteValidator validator) {
-	  //TODO: notify GUI that the banknote was rejected
-  }
+	/**
+	 * An event announcing that the indicated banknote has been detected and
+	 * determined to be invalid.
+	 * 
+	 * @param validator
+	 *                  The device on which the event occurred.
+	 */
+	@Override
+  	public void invalidBanknoteDetected(BanknoteValidator validator) {
+		cashRejected();
+	}
 
-  /**
-   * An event announcing that a coin has been detected and determined to be
-   * invalid.
-   * 
-   * @param validator
-   *                  The device on which the event occurred.
-   */
-  @Override
-  public void invalidCoinDetected(CoinValidator validator) {
-	//TODO: notify GUI that the coin was rejected
-  }
+	/**
+	 * An event announcing that a coin has been detected and determined to be
+	 * invalid.
+	 * 
+	 * @param validator
+	 *                  The device on which the event occurred.
+	 */
+	@Override
+	public void invalidCoinDetected(CoinValidator validator) {
+		cashRejected();
+	}
 
-  /**
-   * Announces that the indicated banknote storage unit is full of banknotes.
-   * 
-   * @param unit
-   *             The storage unit where the event occurred.
-   */
-  @Override
-  public void banknotesFull(BanknoteStorageUnit unit) {
-	  notesFull = true;
-	  sc.station.banknoteInput.disable();
-  }
+	/**
+	 * Announces that the indicated banknote storage unit is full of banknotes.
+	 * 
+	 * @param unit
+	 *             The storage unit where the event occurred.
+	 */
+	@Override
+	public void banknotesFull(BanknoteStorageUnit unit) {
+		notesFull = true;
+		sc.station.banknoteInput.disable();
+		notesDisabled();
+	}
 
-  /**
-   * Announces that the storage unit has been emptied of banknotes. Used to
-   * simulate direct, physical unloading of the unit.
-   * 
-   * @param unit
-   *             The storage unit where the event occurred.
-   */
-  @Override
-  public void banknotesUnloaded(BanknoteStorageUnit unit) {
-	  notesFull = false;
-  }
+	/**
+	 * Announces that the storage unit has been emptied of banknotes. Used to
+	 * simulate direct, physical unloading of the unit.
+	 * 
+	 * @param unit
+	 *             The storage unit where the event occurred.
+	 */
+	@Override
+	public void banknotesUnloaded(BanknoteStorageUnit unit) {
+		notesFull = false;
+	}
 
-  /**
-   * Announces that the indicated coin storage unit is full of coins.
-   * 
-   * @param unit
-   *             The storage unit where the event occurred.
-   */
-  @Override
-  public void coinsFull(CoinStorageUnit unit) {
-    coinsFull = true;
-    sc.station.coinSlot.disable();
-  }
+	/**
+	 * Announces that the indicated coin storage unit is full of coins.
+	 * 
+	 * @param unit
+	 *             The storage unit where the event occurred.
+	 */
+	@Override
+	public void coinsFull(CoinStorageUnit unit) {
+		coinsFull = true;
+		sc.station.coinSlot.disable();
+		coinsDisabled();
+	}
 
-  /**
-   * Announces that the storage unit has been emptied of coins. Used to simulate
-   * direct, physical unloading of the unit.
-   * 
-   * @param unit
-   *             The storage unit where the event occurred.
-   */
-  @Override
-  public void coinsUnloaded(CoinStorageUnit unit) {
-    coinsFull = false;
-  }
+	/**
+	 * Announces that the storage unit has been emptied of coins. Used to simulate
+	 * direct, physical unloading of the unit.
+	 * 
+	 * @param unit
+	 *             The storage unit where the event occurred.
+	 */
+	@Override
+	public void coinsUnloaded(CoinStorageUnit unit) {
+		coinsFull = false;
+	}
   
   
-  @Override
-  public void actionPerformed(ActionEvent e) {
-    String c = e.getActionCommand();
-    try {
-      if (c.startsWith("d")) {
-        Banknote banknote = new Banknote(Currency.getInstance("CAD"), Long.parseLong(c.split(" ")[1]));
-        if (sc.station.banknoteValidator.hasSpace()) {
-          sc.station.banknoteValidator.receive(banknote);
-        } else {
-          System.out.println("Banknote storage unit is full");
-        }
-      }else if (c.startsWith("c")) {
-        Coin coin = new Coin(Currency.getInstance("CAD"), Long.parseLong(c.split(" ")[1]));
-        if (sc.station.coinValidator.hasSpace()) {
-          sc.station.coinValidator.receive(coin);
-        } else {
-          System.out.println("Coin storage unit is full");
-        }
-      }
-    } catch (Exception ex) {
-      System.err.println("Error: " + ex.getMessage());
-    }
-  }
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String c = e.getActionCommand();
+		try {
+			if (c.startsWith("d")) {
+				Banknote banknote = new Banknote(Currency.getInstance("CAD"), Long.parseLong(c.split(" ")[1]));
+				if (sc.station.banknoteInput.isActivated()) {
+					sc.station.banknoteInput.receive(banknote);
+				} else {
+					System.out.println("Banknote storage unit is full");
+				}
+			}else if (c.startsWith("c")) {
+				Coin coin = new Coin(Currency.getInstance("CAD"), Long.parseLong(c.split(" ")[1]));
+				if (sc.station.coinSlot.isActivated()) {
+					sc.station.coinSlot.receive(coin);
+				} else {
+					System.out.println("Coin storage unit is full");
+				}
+			}
+		} catch (Exception ex) {
+			System.err.println("Error: " + ex.getMessage());
+		}
+	}
+  
+	public void returnChange() {
+		//TODO: implement returnChange
+	}
 
   // STUFF FOR CHANGE (leftover money kind)
 

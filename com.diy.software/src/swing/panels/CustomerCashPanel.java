@@ -13,7 +13,8 @@ public class CustomerCashPanel extends JPanel implements CashControlListener {
   private JButton dollar100, dollar50, dollar20, dollar10, dollar5, dollar1;
   private JButton toonie, loonie, quarter, dime, nickel, penny;
 
-  private boolean paymentsEnabled = false;
+  private boolean noteEnabled = false;
+  private boolean coinEnabled = false;
 
   public CustomerCashPanel(StationControl sc) {
     super();
@@ -92,37 +93,61 @@ public class CustomerCashPanel extends JPanel implements CashControlListener {
   }
 
   private void updateButtonStates() {
-    dollar100.setEnabled(paymentsEnabled);
-    dollar50.setEnabled(paymentsEnabled);
-    dollar20.setEnabled(paymentsEnabled);
-    dollar10.setEnabled(paymentsEnabled);
-    dollar5.setEnabled(paymentsEnabled);
-    dollar1.setEnabled(paymentsEnabled);
+    dollar100.setEnabled(noteEnabled);
+    dollar50.setEnabled(noteEnabled);
+    dollar20.setEnabled(noteEnabled);
+    dollar10.setEnabled(noteEnabled);
+    dollar5.setEnabled(noteEnabled);
+    dollar1.setEnabled(noteEnabled);
 
-    toonie.setEnabled(paymentsEnabled);
-    loonie.setEnabled(paymentsEnabled);
-    quarter.setEnabled(paymentsEnabled);
-    dime.setEnabled(paymentsEnabled);
-    nickel.setEnabled(paymentsEnabled);
-    penny.setEnabled(paymentsEnabled);
-  }
-
-  @Override
-  public void cashInsertionEnabled(CashControl cc) {
-    paymentsEnabled = true;
-    updateButtonStates();
-  }
-
-  @Override
-  public void cashInsertionDisabled(CashControl cc) {
-    paymentsEnabled = false;
-    updateButtonStates();
+    toonie.setEnabled(coinEnabled);
+    loonie.setEnabled(coinEnabled);
+    quarter.setEnabled(coinEnabled);
+    dime.setEnabled(coinEnabled);
+    nickel.setEnabled(coinEnabled);
+    penny.setEnabled(coinEnabled);
   }
 
   @Override
   public void cashInserted(CashControl cc) {
     // TODO Auto-generated method stub
     
+  }
+
+  @Override
+  public void coinInsertionEnabled(CashControl cc) {
+    coinEnabled = true;
+    updateButtonStates();
+  }
+
+  @Override
+  public void noteInsertionEnabled(CashControl cc) {
+	noteEnabled = true;
+	updateButtonStates();
+  }
+
+  @Override
+  public void coinInsertionDisabled(CashControl cc) {
+	coinEnabled = false;
+	updateButtonStates();
+  }
+
+  @Override
+  public void noteInsertionDisabled(CashControl cc) {
+	noteEnabled = false;
+	updateButtonStates();
+  }
+
+  @Override
+  public void cashRejected(CashControl cc) {
+	// TODO Auto-generated method stub
+	
+  }
+
+  @Override
+  public void changeReturned(CashControl cc) {
+	// TODO Auto-generated method stub
+	
   }
 
 }

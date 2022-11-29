@@ -18,6 +18,8 @@ import swing.styling.Screen;
 public class PresentCashScreen extends Screen implements CashControlListener {
 
 	private GUI_JLabel prompt;
+	private GUI_JLabel coinAvailability;
+	private GUI_JLabel noteAvailability;
 	private GUI_JButton backButton;
 	
 	public PresentCashScreen(final StationControl systemControl) {
@@ -44,19 +46,43 @@ public class PresentCashScreen extends Screen implements CashControlListener {
 	}
 
 	@Override
-	public void cashInsertionEnabled(CashControl cc) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void cashInsertionDisabled(CashControl cc) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void cashInserted(CashControl cc) {
 		this.prompt.setText("Please insert $" + systemControl.getItemsControl().getCheckoutTotal());
+	}
+
+	@Override
+	public void coinInsertionEnabled(CashControl cc) {
+		this.coinAvailability.setText("");
+		
+	}
+
+	@Override
+	public void noteInsertionEnabled(CashControl cc) {
+		this.noteAvailability.setText("");
+		
+	}
+
+	@Override
+	public void coinInsertionDisabled(CashControl cc) {
+		this.coinAvailability.setText("Coins are currently disabled.");
+		
+	}
+
+	@Override
+	public void noteInsertionDisabled(CashControl cc) {
+		this.coinAvailability.setText("Banknotes are currently disabled.");
+		
+	}
+
+	@Override
+	public void cashRejected(CashControl cc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void changeReturned(CashControl cc) {
+		// TODO Auto-generated method stub
+		
 	}
 }
