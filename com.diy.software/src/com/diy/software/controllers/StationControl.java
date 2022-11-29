@@ -1,6 +1,7 @@
 package com.diy.software.controllers;
 
 import java.util.ArrayList;
+import java.util.Currency;
 
 import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
@@ -26,6 +27,9 @@ import com.jimmyselectronics.opeechee.CardReader;
 import com.jimmyselectronics.opeechee.CardReaderListener;
 import com.jimmyselectronics.virgilio.ElectronicScale;
 import com.jimmyselectronics.virgilio.ElectronicScaleListener;
+import com.unitedbankingservices.TooMuchCashException;
+import com.unitedbankingservices.banknote.Banknote;
+import com.unitedbankingservices.coin.Coin;
 
 import ca.powerutility.NoPowerException;
 
@@ -90,7 +94,6 @@ public class StationControl
 		mc = new MembershipControl(this);
 		cc = new CashControl(this);
 		ac = new AttendantControl(this);
-		
 
 		/*
 		 * simulates what the printer has in it before the printing starts
@@ -170,6 +173,34 @@ public class StationControl
 
 	public CashControl getCashControl() {
 		return cc;
+	}
+	
+	private void fillStation() {
+		for(int i : station.banknoteDenominations) {
+			int capacity = station.banknoteDispensers.get(i).getCapacity();
+			Banknote[] bills = new Banknote[capacity];
+			for(int j = 0; j < capacity; j++) {
+				bills[j] = new Banknote(Currency.getInstance("CAD"), i);
+			}
+			try {
+				station.banknoteDispensers.get(i).load(bills);
+			} catch (TooMuchCashException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		for(long i : station.coinDenominations) {
+			int capacity = station.coinDispensers.get(i).getCapacity();
+			Coin[] coins = new Coin[capacity];
+			for(int j = 0; j < capacity; j++) {
+				coins[j] = new Coin(Currency.getInstance("CAD"), i);
+			}
+			try {
+				station.coinDispensers.get(i).load(coins);
+			} catch (TooMuchCashException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public void updateWeightOfLastItemAddedToBaggingArea(double weight) {
