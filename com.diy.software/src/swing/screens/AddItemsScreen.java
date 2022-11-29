@@ -1,14 +1,9 @@
 package swing.screens;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import com.diy.software.util.Tuple;
@@ -32,43 +27,103 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 	protected GUI_JButton payBtn;
 	protected GUI_JButton memberBtn;
 
+	protected GUI_JButton requestNoBaggingBtn;
+	protected GUI_JButton addOwnBagsBtn;
+	protected GUI_JButton doneAddingOwnBagsBtn;
+	protected GUI_JButton purchaseOwnBagsBtn;
+	protected GUI_JButton addItemByPLUBtn;
+	protected GUI_JButton searchCatalogueBtn;
+
+
 	public AddItemsScreen(StationControl systemControl) {
 		super(systemControl, "Self Checkout");
 		this.itemsControl = systemControl.getItemsControl();
 		this.itemsControl.addListener(this);
+
+
+		//Create a main panel that will be split into 2
+		//The left side will have the already made scanning screen
+		//The right side will have the 5 new buttons
+		JPanel mainPanel = new JPanel(new BorderLayout());
+
+		mainPanel.setPreferredSize(new Dimension(this.width-100, 400));
+		//Right side panel (BoxLayout)
+
+		JPanel leftSidePanel = new JPanel();
+
+		BoxLayout boxlayout = new BoxLayout(leftSidePanel, BoxLayout.Y_AXIS);
+		leftSidePanel.setLayout(boxlayout);
+
 
 		GUI_JLabel itemCheckoutHeader = new GUI_JLabel("ITEM CHECKOUT");
 		itemCheckoutHeader.setOpaque(true);
 		itemCheckoutHeader.setBackground(GUI_Color_Palette.DARK_BROWN);
 		itemCheckoutHeader.setFont(GUI_Fonts.TITLE);
 		itemCheckoutHeader.setHorizontalAlignment(JLabel.CENTER);
-		itemCheckoutHeader.setPreferredSize(new Dimension(this.width - 200, 100));
+		itemCheckoutHeader.setPreferredSize(new Dimension(this.width - 400, 100));
 		itemCheckoutHeader.setBorder(BorderFactory.createMatteBorder(20, 20, 20, 20, GUI_Color_Palette.DARK_BLUE));
-		this.addLayer(itemCheckoutHeader, 0);
+
+
+		leftSidePanel.add(itemCheckoutHeader);
+		//this.addLayer(itemCheckoutHeader, 0);
 
 		JScrollPane itemScrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		itemScrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(24, 0));
 		itemScrollPane.setBackground(GUI_Color_Palette.DARK_BROWN);
-		itemScrollPane.setPreferredSize(new Dimension(this.width - 200, 240));
+		itemScrollPane.setPreferredSize(new Dimension(this.width - 400, 240));
 		itemScrollPane.setBorder(BorderFactory.createMatteBorder(0, 20, 20, 20, GUI_Color_Palette.DARK_BLUE));
-		this.addLayer(itemScrollPane, 0);
+		//this.addLayer(itemScrollPane, 0);
+
+		leftSidePanel.add(itemScrollPane);
 
 		this.scannedPanel = new GUI_JPanel();
 		scannedPanel.setLayout(new GridLayout(20, 1));
 		itemScrollPane.getViewport().add(scannedPanel);
+
 
 		GUI_JPanel totalPanelBg = makeItemLabel("subtotal", 0);
 		((GUI_JLabel) totalPanelBg.getComponent(0)).setFont(GUI_Fonts.TITLE);
 		this.subtotalLabel = (GUI_JLabel) totalPanelBg.getComponent(1);
 		subtotalLabel.setBorder(new EmptyBorder(0, 0, 0, 34)); // adjust position of text
 		subtotalLabel.setFont(GUI_Fonts.TITLE);
-		totalPanelBg.setPreferredSize(new Dimension(this.width - 200, 80));
+		totalPanelBg.setPreferredSize(new Dimension(this.width - 400, 80));
 		totalPanelBg.setBorder(BorderFactory.createMatteBorder(0, 20, 20, 20, GUI_Color_Palette.DARK_BLUE));
-		this.addLayer(totalPanelBg, 0);
+		//this.addLayer(totalPanelBg, 0);
 
+		leftSidePanel.add(totalPanelBg);
+
+		mainPanel.add(leftSidePanel, BorderLayout.CENTER);
+
+
+		JPanel rightSidePanel = new JPanel();
+
+		rightSidePanel.setPreferredSize(new Dimension(400, 400));
+
+		BoxLayout boxlayout2 = new BoxLayout(rightSidePanel, BoxLayout.Y_AXIS);
+		rightSidePanel.setBorder(new EmptyBorder(new Insets(0, 20, 0, 0)));
+
+		rightSidePanel.setLayout(boxlayout2);
+
+
+		mainPanel.add(rightSidePanel, BorderLayout.EAST);
+
+
+		//Adding buttons to the right side of the frame
+
+		this.addOwnBagsBtn = makeButton("Add Own Bags", rightSidePanel);
+
+		this.requestNoBaggingBtn = makeButton("Request No Bagging", rightSidePanel);
+
+		this.purchaseOwnBagsBtn = makeButton("Purchase Bags", rightSidePanel);
+
+		this.addItemByPLUBtn = makeButton("Add Item by PLU", rightSidePanel);
+
+		this.addLayer(mainPanel, 0);
+
+		//Bottom 3 buttons
 		JPanel buttonPanel = new JPanel(new GridLayout(1, 3));
-		buttonPanel.setPreferredSize(new Dimension(this.width - 200, 80));
+		buttonPanel.setPreferredSize(new Dimension(this.width - 125, 80));
 		this.addLayer(buttonPanel, 30);
 
 		this.payBtn = makeButton("pay", buttonPanel);
@@ -78,6 +133,10 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 		this.memberBtn = makeButton("enter member id", buttonPanel);
 		this.memberBtn.setActionCommand("member");
 		this.memberBtn.addActionListener(itemsControl);
+
+		this.searchCatalogueBtn = makeButton("Browse Items", buttonPanel);
+
+
 	}
 
 	public void invalidateAllScannedItems() {
