@@ -3,6 +3,8 @@ package com.diy.software.controllers;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Objects;
 
 import com.diy.software.listeners.AttendantControlListener;
 import com.jimmyselectronics.AbstractDevice;
@@ -16,10 +18,17 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	private StationControl sc;
 	private ArrayList<AttendantControlListener> listeners;
 	String attendantNotifications;
+	
+	public static final HashMap<String,String> loginMap = new HashMap<String,String>();
+	
+	public static boolean login(String username, String password) {
+		return Objects.equals(loginMap.get(username), password) && password != null;
+	}
 
 	public AttendantControl(StationControl sc) {
 		this.sc = sc;
 		this.listeners = new ArrayList<>();
+		
 	}
 
 	public void addListener(AttendantControlListener l) {

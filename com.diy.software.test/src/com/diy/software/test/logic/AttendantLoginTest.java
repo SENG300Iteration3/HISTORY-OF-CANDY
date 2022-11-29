@@ -6,7 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.diy.software.controllers.AttendantLogin;
+import com.diy.software.controllers.AttendantControl;
 import com.diy.software.fakedata.FakeDataInitializer;
 
 public class AttendantLoginTest {
@@ -23,32 +23,32 @@ public class AttendantLoginTest {
 
 	@Test
 	public void testLoginPass() {
-		assertTrue(AttendantLogin.login("A1", "password"));
+		assertTrue(AttendantControl.login("A1", "password"));
 	}
 	
 	@Test
 	public void testLoginWrongName() {
-		assertFalse(AttendantLogin.login("chadwick", "password"));
+		assertFalse(AttendantControl.login("chadwick", "password"));
 	}
 	
 	@Test
 	public void testLoginWrongPassword() {
-		assertFalse(AttendantLogin.login("A1", "pass"));
+		assertFalse(AttendantControl.login("A1", "pass"));
 	}
 	
 	@Test
 	public void testLoginWrongNull() {
-		assertFalse(AttendantLogin.login(null, null));
+		assertFalse(AttendantControl.login(null, null));
 	}
 	
 	@Test
 	public void testLoginWrongNullUsername() {
-		assertFalse(AttendantLogin.login(null, "test"));
+		assertFalse(AttendantControl.login(null, "test"));
 	}
 	
 	@Test
 	public void testLoginWrongNullPassword() {
-		assertFalse(AttendantLogin.login("test2", null));
+		assertFalse(AttendantControl.login("test2", null));
 	}
 
 }

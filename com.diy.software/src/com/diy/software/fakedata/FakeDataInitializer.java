@@ -8,7 +8,7 @@ import java.util.HashMap;
 import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.external.CardIssuer;
 import com.diy.hardware.external.ProductDatabases;
-import com.diy.software.controllers.AttendantLogin;
+import com.diy.software.controllers.AttendantControl;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.necchi.Numeral;
@@ -58,10 +58,10 @@ public class FakeDataInitializer {
 	}
 	
 	public void addFakeAttendantLogin() {
-		AttendantLogin.loginMap.put("A1", "password");
-		AttendantLogin.loginMap.put("A2", "wordpass");
-		AttendantLogin.loginMap.put("A3", "Password1");
-		AttendantLogin.loginMap.put("A4", "12345");
+		AttendantControl.loginMap.put("A1", "password");
+		AttendantControl.loginMap.put("A2", "wordpass");
+		AttendantControl.loginMap.put("A3", "Password1");
+		AttendantControl.loginMap.put("A4", "12345");
 	}
 	
 	public void addCardData() {
