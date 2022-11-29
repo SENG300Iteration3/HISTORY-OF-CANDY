@@ -109,10 +109,7 @@ public class CustomerCashPanel extends JPanel implements CashControlListener {
   }
 
   @Override
-  public void cashInserted(CashControl cc) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void cashInserted(CashControl cc) {}
 
   @Override
   public void coinInsertionEnabled(CashControl cc) {

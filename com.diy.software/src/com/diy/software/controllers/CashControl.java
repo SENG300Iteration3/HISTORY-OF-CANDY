@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Currency;
 
 import com.diy.software.listeners.CashControlListener;
@@ -143,11 +144,15 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 	 */
 	@Override
 	public void validCoinDetected(CoinValidator validator, long value) {
-		sc.getItemsControl().updateCheckoutTotal(-(double)value/100.0);
-		if(sc.getItemsControl().getCheckoutTotal() < 0) {
-			returnChange();
+		double current = sc.getItemsControl().getCheckoutTotal();
+		if(current - (double)value/100.0 >= 0) { //if no change needs to be returned
+			sc.getItemsControl().updateCheckoutTotal(-(double)value/100.0);
+			cashInserted();
+		}else {
+			returnChange((value/100.0)-current);
+			sc.getItemsControl().updateCheckoutTotal(-current);
+			cashInserted();
 		}
-		cashInserted();
 	}
 
 	/**
@@ -163,11 +168,15 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 	 */
 	@Override
 	public void validBanknoteDetected(BanknoteValidator validator, Currency currency, long value) {
-		sc.getItemsControl().updateCheckoutTotal(-value);
-		if(sc.getItemsControl().getCheckoutTotal() < 0) {
-			returnChange();
+		double current = sc.getItemsControl().getCheckoutTotal();
+		if(current - value >= 0) { //if no change needs to be returned
+			sc.getItemsControl().updateCheckoutTotal(-value);
+			cashInserted();
+		}else {
+			returnChange(value-current);
+			sc.getItemsControl().updateCheckoutTotal(-current);
+			cashInserted();
 		}
-		cashInserted();
 	}
 
 	/**
@@ -269,8 +278,90 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 		}
 	}
   
-	public void returnChange() {
-		//TODO: implement returnChange
+	public void returnChange(double change) {
+		ArrayList<Long> coins = new ArrayList<Long>(); //arraylist of the coin dispensers
+		ArrayList<Integer> bills = new ArrayList<Integer>(); //arraylist of the bank note dispensers
+		ArrayList<Integer> returnCoins = new ArrayList<Integer>(); //arraylist of how much a given coin dispenser needs to return
+		ArrayList<Integer> returnBills = new ArrayList<Integer>(); //arraylist of how much a given banknote dispenser needs to return
+		
+		double returned = 0;
+		
+		for(long x : sc.station.coinDenominations) { //gets all of the coin dispensers in the machine
+			coins.add(x);
+			returnCoins.add(0);
+		}
+		for(int x : sc.station.banknoteDenominations) { //gets all of the banknote dispensers in the machine
+			bills.add(x);
+			returnBills.add(0);
+		}
+		Collections.sort(coins, Collections.reverseOrder()); //sorts them from highest to lowest value
+		Collections.sort(bills, Collections.reverseOrder()); //sorts them from highest to lowest value
+		
+		int q = 0;
+		int MAX_q = 10;
+		for(int i = 0; i < bills.size() && q < MAX_q; i++) { //gets how many notes should be returned
+			if((change-returned) < bills.get(bills.size()-1)) { //if the smallest note is too big to be used as change
+				break;
+			}
+			
+			int value = bills.get(i);
+			
+			int capacity = sc.station.banknoteDispensers.get(value).size();
+			
+			int n = Math.min(Math.min((MAX_q-q), capacity), (int)((change-returned)/((double)value)));
+			
+			returned += value*n;
+			returnCoins.set(i, n);
+			q += n;
+		}
+		
+		q = 0;
+		MAX_q = 25;
+		for(int i = 0; i < coins.size() && q < MAX_q; i++) { //gets how many coins should be returned
+			if((change-returned) < coins.get(coins.size()-1)) { //if the smallest coin is too big to be used as change
+				break;
+			}
+			
+			long value = coins.get(i);
+			
+			int capacity = sc.station.coinDispensers.get(value).size();
+			
+			int n = Math.min(Math.min((MAX_q-q), capacity), (int)((change-returned)/(((double)value)/100.0)));
+			
+			returned += value*n;
+			returnCoins.set(i, n);
+			q += n;
+		}
+		
+		for(int i = 0; i < bills.size(); i++) { //returns all of the bills that you have accounted for
+			int times = returnBills.get(i);
+			int value = bills.get(i);
+			while(times > 0) {
+					try {
+						sc.station.banknoteDispensers.get(value).emit();
+					} catch (OutOfCashException | DisabledException | TooMuchCashException e) {
+						break;
+					}
+				times--;
+			}
+		}
+		
+		sc.station.banknoteOutput.dispense();
+		
+		for(int i = 0; i < coins.size(); i++) { //returns all of the coins that you have accounted for
+			int times = returnCoins.get(i);
+			long value = coins.get(i);
+			while(times > 0) {
+				try {
+					sc.station.coinDispensers.get(value).emit();
+				} catch (OutOfCashException | DisabledException | TooMuchCashException e) {
+					break;
+				}
+				times--;
+			}
+		}
+		
+		changeReturned();
 	}
 
   // STUFF FOR CHANGE (leftover money kind)
