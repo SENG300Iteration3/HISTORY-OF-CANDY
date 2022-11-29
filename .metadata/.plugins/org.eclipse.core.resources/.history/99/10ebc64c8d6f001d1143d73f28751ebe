@@ -1,0 +1,5 @@
+package com.diy.software.fakedata;
+
+public class InventoryInitializer {
+
+}

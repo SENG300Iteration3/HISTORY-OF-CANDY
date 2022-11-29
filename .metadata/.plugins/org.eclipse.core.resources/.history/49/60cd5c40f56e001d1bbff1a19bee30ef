@@ -1,0 +1,19 @@
+package swing.frames;
+
+import java.awt.BorderLayout;
+
+import javax.swing.JFrame;
+
+import swing.styling.GUI_Constants;
+import swing.styling.GUI_JFrame;
+
+public class CatalogPrototypeGUI {
+	private GUI_JFrame frame = new GUI_JFrame("Catalog ProtoType", GUI_Constants.SCREEN_WIDTH, GUI_Constants.SCREEN_HEIGHT);
+
+	public CatalogPrototypeGUI() {
+	    frame.setVisible(true);
+	    frame.setLocation(0, 0);
+	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    frame.getContentPane().add(tabbedPane , BorderLayout.CENTER);
+	}
+}

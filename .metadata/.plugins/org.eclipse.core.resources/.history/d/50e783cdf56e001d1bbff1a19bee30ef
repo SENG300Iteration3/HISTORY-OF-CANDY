@@ -1,0 +1,30 @@
+package swing.frames;
+
+import java.awt.BorderLayout;
+
+import javax.swing.JFrame;
+
+import swing.styling.GUI_Constants;
+import swing.styling.GUI_JFrame;
+
+public class CatalogPrototypeGUI {
+	private GUI_JFrame frame = new JFrame("Catalog ProtoType");
+    JFrame frame = new JFrame("Attendant Actions");
+    JPanel container;
+    AttendantPanel attendantPanel;
+    
+	public CatalogPrototypeGUI() {
+    	container = new JPanel();
+    	
+		frame.setVisible(true);
+		frame.setSize(820,300);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().add(container, BorderLayout.CENTER);
+		
+		attendantPanel = new AttendantPanel(sc);
+		
+		container.add(attendantPanel);
+    }
+	}
+}

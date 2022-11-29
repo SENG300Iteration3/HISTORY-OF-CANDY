@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="swing.frames.CatalogPrototypeGUI"/>
+    <fullyQualifiedTypeName name="javax.swing.JPanel"/>
+    <fullyQualifiedTypeName name="java.util.Map"/>
+    <fullyQualifiedTypeName name="com.diy.hardware.Product"/>
+    <fullyQualifiedTypeName name="com.diy.hardware.PLUCodedProduct"/>
+    <fullyQualifiedTypeName name="com.diy.hardware.PriceLookUpCode"/>
+    <fullyQualifiedTypeName name="swing.panels.CatalogPanel"/>
+    <fullyQualifiedTypeName name="com.diy.software.controllers.StationControl"/>
+</qualifiedTypeNameHistroy>
