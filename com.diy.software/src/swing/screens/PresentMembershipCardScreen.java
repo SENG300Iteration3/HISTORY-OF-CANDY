@@ -23,7 +23,7 @@ public class PresentMembershipCardScreen extends Screen {
 
 		//systemControl.startMembershipCardInput();
 
-		this.prompt = new GUI_JLabel("Please scan and swipe your membership card.");
+		this.prompt = new GUI_JLabel("Please scan or swipe your membership card.");
 		prompt.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		prompt.setHorizontalAlignment(SwingConstants.CENTER);
 		prompt.setPreferredSize(new Dimension(this.width - 200, 100));

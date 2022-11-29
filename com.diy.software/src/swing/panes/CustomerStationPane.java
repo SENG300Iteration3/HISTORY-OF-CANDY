@@ -141,7 +141,12 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	
 	public void membershipCardInputFinished(StationControl systemControl) {
 		triggerPanelBack(systemControl);
-		
+	}
+	
+	@Override
+	public void membershipCardInputCanceled(StationControl systemControl, String reason) {
+		okayPromptScreen = new OkayPromptScreen(systemControl, reason, false);
+		addPanel(okayPromptScreen.getRootPanel());
 	}
 
 	@Override

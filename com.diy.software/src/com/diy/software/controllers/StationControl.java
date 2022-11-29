@@ -271,6 +271,11 @@ public class StationControl
 				l.paymentHasBeenCanceled(this, null, reason);
 		}
 	}
+	
+	public void triggerMembershipCardInputFailScreen(String reason) {
+		for (StationControlListener l : listeners)
+			l.paymentHasBeenCanceled(this, null, reason);
+	}
 
 	public void startPaymentWorkflow() {
 		for (StationControlListener l : listeners)
