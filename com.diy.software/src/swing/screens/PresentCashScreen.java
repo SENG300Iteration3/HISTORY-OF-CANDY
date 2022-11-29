@@ -3,12 +3,15 @@ package swing.screens;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.SwingConstants;
 
 import com.diy.software.controllers.CashControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.CashControlListener;
+import com.unitedbankingservices.banknote.Banknote;
+import com.unitedbankingservices.coin.Coin;
 
 import swing.styling.GUI_Fonts;
 import swing.styling.GUI_JButton;
@@ -20,10 +23,14 @@ public class PresentCashScreen extends Screen implements CashControlListener {
 	private GUI_JLabel prompt;
 	private GUI_JLabel coinAvailability;
 	private GUI_JLabel noteAvailability;
+	private GUI_JLabel message;
 	private GUI_JButton backButton;
+	public double lastRecievedCash;
 	
 	public PresentCashScreen(final StationControl systemControl) {
 		super(systemControl);
+		
+		lastRecievedCash = 0;
 		
 		systemControl.getCashControl().enablePayments();
 		systemControl.getCashControl().addListener(this);
@@ -76,13 +83,39 @@ public class PresentCashScreen extends Screen implements CashControlListener {
 
 	@Override
 	public void cashRejected(CashControl cc) {
-		// TODO Auto-generated method stub
-		
+		List<Coin> c = systemControl.station.coinTray.collectCoins();
+		Banknote b = null; 
+		if(systemControl.station.banknoteInput.hasDanglingBanknotes()) {
+			b = systemControl.station.banknoteInput.removeDanglingBanknote();
+		}
+		double returnedCash = 0;
+		for(Coin i : c) {
+			returnedCash += ((double)i.getValue())/100.0;
+		}
+		if(b != null) {
+			returnedCash += b.getValue();
+		}
+		message.setText("Input cash was rejected. You recieved " + returnedCash + " back from the machine");
+		lastRecievedCash = returnedCash;
 	}
 
 	@Override
 	public void changeReturned(CashControl cc) {
-		// TODO Auto-generated method stub
-		
+		List<Coin> c = systemControl.station.coinTray.collectCoins();
+		List<Banknote> b = null;
+		if(systemControl.station.banknoteOutput.hasDanglingBanknotes()) {
+			b = systemControl.station.banknoteOutput.removeDanglingBanknotes();
+		}
+		double returnedCash = 0;
+		for(Coin i : c) {
+			returnedCash += ((double)i.getValue())/100.0;
+		}
+		if(b != null) {
+			for(Banknote i : b) {
+				returnedCash += i.getValue();
+			}
+		}
+		message.setText("You recieved " + returnedCash + " change from the machine");
+		lastRecievedCash = returnedCash;
 	}
 }

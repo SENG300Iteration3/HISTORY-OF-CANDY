@@ -176,6 +176,7 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 			returnChange(value-current);
 			sc.getItemsControl().updateCheckoutTotal(-current);
 			cashInserted();
+			disablePayments();
 		}
 	}
 
