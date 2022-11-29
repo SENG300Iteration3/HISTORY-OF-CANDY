@@ -60,11 +60,13 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 		itemCheckoutHeader.setBackground(GUI_Color_Palette.DARK_BROWN);
 		itemCheckoutHeader.setFont(GUI_Fonts.TITLE);
 		itemCheckoutHeader.setHorizontalAlignment(JLabel.CENTER);
-		itemCheckoutHeader.setPreferredSize(new Dimension(this.width - 400, 100));
+		//itemCheckoutHeader.setPreferredSize(new Dimension(this.width - 400, 100));
+		itemCheckoutHeader.setMaximumSize(new Dimension(this.width - 400, itemCheckoutHeader.getMinimumSize().height));
 		itemCheckoutHeader.setBorder(BorderFactory.createMatteBorder(20, 20, 20, 20, GUI_Color_Palette.DARK_BLUE));
 
+		itemCheckoutHeader.setAlignmentX(Component.CENTER_ALIGNMENT);
+		itemCheckoutHeader.setAlignmentY(Component.CENTER_ALIGNMENT);
 
-		leftSidePanel.add(itemCheckoutHeader);
 		//this.addLayer(itemCheckoutHeader, 0);
 
 		JScrollPane itemScrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -73,9 +75,10 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 		itemScrollPane.setBackground(GUI_Color_Palette.DARK_BROWN);
 		itemScrollPane.setPreferredSize(new Dimension(this.width - 400, 240));
 		itemScrollPane.setBorder(BorderFactory.createMatteBorder(0, 20, 20, 20, GUI_Color_Palette.DARK_BLUE));
+		itemScrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
 		//this.addLayer(itemScrollPane, 0);
 
-		leftSidePanel.add(itemScrollPane);
+
 
 		this.scannedPanel = new GUI_JPanel();
 		scannedPanel.setLayout(new GridLayout(20, 1));
@@ -89,8 +92,11 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 		subtotalLabel.setFont(GUI_Fonts.TITLE);
 		totalPanelBg.setPreferredSize(new Dimension(this.width - 400, 80));
 		totalPanelBg.setBorder(BorderFactory.createMatteBorder(0, 20, 20, 20, GUI_Color_Palette.DARK_BLUE));
+		totalPanelBg.setAlignmentX(Component.CENTER_ALIGNMENT);
 		//this.addLayer(totalPanelBg, 0);
 
+		leftSidePanel.add(itemCheckoutHeader);
+		leftSidePanel.add(itemScrollPane);
 		leftSidePanel.add(totalPanelBg);
 
 		mainPanel.add(leftSidePanel, BorderLayout.CENTER);
