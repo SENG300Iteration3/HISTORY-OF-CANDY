@@ -76,7 +76,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			price = (double) barcodedProduct.getPrice();
 			this.addItemToCheckoutList(new Tuple<String, Double>(barcodedProduct.getDescription(), price));
 			this.updateCheckoutTotal(price);
-			
+
 			sc.updateExpectedCheckoutWeight(sc.weightOfItemScanned);
 			sc.updateWeightOfLastItemAddedToBaggingArea(sc.weightOfItemScanned);
 		} else {
@@ -160,13 +160,11 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		baggingAreaTimerEnd = System.currentTimeMillis();
 		// placing an item could potentially fail so allow for retries
 		// simulating a 40% chance of putting wrong item on the scale
-		
-		
+
 		if (random.nextDouble(0.0, 1.0) > PROBABILITY_OF_BAGGING_WRONG_ITEM) {
 			System.out.println("HERE");
 			weighSuccess = true;
 			sc.customer.placeItemInBaggingArea();
-			
 
 		} else {
 			// simulation weight discrepancy
@@ -263,23 +261,20 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		boolean isItemSelected = false;
 
 		barcodeIdentifier = searchBarcodedProductDatabase(strProductName);
-		System.out.println(barcodeIdentifier);
-
-		// Assumes that there are only two types of Products: (1) BarcodedProduct and
-		// (2) PLUCodedProduct
-		if (barcodeIdentifier == null) {
-			PLUCodeIdentifier = searchPLUCodedProductDatabase(strProductName);
-
-			// FIXME: Call add item by PLU code method
+		if (barcodeIdentifier != null) {
+			addScannedItemToCheckoutList(barcodeIdentifier);
 			isItemSelected = true;
 
-		} else {
-			addScannedItemToCheckoutList(barcodeIdentifier);
+		}
+		
+		PLUCodeIdentifier = searchPLUCodedProductDatabase(strProductName);
+		if (PLUCodeIdentifier != null) {
+			// FIXME: Call add item by PLU code method
 			isItemSelected = true;
 		}
 		if (isItemSelected) {
 			sc.goBackOnUI();
-			
+
 			inCatalog = false;
 		}
 	}
