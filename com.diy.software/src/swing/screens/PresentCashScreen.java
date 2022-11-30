@@ -13,6 +13,7 @@ import com.diy.software.listeners.CashControlListener;
 import com.unitedbankingservices.banknote.Banknote;
 import com.unitedbankingservices.coin.Coin;
 
+import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Fonts;
 import swing.styling.GUI_JButton;
 import swing.styling.GUI_JLabel;
@@ -41,20 +42,65 @@ public class PresentCashScreen extends Screen implements CashControlListener {
 		prompt.setPreferredSize(new Dimension(this.width - 200, 100));
 		this.addLayer(prompt, 0);
 
+		this.coinAvailability = new GUI_JLabel();
+		this.noteAvailability = new GUI_JLabel();
+		this.message = new GUI_JLabel();
+		coinAvailability.setFont(GUI_Fonts.FRANKLIN_BOLD);
+		noteAvailability.setFont(GUI_Fonts.FRANKLIN_BOLD);
+		message.setFont(GUI_Fonts.FRANKLIN_BOLD);
+		coinAvailability.setHorizontalAlignment(SwingConstants.LEFT);
+		noteAvailability.setHorizontalAlignment(SwingConstants.LEFT);
+		coinAvailability.setVerticalAlignment(SwingConstants.TOP);
+		noteAvailability.setVerticalAlignment(SwingConstants.TOP);
+		message.setHorizontalAlignment(SwingConstants.CENTER);
+		coinAvailability.setPreferredSize(new Dimension(this.width - 200, 100));
+		noteAvailability.setPreferredSize(new Dimension(this.width - 200, 100));
+		message.setPreferredSize(new Dimension(this.width - 200, 100));
+		coinAvailability.setForeground(GUI_Color_Palette.BLACK);
+		noteAvailability.setForeground(GUI_Color_Palette.BLACK);
+		message.setForeground(GUI_Color_Palette.BLACK);
+		this.addLayer(coinAvailability, 0);
+		this.addLayer(noteAvailability, 0);
+		this.addLayer(message, 0);
+		
 		this.backButton = makeCentralButton("BACK", this.width - 200, 100);
 		backButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				removeThis();
 				systemControl.getCashControl().disablePayments();
 				systemControl.goBackOnUI();
 			}
 		});
 		this.addLayer(backButton, 100);
 	}
+	
+	public void removeThis() {
+		systemControl.getCashControl().removeListener(this);
+	}
 
 	@Override
 	public void cashInserted(CashControl cc) {
-		this.prompt.setText("Please insert $" + systemControl.getItemsControl().getCheckoutTotal());
+		this.prompt.setText("Please insert $" + fix(systemControl.getItemsControl().getCheckoutTotal()));
+	}
+	
+	public String fix(double d) { //fixes a bug where more than 2 decimals of the remaining cost will show up
+		String n = String.valueOf(d);
+		String ret = "";
+		int l = -1;
+		for(char i : n.toCharArray()) {
+			ret += i;
+			if(l == 0) {
+				break;
+			}
+			if(i == '.') {
+				l = 2;
+			}
+			if(l != -1) {
+				l--;
+			}
+		}
+		return ret;
 	}
 
 	@Override
@@ -77,7 +123,7 @@ public class PresentCashScreen extends Screen implements CashControlListener {
 
 	@Override
 	public void noteInsertionDisabled(CashControl cc) {
-		this.coinAvailability.setText("Banknotes are currently disabled.");
+		this.noteAvailability.setText("Banknotes are currently disabled.");
 		
 	}
 
@@ -95,8 +141,9 @@ public class PresentCashScreen extends Screen implements CashControlListener {
 		if(b != null) {
 			returnedCash += b.getValue();
 		}
-		message.setText("Input cash was rejected. You recieved " + returnedCash + " back from the machine");
+		message.setText("Input cash was rejected. You recieved $" + returnedCash + " back from the machine");
 		lastRecievedCash = returnedCash;
+		System.out.println("Input cash was rejected. You recieved $" + returnedCash + " back from the machine");
 	}
 
 	@Override
@@ -115,7 +162,8 @@ public class PresentCashScreen extends Screen implements CashControlListener {
 				returnedCash += i.getValue();
 			}
 		}
-		message.setText("You recieved " + returnedCash + " change from the machine");
+		message.setText("You recieved $" + returnedCash + " as change from the machine");
 		lastRecievedCash = returnedCash;
+		System.out.println("You recieved $" + returnedCash + " as change from the machine");
 	}
 }

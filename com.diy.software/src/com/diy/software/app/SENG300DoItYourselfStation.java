@@ -7,12 +7,14 @@ import com.diy.software.controllers.PaneControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.fakedata.FakeDataInitializer;
 
+import ca.powerutility.PowerGrid;
 import swing.frames.AttendantStationGUI;
 import swing.frames.CustomerActionsGUI;
 import swing.frames.CustomerStationGUI;
 
 public class SENG300DoItYourselfStation {
   public static void main(String[] args) {
+	  PowerGrid.engageUninterruptiblePowerSource();
     int totalNumberOfStations;
     try {
       totalNumberOfStations = Integer.parseInt(args[0]);

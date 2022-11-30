@@ -32,7 +32,6 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 	private ArrayList<CashControlListener> listeners;
 	private boolean coinsFull;
 	private boolean notesFull;
-	private ArrayList<Integer> notesToReturn;
 
 	public CashControl(StationControl sc) {
 		this.sc = sc;
@@ -46,8 +45,6 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
     
 		coinsFull = false;
 		notesFull = false;
-    
-		notesToReturn = new ArrayList<Integer>();
 	}
 
 	public void addListener(CashControlListener listener) {
@@ -149,9 +146,10 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 			sc.getItemsControl().updateCheckoutTotal(-(double)value/100.0);
 			cashInserted();
 		}else {
-			returnChange((value/100.0)-current);
 			sc.getItemsControl().updateCheckoutTotal(-current);
 			cashInserted();
+			returnChange((value/100.0)-current);
+			disablePayments();
 		}
 	}
 
@@ -173,9 +171,9 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 			sc.getItemsControl().updateCheckoutTotal(-value);
 			cashInserted();
 		}else {
-			returnChange(value-current);
 			sc.getItemsControl().updateCheckoutTotal(-current);
 			cashInserted();
+			returnChange(value-current);
 			disablePayments();
 		}
 	}
@@ -188,7 +186,7 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 	 *                  The device on which the event occurred.
 	 */
 	@Override
-  	public void invalidBanknoteDetected(BanknoteValidator validator) {
+  	public void banknoteEjected(BanknoteInsertionSlot slot) {
 		cashRejected();
 	}
 
@@ -312,14 +310,14 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 			int n = Math.min(Math.min((MAX_q-q), capacity), (int)((change-returned)/((double)value)));
 			
 			returned += value*n;
-			returnCoins.set(i, n);
+			returnBills.set(i, n);
 			q += n;
 		}
 		
 		q = 0;
 		MAX_q = 25;
 		for(int i = 0; i < coins.size() && q < MAX_q; i++) { //gets how many coins should be returned
-			if((change-returned) < coins.get(coins.size()-1)) { //if the smallest coin is too big to be used as change
+			if((change-returned) < coins.get(coins.size()-1)/100.0) { //if the smallest coin is too big to be used as change
 				break;
 			}
 			
@@ -329,7 +327,7 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 			
 			int n = Math.min(Math.min((MAX_q-q), capacity), (int)((change-returned)/(((double)value)/100.0)));
 			
-			returned += value*n;
+			returned += (((double)value)/100.0)*n;
 			returnCoins.set(i, n);
 			q += n;
 		}
