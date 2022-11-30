@@ -72,6 +72,7 @@ public class StationControl
 	private CashControl cc;
 	private PinPadControl ppc;
 	private PaymentControl pc;
+	private	ReceiptControl rc;
 
 	private boolean isLocked = false;
 	public String memberName;
@@ -102,6 +103,7 @@ public class StationControl
 		station.baggingArea.register(this);
 		station.cardReader.register(this);
 		station.reusableBagDispenser.register(this);
+		rc = new ReceiptControl(this);
 		
 
 		startUp();
@@ -193,6 +195,10 @@ public class StationControl
 	public BagDispenserControl getBagDispenserControl() {
 		return bdc;
 	}
+	public ReceiptControl getReceiptControl() {
+		return rc;
+	}
+
 
 	public PinPadControl getPinPadControl() {
 		return ppc;
