@@ -180,7 +180,7 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	}
 
 	@Override
-	public void loggedIn() {
+	public void loggedIn(Boolean isLoggedIn) {
 		// TODO Auto-generated method stub
 		
 	}

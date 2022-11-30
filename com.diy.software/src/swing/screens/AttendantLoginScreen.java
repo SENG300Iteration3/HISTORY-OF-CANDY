@@ -1,6 +1,7 @@
-package swing.panes;
+package swing.screens;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -13,7 +14,6 @@ import javax.swing.JTextField;
 
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.StationControl;
-import com.diy.software.listeners.AttendantControlListener;
 
 import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Fonts;
@@ -22,13 +22,14 @@ import swing.styling.GUI_JLabel;
 import swing.styling.GUI_JPanel;
 import swing.styling.Screen;
 
-public class AttendantLoginPane extends Screen {
+public class AttendantLoginScreen extends Screen {
 	
 	private StationControl sc;
 	private AttendantControl ac;
 	GUI_JButton loginButton;
 	private JTextField loginInfo;
 	private JLabel loginTitle;
+	private JLabel loginFail;
 	private int width = 450;
 	private int height = 50;
 	private int overallMargin = 10;
@@ -37,7 +38,7 @@ public class AttendantLoginPane extends Screen {
 	
 	private static String HeaderText = "Attendant Login Screen".toUpperCase();
 	
-	public AttendantLoginPane(StationControl sc) {
+	public AttendantLoginScreen(StationControl sc) {
 		super(sc, HeaderText);
 		this.sc = sc;
 		ac = sc.getAttendantControl();
@@ -56,6 +57,19 @@ public class AttendantLoginPane extends Screen {
 		
 		initalizeLoginButton();
 		
+		loginFail = new GUI_JLabel();
+		loginFail.setFont(GUI_Fonts.SUB_HEADER);
+		loginFail.setHorizontalAlignment(JLabel.CENTER);
+		loginFail.setForeground(Color.RED);
+		
+		addLayer(loginFail, 0);
+		
+		
+	}
+	
+	public void loginFail() {
+		System.out.println("failure");
+		loginFail.setText("Incorrect login Information".toUpperCase());
 		
 	}
 	

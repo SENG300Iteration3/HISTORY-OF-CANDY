@@ -10,9 +10,9 @@ import com.diy.software.controllers.PaneControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.PaneControlListener;
 
-import swing.panes.AttendantLoginPane;
 import swing.panes.AttendantPane;
 import swing.panes.AttendantStationPane;
+import swing.screens.AttendantLoginScreen;
 import swing.styling.GUI_Constants;
 import swing.styling.GUI_JFrame;
 

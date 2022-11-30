@@ -9,6 +9,7 @@ import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.AttendantControlListener;
 
 import swing.frames.AttendantStationGUI;
+import swing.screens.AttendantLoginScreen;
 import swing.styling.Screen;
 
 public class AttendantPane implements AttendantControlListener {
@@ -17,7 +18,7 @@ public class AttendantPane implements AttendantControlListener {
 	private JPanel rooPanel, currentPanel;
 	private ArrayList<JPanel> panelStack;
 	
-	private AttendantLoginPane loginPane;
+	private AttendantLoginScreen loginPane;
 	private AttendantStationPane stationPane;
 	AttendantStationGUI asGUI;
 	
@@ -29,7 +30,7 @@ public class AttendantPane implements AttendantControlListener {
 		this.sc.getAttendantControl().addListener(this);
 		
 		this.panelStack = new ArrayList<>();
-		this.loginPane = new AttendantLoginPane(sc);
+		this.loginPane = new AttendantLoginScreen(sc);
 		this.stationPane = new AttendantStationPane(sc);
 		
 		this.currentPanel = new JPanel();
@@ -103,8 +104,16 @@ public class AttendantPane implements AttendantControlListener {
 	}
 
 	@Override
-	public void loggedIn() {
+	public void loggedIn(Boolean isLoggedIn) {
+		if (isLoggedIn) {
 		asGUI.loginTabs();
+		}else if (currentPanel.equals(loginPane.getRootPanel())){
+		
+			loginPane.loginFail();
+		}else if (currentPanel.equals(stationPane.getRootPanel())){
+			//logout
+		}
+		
 	}
 	
 	public void logInRequested() {

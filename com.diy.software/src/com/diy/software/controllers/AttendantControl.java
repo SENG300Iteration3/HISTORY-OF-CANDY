@@ -23,10 +23,8 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	public static final HashMap<String,String> loginMap = new HashMap<String,String>();
 	
 	public void login(String username, String password) {
-		if (Objects.equals(loginMap.get(username), password) && password != null) {
-			for (AttendantControlListener l : listeners) {
-				l.loggedIn();
-			}
+		for (AttendantControlListener l : listeners) {
+			l.loggedIn(Objects.equals(loginMap.get(username), password) && password != null);
 		}
 	}
 
