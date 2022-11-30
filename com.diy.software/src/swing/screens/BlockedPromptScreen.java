@@ -23,7 +23,7 @@ public class BlockedPromptScreen extends Screen {
 		requestNoBaggingBtn.setBorder(BorderFactory.createMatteBorder(10, 20, 10, 20, GUI_Color_Palette.DARK_BLUE));
 		requestNoBaggingBtn.setPreferredSize(new Dimension(400, 100));
 
-		this.addLayer(requestNoBaggingBtn, 70);
+		this.addLayer(requestNoBaggingBtn, 75);
 
 
 

@@ -274,7 +274,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 	@Override
 	public void awaitingItemToBeRemoved(ItemsControl itemsControl, String updateMessage) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
