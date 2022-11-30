@@ -18,7 +18,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	private StationControl sc;
 	private ArrayList<AttendantControlListener> listeners;
 	String attendantNotifications;
-	private boolean loggedIn;
+	
 	
 	public static final HashMap<String,String> loginMap = new HashMap<String,String>();
 	

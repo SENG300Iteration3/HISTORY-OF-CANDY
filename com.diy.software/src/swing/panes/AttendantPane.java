@@ -8,6 +8,7 @@ import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.AttendantControlListener;
 
+import swing.frames.AttendantStationGUI;
 import swing.styling.Screen;
 
 public class AttendantPane implements AttendantControlListener {
@@ -18,12 +19,13 @@ public class AttendantPane implements AttendantControlListener {
 	
 	private AttendantLoginPane loginPane;
 	private AttendantStationPane stationPane;
+	AttendantStationGUI asGUI;
 	
-	public AttendantPane(StationControl sc) {
-		this.sc = sc;
-
+	public AttendantPane(StationControl sc, AttendantStationGUI asGUI) {
 		
-		//this.sc.register(this);
+		this.sc = sc;
+		this.asGUI = asGUI;
+
 		this.sc.getAttendantControl().addListener(this);
 		
 		this.panelStack = new ArrayList<>();
@@ -102,9 +104,11 @@ public class AttendantPane implements AttendantControlListener {
 
 	@Override
 	public void loggedIn() {
+		asGUI.loginTabs();
+	}
+	
+	public void logInRequested() {
 		addScreenToStack(stationPane);
-		
-		
 	}
 
 }
