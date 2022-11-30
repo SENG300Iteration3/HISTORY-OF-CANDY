@@ -7,6 +7,7 @@ import java.util.Objects;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 import com.diy.software.util.Tuple;
 
@@ -31,6 +32,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 
 	protected GUI_JButton requestNoBaggingBtn;
 	protected GUI_JButton addOwnBagsBtn;
+	protected GUI_JButton removeItemBtn;
 
 	protected GUI_JButton purchaseOwnBagsBtn;
 	protected GUI_JButton addItemByPLUBtn;
@@ -118,23 +120,32 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 
 		rightSidePanel.setBorder(new EmptyBorder(0, 50, 0, 0));
 
+
 		this.addOwnBagsBtn = makeButton("Add Own Bags", rightSidePanel);
 		addOwnBagsBtn.setMaximumSize(new Dimension(360, itemCheckoutHeader.getMinimumSize().height));
 
-		rightSidePanel.add(Box.createRigidArea(new Dimension(0,30)));
+		//rightSidePanel.add(Box.createRigidArea(new Dimension(0,10)));
 
 		this.requestNoBaggingBtn = makeButton("Request No Bag", rightSidePanel);
 		requestNoBaggingBtn.setMaximumSize(new Dimension(360, itemCheckoutHeader.getMinimumSize().height));
 
-		rightSidePanel.add(Box.createRigidArea(new Dimension(0,30)));
+		//rightSidePanel.add(Box.createRigidArea(new Dimension(0,10)));
 
 		this.purchaseOwnBagsBtn = makeButton("Purchase Bags", rightSidePanel);
 		purchaseOwnBagsBtn.setMaximumSize(new Dimension(360, itemCheckoutHeader.getMinimumSize().height));
 
-		rightSidePanel.add(Box.createRigidArea(new Dimension(0,30)));
+		//rightSidePanel.add(Box.createRigidArea(new Dimension(0,10)));
 
 		this.addItemByPLUBtn = makeButton("Add Item by PLU", rightSidePanel);
 		addItemByPLUBtn.setMaximumSize(new Dimension(360, itemCheckoutHeader.getMinimumSize().height));
+
+		//rightSidePanel.add(Box.createRigidArea(new Dimension(0,10)));
+
+		this.removeItemBtn = makeButton("Remove Item", rightSidePanel);
+		removeItemBtn.setMaximumSize(new Dimension(360, itemCheckoutHeader.getMinimumSize().height));
+
+
+		//rightSidePanel.setBackground(GUI_Color_Palette.DARK_BLUE);
 
 		this.addLayer(mainPanel, 0);
 
