@@ -118,6 +118,7 @@ public class CustomerWalletPanel extends JPanel implements WalletControlListener
 	@Override
 	public void membershipCardInputEnabled(WalletControl wc) {
 		membershipCardInputEnabled = true;
+		updateButtonStates();
 	}
 	
 	@Override
