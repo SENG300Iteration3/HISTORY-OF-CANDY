@@ -186,6 +186,11 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 	@Override
 	public void attendantPermitStationUse(AttendantControl ac) {
 		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public void loggedIn() {
+		// TODO Auto-generated method stub
 		
 	}
 }
