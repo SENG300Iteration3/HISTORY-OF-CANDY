@@ -190,6 +190,8 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 		for (JButton button : numberPadButtons) {
 			button.setEnabled(false);
 		}
+		correctButton.setEnabled(false);
+		submitButton.setEnabled(false);
 		
 	}
 }
