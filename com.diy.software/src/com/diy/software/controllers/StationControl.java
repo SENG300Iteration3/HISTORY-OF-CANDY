@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.DoItYourselfStation;
+import com.diy.hardware.Product;
 import com.diy.hardware.external.CardIssuer;
 import com.diy.hardware.external.ProductDatabases;
 import com.diy.simulation.Customer;
@@ -28,6 +29,7 @@ import com.jimmyselectronics.virgilio.ElectronicScale;
 import com.jimmyselectronics.virgilio.ElectronicScaleListener;
 
 import ca.powerutility.NoPowerException;
+import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
 
 /**
  * SystemControl is a class that acts as an intermediary between listeners
@@ -445,6 +447,8 @@ public class StationControl
 	// FIXME: only barcoded products have barcodes, product only have price/weight
 	@Override
 	public void barcodeScanned(BarcodeScanner barcodeScanner, Barcode barcode) {
+		Product product = findProduct(barcode);
+		checkInventory(product);
 		weightOfItemScanned = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
 		// Add the barcode to the ArrayList within itemControl
 		this.ic.addScannedItemToCheckoutList(barcode);
@@ -456,6 +460,26 @@ public class StationControl
 		this.blockStation();
 		// Trigger the GUI to display "place the scanned item in the Bagging Area"
 	}
+	
+	private void checkInventory(Product product) {
+		if(ProductDatabases.INVENTORY.containsKey(product) && ProductDatabases.INVENTORY.get(product) >= 1) {
+			ProductDatabases.INVENTORY.put(product, ProductDatabases.INVENTORY.get(product)-1); //updates INVENTORY with new total
+		}else {
+			// TODO: inform customer and attendant
+			System.out.print("Out of stock");
+		}
+	}
+	
+	private BarcodedProduct findProduct(Barcode Barcode) throws NullPointerSimulationException {
+    	if(ProductDatabases.BARCODED_PRODUCT_DATABASE.containsKey(Barcode)) {
+            return ProductDatabases.BARCODED_PRODUCT_DATABASE.get(Barcode);        
+        }
+    	else {
+    		// TODO: Inform customer station
+    		System.out.println("Cannot find the product. Please try again or ask for assistant!");
+    		throw new NullPointerSimulationException();
+    	}
+    }
 
 	/**
 	 * Compares the expected weight after adding an item to the actual weight being
