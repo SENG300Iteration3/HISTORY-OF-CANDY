@@ -14,7 +14,7 @@ import swing.frames.CustomerStationGUI;
 
 public class SENG300DoItYourselfStation {
   public static void main(String[] args) {
-	  PowerGrid.engageUninterruptiblePowerSource();
+	PowerGrid.engageUninterruptiblePowerSource();
     int totalNumberOfStations;
     try {
       totalNumberOfStations = Integer.parseInt(args[0]);
