@@ -178,4 +178,10 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		approveNoBagging.setEnabled(false);
 		weightDescrepancyMssg.setText("");
 	}
+
+	@Override
+	public void loggedIn() {
+		// TODO Auto-generated method stub
+		
+	}
 }

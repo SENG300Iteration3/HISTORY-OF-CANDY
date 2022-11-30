@@ -665,6 +665,12 @@ public class ItemsControlTest {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public void loggedIn() {
+			// TODO Auto-generated method stub
+			
+		}
     }
 
 }

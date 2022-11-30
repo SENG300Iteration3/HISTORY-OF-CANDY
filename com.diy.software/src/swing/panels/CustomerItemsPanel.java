@@ -213,4 +213,10 @@ public class CustomerItemsPanel extends JPanel
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void loggedIn() {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -116,6 +116,7 @@ public class StationControl
 		this.fakeData.addCardData();
 		this.fakeData.addProductAndBarcodeData();
 		this.fakeData.addFakeMembers();
+		this.fakeData.addFakeAttendantLogin();
 
 		// for (Card c: this.fakeData.getCards()) customer.wallet.cards.add(c);
 		// for (Item i: this.fakeData.getItems()) customer.shoppingCart.add(i);

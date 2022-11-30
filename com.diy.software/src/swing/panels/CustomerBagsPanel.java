@@ -177,4 +177,10 @@ public class CustomerBagsPanel extends JPanel
 		
 	}
 
+	@Override
+	public void loggedIn() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

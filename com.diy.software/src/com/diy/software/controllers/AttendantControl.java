@@ -18,11 +18,16 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	private StationControl sc;
 	private ArrayList<AttendantControlListener> listeners;
 	String attendantNotifications;
+	private boolean loggedIn;
 	
 	public static final HashMap<String,String> loginMap = new HashMap<String,String>();
 	
-	public static boolean login(String username, String password) {
-		return Objects.equals(loginMap.get(username), password) && password != null;
+	public void login(String username, String password) {
+		if (Objects.equals(loginMap.get(username), password) && password != null) {
+			for (AttendantControlListener l : listeners) {
+				l.loggedIn();
+			}
+		}
 	}
 
 	public AttendantControl(StationControl sc) {

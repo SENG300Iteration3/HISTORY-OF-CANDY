@@ -427,6 +427,12 @@ public class TestAttendantControl {
 			ini = true;
 			
 		}
+
+		@Override
+		public void loggedIn() {
+			// TODO Auto-generated method stub
+			
+		}
     }
 
 

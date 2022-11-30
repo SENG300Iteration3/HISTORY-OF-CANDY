@@ -146,4 +146,10 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 		approveNoBagging.setEnabled(false);
 		weightDescrepancyMssg.setText("");
 	}
+
+	@Override
+	public void loggedIn() {
+		// TODO Auto-generated method stub
+		
+	}
 }

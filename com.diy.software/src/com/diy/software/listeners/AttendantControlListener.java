@@ -34,5 +34,7 @@ public interface AttendantControlListener {
 	 * returns the attendant station to initial starting state when stations have no issues
 	 */
 	public void initialState();
+
+	public void loggedIn();
 		
 }
