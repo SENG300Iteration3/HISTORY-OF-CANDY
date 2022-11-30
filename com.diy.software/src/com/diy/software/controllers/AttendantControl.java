@@ -23,7 +23,6 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	private StationControl sc;
 	private ArrayList<AttendantControlListener> listeners;
 	private Currency currency;
-//	private BanknoteStorageUnit banknoteUnit;
 	String attendantNotifications;
 
 	public AttendantControl(StationControl sc) {
