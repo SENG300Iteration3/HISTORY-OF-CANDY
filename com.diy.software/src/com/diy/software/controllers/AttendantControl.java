@@ -31,7 +31,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	private CoinStorageUnit unit;
 	private Currency currency;
 	String attendantNotifications;
-	private boolean loggedIn;
+	
 	
 	public static final HashMap<String,String> loginMap = new HashMap<String,String>();
 	
