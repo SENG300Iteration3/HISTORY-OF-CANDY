@@ -104,7 +104,7 @@ public class AttendantPane implements AttendantControlListener {
 	}
 
 	@Override
-	public void loggedIn(Boolean isLoggedIn) {
+	public void loggedIn(boolean isLoggedIn) {
 		if (isLoggedIn) {
 		asGUI.loginTabs();
 		}else if (currentPanel.equals(loginPane.getRootPanel())){

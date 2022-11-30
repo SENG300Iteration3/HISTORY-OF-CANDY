@@ -33,11 +33,11 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	String attendantNotifications;
 	
 	
-	public static final HashMap<String,String> loginMap = new HashMap<String,String>();
+	public static final ArrayList<String> logins = new ArrayList<String>();
 	
-	public void login(String username, String password) {
+	public void login(String password) {
 		for (AttendantControlListener l : listeners) {
-			l.loggedIn(Objects.equals(loginMap.get(username), password) && password != null);
+			l.loggedIn(logins.contains(password));
 		}
 	}
 

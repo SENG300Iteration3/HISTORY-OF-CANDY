@@ -188,7 +188,7 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 	}
 
 	@Override
-	public void loggedIn(Boolean isLoggedIn) {
+	public void loggedIn(boolean isLoggedIn) {
 		// TODO Auto-generated method stub
 
 	}

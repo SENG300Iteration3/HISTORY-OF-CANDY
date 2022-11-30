@@ -664,11 +664,6 @@ public class ItemsControlTest {
 			noBagging = true;
 		}
 
-		public void loggedIn() {
-			// TODO Auto-generated method stub
-
-		}
-
 		@Override
 		public void lowInk(AttendantControl ac, String message) {
 			// TODO Auto-generated method stub
@@ -701,6 +696,12 @@ public class ItemsControlTest {
 
 		@Override
 		public void coinIsLowState(CoinStorageUnit unit, int amount) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void loggedIn(boolean isLoggedIn) {
 			// TODO Auto-generated method stub
 			
 		}

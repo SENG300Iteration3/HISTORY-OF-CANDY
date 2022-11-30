@@ -87,10 +87,10 @@ public class FakeDataInitializer {
 	}
 	
 	public void addFakeAttendantLogin() {
-		AttendantControl.loginMap.put("password", "password");
-		AttendantControl.loginMap.put("A2", "wordpass");
-		AttendantControl.loginMap.put("A3", "Password1");
-		AttendantControl.loginMap.put("A4", "12345");
+		AttendantControl.logins.add("password");
+		AttendantControl.logins.add("wordpass");
+		AttendantControl.logins.add("Password1");
+		AttendantControl.logins.add("12345");
 	}
 	
 	public void addCardData() {
