@@ -169,7 +169,7 @@ public class WalletControl implements ActionListener, CardReaderListener {
 		String c = e.getActionCommand();
 		try {
 			switch (c) {
-			case "cc3":
+			case "giftcard":
 				selectCard("GiftCard");
 				break;
 			case "cc2":
