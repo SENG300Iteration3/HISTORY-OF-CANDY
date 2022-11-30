@@ -35,6 +35,6 @@ public interface AttendantControlListener {
 	 */
 	public void initialState();
 
-	void loggedIn(Boolean isLoggedIn);
+	public void loggedIn(boolean isLoggedIn);
 		
 }

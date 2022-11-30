@@ -667,7 +667,7 @@ public class ItemsControlTest {
 		}
 
 		@Override
-		public void loggedIn() {
+		public void loggedIn(boolean isLoggedIn) {
 			// TODO Auto-generated method stub
 			
 		}

@@ -80,6 +80,34 @@ public class TestAttendantControl {
     	ac.approveBagsAdded();
     	assertFalse(als.attendantBags);
     }
+    
+    
+    @Test
+	public void testLoginPass() {
+    	AttendantControl.logins.add("password");
+    	ac.addListener(als);
+    	als.isLoggedIn = false;
+    	ac.login("password");
+		assertTrue(als.isLoggedIn);
+	}
+	
+	@Test
+	public void testLoginWrongPassword() {
+		AttendantControl.logins.add("password");
+		ac.addListener(als);
+		als.isLoggedIn = true;
+		ac.login("pass");
+		assertFalse(als.isLoggedIn);
+	}
+	
+	@Test
+	public void testLoginWrongNull() {
+		AttendantControl.logins.add("password");
+		ac.addListener(als);
+		als.isLoggedIn = true;
+		ac.login(null);
+		assertFalse(als.isLoggedIn);
+	}
 
     @Test
     public void testAddPaper() throws OverloadException {
@@ -382,6 +410,7 @@ public class TestAttendantControl {
 		public boolean noBagging = false;
 		String testMsg = "";
 		boolean ini = false;
+		boolean isLoggedIn = false;
     	
     	@Override
     	public void attendantApprovedBags(AttendantControl ac) {
@@ -429,8 +458,8 @@ public class TestAttendantControl {
 		}
 
 		@Override
-		public void loggedIn() {
-			// TODO Auto-generated method stub
+		public void loggedIn(boolean isLoggedIn) {
+			this.isLoggedIn = isLoggedIn;
 			
 		}
     }

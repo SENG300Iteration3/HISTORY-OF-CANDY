@@ -215,7 +215,7 @@ public class CustomerItemsPanel extends JPanel
 	}
 
 	@Override
-	public void loggedIn(Boolean isLoggedIn) {
+	public void loggedIn(boolean isLoggedIn) {
 		// TODO Auto-generated method stub
 		
 	}

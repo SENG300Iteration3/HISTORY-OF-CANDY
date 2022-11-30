@@ -118,7 +118,7 @@ public class AttendantLoginScreen extends Screen {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			ac.login(loginInfo.getText(), "password");
+			ac.login(loginInfo.getText());
 		}
 		
 	}
