@@ -240,128 +240,147 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 		coinsDisabled();
 	}
 
-	/**
-	 * Announces that the storage unit has been emptied of coins. Used to simulate
-	 * direct, physical unloading of the unit.
-	 * 
-	 * @param unit
-	 *             The storage unit where the event occurred.
-	 */
-	@Override
-	public void coinsUnloaded(CoinStorageUnit unit) {
-		coinsFull = false;
-	}
-  
-  
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		String c = e.getActionCommand();
-		try {
-			if (c.startsWith("d")) {
-				Banknote banknote = new Banknote(Currency.getInstance("CAD"), Long.parseLong(c.split(" ")[1]));
-				if (sc.station.banknoteInput.isActivated()) {
-					sc.station.banknoteInput.receive(banknote);
-				} else {
-					System.out.println("Banknote storage unit is full");
-				}
-			}else if (c.startsWith("c")) {
-				Coin coin = new Coin(Currency.getInstance("CAD"), Long.parseLong(c.split(" ")[1]));
-				if (sc.station.coinSlot.isActivated()) {
-					sc.station.coinSlot.receive(coin);
-				} else {
-					System.out.println("Coin storage unit is full");
-				}
-			}
-		} catch (Exception ex) {
-			System.err.println("Error: " + ex.getMessage());
-		}
-	}
-  
-	public void returnChange(double change) {
-		ArrayList<Long> coins = new ArrayList<Long>(); //arraylist of the coin dispensers
-		ArrayList<Integer> bills = new ArrayList<Integer>(); //arraylist of the bank note dispensers
-		ArrayList<Integer> returnCoins = new ArrayList<Integer>(); //arraylist of how much a given coin dispenser needs to return
-		ArrayList<Integer> returnBills = new ArrayList<Integer>(); //arraylist of how much a given banknote dispenser needs to return
-		
-		double returned = 0;
-		
-		for(long x : sc.station.coinDenominations) { //gets all of the coin dispensers in the machine
-			coins.add(x);
-			returnCoins.add(0);
-		}
-		for(int x : sc.station.banknoteDenominations) { //gets all of the banknote dispensers in the machine
-			bills.add(x);
-			returnBills.add(0);
-		}
-		Collections.sort(coins, Collections.reverseOrder()); //sorts them from highest to lowest value
-		Collections.sort(bills, Collections.reverseOrder()); //sorts them from highest to lowest value
-		
-		int q = 0;
-		int MAX_q = 10;
-		for(int i = 0; i < bills.size() && q < MAX_q; i++) { //gets how many notes should be returned
-			if((change-returned) < bills.get(bills.size()-1)) { //if the smallest note is too big to be used as change
-				break;
-			}
-			
-			int value = bills.get(i);
-			
-			int capacity = sc.station.banknoteDispensers.get(value).size();
-			
-			int n = Math.min(Math.min((MAX_q-q), capacity), (int)((change-returned)/((double)value)));
-			
-			returned += value*n;
-			returnBills.set(i, n);
-			q += n;
-		}
-		
-		q = 0;
-		MAX_q = 25;
-		for(int i = 0; i < coins.size() && q < MAX_q; i++) { //gets how many coins should be returned
-			if((change-returned) < coins.get(coins.size()-1)/100.0) { //if the smallest coin is too big to be used as change
-				break;
-			}
-			
-			long value = coins.get(i);
-			
-			int capacity = sc.station.coinDispensers.get(value).size();
-			
-			int n = Math.min(Math.min((MAX_q-q), capacity), (int)((change-returned)/(((double)value)/100.0)));
-			
-			returned += (((double)value)/100.0)*n;
-			returnCoins.set(i, n);
-			q += n;
-		}
-		
-		for(int i = 0; i < bills.size(); i++) { //returns all of the bills that you have accounted for
-			int times = returnBills.get(i);
-			int value = bills.get(i);
-			while(times > 0) {
-					try {
-						sc.station.banknoteDispensers.get(value).emit();
-					} catch (OutOfCashException | DisabledException | TooMuchCashException e) {
-						break;
-					}
-				times--;
-			}
-		}
-		
-		sc.station.banknoteOutput.dispense(); //dispenses all banknotes
-		
-		for(int i = 0; i < coins.size(); i++) { //returns all of the coins that you have accounted for
-			int times = returnCoins.get(i);
-			long value = coins.get(i);
-			while(times > 0) {
-				try {
-					sc.station.coinDispensers.get(value).emit();
-				} catch (OutOfCashException | DisabledException | TooMuchCashException e) {
-					break;
-				}
-				times--;
-			}
-		}
-		
-		changeReturned();
-	}
+  /**
+   * An event announcing that the indicated coin has been detected and determined
+   * to be valid.
+   * 
+   * @param validator
+   *                  The device on which the event occurred.
+   * @param value
+   *                  The value of the coin.
+   */
+
+  @Override
+  public void validCoinDetected(CoinValidator validator, long value) {
+    lastInsertedCoin = value;
+    try{
+      sc.station.coinStorage.receive(new Coin(Currency.getInstance("CAD"), value));
+    } catch (TooMuchCashException e) {
+      e.printStackTrace();
+    } catch (DisabledException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * An event announcing that the indicated banknote has been detected and
+   * determined to be valid.
+   * 
+   * @param validator
+   *                  The device on which the event occurred.
+   * @param currency
+   *                  The kind of currency of the inserted banknote.
+   * @param value
+   *                  The value of the inserted banknote.
+   */
+  @Override
+  public void validBanknoteDetected(BanknoteValidator validator, Currency currency, long value) {
+    lastInsertedBanknote = value;
+    try {
+      sc.station.banknoteStorage.receive(new Banknote(Currency.getInstance("CAD"), value));
+    } catch (DisabledException e) {
+      e.printStackTrace();
+    } catch (TooMuchCashException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * An event announcing that the indicated banknote has been detected and
+   * determined to be invalid.
+   * 
+   * @param validator
+   *                  The device on which the event occurred.
+   */
+  @Override
+  public void invalidBanknoteDetected(BanknoteValidator validator) {
+
+  }
+
+  /**
+   * An event announcing that a coin has been detected and determined to be
+   * invalid.
+   * 
+   * @param validator
+   *                  The device on which the event occurred.
+   */
+  @Override
+  public void invalidCoinDetected(CoinValidator validator) {
+
+  }
+
+  /**
+   * Announces that the indicated coin dispenser is full of coins.
+   * 
+   * @param dispenser
+   *                  The dispenser where the event occurred.
+   */
+
+  /**
+   * Announces that the indicated banknote storage unit is full of banknotes.
+   * 
+   * @param unit
+   *             The storage unit where the event occurred.
+   */
+  @Override
+  public void banknotesFull(BanknoteStorageUnit unit) {
+  }
+
+  /**
+   * Announces that the indicated storage unit has been loaded with banknotes.
+   * Used to simulate direct, physical loading of the unit.
+   * 
+   * @param unit
+   *             The storage unit where the event occurred.
+   */
+  @Override
+  public void banknotesLoaded(BanknoteStorageUnit unit) {
+  }
+
+  /**
+   * Announces that the storage unit has been emptied of banknotes. Used to
+   * simulate direct, physical unloading of the unit.
+   * 
+   * @param unit
+   *             The storage unit where the event occurred.
+   */
+  @Override
+  public void banknotesUnloaded(BanknoteStorageUnit unit) {
+  }
+
+  /**
+   * Announces that the indicated coin storage unit is full of coins.
+   * 
+   * @param unit
+   *             The storage unit where the event occurred.
+   */
+  @Override
+  public void coinsFull(CoinStorageUnit unit) {
+    System.out.println("Coin storage Unit is too full of coins >//<");
+  }
+
+  /**
+   * Announces that the indicated storage unit has been loaded with coins. Used to
+   * simulate direct, physical loading of the unit.
+   * 
+   * @param unit
+   *             The storage unit where the event occurred.
+   */
+  @Override
+  public void coinsLoaded(CoinStorageUnit unit) {
+  }
+
+  /**
+   * Announces that the storage unit has been emptied of coins. Used to simulate
+   * direct, physical unloading of the unit.
+   * 
+   * @param unit
+   *             The storage unit where the event occurred.
+   */
+  @Override
+  public void coinsUnloaded(CoinStorageUnit unit) {
+    System.out.println("Coin storage Unit emptied of coins >//<");
+  }
 
   // STUFF FOR CHANGE (leftover money kind)
 
