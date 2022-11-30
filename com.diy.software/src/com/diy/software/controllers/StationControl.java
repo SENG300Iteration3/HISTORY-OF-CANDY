@@ -191,6 +191,7 @@ public class StationControl
 			while (loop) {
 				try {
 					this.station.handheldScanner.disable();
+					this.station.mainScanner.disable();
 					this.station.cardReader.disable();
 					for (StationControlListener l : listeners) {
 						l.systemControlLocked(this, true);
@@ -217,6 +218,7 @@ public class StationControl
 			while (loop) {
 				try {
 					this.station.handheldScanner.enable();
+					this.station.mainScanner.enable();
 					this.station.cardReader.enable();
 					for (StationControlListener l : listeners)
 						l.systemControlLocked(this, false);
