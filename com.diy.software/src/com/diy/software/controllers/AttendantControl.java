@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.List;
 
 import com.diy.software.listeners.AttendantControlListener;
 import com.jimmyselectronics.AbstractDevice;
@@ -22,10 +23,12 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	private StationControl sc;
 	private ArrayList<AttendantControlListener> listeners;
 	private Currency currency;
+//	private BanknoteStorageUnit banknoteUnit;
 	String attendantNotifications;
 
 	public AttendantControl(StationControl sc) {
 		this.sc = sc;
+//		this.banknoteUnit = sc.station.banknoteStorage;
 		this.listeners = new ArrayList<>();
 	}
 
@@ -96,14 +99,22 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 * 
 	 * @param unit
 	 * 		the unit that needs to be updated
+	 * @throws SimulationException
+	 * 
+	 * @throws TooMuchCashException
+	 * 
 	 */
-	public void adjustBanknotesForChange(BanknoteStorageUnit unit) throws SimulationException, TooMuchCashException {
-		//TODO: Implement further
-		sc.getCashControl().disablePayments();
-		
-//		unit.unload();
-//		sc.getCashControl().banknotesUnloaded(unit);
-		
+	public void adjustBanknotesForChange(BanknoteStorageUnit banknoteUnit) throws SimulationException, TooMuchCashException {
+//		this.banknoteUnit = banknoteUnit;
+		//TODO: Simplify loops (probably make separate method)
+		//Adjust amount to add
+		int totalOnes = 20;
+		int totalFives = 20;
+		int totalTens = 20;
+		int totalTwenties = 20;
+		int totalFifties = 20;
+		int totalHundreds = 20;
+
 		Banknote one = new Banknote(currency, 1);
 		Banknote five = new Banknote(currency, 5);
 		Banknote ten = new Banknote(currency, 10);
@@ -111,9 +122,51 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		Banknote fifty = new Banknote(currency, 50);
 		Banknote oneHundred = new Banknote(currency, 100);
 		
-		unit.load(one, five, ten, twenty, fifty, oneHundred);
+		sc.getCashControl().disablePayments();
+		List<Banknote> unloadedBanknotes = banknoteUnit.unload();
+		sc.getCashControl().banknotesUnloaded(banknoteUnit);
 		
-		sc.getCashControl().banknotesLoaded(unit);
+		for(Banknote banknote : unloadedBanknotes) {
+			if (banknote.getValue() == 1) {
+				totalOnes--;
+			}
+			if (banknote.getValue() == 5) {
+				totalFives--;
+			}
+			if (banknote.getValue() == 10) {
+				totalTens--;
+			}
+			if (banknote.getValue() == 20) {
+				totalTwenties--;
+			}
+			if (banknote.getValue() == 50) {
+				totalFifties--;
+			}
+			if (banknote.getValue() == 100) {
+				totalHundreds--;
+			}
+		}
+		
+		for (int i = 0; i < totalOnes; i++) {
+			banknoteUnit.load(one);
+		}
+		for (int i = 0; i < totalFives; i++) {
+			banknoteUnit.load(five);
+		}
+		for (int i = 0; i < totalTens; i++) {
+			banknoteUnit.load(ten);
+		}
+		for (int i = 0; i < totalTwenties; i++) {
+			banknoteUnit.load(twenty);
+		}
+		for (int i = 0; i < totalFifties; i++) {
+			banknoteUnit.load(fifty);
+		}
+		for(int i = 0; i < totalHundreds; i++) {
+			banknoteUnit.load(oneHundred);
+		}
+				
+		sc.getCashControl().banknotesLoaded(banknoteUnit);
 		sc.getCashControl().enablePayments();
 	}
 
