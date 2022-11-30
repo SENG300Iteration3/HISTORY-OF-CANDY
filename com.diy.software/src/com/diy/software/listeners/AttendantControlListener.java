@@ -74,6 +74,6 @@ public interface AttendantControlListener {
 	 */
 	public void coinIsLowState(CoinStorageUnit unit, int amount);
 
-	public void loggedIn();
+	void loggedIn(Boolean isLoggedIn);
 		
 }
