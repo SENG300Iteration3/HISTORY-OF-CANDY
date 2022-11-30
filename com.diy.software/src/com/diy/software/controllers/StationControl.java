@@ -59,6 +59,7 @@ public class StationControl
 	private WalletControl wc;
 	private MembershipControl mc;
 	private CashControl cc;
+	private	ReceiptControl rc;
 
 	private boolean isLocked = false;
 	public String memberName;
@@ -90,6 +91,7 @@ public class StationControl
 		mc = new MembershipControl(this);
 		cc = new CashControl(this);
 		ac = new AttendantControl(this);
+		rc = new ReceiptControl(this);
 		
 
 		/*
@@ -159,6 +161,11 @@ public class StationControl
 	public MembershipControl getMembershipControl() {
 		return mc;
 	}
+	
+	public ReceiptControl getReceiptControl() {
+		return rc;
+	}
+
 
 	public PinPadControl getPinPadControl() {
 		return ppc;
