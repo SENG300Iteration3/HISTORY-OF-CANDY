@@ -625,8 +625,13 @@ public class ItemsControlTest {
     	public void attendantApprovedBags(AttendantControl ac) {
     		attendantBags = true;
     	}
-    	
-    	public boolean getAttendantBags() {
+
+		@Override
+		public void attendantPreventUse(AttendantControl ac) {
+			// TODO Auto-generated method stub
+		}
+
+		public boolean getAttendantBags() {
     		return attendantBags;
     	}
 
