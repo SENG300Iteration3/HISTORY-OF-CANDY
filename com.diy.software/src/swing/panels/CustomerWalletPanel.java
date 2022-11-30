@@ -123,6 +123,7 @@ public class CustomerWalletPanel extends JPanel implements WalletControlListener
 	@Override
 	public void membershipCardInputCanceled(WalletControl walletControl) {
 		membershipCardInputEnabled = false;
+		updateButtonStates();
 	}
 	
 	@Override
