@@ -183,4 +183,13 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 		super.systemControl.startMembershipCardInput();
 		
 	}
+
+	@Override
+	public void disableMembershipInput(MembershipControl mc) {
+		scanSwipeButton.setEnabled(false);
+		for (JButton button : numberPadButtons) {
+			button.setEnabled(false);
+		}
+		
+	}
 }

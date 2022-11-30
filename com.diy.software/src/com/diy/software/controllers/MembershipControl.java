@@ -30,8 +30,11 @@ public class MembershipControl implements ActionListener {
 		tempMembershipMap = sc.fakeData.getMembershipMap();
 		if (tempMembershipMap.containsKey(memberShipNumber)) {
 			this.memberName = tempMembershipMap.get(memberShipNumber);
-			for (MembershipControlListener l : listeners)
+			for (MembershipControlListener l : listeners) {
 				l.welcomeMember(this, "Welcome! " + memberName);
+				l.disableMembershipInput(this);
+			}
+				
 		} else {
 			String notFound = "Member not found try again!";
 			for (MembershipControlListener l : listeners)

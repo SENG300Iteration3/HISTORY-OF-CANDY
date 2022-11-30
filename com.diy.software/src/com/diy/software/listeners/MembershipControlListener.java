@@ -13,4 +13,6 @@ public interface MembershipControlListener {
 	public void memberFieldHasBeenUpdated(MembershipControl mc, String memberNumber);
 
 	public void scanSwipeSelected(MembershipControl mc);
+
+	public void disableMembershipInput(MembershipControl mc);
 }
