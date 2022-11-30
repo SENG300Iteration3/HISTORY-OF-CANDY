@@ -118,34 +118,30 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 
 		//Adding buttons to the right side of the frame
 
-		rightSidePanel.setBorder(new EmptyBorder(0, 50, 0, 0));
+		rightSidePanel.setBorder(new EmptyBorder(0, 40, 0, 0));
 
 
-		this.addOwnBagsBtn = makeButton("Add Own Bags", rightSidePanel);
-		addOwnBagsBtn.setMaximumSize(new Dimension(360, itemCheckoutHeader.getMinimumSize().height));
+		JPanel rightSidebuttonPanel = new JPanel(new GridLayout(4, 1));
+		rightSidebuttonPanel.setPreferredSize(new Dimension(370, 400));
 
-		//rightSidePanel.add(Box.createRigidArea(new Dimension(0,10)));
+		rightSidebuttonPanel.setBackground(GUI_Color_Palette.DARK_BLUE);
+		rightSidePanel.add(rightSidebuttonPanel);
 
-		this.requestNoBaggingBtn = makeButton("Request No Bag", rightSidePanel);
-		requestNoBaggingBtn.setMaximumSize(new Dimension(360, itemCheckoutHeader.getMinimumSize().height));
+		JPanel firstButtonPanel = new JPanel(new GridLayout());
+		this.addOwnBagsBtn = makeButton("Add Own Bags", firstButtonPanel);
+		rightSidebuttonPanel.add(firstButtonPanel);
 
-		//rightSidePanel.add(Box.createRigidArea(new Dimension(0,10)));
+		JPanel secondButtonPanel = new JPanel(new GridLayout());
+		this.purchaseOwnBagsBtn = makeButton("Purchase Bag", secondButtonPanel);
+		rightSidebuttonPanel.add(secondButtonPanel);
 
-		this.purchaseOwnBagsBtn = makeButton("Purchase Bags", rightSidePanel);
-		purchaseOwnBagsBtn.setMaximumSize(new Dimension(360, itemCheckoutHeader.getMinimumSize().height));
+		JPanel thirdButtonPanel = new JPanel(new GridLayout());
+		this.addItemByPLUBtn = makeButton("Add Item by PLU", thirdButtonPanel);
+		rightSidebuttonPanel.add(thirdButtonPanel);
 
-		//rightSidePanel.add(Box.createRigidArea(new Dimension(0,10)));
-
-		this.addItemByPLUBtn = makeButton("Add Item by PLU", rightSidePanel);
-		addItemByPLUBtn.setMaximumSize(new Dimension(360, itemCheckoutHeader.getMinimumSize().height));
-
-		//rightSidePanel.add(Box.createRigidArea(new Dimension(0,10)));
-
-		this.removeItemBtn = makeButton("Remove Item", rightSidePanel);
-		removeItemBtn.setMaximumSize(new Dimension(360, itemCheckoutHeader.getMinimumSize().height));
-
-
-		//rightSidePanel.setBackground(GUI_Color_Palette.DARK_BLUE);
+		JPanel fourthButtonPanel = new JPanel(new GridLayout());
+		this.removeItemBtn = makeButton("Remove Item", fourthButtonPanel);
+		rightSidebuttonPanel.add(fourthButtonPanel);
 
 		this.addLayer(mainPanel, 0);
 
@@ -211,10 +207,10 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 
 		//Fix border formatting for the left side of the buttons
 		if (!Objects.equals(parent.getName(), "Right Panel")) {
+
 			btn.setBorder(BorderFactory.createMatteBorder(10, left_padding, 10, 20, GUI_Color_Palette.DARK_BLUE));
 		} else {
 			btn.setBorder(BorderFactory.createMatteBorder(10, 20, 10, 20, GUI_Color_Palette.DARK_BLUE));
-
 		}
 		btn.setBackground(GUI_Color_Palette.DARK_BROWN);
 		btn.setOpaque(true);
