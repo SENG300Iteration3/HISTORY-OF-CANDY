@@ -305,6 +305,26 @@ public class TestAttendantControl {
     	assertTrue(als.noBagging);
     }
     
+    @Test 
+    public void testActionPerformedPermitUse() {
+    	ActionEvent e = new ActionEvent(this, 0, "permit_use");
+    	sc.listeners.add(scl);
+    	ac.addListener(als);
+    	
+    	sc.blockStation();
+    	assertTrue(sc.station.handheldScanner.isDisabled());
+    	assertTrue(sc.station.cardReader.isDisabled());
+    	assertFalse(als.stationPermitted);
+    	
+    	ac.actionPerformed(e);
+    	
+    	assertFalse(sc.station.handheldScanner.isDisabled());
+    	assertFalse(sc.station.cardReader.isDisabled());
+    	assertTrue(als.stationPermitted);
+    }
+    
+    
+    
     @After
     public void teardown() {
     	PowerGrid.reconnectToMains();
@@ -382,6 +402,7 @@ public class TestAttendantControl {
 		public boolean noBagging = false;
 		String testMsg = "";
 		boolean ini = false;
+		boolean stationPermitted = false;
     	
     	@Override
     	public void attendantApprovedBags(AttendantControl ac) {
@@ -425,6 +446,12 @@ public class TestAttendantControl {
 		@Override
 		public void initialState() {
 			ini = true;
+			
+		}
+
+		@Override
+		public void attendantPermitStationUse(AttendantControl ac) {
+			stationPermitted = true;
 			
 		}
     }

@@ -29,6 +29,15 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	public void removeListener(AttendantControlListener l) {
 		listeners.remove(l);
 	}
+	
+	
+	// allow attendant to enable customer station use after it has been suspended
+	public void permitStationUse() {
+		sc.unblockStation();
+		for (AttendantControlListener l : listeners) {
+			l.attendantPermitStationUse(this);
+		}
+	}
 
 	public void approveBagsAdded() {
 		sc.unblockStation();
@@ -110,6 +119,9 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 					attendantNotifications = ("approved no bagging request");
 					removeLastBaggedItem();
 					break;
+				case "permit_use":
+					attendantNotifications = ("Permitting use on station");
+					permitStationUse();
 				default:
 					break;
 			}
