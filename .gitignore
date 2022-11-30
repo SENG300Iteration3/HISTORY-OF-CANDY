@@ -1,1 +1,7 @@
 **/bin/**
+
+# meta folder
+/.metadata
+
+# Hardware project
+/com.diy.hardware_0.4
