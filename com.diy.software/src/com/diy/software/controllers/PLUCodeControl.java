@@ -28,8 +28,6 @@ public class PLUCodeControl implements ActionListener {
 	
 	public void exitPLUCode() {
 		pluCode = "";		//need to do?
-		//TODO: insert line of code here. something like pin pad controls "sc.getWalletControl().enablePayments();"
-			//IF NEEDED
 		sc.goBackOnUI();
 	}
 
