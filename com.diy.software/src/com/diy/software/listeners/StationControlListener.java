@@ -16,6 +16,9 @@ public interface StationControlListener {
 	 */
 	public void systemControlLocked(StationControl systemControl, boolean isLocked);
 	
+
+	public void systemControlLocked(StationControl systemControl, boolean isLocked, String reason);
+	
 	/**
 	 * An event announcing a payment has been made
 	 * 

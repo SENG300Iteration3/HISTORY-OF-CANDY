@@ -205,6 +205,27 @@ public class StationControl
 		}
 		// System.out.println("Station Locked"); // Remove before release}
 	}
+	
+	public void blockStation(String reason) {
+		if (!isLocked) {
+			boolean loop = true;
+			while (loop) {
+				try {
+					this.station.handheldScanner.disable();
+					this.station.cardReader.disable();
+					for (StationControlListener l : listeners) {
+						l.systemControlLocked(this, true, reason);
+					}
+					isLocked = true;
+				} catch (NoPowerException e) {
+					System.out.println(e.getMessage());
+				} finally {
+					if (this.station.handheldScanner.isPoweredUp())
+						loop = false;
+				}
+			}
+		}
+	}
 
 	/**
 	 * Enables pieces of hardware so the Customer can continue checking out now that

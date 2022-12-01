@@ -28,7 +28,7 @@ public class BagsControl implements ActionListener {
 	
 	
 	public void placeBagsInBaggingArea() {
-		sc.blockStation();
+		sc.blockStation("use own bags");
 		sc.updateWeightOfLastItemAddedToBaggingArea(abritraryWeightOfBags);
 		sc.updateExpectedCheckoutWeight(abritraryWeightOfBags,true);
 		for (BagsControlListener l : listeners) {
@@ -38,7 +38,7 @@ public class BagsControl implements ActionListener {
 	
 	// FIXME: where is the bag dispensery in the hardware mentioned in the use case
 	public void ownBagsPlacedInBaggingArea() {
-		sc.blockStation();
+		sc.blockStation("Please Wait For Attendant's Approval");
 		for (BagsControlListener l : listeners) {
 			l.awaitingAttendantToVerifyBagsPlacedInBaggingArea(this);
 		}

@@ -15,6 +15,7 @@ import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.opeechee.Card.CardData;
 
 import swing.screens.AddItemsScreen;
+import swing.screens.AddOwnBagsPromptScreen;
 import swing.screens.BlockedPromptScreen;
 import swing.screens.MembershipScreen;
 import swing.screens.OkayPromptScreen;
@@ -112,6 +113,23 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 			triggerPanelBack(systemControl);
 		}
 	}
+	
+	@Override
+	public void systemControlLocked(StationControl systemControl, boolean isLocked, String reason) {
+		if (isLocked) {
+			if (reason == "use own bags") {
+				AddOwnBagsPromptScreen screen = new AddOwnBagsPromptScreen(systemControl, 
+						"Please Place Your Bags In the Bagging Area");
+				addScreenToStack(screen);
+				
+			} else {
+				blockedPromptScreen = new BlockedPromptScreen(systemControl, reason);
+				addScreenToStack(blockedPromptScreen);
+			}
+		} else {
+			triggerPanelBack(systemControl);
+		}
+	}
 
 	@Override
 	public void paymentHasBeenMade(StationControl systemControl, CardData cardData) {
@@ -175,4 +193,6 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	public void triggerMembershipWorkflow(StationControl systemControl) {
 		addScreenToStack(membershipSceen);
 	}
+
+	
 }
