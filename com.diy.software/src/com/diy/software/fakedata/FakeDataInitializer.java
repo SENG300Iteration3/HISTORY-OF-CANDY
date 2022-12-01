@@ -53,6 +53,7 @@ public class FakeDataInitializer {
 	}
 
 	/**
+	 * (NOTE: PLU Codes should only be for produce products but its for every product right now!)
 	 * Assigns PLU Codes to every BarcodedProduct in the database, and
 	 * populates the PLU_PRODUCT_DATABASE with said PLU code and PLUProduct.
 	 */

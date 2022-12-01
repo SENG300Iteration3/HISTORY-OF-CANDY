@@ -134,8 +134,9 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 	}
 
-	public void addItemByID(PriceLookUpCode code) {
-
+	public void addItemByPLU() {
+		baggingAreaTimerStart = System.currentTimeMillis();
+		
 	}
 
 	// TODO: scanItem now differtiates between using handheldScanner and mainScanner
@@ -228,6 +229,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			case "handheld scan":
 				System.out.println("Customer uses handheld scanner to scan next item");
 				scanCurrentItem(true);
+				break;
+			case "enter plu":
+				System.out.println("Customer entered a PLU Code");
+				addItemByPLU();
 				break;
 			case "put back":
 				System.out.println("Customer put back current item");
