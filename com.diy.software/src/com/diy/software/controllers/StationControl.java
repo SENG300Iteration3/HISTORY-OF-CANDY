@@ -69,6 +69,7 @@ public class StationControl
 	private boolean isLocked = false;
 	public String memberName;
 	public double weightOfItemScanned;
+	private boolean membershipInput = false;
 
 	private PinPadControl ppc;
 	private PaymentControl pc;
@@ -84,6 +85,7 @@ public class StationControl
 		customer.useStation(station);
 
 		station.printer.register(this);
+		station.mainScanner.register(this);
 		station.handheldScanner.register(this);
 		station.mainScanner.register(this);
 		station.baggingArea.register(this);
@@ -307,6 +309,12 @@ public class StationControl
 				l.paymentHasBeenCanceled(this, null, reason);
 		}
 	}
+	
+	public void triggerMembershipCardInputFailScreen(String reason) {
+		for (StationControlListener l : listeners)
+			l.paymentHasBeenCanceled(this, null, reason);
+		wc.membershipCardInputCanceled();
+	}
 
 	public void startPaymentWorkflow() {
 		for (StationControlListener l : listeners)
@@ -316,6 +324,18 @@ public class StationControl
 	public void startMembershipWorkflow() {
 		for (StationControlListener l : listeners)
 			l.triggerMembershipWorkflow(this);
+	}
+	
+	public void startMembershipCardInput() {
+		for (StationControlListener l : listeners)
+			l.startMembershipCardInput(this);
+		wc.membershipCardInputEnabled();
+		membershipInput = true;
+	}
+	
+	public void cancelMembershipCardInput() {
+		wc.membershipCardInputCanceled();
+		membershipInput = false;
 	}
 
 	@Override
@@ -366,26 +386,35 @@ public class StationControl
 	 * set to false.
 	 */
 	public void cardDataRead(CardReader reader, CardData data) {
-		Double amountOwed = this.ic.getCheckoutTotal();
-		String cardNumber = data.getNumber();
-		CardIssuer bank = fakeData.getCardIssuer();
+		if (data.getType() == "MEMBERSHIP") {
+			mc.checkMembership(Integer.parseInt(data.getNumber()));
+			for (StationControlListener l : listeners) {
+				l.membershipCardInputFinished(this);
+			}
+			membershipInput = false;
+			wc.membershipCardInputCanceled();
+		} else {
+			Double amountOwed = this.ic.getCheckoutTotal();
+			String cardNumber = data.getNumber();
+			CardIssuer bank = fakeData.getCardIssuer();
 
-		long holdNum = bank.authorizeHold(cardNumber, amountOwed);
-		if (holdNum <= -1) {
-			for (StationControlListener l : listeners) {
-				l.paymentHasBeenCanceled(this, data, "Could not authorize bank hold.");
+			long holdNum = bank.authorizeHold(cardNumber, amountOwed);
+			if (holdNum <= -1) {
+				for (StationControlListener l : listeners) {
+					l.paymentHasBeenCanceled(this, data, "Could not authorize bank hold.");
+				}
+			} else if (bank.postTransaction(cardNumber, holdNum, amountOwed)) {
+				bank.releaseHold(cardNumber, holdNum);
+				this.ic.updateCheckoutTotal(-this.ic.getCheckoutTotal());
+				for (StationControlListener l : listeners) {
+					l.paymentHasBeenMade(this, data);
+				}
+				ic.updateCheckoutTotal(0);
+				return;
 			}
-		} else if (bank.postTransaction(cardNumber, holdNum, amountOwed)) {
-			bank.releaseHold(cardNumber, holdNum);
-			this.ic.updateCheckoutTotal(-this.ic.getCheckoutTotal());
 			for (StationControlListener l : listeners) {
-				l.paymentHasBeenMade(this, data);
+				l.paymentHasBeenCanceled(this, data, "Payment failed.");
 			}
-			ic.updateCheckoutTotal(0);
-			return;
-		}
-		for (StationControlListener l : listeners) {
-			l.paymentHasBeenCanceled(this, data, "Payment failed.");
 		}
 	}
 
@@ -480,18 +509,27 @@ public class StationControl
 	// FIXME: only barcoded products have barcodes, product only have price/weight
 	@Override
 	public void barcodeScanned(BarcodeScanner barcodeScanner, Barcode barcode) {
-		Product product = findProduct(barcode);
-		checkInventory(product);
-		weightOfItemScanned = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
-		// Add the barcode to the ArrayList within itemControl
-		this.ic.addScannedItemToCheckoutList(barcode);
-		// Set the expected weight in SystemControl
-		this.updateExpectedCheckoutWeight(weightOfItemScanned);
-		this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
-		// Call method within SystemControl that handles the rest of the item scanning
-		// procedure
-		this.blockStation();
-		// Trigger the GUI to display "place the scanned item in the Bagging Area"
+		if (membershipInput) {
+			mc.checkMembership(Integer.parseInt(barcode.toString()));
+			for (StationControlListener l : listeners) {
+				l.membershipCardInputFinished(this);
+			}
+			membershipInput = false;
+			wc.membershipCardInputCanceled();
+		} else {
+      Product product = findProduct(barcode);
+		  checkInventory(product);
+			weightOfItemScanned = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
+			// Add the barcode to the ArrayList within itemControl
+			this.ic.addScannedItemToCheckoutList(barcode);
+			// Set the expected weight in SystemControl
+			this.updateExpectedCheckoutWeight(weightOfItemScanned);
+			this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
+			// Call method within SystemControl that handles the rest of the item scanning
+			// procedure
+			this.blockStation();
+			// Trigger the GUI to display "place the scanned item in the Bagging Area"
+		}
 	}
 	
 	private void checkInventory(Product product) {
