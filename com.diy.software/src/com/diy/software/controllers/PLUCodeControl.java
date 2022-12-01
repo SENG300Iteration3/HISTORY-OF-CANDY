@@ -50,7 +50,7 @@ public class PLUCodeControl implements ActionListener {
 					l.pluHasBeenUpdated(this, pluCode);
 				break;
 			case "submit":
-				ic.addItemByPLU(pluCode);
+				sc.getItemsControl().addItemByPLU(pluCode);
 				pluCode = "";
 				break;
 			default:
