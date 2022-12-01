@@ -25,7 +25,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	private StationControl sc;
 	private ArrayList<ItemsControlListener> listeners;
 	public ArrayList<Tuple<BarcodedProduct,Integer>> tempList = new ArrayList<>();
-	private Map<String, Double> checkoutList = new HashMap<>();
+	private Map<Barcode, Double> checkoutList = new HashMap<>();
 	private double checkoutListTotal = 0.0;
 
 	private boolean scanSuccess = true, weighSuccess = true;
@@ -61,8 +61,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		listeners.remove(l);
 	}
 	
-	public void addItemToCheckoutList(String productName, Double price) {
-		checkoutList.put(productName, price);
+	public void addItemToCheckoutList(Barcode barcode, Double price) {
+		checkoutList.put(barcode, price);
 		refreshGui();
 	}
 	
@@ -71,7 +71,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		double price;
 		if (barcodedProduct != null) {
 			price = (double) barcodedProduct.getPrice();
-			this.addItemToCheckoutList(barcodedProduct.getDescription(), price);
+			this.addItemToCheckoutList(barcode, price);
 			this.updateCheckoutTotal(price);
 		} else {
 			System.err.println("Scanned item is not in product database!");
@@ -88,7 +88,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		return checkoutListTotal;
 	}
 	
-	public Map<String, Double> getCheckoutList () {
+	public Map<Barcode, Double> getCheckoutList () {
 		return checkoutList;
 	}
 	
@@ -309,6 +309,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			}
 		}
 		
+	public void setWeighSuccess(boolean bool) {
+		this.weighSuccess = bool;
+	}
+	
 
 	@Override
 	public void overload(ElectronicScale scale) {

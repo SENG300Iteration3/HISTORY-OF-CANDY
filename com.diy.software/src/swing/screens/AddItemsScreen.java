@@ -2,9 +2,8 @@ package swing.screens;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Objects;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -12,6 +11,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import com.diy.software.util.Tuple;
+import com.jimmyselectronics.necchi.Barcode;
 
 import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Fonts;
@@ -20,8 +20,10 @@ import swing.styling.GUI_JLabel;
 import swing.styling.GUI_JPanel;
 import swing.styling.Screen;
 
+import com.diy.hardware.external.ProductDatabases;
 import com.diy.software.controllers.ItemsControl;
 import com.diy.software.controllers.StationControl;
+import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.ItemsControlListener;
 
 public class AddItemsScreen extends Screen implements ItemsControlListener {
@@ -183,8 +185,6 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 		GUI_JPanel itemPanel = new GUI_JPanel();
 		itemPanel.setPreferredSize(new Dimension(this.width - 200, 50));
 		itemPanel.setLayout(new BorderLayout());
-		
-		System.out.println();
 
 		GUI_JLabel totalLabel = new GUI_JLabel(itemName.toUpperCase());
 		totalLabel.setFont(GUI_Fonts.SUB_HEADER);
@@ -253,34 +253,18 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 
 	}
 
-//	@Override
-//	public void itemsHaveBeenUpdated(ItemsControl itemsControl) {
-//		ArrayList<Tuple<String, Double>> checkoutList = itemsControl.getCheckoutList();
-//
-//		String[] itemDescriptions = new String[checkoutList.size()];
-//		double[] itemPrices = new double[checkoutList.size()];
-//
-//		for (int i = 0; i < checkoutList.size(); i++) {
-//			itemDescriptions[i] = checkoutList.get(i).x;
-//			itemPrices[i] = checkoutList.get(i).y;
-//		}
-//		this.invalidateAllScannedItems();
-//		for (int i = 0; i < itemDescriptions.length; i++) {
-//			this.addScannedItem(i+1 + ". " + itemDescriptions[i], itemPrices[i]);
-//		}
-//	}
-
 	@Override
 	public void itemsHaveBeenUpdated(ItemsControl itemsControl) {
-		Map<String, Double> checkoutList = itemsControl.getCheckoutList();
+		Map<Barcode, Double> checkoutList = itemsControl.getCheckoutList();	 
 		int i = 0;
 		this.invalidateAllScannedItems();
-		for (String productName: checkoutList.keySet()) {
-			this.addScannedItem(i+1 + ". " + productName, checkoutList.get(productName));
+		for (Barcode barcode: checkoutList.keySet()) {
+			this.addScannedItem(i+1 + ". " + ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getDescription(), checkoutList.get(barcode));
+			System.out.println("Product = " + ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getDescription() + "\t Price = " + checkoutList.get(barcode));
 			i++;
 		}
 	}
-	
+
 	@Override
 	public void productSubtotalUpdated(ItemsControl itemsControl) {
 		subtotalLabel.setText("Subtotal: $" + itemsControl.getCheckoutTotal());
