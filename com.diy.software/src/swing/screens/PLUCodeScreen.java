@@ -134,4 +134,10 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 		return numpadButton;
 	}
 
+	@Override
+	public void pluCodeEntered(PLUCodeControl ppc, String pluCode) {
+		this.pluCode.setText("");
+		
+	}
+
 }

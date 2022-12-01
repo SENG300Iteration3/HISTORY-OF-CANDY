@@ -542,7 +542,11 @@ public class StationControl
 
 	}
 
-	// FIXME: only barcoded products have barcodes, product only have price/weight
+	@Override
+	public void pluHasBeenUpdated(PLUCodeControl ppc, String pluCode) {
+
+	}
+
 	@Override
 	public void barcodeScanned(BarcodeScanner barcodeScanner, Barcode barcode) {
 		if (membershipInput) {
@@ -556,20 +560,19 @@ public class StationControl
 			Product product = findProduct(barcode);
 			checkInventory(product);
 			weightOfItemScanned = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
-			// Add the barcode to the ArrayList within itemControl
 			this.ic.addScannedItemToCheckoutList(barcode);
 			// Set the expected weight in SystemControl
 			this.updateExpectedCheckoutWeight(weightOfItemScanned);
 			this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
-			// Call method within SystemControl that handles the rest of the item scanning
+			// Call method within SystemControl that handles the rest of the item adding
 			// procedure
 			this.blockStation();
-			// Trigger the GUI to display "place the scanned item in the Bagging Area"
+			// Trigger the GUI to display "place the item in the Bagging Area"
 		}
 	}
 	
 	@Override
-	public void pluHasBeenUpdated(PLUCodeControl ppc, String pluCode) {
+	public void pluCodeEntered(PLUCodeControl ppc, String pluCode) {
 		PriceLookUpCode code = new PriceLookUpCode(pluCode);
 		Product product = findProduct(code);
 		checkInventory(product);

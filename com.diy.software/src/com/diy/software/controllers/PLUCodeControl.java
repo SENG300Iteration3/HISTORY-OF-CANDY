@@ -51,7 +51,8 @@ public class PLUCodeControl implements ActionListener {
 				break;
 			case "submit":
 				PriceLookUpCode code = new PriceLookUpCode(pluCode);
-				sc.getItemsControl().addItemByPLU(code);
+				for (PLUCodeControlListener l: listeners)
+					l.pluCodeEntered(this, pluCode);
 				pluCode = "";
 				break;
 			default:

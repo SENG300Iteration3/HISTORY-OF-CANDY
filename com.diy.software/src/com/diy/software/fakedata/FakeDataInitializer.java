@@ -136,7 +136,7 @@ public class FakeDataInitializer {
 	
 	
 	public Item[] getItems() {
-		return new Item[]{item1, item2, item3, item4, pitem1, pitem2, pitem3, pitem4};
+		return new Item[]{item1, item2, item3, item4, pitem1};
 	}
 	
 	public Card[] getCards() {
