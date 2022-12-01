@@ -8,7 +8,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
-import com.diy.hardware.PLUCodedItem;
 import com.diy.hardware.PLUCodedProduct;
 import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.external.ProductDatabases;
@@ -19,7 +18,6 @@ import com.jimmyselectronics.Item;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodeScanner;
 import com.jimmyselectronics.necchi.BarcodeScannerListener;
-import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.virgilio.ElectronicScale;
 import com.jimmyselectronics.virgilio.ElectronicScaleListener;
 
@@ -161,17 +159,12 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	// TODO: scanItem now differtiates between using handheldScanner and mainScanner
 	// ALSO: note that a new weight area called scanningArea exists now to grab weight of items during general scanning phase
 	public void scanCurrentItem(boolean useHandheld) {
-		if(sc.customer.shoppingCart.get(0).getClass() == BarcodedItem.class) {
-			System.out.println(sc.customer.shoppingCart.get(0).getClass());
-			baggingAreaTimerStart = System.currentTimeMillis();
-			scanSuccess = false;
-			sc.customer.scanItem(useHandheld);
-			if (!scanSuccess) {
-				// if scanSuccess is still false after listeners have been called, we can show
-				// an alert showing a failed scan if time permits.
-			}
-		} else {
-			System.err.println("Item selected is a PLU item!");
+		baggingAreaTimerStart = System.currentTimeMillis();
+		scanSuccess = false;
+		sc.customer.scanItem(useHandheld);
+		if (!scanSuccess) {
+			// if scanSuccess is still false after listeners have been called, we can show
+			// an alert showing a failed scan if time permits.
 		}
 	}
 
