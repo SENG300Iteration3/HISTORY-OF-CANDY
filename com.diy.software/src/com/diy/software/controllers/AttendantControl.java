@@ -241,6 +241,10 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 					System.out.println("Station has been started up");
 					startUpStation();
 					break;
+				case "startUp":
+					System.out.println("Station has been started up");
+					startUpStation();
+					break;
 				default:
 					break;
 			}
