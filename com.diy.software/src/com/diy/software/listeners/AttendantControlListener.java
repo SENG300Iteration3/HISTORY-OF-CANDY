@@ -4,6 +4,8 @@ import com.diy.software.controllers.AttendantControl;
 
 public interface AttendantControlListener {
 	public void attendantApprovedBags(AttendantControl ac);
+
+	public void attendantPreventUse(AttendantControl ac);
 	
 	/**
 	 * allowing attendant to add paper to the printer when the printer is out or low on paper

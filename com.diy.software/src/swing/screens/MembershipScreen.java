@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 
@@ -15,6 +16,7 @@ import javax.swing.JTextField;
 import com.diy.software.controllers.MembershipControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.MembershipControlListener;
+import com.diy.software.listeners.StationControlListener;
 
 import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Fonts;
@@ -32,10 +34,15 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 	private JButton cancelButton = createNumberPadButton("X");
 	private JButton correctButton = createNumberPadButton("O");
 	private JButton submitButton = createNumberPadButton(">");
+	
+	private GUI_JPanel scanSwipePanel;
+	private GUI_JButton scanSwipeButton;
 
 	private JTextField numberEntry;
 	private JLabel memberMssg = new JLabel("");
 	GUI_JPanel numberInputPanel;
+	
+	private PresentMembershipCardScreen scanSwipeScreen;
 
 	private static String HeaderText = "Membership";
 	
@@ -43,6 +50,23 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 		super(sc, HeaderText);
 		mc = sc.getMembershipControl();
 		mc.addListener(this);
+		
+		scanSwipePanel = new GUI_JPanel();
+		scanSwipePanel.setLayout(new GridBagLayout());
+		scanSwipePanel.setBackground(GUI_Color_Palette.DARK_BLUE);
+		
+		scanSwipeButton = new GUI_JButton("Scan/Swipe Card");
+		scanSwipeButton.setBackground(GUI_Color_Palette.DARK_BLUE);
+		scanSwipeButton.setFont(new Font("Franklin Gothic", Font.BOLD, 22));
+		scanSwipeButton.setForeground(GUI_Color_Palette.WHITE);
+		
+		gridConstraint.gridy = 1;
+		gridConstraint.gridx = 1;
+		scanSwipeButton.setActionCommand("scan swipe membership");
+		scanSwipeButton.addActionListener(mc);
+		scanSwipePanel.add(scanSwipeButton, gridConstraint);
+		
+		addLayer(scanSwipePanel, 0);
 
 		numberInputPanel = new GUI_JPanel();
 		numberInputPanel.setLayout(new GridBagLayout());
@@ -102,7 +126,7 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 		centerPanel.setLayout(new GridLayout(1, 0));
 
 		centerPanel.add(memberMssg);
-		addLayer(centerPanel, 0);
+		addLayer(centerPanel, 10);
 
 	}
 
@@ -152,5 +176,22 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 	@Override
 	public void memberFieldHasBeenUpdated(MembershipControl mc, String memberNumber) {
 		numberEntry.setText(memberNumber);
+	}
+	
+	@Override
+	public void scanSwipeSelected(MembershipControl mc) {
+		super.systemControl.startMembershipCardInput();
+		
+	}
+
+	@Override
+	public void disableMembershipInput(MembershipControl mc) {
+		scanSwipeButton.setEnabled(false);
+		for (JButton button : numberPadButtons) {
+			button.setEnabled(false);
+		}
+		correctButton.setEnabled(false);
+		submitButton.setEnabled(false);
+		
 	}
 }
