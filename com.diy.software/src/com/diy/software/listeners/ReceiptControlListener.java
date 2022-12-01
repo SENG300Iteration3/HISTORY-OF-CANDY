@@ -5,39 +5,9 @@ import com.diy.software.controllers.ReceiptControl;
 public interface ReceiptControlListener {
 	
 	/**
-	 * used to notify out of ink state
+	 * used to notify customer why the station is locked
 	 */
-	public String outOfInk(ReceiptControl rc, String message);
-	
-	/**
-	 * used to notify low ink state
-	 */
-	public String lowInk(ReceiptControl rc, String message);
-	
-	/**
-	 * used to notify out of paper state
-	 */
-	public String outOfPaper(ReceiptControl rc, String message);
-	
-	/**
-	 * used to notify low paper state
-	 */
-	public String lowPaper(ReceiptControl rc, String dateTime);
-	
-	/**
-	 * allowing attendant to add paper to the printer when the printer is out or low on paper
-	 */
-	public void addPaperState();
-	
-	/**
-	 * allowing attendant to add ink to the printer when the printer is out or low on ink 
-	 */
-	public void addInkState();
-	
-	/**
-	 * changes GUI state to match printer not in low ink and not low paper
-	 */
-	public void printerNotLowState();
+	public String outOfInkOrPaper(ReceiptControl rc, String message);
 	
 	/**
 	 * used to pass a list of checked out items
