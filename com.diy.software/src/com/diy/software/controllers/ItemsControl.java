@@ -21,6 +21,8 @@ import com.jimmyselectronics.necchi.BarcodeScannerListener;
 import com.jimmyselectronics.virgilio.ElectronicScale;
 import com.jimmyselectronics.virgilio.ElectronicScaleListener;
 
+import ca.ucalgary.seng300.simulation.InvalidArgumentSimulationException;
+
 public class ItemsControl implements ActionListener, BarcodeScannerListener, ElectronicScaleListener {
 	private StationControl sc;
 	private ArrayList<ItemsControlListener> listeners;
@@ -136,19 +138,23 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	}
 
 	public void addItemByPLU(String code) {
-		baggingAreaTimerStart = System.currentTimeMillis();
+		try {
+			baggingAreaTimerStart = System.currentTimeMillis();
 
-		PriceLookUpCode pluCode = new PriceLookUpCode(code);
-		PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode);
-		
-		if(product != null) {
-			double price = (double)product.getPrice();
-			this.addItemToCheckoutList(new Tuple<String,Double>(product.getDescription(), price));
-			this.updateCheckoutTotal(price);
-		} else {
-			System.err.println("PLU Code does not correspond to a product in the database!");
+			PriceLookUpCode pluCode = new PriceLookUpCode(code);
+			PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode);
+			
+			if(product != null) {
+				double price = (double)product.getPrice();
+				this.addItemToCheckoutList(new Tuple<String,Double>(product.getDescription(), price));
+				this.updateCheckoutTotal(price);
+				System.out.println("Added item to checkout list!");
+			} else {
+				System.err.println("PLU Code does not correspond to a product in the database!");
+			}
+		} catch(InvalidArgumentSimulationException e) {
+			System.err.println(e.getMessage());
 		}
-		
 	}
 
 	// TODO: scanItem now differtiates between using handheldScanner and mainScanner
