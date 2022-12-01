@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -38,11 +39,11 @@ public class AttendantLoginScreen extends Screen {
 	
 	private static String HeaderText = "Attendant Login Screen".toUpperCase();
 	
-	public AttendantLoginScreen(StationControl sc) {
-		super(sc, HeaderText);
-		this.sc = sc;
-		ac = sc.getAttendantControl();
+	public AttendantLoginScreen(ArrayList<StationControl> arrayList) {
+		super(null, HeaderText);
 		tl = new testListener();
+		
+		ac = arrayList.get(0).getAttendantControl();
 		
 		centerPanel = new GUI_JPanel();
 		centerPanel.setBackground(GUI_Color_Palette.DARK_BLUE);
@@ -63,8 +64,6 @@ public class AttendantLoginScreen extends Screen {
 		loginFail.setForeground(Color.RED);
 		
 		addLayer(loginFail, 0);
-		
-		
 	}
 	
 	public void loginFail() {
