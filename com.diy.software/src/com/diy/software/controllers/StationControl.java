@@ -91,8 +91,7 @@ public class StationControl
 		station.baggingArea.register(this);
 		station.cardReader.register(this);
 
-		station.plugIn();
-		station.turnOn();
+		startUp();
 		
 		fillStation();
 
@@ -150,6 +149,11 @@ public class StationControl
 		listeners.remove(l);
 	}
 
+	public void startUp() {
+		station.plugIn();
+		station.turnOn();
+	}
+	
 	public ItemsControl getItemsControl() {
 		return ic;
 	}

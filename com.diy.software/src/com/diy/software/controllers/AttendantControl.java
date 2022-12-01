@@ -38,6 +38,10 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		listeners.remove(l);
 	}
 
+	public void startUpStation() {
+		sc.startUp();
+	}
+	
 	public void approveBagsAdded() {
 		sc.unblockStation();
 		for (AttendantControlListener l : listeners) {
@@ -191,6 +195,10 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 				case "no_bagging":
 					attendantNotifications = ("approved no bagging request");
 					removeLastBaggedItem();
+					break;
+				case "startUp":
+					System.out.println("Station has been started up");
+					startUpStation();
 					break;
 				default:
 					break;
