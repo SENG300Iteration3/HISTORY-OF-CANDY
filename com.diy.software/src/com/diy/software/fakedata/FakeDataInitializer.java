@@ -129,6 +129,11 @@ public class FakeDataInitializer {
 	public Barcode[] getBarcodes() {
 		return new Barcode[] {barcode1, barcode2, barcode3, barcode4};
 	}
+
+	public PriceLookUpCode[] getPLUCodes() {
+		return new PriceLookUpCode[] {code1, code2, code3, code4};
+	}
+	
 	
 	public Item[] getItems() {
 		return new Item[]{item1, item2, item3, item4, pitem1, pitem2, pitem3, pitem4};
