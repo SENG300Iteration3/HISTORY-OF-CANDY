@@ -21,7 +21,6 @@ import swing.screens.OkayPromptScreen;
 import swing.screens.PaymentScreen;
 import swing.screens.PinPadScreen;
 import swing.screens.PresentCardScreen;
-import swing.screens.PresentCashScreen;
 import swing.screens.PresentMembershipCardScreen;
 import swing.screens.PresentGiftCardOrCashScreen;
 import swing.styling.Screen;

@@ -35,7 +35,7 @@ public class PaymentScreen extends Screen {
 
 		pc = sc.getPaymentControl();
 
-		giftCardButton.setActionCommand("giftCard");
+		giftCardButton.setActionCommand("giftcard");
 		cashButton.setActionCommand("cash");
 		creditButton.setActionCommand("credit");
 		debitButton.setActionCommand("debit");
