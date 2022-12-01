@@ -1,43 +1,57 @@
 package swing.panes;
 
+import java.awt.Component;
+import java.awt.FlowLayout;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 import com.diy.software.controllers.AttendantControl;
+import com.diy.software.controllers.PaneControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.AttendantControlListener;
 
-import swing.frames.AttendantStationGUI;
 import swing.screens.AttendantLoginScreen;
 import swing.styling.Screen;
 
 public class AttendantPane implements AttendantControlListener {
-	private StationControl sc;
+	private PaneControl pc;
 	
-	private JPanel rooPanel, currentPanel;
+	private JPanel rooPanel;
+	private Component currentPanel;
 	private ArrayList<JPanel> panelStack;
 	
-	private AttendantLoginScreen loginPane;
-	private AttendantStationPane stationPane;
-	AttendantStationGUI asGUI;
-	
-	public AttendantPane(StationControl sc, AttendantStationGUI asGUI) {
-		
-		this.sc = sc;
-		this.asGUI = asGUI;
+	private AttendantLoginScreen loginScreen;
+	private AttendantStationPane stationScreen;
 
-		this.sc.getAttendantControl().addListener(this);
+	private JTabbedPane tabbedPane;
+	
+	public AttendantPane(PaneControl pc) {
+		
+		this.pc = pc;
 		
 		this.panelStack = new ArrayList<>();
-		this.loginPane = new AttendantLoginScreen(sc);
-		this.stationPane = new AttendantStationPane(sc);
-		
+		this.loginScreen = new AttendantLoginScreen(pc.getStationControls());
+		this.tabbedPane = new JTabbedPane();
+		int i = 1;
+		for (StationControl sc : pc.getStationControls()) {
+			sc.getAttendantControl().addListener(this);
+			JPanel tempPanel = new JPanel();
+			tempPanel.add(( new AttendantStationPane(sc)).getRootPanel());
+			tabbedPane.addTab("Station " + i++, tempPanel);
+		}
+		 
 		this.currentPanel = new JPanel();
 		this.rooPanel = new JPanel();
+		this.rooPanel.setOpaque(false);
+		FlowLayout lm = new FlowLayout();
+		lm.setHgap(0);
+		lm.setVgap(0);
+		rooPanel.setLayout(lm);
 		this.rooPanel.add(currentPanel);
 		
-		addScreenToStack(loginPane);
+		addScreenToStack(loginScreen);
 		
 	}
 	
@@ -45,7 +59,7 @@ public class AttendantPane implements AttendantControlListener {
 		return rooPanel;
 	}
 	
-	private void addPanel(JPanel newPanel) {
+	private void addPanel(Component newPanel) {
 		JPanel parent = (JPanel) currentPanel.getParent();
 		parent.remove(currentPanel);
 		currentPanel = newPanel;
@@ -106,18 +120,15 @@ public class AttendantPane implements AttendantControlListener {
 	@Override
 	public void loggedIn(boolean isLoggedIn) {
 		if (isLoggedIn) {
-		asGUI.loginTabs();
-		}else if (currentPanel.equals(loginPane.getRootPanel())){
+			addPanel(tabbedPane);
+			
+			
+		}else if (currentPanel.equals(loginScreen.getRootPanel())){
 		
-			loginPane.loginFail();
-		}else if (currentPanel.equals(stationPane.getRootPanel())){
+			loginScreen.loginFail();
+		}else{
 			//logout
 		}
 		
 	}
-	
-	public void logInRequested() {
-		addScreenToStack(stationPane);
-	}
-
 }
