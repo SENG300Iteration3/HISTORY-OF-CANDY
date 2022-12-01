@@ -19,10 +19,10 @@ public class FakeDataInitializer {
 	/**
 	 * The known Barcoded Items. Indexed by barcode.
 	 */
-	public static final Map<Barcode, BarcodedItem> BARCODED_ITEM_DATABASE = new HashMap<>();
-	private Barcode barcode1, barcode2, barcode3, barcode4, purchasableBagBarcode;
-	private BarcodedItem item1, item2, item3, item4, purchasableBagItem;
-	private BarcodedProduct bp1, bp2, bp3, bp4, purchasableBagProduct;
+	public static final Map<String, BarcodedItem> BARCODED_ITEM_DATABASE = new HashMap<>();
+	private Barcode barcode1, barcode2, barcode3, barcode4;
+	private BarcodedItem item1, item2, item3, item4;
+	private BarcodedProduct bp1, bp2, bp3, bp4;
 	private Card card1, card2, card3, card4;
 	private CardIssuer fakebank;
 	private final Double AMOUNT_AVAILABLE = 1000.0;
@@ -34,37 +34,31 @@ public class FakeDataInitializer {
 		item1 = new BarcodedItem(barcode1, 450); 
 		bp1 = new BarcodedProduct(barcode1, "Can of Beans", 2, 450);
 		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode1, bp1);
-		FakeDataInitializer.BARCODED_ITEM_DATABASE.put(barcode1, item1);
+		FakeDataInitializer.BARCODED_ITEM_DATABASE.put("Can of Beans", item1);
 		
 		barcode2 = new Barcode(new Numeral[] { Numeral.zero, Numeral.four, Numeral.two, Numeral.zero }); 
 		item2 = new BarcodedItem(barcode2, 420); 
 		bp2 = new BarcodedProduct(barcode2, "Bag of Doritos", 5, 420);
 		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode2, bp2);
-		FakeDataInitializer.BARCODED_ITEM_DATABASE.put(barcode2, item2);
+		FakeDataInitializer.BARCODED_ITEM_DATABASE.put("Bag of Doritos", item2);
 		
 		barcode3 = new Barcode(new Numeral[] { Numeral.four, Numeral.three, Numeral.two, Numeral.one }); 
 		item3 = new BarcodedItem(barcode3, 350); 
 		bp3 = new BarcodedProduct(barcode3, "Rib Eye Steak", 17, 350);
 		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode3, bp3);
-		FakeDataInitializer.BARCODED_ITEM_DATABASE.put(barcode3, item3);
+		FakeDataInitializer.BARCODED_ITEM_DATABASE.put("Rib Eye Steak", item3);
 		
 		barcode4 = new Barcode(new Numeral[] { Numeral.one, Numeral.two, Numeral.one, Numeral.two }); 
 		item4 = new BarcodedItem(barcode4, 550); 	
 		bp4 = new BarcodedProduct(barcode4, "Cauliflower", 6, 550);
-		FakeDataInitializer.BARCODED_ITEM_DATABASE.put(barcode4, item4);
 		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode4, bp4);
+		FakeDataInitializer.BARCODED_ITEM_DATABASE.put("Cauliflower", item4);
 		
-//		purchasableBagBarcode = new Barcode(new Numeral[] { Numeral.one, Numeral.one, Numeral.one, Numeral.one }); 
-//		purchasableBagItem = new BarcodedItem(purchasableBagBarcode, 50); 	
-//		purchasableBagProduct = new BarcodedProduct(barcode4, "Purchasable Bag", 350, 50);
-//		FakeDataInitializer.BARCODED_ITEM_DATABASE.put(purchasableBagBarcode, purchasableBagItem );
-//		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(purchasableBagBarcode, purchasableBagProduct);
 		
 		ProductDatabases.INVENTORY.put(bp1, 100);
 		ProductDatabases.INVENTORY.put(bp2, 100);
 		ProductDatabases.INVENTORY.put(bp3, 100);
 		ProductDatabases.INVENTORY.put(bp4, 100);
-		//ProductDatabases.INVENTORY.put(purchasableBagProduct, 1000);
 
 	}
 	

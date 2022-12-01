@@ -427,7 +427,7 @@ public class StationControl
 		customer.placeItemInBaggingArea();
 		this.unblockStation();
 	}
-
+	
 	/**
 	 * Removing item from electronic scale
 	 * 
@@ -487,6 +487,7 @@ public class StationControl
 		if (this.expectedWeightMatchesActualWeight(weightInGrams)) {
 			this.unblockStation();
 			userMessage = "Weight of scale has changed to: " + weightInGrams;
+			System.out.println("Expected Weight = " + this.expectedCheckoutWeight +  "\t Actual weight = " + weightInGrams);
 		} else {
 			this.blockStation();
 			System.err.println("System has been blocked!");

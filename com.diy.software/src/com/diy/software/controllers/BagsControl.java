@@ -5,12 +5,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import com.diy.software.util.Tuple;
-import com.jimmyselectronics.necchi.Barcode;
-import com.jimmyselectronics.necchi.BarcodedItem;
-import com.jimmyselectronics.necchi.Numeral;
-import com.diy.hardware.BarcodedProduct;
-import com.diy.hardware.external.ProductDatabases;
-import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.BagsControlListener;
 
 public class BagsControl implements ActionListener {
@@ -18,19 +12,10 @@ public class BagsControl implements ActionListener {
 	private ArrayList<BagsControlListener> listeners;
 	private static final double abritraryWeightOfBags = 50;
 	private static final double abritraryPriceOfBags = 3.5;
-	private Barcode purchasableBagBarcode;
-	private BarcodedItem purchasableBagItem;
-	private BarcodedProduct purchasableBagProduct;
 	
 	public BagsControl(StationControl sc) {
 		this.sc = sc;
 		this.listeners = new ArrayList<>();
-		purchasableBagBarcode = new Barcode(new Numeral[] { Numeral.one, Numeral.one, Numeral.one, Numeral.nine }); 
-		purchasableBagItem = new BarcodedItem(purchasableBagBarcode, 50); 	
-		purchasableBagProduct = new BarcodedProduct(purchasableBagBarcode, "Purchasable Bag", 350, 50);
-		FakeDataInitializer.BARCODED_ITEM_DATABASE.put(purchasableBagBarcode, purchasableBagItem);
-		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(purchasableBagBarcode, purchasableBagProduct);
-		ProductDatabases.INVENTORY.put(purchasableBagProduct, 1000);
 	}
 	
 	public void addListener(BagsControlListener l) {
@@ -62,10 +47,8 @@ public class BagsControl implements ActionListener {
 	// FIXME: need to update price
 	public void placePurchasedBagsInBaggingArea() {
 		sc.updateWeightOfLastItemAddedToBaggingArea(abritraryWeightOfBags);
-		sc.getItemsControl().setWeighSuccess(true);
+		sc.getItemsControl().addItemToCheckoutList("Reusable Bag",abritraryPriceOfBags);
 		sc.updateExpectedCheckoutWeight(abritraryWeightOfBags,true);
-		sc.station.baggingArea.add(purchasableBagItem);
-		sc.getItemsControl().addItemToCheckoutList(purchasableBagBarcode,abritraryPriceOfBags);
 		sc.getItemsControl().updateCheckoutTotal(abritraryPriceOfBags);
 		sc.unblockStation(); // call this to update total on gui
 	}

@@ -11,7 +11,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import com.diy.software.util.Tuple;
-import com.jimmyselectronics.necchi.Barcode;
 
 import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Fonts;
@@ -20,10 +19,8 @@ import swing.styling.GUI_JLabel;
 import swing.styling.GUI_JPanel;
 import swing.styling.Screen;
 
-import com.diy.hardware.external.ProductDatabases;
 import com.diy.software.controllers.ItemsControl;
 import com.diy.software.controllers.StationControl;
-import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.ItemsControlListener;
 
 public class AddItemsScreen extends Screen implements ItemsControlListener {
@@ -255,12 +252,11 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 
 	@Override
 	public void itemsHaveBeenUpdated(ItemsControl itemsControl) {
-		Map<Barcode, Double> checkoutList = itemsControl.getCheckoutList();	 
+		Map<String, Double> checkoutList = itemsControl.getCheckoutList();
 		int i = 0;
 		this.invalidateAllScannedItems();
-		for (Barcode barcode: checkoutList.keySet()) {
-			this.addScannedItem(i+1 + ". " + ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getDescription(), checkoutList.get(barcode));
-			//System.out.println("Product = " + ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getDescription() + "\t Price = " + checkoutList.get(barcode));
+		for (String productName: checkoutList.keySet()) {
+			this.addScannedItem(i+1 + ". " + productName, checkoutList.get(productName));
 			i++;
 		}
 	}
