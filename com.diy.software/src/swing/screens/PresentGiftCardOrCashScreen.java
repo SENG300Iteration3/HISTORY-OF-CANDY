@@ -38,6 +38,8 @@ public class PresentGiftCardOrCashScreen extends Screen implements CashControlLi
 		systemControl.getCashControl().addListener(this);
 
 		this.isGiftCard = isGiftCard;
+		
+		this.prompt = new GUI_JLabel();
 
 		cashInserted(null);
 		
@@ -45,27 +47,29 @@ public class PresentGiftCardOrCashScreen extends Screen implements CashControlLi
 		prompt.setHorizontalAlignment(SwingConstants.CENTER);
 		prompt.setPreferredSize(new Dimension(this.width - 200, 100));
 		this.addLayer(prompt, 0);
-
-		this.coinAvailability = new GUI_JLabel();
-		this.noteAvailability = new GUI_JLabel();
-		this.message = new GUI_JLabel();
-		coinAvailability.setFont(GUI_Fonts.FRANKLIN_BOLD);
-		noteAvailability.setFont(GUI_Fonts.FRANKLIN_BOLD);
-		message.setFont(GUI_Fonts.FRANKLIN_BOLD);
-		coinAvailability.setHorizontalAlignment(SwingConstants.LEFT);
-		noteAvailability.setHorizontalAlignment(SwingConstants.LEFT);
-		coinAvailability.setVerticalAlignment(SwingConstants.TOP);
-		noteAvailability.setVerticalAlignment(SwingConstants.TOP);
-		message.setHorizontalAlignment(SwingConstants.CENTER);
-		coinAvailability.setPreferredSize(new Dimension(this.width - 200, 100));
-		noteAvailability.setPreferredSize(new Dimension(this.width - 200, 100));
-		message.setPreferredSize(new Dimension(this.width - 200, 100));
-		coinAvailability.setForeground(GUI_Color_Palette.BLACK);
-		noteAvailability.setForeground(GUI_Color_Palette.BLACK);
-		message.setForeground(GUI_Color_Palette.BLACK);
-		this.addLayer(coinAvailability, 0);
-		this.addLayer(noteAvailability, 0);
-		this.addLayer(message, 0);
+		
+		if(!isGiftCard) {
+			this.coinAvailability = new GUI_JLabel();
+			this.noteAvailability = new GUI_JLabel();
+			this.message = new GUI_JLabel();
+			coinAvailability.setFont(GUI_Fonts.FRANKLIN_BOLD);
+			noteAvailability.setFont(GUI_Fonts.FRANKLIN_BOLD);
+			message.setFont(GUI_Fonts.FRANKLIN_BOLD);
+			coinAvailability.setHorizontalAlignment(SwingConstants.LEFT);
+			noteAvailability.setHorizontalAlignment(SwingConstants.LEFT);
+			coinAvailability.setVerticalAlignment(SwingConstants.TOP);
+			noteAvailability.setVerticalAlignment(SwingConstants.TOP);
+			message.setHorizontalAlignment(SwingConstants.CENTER);
+			coinAvailability.setPreferredSize(new Dimension(this.width - 200, 100));
+			noteAvailability.setPreferredSize(new Dimension(this.width - 200, 100));
+			message.setPreferredSize(new Dimension(this.width - 200, 100));
+			coinAvailability.setForeground(GUI_Color_Palette.BLACK);
+			noteAvailability.setForeground(GUI_Color_Palette.BLACK);
+			message.setForeground(GUI_Color_Palette.BLACK);
+			this.addLayer(coinAvailability, 0);
+			this.addLayer(noteAvailability, 0);
+			this.addLayer(message, 0);
+		}
 		
 		this.backButton = makeCentralButton("BACK", this.width - 200, 100);
 		backButton.addActionListener(new ActionListener() {
@@ -86,9 +90,9 @@ public class PresentGiftCardOrCashScreen extends Screen implements CashControlLi
 	@Override
 	public void cashInserted(CashControl cc) {
 		if (isGiftCard) {
-			this.prompt = new GUI_JLabel("Please swipe gift card. Total remaining: $" + fix(systemControl.getItemsControl().getCheckoutTotal()));
+			this.prompt.setText("Please swipe gift card. Total remaining: $" + fix(systemControl.getItemsControl().getCheckoutTotal()));
 		} else {
-			this.prompt = new GUI_JLabel("Please insert $" + fix(systemControl.getItemsControl().getCheckoutTotal()));
+			this.prompt.setText("Please insert $" + fix(systemControl.getItemsControl().getCheckoutTotal()));
 		}
 	}
 	
