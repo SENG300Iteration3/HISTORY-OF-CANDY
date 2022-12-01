@@ -397,7 +397,6 @@ public class StationControl
 	}
 
 	@Override
-	// <<<<<<< HEAD
 	/*
 	 * Reads the data from the card and pays for the transaction using the card. On
 	 * success, the amount owed will be updated to 0.0 and the hold placed on the
