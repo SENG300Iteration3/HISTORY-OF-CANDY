@@ -23,7 +23,6 @@ public class FakeDataInitializer {
 	private final Double AMOUNT_AVAILABLE = 1000.0;
 	Calendar expire_date = Calendar.getInstance();
 	
-	// FIXME: need to add to products to inventory
 	public void addProductAndBarcodeData () {
 		barcode1 = new Barcode(new Numeral[] { Numeral.one, Numeral.two, Numeral.three, Numeral.four }); 
 		item1 = new BarcodedItem(barcode1, 450); 
@@ -42,6 +41,11 @@ public class FakeDataInitializer {
 		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode3, bp3);
 		bp4 = new BarcodedProduct(barcode4, "Cauliflower", 6, 550);
 		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode4, bp4);
+		
+		ProductDatabases.INVENTORY.put(bp1, 100);
+		ProductDatabases.INVENTORY.put(bp2, 100);
+		ProductDatabases.INVENTORY.put(bp3, 100);
+		ProductDatabases.INVENTORY.put(bp4, 100);
 
 	}
 	

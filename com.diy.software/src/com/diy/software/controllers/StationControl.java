@@ -1,10 +1,12 @@
 package com.diy.software.controllers;
 
 import java.util.ArrayList;
+import java.util.Currency;
 
 import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.DoItYourselfStation;
+import com.diy.hardware.Product;
 import com.diy.hardware.external.CardIssuer;
 import com.diy.hardware.external.ProductDatabases;
 import com.diy.simulation.Customer;
@@ -26,8 +28,12 @@ import com.jimmyselectronics.opeechee.CardReader;
 import com.jimmyselectronics.opeechee.CardReaderListener;
 import com.jimmyselectronics.virgilio.ElectronicScale;
 import com.jimmyselectronics.virgilio.ElectronicScaleListener;
+import com.unitedbankingservices.TooMuchCashException;
+import com.unitedbankingservices.banknote.Banknote;
+import com.unitedbankingservices.coin.Coin;
 
 import ca.powerutility.NoPowerException;
+import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
 
 /**
  * SystemControl is a class that acts as an intermediary between listeners
@@ -81,18 +87,20 @@ public class StationControl
 		station.printer.register(this);
 		station.mainScanner.register(this);
 		station.handheldScanner.register(this);
+		station.mainScanner.register(this);
 		station.baggingArea.register(this);
 		station.cardReader.register(this);
 
 		station.plugIn();
 		station.turnOn();
+		
+		fillStation();
 
 		ic = new ItemsControl(this);
 		bc = new BagsControl(this);
 		mc = new MembershipControl(this);
 		cc = new CashControl(this);
 		ac = new AttendantControl(this);
-		
 
 		/*
 		 * simulates what the printer has in it before the printing starts
@@ -173,6 +181,34 @@ public class StationControl
 	public CashControl getCashControl() {
 		return cc;
 	}
+	
+	private void fillStation() {
+		for(int i : station.banknoteDenominations) {
+			int capacity = station.banknoteDispensers.get(i).getCapacity();
+			Banknote[] bills = new Banknote[capacity];
+			for(int j = 0; j < capacity; j++) {
+				bills[j] = new Banknote(Currency.getInstance("CAD"), i);
+			}
+			try {
+				station.banknoteDispensers.get(i).load(bills);
+			} catch (TooMuchCashException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		for(long i : station.coinDenominations) {
+			int capacity = station.coinDispensers.get(i).getCapacity();
+			Coin[] coins = new Coin[capacity];
+			for(int j = 0; j < capacity; j++) {
+				coins[j] = new Coin(Currency.getInstance("CAD"), i);
+			}
+			try {
+				station.coinDispensers.get(i).load(coins);
+			} catch (TooMuchCashException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	public void updateWeightOfLastItemAddedToBaggingArea(double weight) {
 		weightOfLastItemAddedToBaggingArea = weight;
@@ -192,6 +228,7 @@ public class StationControl
 			while (loop) {
 				try {
 					this.station.handheldScanner.disable();
+					this.station.mainScanner.disable();
 					this.station.cardReader.disable();
 					for (StationControlListener l : listeners) {
 						l.systemControlLocked(this, true);
@@ -218,6 +255,7 @@ public class StationControl
 			while (loop) {
 				try {
 					this.station.handheldScanner.enable();
+					this.station.mainScanner.enable();
 					this.station.cardReader.enable();
 					for (StationControlListener l : listeners)
 						l.systemControlLocked(this, false);
@@ -479,6 +517,8 @@ public class StationControl
 			membershipInput = false;
 			wc.membershipCardInputCanceled();
 		} else {
+      Product product = findProduct(barcode);
+		  checkInventory(product);
 			weightOfItemScanned = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
 			// Add the barcode to the ArrayList within itemControl
 			this.ic.addScannedItemToCheckoutList(barcode);
@@ -491,6 +531,26 @@ public class StationControl
 			// Trigger the GUI to display "place the scanned item in the Bagging Area"
 		}
 	}
+	
+	private void checkInventory(Product product) {
+		if(ProductDatabases.INVENTORY.containsKey(product) && ProductDatabases.INVENTORY.get(product) >= 1) {
+			ProductDatabases.INVENTORY.put(product, ProductDatabases.INVENTORY.get(product)-1); //updates INVENTORY with new total
+		}else {
+			// TODO: inform customer and attendant
+			System.out.print("Out of stock");
+		}
+	}
+	
+	private BarcodedProduct findProduct(Barcode Barcode) throws NullPointerSimulationException {
+    	if(ProductDatabases.BARCODED_PRODUCT_DATABASE.containsKey(Barcode)) {
+            return ProductDatabases.BARCODED_PRODUCT_DATABASE.get(Barcode);        
+        }
+    	else {
+    		// TODO: Inform customer station
+    		System.out.println("Cannot find the product. Please try again or ask for assistant!");
+    		throw new NullPointerSimulationException();
+    	}
+    }
 
 	/**
 	 * Compares the expected weight after adding an item to the actual weight being
