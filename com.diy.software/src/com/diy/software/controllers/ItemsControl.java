@@ -8,6 +8,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
+import com.diy.hardware.PLUCodedProduct;
 import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.external.ProductDatabases;
 import com.diy.software.listeners.ItemsControlListener;
@@ -134,8 +135,17 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 	}
 
-	public void addItemByPLU() {
+	public void addItemByPLU(PriceLookUpCode code) {
 		baggingAreaTimerStart = System.currentTimeMillis();
+
+		PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(code);
+		if(product != null) {
+			double price = (double)product.getPrice();
+			this.addItemToCheckoutList(new Tuple<String,Double>(product.getDescription(), price));
+			this.updateCheckoutTotal(price);
+		} else {
+			System.err.println("PLU Code does not correspond to a product in the database!");
+		}
 		
 	}
 
