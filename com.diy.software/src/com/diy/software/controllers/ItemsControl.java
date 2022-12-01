@@ -244,6 +244,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				break;
 			case "enter plu":
 				System.out.println("Customer entered a PLU Code");
+				sc.startPLUCodeWorkflow();
 				break;
 			case "put back":
 				System.out.println("Customer put back current item");

@@ -116,6 +116,7 @@ public class StationControl
 		wc = new WalletControl(this);
 		ppc = new PinPadControl(this);
 		pc = new PaymentControl(this);
+		pcc = new PLUCodeControl(this);
 	}
 
 	/**
@@ -329,6 +330,11 @@ public class StationControl
 	public void startMembershipWorkflow() {
 		for (StationControlListener l : listeners)
 			l.triggerMembershipWorkflow(this);
+	}
+
+	public void startPLUCodeWorkflow() {
+		for (StationControlListener l : listeners)
+			l.triggerPLUCodeWorkflow(this);;
 	}
 	
 	public void startMembershipCardInput() {

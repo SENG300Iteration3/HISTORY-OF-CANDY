@@ -14,15 +14,7 @@ import com.diy.software.listeners.PaymentControlListener;
 import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.opeechee.Card.CardData;
 
-import swing.screens.AddItemsScreen;
-import swing.screens.BlockedPromptScreen;
-import swing.screens.MembershipScreen;
-import swing.screens.OkayPromptScreen;
-import swing.screens.PaymentScreen;
-import swing.screens.PinPadScreen;
-import swing.screens.PresentCardScreen;
-import swing.screens.PresentCashScreen;
-import swing.screens.PresentMembershipCardScreen;
+import swing.screens.*;
 import swing.styling.Screen;
 
 public class CustomerStationPane implements StationControlListener, PaymentControlListener {
@@ -41,6 +33,7 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	private OkayPromptScreen okayPromptScreen;
 	private MembershipScreen membershipSceen;
 	private PresentMembershipCardScreen presentMembershipCardScreen;
+	private PLUCodeScreen pluCodeScreen;
 
 	public CustomerStationPane(StationControl sc) {
 		this.sc = sc;
@@ -56,6 +49,7 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 		this.pinPadScren = new PinPadScreen(sc);
 		this.paymentScreen = new PaymentScreen(sc);
 		this.membershipSceen = new MembershipScreen(sc);
+		this.pluCodeScreen = new PLUCodeScreen(sc);
 		this.currentPanel = new JPanel();
 		this.rooPanel = new JPanel();
 		this.rooPanel.add(currentPanel);
@@ -192,5 +186,10 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	@Override
 	public void triggerMembershipWorkflow(StationControl systemControl) {
 		addScreenToStack(membershipSceen);
+	}
+
+	@Override
+	public void triggerPLUCodeWorkflow(StationControl systemControl) {
+		addScreenToStack(pluCodeScreen);
 	}
 }

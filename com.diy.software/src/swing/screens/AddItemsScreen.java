@@ -158,6 +158,9 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 		this.memberBtn.setActionCommand("member");
 		this.memberBtn.addActionListener(itemsControl);
 
+		this.addItemByPLUBtn.setActionCommand("enter plu");
+		this.addItemByPLUBtn.addActionListener(itemsControl);
+
 		this.searchCatalogueBtn = makeButton("Browse Items", buttonPanel);
 
 

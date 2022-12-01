@@ -99,5 +99,6 @@ public interface StationControlListener {
 	 * 			The default SystemControl unit for the current instance
 	 */
 	public void triggerMembershipWorkflow(StationControl systemControl);
-	
+
+	void triggerPLUCodeWorkflow(StationControl systemControl);
 }
