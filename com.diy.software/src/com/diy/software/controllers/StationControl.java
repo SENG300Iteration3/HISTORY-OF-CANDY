@@ -92,7 +92,6 @@ public class StationControl
 		station.printer.register(this);
 		station.mainScanner.register(this);
 		station.handheldScanner.register(this);
-		station.mainScanner.register(this);
 		station.baggingArea.register(this);
 		station.cardReader.register(this);
 
@@ -255,6 +254,27 @@ public class StationControl
 			}
 		}
 		// System.out.println("Station Locked"); // Remove before release}
+	}
+	
+	public void blockStation(String reason) {
+		if (!isLocked) {
+			boolean loop = true;
+			while (loop) {
+				try {
+					this.station.handheldScanner.disable();
+					this.station.cardReader.disable();
+					for (StationControlListener l : listeners) {
+						l.systemControlLocked(this, true, reason);
+					}
+					isLocked = true;
+				} catch (NoPowerException e) {
+					System.out.println(e.getMessage());
+				} finally {
+					if (this.station.handheldScanner.isPoweredUp())
+						loop = false;
+				}
+			}
+		}
 	}
 
 	/**
@@ -533,8 +553,8 @@ public class StationControl
 			membershipInput = false;
 			wc.membershipCardInputCanceled();
 		} else {
-      Product product = findProduct(barcode);
-		  checkInventory(product);
+			Product product = findProduct(barcode);
+			checkInventory(product);
 			weightOfItemScanned = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
 			// Add the barcode to the ArrayList within itemControl
 			this.ic.addScannedItemToCheckoutList(barcode);
@@ -595,6 +615,12 @@ public class StationControl
 			System.out.println("Cannot find the product. Please try again or ask for assistant!");
 			throw new NullPointerSimulationException();
 		}
+	}
+	
+	public void ItemApprovedToNotBag() {
+		this.updateExpectedCheckoutWeight(-weightOfItemScanned);
+		this.updateWeightOfLastItemAddedToBaggingArea(-weightOfItemScanned);
+		this.unblockStation();
 	}
 
 	/**
