@@ -169,14 +169,14 @@ public class TextSearchScreen extends Screen
 		int searchButtonHeight = 35;
 		int searchButtonWidth = 130;
 		
-		//Setting up  the search button
+		//Setting up  the back button
 		GUI_JButton backButton = new GUI_JButton("Back".toUpperCase());
 		backButton.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		backButton.setPreferredSize(new Dimension(searchButtonWidth, searchButtonHeight));
 		backButton.setLayout(new BorderLayout());
 		backButton.setBorder(emptyBorder);
 		
-		//Setting up grid Bag Constraints on the search button
+		//Setting up grid Bag Constraints on the back button
 		gridBagConstraints.gridx = 0;
 		gridBagConstraints.gridy = 5;
 		gridBagConstraints.insets = new Insets(20 ,0,20,0);
