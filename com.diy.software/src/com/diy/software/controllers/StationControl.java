@@ -99,6 +99,7 @@ public class StationControl
 		ic = new ItemsControl(this);
 		bc = new BagsControl(this);
 		mc = new MembershipControl(this);
+		bdc = new BagDispenserControl(this);
 		cc = new CashControl(this);
 		ac = new AttendantControl(this);
 
