@@ -80,6 +80,11 @@ public class StationControl
 	private boolean membershipInput = false;
 	private int bagInStock;
 
+
+	
+	// used for receipt listeners
+	boolean isOutOfPaper = false;
+	boolean isOutOfInk = false;
 	/**
 	 * Constructor for the SystemControl class. Instantiates an object of type
 	 * DoItYourselfStation as well as a set of listeners which are registered to the
@@ -675,8 +680,6 @@ public class StationControl
 		return bagInStock;
 	}
 
-	boolean isOutOfPaper = false;
-	boolean isOutOfInk = false;
 	
 	@Override
 	public void outOfPaper(IReceiptPrinter printer) {
