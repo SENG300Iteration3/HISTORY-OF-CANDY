@@ -8,11 +8,13 @@ import java.util.HashMap;
 import javax.swing.text.PlainDocument;
 
 import com.diy.hardware.BarcodedProduct;
+import com.diy.hardware.PLUCodedItem;
 import com.diy.hardware.PLUCodedProduct;
 import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.Product;
 import com.diy.hardware.external.CardIssuer;
 import com.diy.hardware.external.ProductDatabases;
+import com.jimmyselectronics.Item;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.necchi.Numeral;
@@ -24,7 +26,8 @@ public class FakeDataInitializer {
 	private BarcodedItem item1, item2, item3, item4;
 	private BarcodedProduct bp1, bp2, bp3, bp4;
 	private PriceLookUpCode code1, code2, code3, code4;
-	private PLUCodedProduct pitem1, pitem2, pitem3, pitem4;
+	private PLUCodedItem pitem1, pitem2, pitem3, pitem4;
+	private PLUCodedProduct pp1, pp2, pp3, pp4;
 	private Card card1, card2, card3, card4;
 	private CardIssuer fakebank;
 	private final Double AMOUNT_AVAILABLE = 1000.0;
@@ -71,18 +74,30 @@ public class FakeDataInitializer {
 		// }
 
 		code1 = new PriceLookUpCode("1234");
-		pitem1 = new PLUCodedProduct(code1, "Green Apples", 8);
+		pitem1 = new PLUCodedItem(code1, 223);
+		pp1 = new PLUCodedProduct(code1, "Green Apples", 8);
+		
 		code2 = new PriceLookUpCode("9876");
-		pitem2 = new PLUCodedProduct(code2, "Broccoli", 5);
-		code3 = new PriceLookUpCode("11111");
-		pitem3 = new PLUCodedProduct(code3, "Tomatoes", 4);
-		code4 = new PriceLookUpCode("23456");
-		pitem4 = new PLUCodedProduct(code4, "Oranges", 7);
+		pitem2 = new PLUCodedItem(code2, 350);
+		pp2 = new PLUCodedProduct(code2, "Broccoli", 5);
 
-		ProductDatabases.PLU_PRODUCT_DATABASE.put(code1, pitem1);
-		ProductDatabases.PLU_PRODUCT_DATABASE.put(code2, pitem2);
-		ProductDatabases.PLU_PRODUCT_DATABASE.put(code3, pitem3);
-		ProductDatabases.PLU_PRODUCT_DATABASE.put(code4, pitem4);
+		code3 = new PriceLookUpCode("11111");
+		pitem3 = new PLUCodedItem(code3, 85);
+		pp3 = new PLUCodedProduct(code3, "Tomatoes", 4);
+
+		code4 = new PriceLookUpCode("23456");
+		pitem4 = new PLUCodedItem(code4, 140);
+		pp4 = new PLUCodedProduct(code4, "Oranges", 7);
+
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(code1, pp1);
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(code2, pp2);
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(code3, pp3);
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(code4, pp4);
+
+		ProductDatabases.INVENTORY.put(pp1, 100);
+		ProductDatabases.INVENTORY.put(pp2, 100);
+		ProductDatabases.INVENTORY.put(pp3, 100);
+		ProductDatabases.INVENTORY.put(pp4, 100);
 	}
 	
 	/**
@@ -115,8 +130,8 @@ public class FakeDataInitializer {
 		return new Barcode[] {barcode1, barcode2, barcode3, barcode4};
 	}
 	
-	public BarcodedItem[] getItems() {
-		return new BarcodedItem[] {item1, item2, item3, item4};
+	public Item[] getItems() {
+		return new Item[]{item1, item2, item3, item4, pitem1, pitem2, pitem3, pitem4};
 	}
 	
 	public Card[] getCards() {
