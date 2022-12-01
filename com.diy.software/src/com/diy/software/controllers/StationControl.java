@@ -67,7 +67,10 @@ public class StationControl
 
 	private PinPadControl ppc;
 	private PaymentControl pc;
-
+	
+	// used for receipt listeners
+	boolean isOutOfPaper = false;
+	boolean isOutOfInk = false;
 	/**
 	 * Constructor for the SystemControl class. Instantiates an object of type
 	 * DoItYourselfStation as well as a set of listeners which are registered to the
@@ -474,9 +477,6 @@ public class StationControl
 	public boolean expectedWeightMatchesActualWeight(double actualWeight) {
 		return (this.getExpectedWeight() == actualWeight + bagWeight);
 	}
-	
-	boolean isOutOfPaper = false;
-	boolean isOutOfInk = false;
 	
 	@Override
 	public void outOfPaper(IReceiptPrinter printer) {
