@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.BagsControl;
 import com.diy.software.controllers.ItemsControl;
+import com.diy.software.controllers.ReceiptControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
@@ -212,5 +213,29 @@ public class CustomerItemsPanel extends JPanel
 	public void initialState() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public String lowInk(ReceiptControl rc, String message) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String lowPaper(ReceiptControl rc, String dateTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String outOfInk(ReceiptControl rc, String message) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String outOfPaper(ReceiptControl rc, String message) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
