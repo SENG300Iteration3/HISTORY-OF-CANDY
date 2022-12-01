@@ -73,6 +73,7 @@ public class StationControl
 
 	private PinPadControl ppc;
 	private PaymentControl pc;
+	private PLUCodeControl pcc;
 
 	/**
 	 * Constructor for the SystemControl class. Instantiates an object of type
@@ -180,6 +181,10 @@ public class StationControl
 
 	public CashControl getCashControl() {
 		return cc;
+	}
+
+	public PLUCodeControl getPLUCodeControl() {
+		return pcc;
 	}
 	
 	private void fillStation() {
