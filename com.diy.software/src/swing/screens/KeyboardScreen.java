@@ -16,6 +16,7 @@ import com.jimmyselectronics.nightingale.Keyboard;
 import swing.styling.GUI_Fonts;
 import swing.styling.GUI_JButton;
 import swing.styling.GUI_JLabel;
+import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Constants;
 import swing.styling.Screen;
 
@@ -75,7 +76,7 @@ public class KeyboardScreen extends Screen {
 	}
 	
 	public void addKeyButton(final String key, int row, int col, int keyWidth, int keyHeight) {
-		GUI_JButton keyBtn = new GUI_JButton(key);
+		final GUI_JButton keyBtn = new GUI_JButton(key);
 		
 		keyBtn.setFont(GUI_Fonts.SMALL_TEXT);
 		
@@ -127,7 +128,13 @@ public class KeyboardScreen extends Screen {
 					keyBtn.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							capsLockOn = !capsLockOn;
+							if (capsLockOn) {
+								capsLockOn = false;
+								keyBtn.setBackground(GUI_Color_Palette.DARK_BROWN);
+							} else {
+								capsLockOn = true;
+								keyBtn.setBackground(Color.GREEN);
+							}
 						}
 					});
 					break;
