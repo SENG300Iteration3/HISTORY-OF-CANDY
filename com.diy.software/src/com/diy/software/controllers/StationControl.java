@@ -11,6 +11,7 @@ import com.diy.hardware.external.CardIssuer;
 import com.diy.hardware.external.ProductDatabases;
 import com.diy.simulation.Customer;
 import com.diy.software.fakedata.FakeDataInitializer;
+import com.diy.software.fakedata.GiftcardDatabase;
 import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
@@ -397,6 +398,23 @@ public class StationControl
 			Double amountOwed = this.ic.getCheckoutTotal();
 			String cardNumber = data.getNumber();
 			CardIssuer bank = fakeData.getCardIssuer();
+			
+			if(data.getType().equals(GiftcardDatabase.CompanyGiftCard)) {
+				Double amountOnCard = GiftcardDatabase.giftcardMap.get(cardNumber);
+				Double dif = amountOnCard - amountOwed;
+				if(dif >= 0) {
+					GiftcardDatabase.giftcardMap.put(cardNumber, dif);
+					ic.updateCheckoutTotal(-amountOwed);
+					for (StationControlListener l : listeners) {
+						l.paymentHasBeenMade(this, data);
+					}
+				}else {
+					GiftcardDatabase.giftcardMap.put(cardNumber, 0.0);
+					ic.updateCheckoutTotal(-amountOnCard);
+					//TODO: tell customer that their card wasn't enough maybe?
+				}
+				return;
+			}
 
 			long holdNum = bank.authorizeHold(cardNumber, amountOwed);
 			if (holdNum <= -1) {
