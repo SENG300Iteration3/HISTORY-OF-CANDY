@@ -86,9 +86,9 @@ public class PresentGiftCardOrCashScreen extends Screen implements CashControlLi
 	@Override
 	public void cashInserted(CashControl cc) {
 		if (isGiftCard) {
-			this.prompt = new GUI_JLabel("Please swipe gift card. Total remaining: $" + systemControl.getItemsControl().getCheckoutTotal());
+			this.prompt = new GUI_JLabel("Please swipe gift card. Total remaining: $" + fix(systemControl.getItemsControl().getCheckoutTotal()));
 		} else {
-			this.prompt = new GUI_JLabel("Please insert $" + systemControl.getItemsControl().getCheckoutTotal());
+			this.prompt = new GUI_JLabel("Please insert $" + fix(systemControl.getItemsControl().getCheckoutTotal()));
 		}
 	}
 	
@@ -113,65 +113,77 @@ public class PresentGiftCardOrCashScreen extends Screen implements CashControlLi
 
 	@Override
 	public void coinInsertionEnabled(CashControl cc) {
-		this.coinAvailability.setText("");
+		if(!isGiftCard) {
+			this.coinAvailability.setText("");
+		}
 		
 	}
 
 	@Override
 	public void noteInsertionEnabled(CashControl cc) {
-		this.noteAvailability.setText("");
+		if(!isGiftCard) {
+			this.noteAvailability.setText("");
+		}
 		
 	}
 
 	@Override
 	public void coinInsertionDisabled(CashControl cc) {
-		this.coinAvailability.setText("Coins are currently disabled.");
+		if(!isGiftCard) {
+			this.coinAvailability.setText("Coins are currently disabled.");
+		}
 		
 	}
 
 	@Override
 	public void noteInsertionDisabled(CashControl cc) {
-		this.noteAvailability.setText("Banknotes are currently disabled.");
+		if(!isGiftCard) {
+			this.noteAvailability.setText("Banknotes are currently disabled.");
+		}
 		
 	}
 
 	@Override
 	public void cashRejected(CashControl cc) {
-		List<Coin> c = systemControl.station.coinTray.collectCoins();
-		Banknote b = null; 
-		if(systemControl.station.banknoteInput.hasDanglingBanknotes()) {
-			b = systemControl.station.banknoteInput.removeDanglingBanknote();
+		if(!isGiftCard) {
+			List<Coin> c = systemControl.station.coinTray.collectCoins();
+			Banknote b = null; 
+			if(systemControl.station.banknoteInput.hasDanglingBanknotes()) {
+				b = systemControl.station.banknoteInput.removeDanglingBanknote();
+			}
+			double returnedCash = 0;
+			for(Coin i : c) {
+				returnedCash += ((double)i.getValue())/100.0;
+			}
+			if(b != null) {
+				returnedCash += b.getValue();
+			}
+			message.setText("Input cash was rejected. You recieved $" + returnedCash + " back from the machine");
+			lastRecievedCash = returnedCash;
+			System.out.println("Input cash was rejected. You recieved $" + returnedCash + " back from the machine");
 		}
-		double returnedCash = 0;
-		for(Coin i : c) {
-			returnedCash += ((double)i.getValue())/100.0;
-		}
-		if(b != null) {
-			returnedCash += b.getValue();
-		}
-		message.setText("Input cash was rejected. You recieved $" + returnedCash + " back from the machine");
-		lastRecievedCash = returnedCash;
-		System.out.println("Input cash was rejected. You recieved $" + returnedCash + " back from the machine");
 	}
 
 	@Override
 	public void changeReturned(CashControl cc) {
-		List<Coin> c = systemControl.station.coinTray.collectCoins();
-		List<Banknote> b = null;
-		if(systemControl.station.banknoteOutput.hasDanglingBanknotes()) {
-			b = systemControl.station.banknoteOutput.removeDanglingBanknotes();
-		}
-		double returnedCash = 0;
-		for(Coin i : c) {
-			returnedCash += ((double)i.getValue())/100.0;
-		}
-		if(b != null) {
-			for(Banknote i : b) {
-				returnedCash += i.getValue();
+		if(!isGiftCard) {
+			List<Coin> c = systemControl.station.coinTray.collectCoins();
+			List<Banknote> b = null;
+			if(systemControl.station.banknoteOutput.hasDanglingBanknotes()) {
+				b = systemControl.station.banknoteOutput.removeDanglingBanknotes();
 			}
+			double returnedCash = 0;
+			for(Coin i : c) {
+				returnedCash += ((double)i.getValue())/100.0;
+			}
+			if(b != null) {
+				for(Banknote i : b) {
+					returnedCash += i.getValue();
+				}
+			}
+			message.setText("You recieved $" + returnedCash + " as change from the machine");
+			lastRecievedCash = returnedCash;
+			System.out.println("You recieved $" + returnedCash + " as change from the machine");
 		}
-		message.setText("You recieved $" + returnedCash + " as change from the machine");
-		lastRecievedCash = returnedCash;
-		System.out.println("You recieved $" + returnedCash + " as change from the machine");
 	}
 }
