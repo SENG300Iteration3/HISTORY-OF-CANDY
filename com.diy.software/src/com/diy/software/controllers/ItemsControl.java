@@ -137,12 +137,11 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 	}
 
-	public void addItemByPLU(String code) {
+	public void addItemByPLU(PriceLookUpCode code) {
 		try {
 			baggingAreaTimerStart = System.currentTimeMillis();
-
-			PriceLookUpCode pluCode = new PriceLookUpCode(code);
-			PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode);
+			
+			PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(code);
 			
 			if(product != null) {
 				double price = (double)product.getPrice();

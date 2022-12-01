@@ -1,5 +1,6 @@
 package com.diy.software.controllers;
 
+import com.diy.hardware.PriceLookUpCode;
 import com.diy.software.listeners.PLUCodeControlListener;
 
 import java.awt.event.ActionEvent;
@@ -49,7 +50,8 @@ public class PLUCodeControl implements ActionListener {
 					l.pluHasBeenUpdated(this, pluCode);
 				break;
 			case "submit":
-				sc.getItemsControl().addItemByPLU(pluCode);
+				PriceLookUpCode code = new PriceLookUpCode(pluCode);
+				sc.getItemsControl().addItemByPLU(code);
 				pluCode = "";
 				break;
 			default:

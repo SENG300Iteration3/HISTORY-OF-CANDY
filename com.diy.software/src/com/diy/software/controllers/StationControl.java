@@ -6,11 +6,14 @@ import java.util.Currency;
 import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.DoItYourselfStation;
+import com.diy.hardware.PLUCodedProduct;
+import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.Product;
 import com.diy.hardware.external.CardIssuer;
 import com.diy.hardware.external.ProductDatabases;
 import com.diy.simulation.Customer;
 import com.diy.software.fakedata.FakeDataInitializer;
+import com.diy.software.listeners.PLUCodeControlListener;
 import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
@@ -44,7 +47,7 @@ import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
  *
  */
 public class StationControl
-		implements BarcodeScannerListener, ElectronicScaleListener, CardReaderListener, ReceiptPrinterListener {
+		implements BarcodeScannerListener, ElectronicScaleListener, CardReaderListener, ReceiptPrinterListener, PLUCodeControlListener {
 	public FakeDataInitializer fakeData;
 	private double expectedCheckoutWeight = 0.0;
 	private double bagWeight = 0.0;
@@ -69,6 +72,7 @@ public class StationControl
 	private boolean isLocked = false;
 	public String memberName;
 	public double weightOfItemScanned;
+	public double weightOfItemCodeEntered;
 	private boolean membershipInput = false;
 
 	private PinPadControl ppc;
@@ -137,6 +141,7 @@ public class StationControl
 			customer.wallet.cards.add(c);
 		for (Item i : this.fakeData.getItems())
 			customer.shoppingCart.add(i);
+			
 	}
 
 	/**
@@ -543,6 +548,25 @@ public class StationControl
 		}
 	}
 	
+	@Override
+	public void pluHasBeenUpdated(PLUCodeControl ppc, String pluCode) {
+		PriceLookUpCode code = new PriceLookUpCode(pluCode);
+		Product product = findProduct(code);
+		checkInventory(product);
+
+		// Index 0 should be the current item
+		weightOfItemCodeEntered = customer.shoppingCart.get(0).getWeight();
+		// Add the barcode to the ArrayList within itemControl
+		this.ic.addItemByPLU(code);
+		// Set the expected weight in SystemControl
+		this.updateExpectedCheckoutWeight(weightOfItemCodeEntered);
+		this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemCodeEntered);
+		// Call method within SystemControl that handles the rest of the item scanning
+		// procedure
+		this.blockStation();
+		// Trigger the GUI to display "place the scanned item in the Bagging Area"
+	}
+	
 	private void checkInventory(Product product) {
 		if(ProductDatabases.INVENTORY.containsKey(product) && ProductDatabases.INVENTORY.get(product) >= 1) {
 			ProductDatabases.INVENTORY.put(product, ProductDatabases.INVENTORY.get(product)-1); //updates INVENTORY with new total
@@ -562,6 +586,16 @@ public class StationControl
     		throw new NullPointerSimulationException();
     	}
     }
+	private PLUCodedProduct findProduct(PriceLookUpCode code) throws NullPointerSimulationException {
+		if(ProductDatabases.PLU_PRODUCT_DATABASE.containsKey(code)) {
+					return ProductDatabases.PLU_PRODUCT_DATABASE.get(code);        
+			}
+		else {
+			// TODO: Inform customer station
+			System.out.println("Cannot find the product. Please try again or ask for assistant!");
+			throw new NullPointerSimulationException();
+		}
+	}
 
 	/**
 	 * Compares the expected weight after adding an item to the actual weight being
@@ -608,4 +642,6 @@ public class StationControl
 		// TODO Auto-generated method stub
 
 	}
+
+	
 }
