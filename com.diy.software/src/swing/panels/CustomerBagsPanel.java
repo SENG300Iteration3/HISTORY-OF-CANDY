@@ -36,16 +36,19 @@ public class CustomerBagsPanel extends JPanel
 		ic = sc.getItemsControl();
 		ic.addListener(this);
 
+		//TODO: REMOVE
 		addBagsButton = new JButton("addOwnBagsInBaggingArea()");
 		addBagsButton.setActionCommand("add bags");
 		addBagsButton.addActionListener(bc);
 
 		addBagsLabel = new JLabel("");
 
+		//TODO: REMOVE
 		doneAddingBagsButton = new JButton("doneAddOwnBagsInBaggingArea()");
 		doneAddingBagsButton.setActionCommand("done adding bags");
 		doneAddingBagsButton.addActionListener(bc);
 
+		//TODO: REMOVE
 		purchaseBagsButton = new JButton("purchaseBags()");
 		purchaseBagsButton.setActionCommand("purchase bags");
 		purchaseBagsButton.addActionListener(bc);
