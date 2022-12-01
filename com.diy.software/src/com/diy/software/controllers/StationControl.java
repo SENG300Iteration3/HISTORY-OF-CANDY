@@ -87,7 +87,6 @@ public class StationControl
 		station.printer.register(this);
 		station.mainScanner.register(this);
 		station.handheldScanner.register(this);
-		station.mainScanner.register(this);
 		station.baggingArea.register(this);
 		station.cardReader.register(this);
 
