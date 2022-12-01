@@ -83,6 +83,7 @@ public class StationControl
 		station.handheldScanner.register(this);
 		station.mainScanner.register(this);
 		station.baggingArea.register(this);
+		station.scanningArea.register(this);
 		station.cardReader.register(this);
 
 		station.plugIn();
@@ -447,39 +448,18 @@ public class StationControl
 	// FIXME: only barcoded products have barcodes, product only have price/weight
 	@Override
 	public void barcodeScanned(BarcodeScanner barcodeScanner, Barcode barcode) {
-		Product product = findProduct(barcode);
-		checkInventory(product);
+		this.blockStation();
+	}
+	
+	public void addNewItem(Barcode barcode) {
 		weightOfItemScanned = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
 		// Add the barcode to the ArrayList within itemControl
 		this.ic.addScannedItemToCheckoutList(barcode);
 		// Set the expected weight in SystemControl
 		this.updateExpectedCheckoutWeight(weightOfItemScanned);
 		this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
-		// Call method within SystemControl that handles the rest of the item scanning
-		// procedure
-		this.blockStation();
-		// Trigger the GUI to display "place the scanned item in the Bagging Area"
+		// Call method within SystemControl that handles the rest of the item scanning		
 	}
-	
-	private void checkInventory(Product product) {
-		if(ProductDatabases.INVENTORY.containsKey(product) && ProductDatabases.INVENTORY.get(product) >= 1) {
-			ProductDatabases.INVENTORY.put(product, ProductDatabases.INVENTORY.get(product)-1); //updates INVENTORY with new total
-		}else {
-			// TODO: inform customer and attendant
-			System.out.print("Out of stock");
-		}
-	}
-	
-	private BarcodedProduct findProduct(Barcode Barcode) throws NullPointerSimulationException {
-    	if(ProductDatabases.BARCODED_PRODUCT_DATABASE.containsKey(Barcode)) {
-            return ProductDatabases.BARCODED_PRODUCT_DATABASE.get(Barcode);        
-        }
-    	else {
-    		// TODO: Inform customer station
-    		System.out.println("Cannot find the product. Please try again or ask for assistant!");
-    		throw new NullPointerSimulationException();
-    	}
-    }
 
 	/**
 	 * Compares the expected weight after adding an item to the actual weight being

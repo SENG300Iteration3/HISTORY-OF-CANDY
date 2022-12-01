@@ -23,7 +23,7 @@ public class CustomerItemsPanel extends JPanel
 	private AttendantControl ac;
 	private BagsControl bc;
 	private boolean itemsAvailable;
-	JButton selectNextItemButton, mainScannerButton, handheldScannerButton, deselectCurrentItemButton, placeItemInBaggingAreaButton, removeItemInBaggingAreaButton;
+	JButton selectNextItemButton, mainScannerButton, handheldScannerButton, deselectCurrentItemButton, placeItemInScanningAreaButton, placeItemInBaggingAreaButton, removeItemInBaggingAreaButton;
 	GridBagConstraints buttonGrid = new GridBagConstraints();
 	JLabel weightDescrepancyMessage;
 
@@ -56,7 +56,11 @@ public class CustomerItemsPanel extends JPanel
 		deselectCurrentItemButton.setActionCommand("put back");
 		deselectCurrentItemButton.addActionListener(ic);
 
-		placeItemInBaggingAreaButton = new JButton("placeItemInBagginArea()");
+		placeItemInScanningAreaButton = new JButton("placeItemInScanningArea()");
+		placeItemInScanningAreaButton.setActionCommand("weight item");
+		placeItemInScanningAreaButton.addActionListener(ic);
+		
+		placeItemInBaggingAreaButton = new JButton("placeItemInBaggingArea()");
 		placeItemInBaggingAreaButton.setActionCommand("bag");
 		placeItemInBaggingAreaButton.addActionListener(ic);
 		
@@ -78,15 +82,18 @@ public class CustomerItemsPanel extends JPanel
 
 		buttonGrid.gridx = 3;
 		this.add(deselectCurrentItemButton, buttonGrid);
-
+		
 		buttonGrid.gridx = 4;
+		this.add(placeItemInScanningAreaButton, buttonGrid);
+
+		buttonGrid.gridx = 5;
 		this.add(placeItemInBaggingAreaButton, buttonGrid);
 		
-		buttonGrid.gridx = 5;
+		buttonGrid.gridx = 6;
 		this.add(removeItemInBaggingAreaButton, buttonGrid);
 		
 		buttonGrid.gridy = 1;
-		buttonGrid.gridx = 6;
+		buttonGrid.gridx = 7;
 		this.add(weightDescrepancyMessage);
 		
 
@@ -98,6 +105,7 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
+		placeItemInScanningAreaButton.setEnabled(false);
 		removeItemInBaggingAreaButton.setEnabled(false);
 	}
 
@@ -108,6 +116,7 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
+		placeItemInScanningAreaButton.setEnabled(false);
 		removeItemInBaggingAreaButton.setEnabled(false);
 		weightDescrepancyMessage.setText("");
 	}
@@ -119,6 +128,7 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(true);
 		deselectCurrentItemButton.setEnabled(true);
 		placeItemInBaggingAreaButton.setEnabled(false);
+		placeItemInScanningAreaButton.setEnabled(false);
 		removeItemInBaggingAreaButton.setEnabled(false);
 	}
 
@@ -129,6 +139,18 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(true);
+		placeItemInScanningAreaButton.setEnabled(false);
+		removeItemInBaggingAreaButton.setEnabled(false);
+	}
+	
+	@Override
+	public void awaitingItemToBePlacedInScanningArea(ItemsControl ic) {
+		selectNextItemButton.setEnabled(false);
+		mainScannerButton.setEnabled(false);
+		handheldScannerButton.setEnabled(false);
+		deselectCurrentItemButton.setEnabled(false);
+		placeItemInBaggingAreaButton.setEnabled(false);
+		placeItemInScanningAreaButton.setEnabled(true);
 		removeItemInBaggingAreaButton.setEnabled(false);
 	}
 
@@ -151,6 +173,7 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
+		placeItemInScanningAreaButton.setEnabled(false);
 		removeItemInBaggingAreaButton.setEnabled(false);
 	}
 
@@ -161,6 +184,7 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
+		placeItemInScanningAreaButton.setEnabled(false);
 		removeItemInBaggingAreaButton.setEnabled(false);
 	}
 
@@ -171,6 +195,7 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
+		placeItemInScanningAreaButton.setEnabled(false);
 		removeItemInBaggingAreaButton.setEnabled(false);
 	}
 
@@ -187,6 +212,7 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
+		placeItemInScanningAreaButton.setEnabled(false);
 		removeItemInBaggingAreaButton.setEnabled(true);
 		weightDescrepancyMessage.setText(updateMessage);
 	}

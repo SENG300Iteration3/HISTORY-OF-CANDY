@@ -96,6 +96,13 @@ public class CustomerBagsPanel extends JPanel
 		purchaseBagsButton.setEnabled(false);
 		doneAddingBagsButton.setEnabled(false);
 	}
+	
+	@Override
+	public void awaitingItemToBePlacedInScanningArea(ItemsControl ic) {
+		addBagsButton.setEnabled(false);
+		purchaseBagsButton.setEnabled(false);
+		doneAddingBagsButton.setEnabled(false);
+	}
 
 	@Override
 	public void noMoreItemsAvailableInCart(ItemsControl ic) {

@@ -7,8 +7,10 @@ public interface ItemsControlListener {
 	public void awaitingItemToBeSelected(ItemsControl ic);
 	
 	public void itemWasSelected(ItemsControl ic);
-	
+
 	public void awaitingItemToBePlacedInBaggingArea(ItemsControl ic);
+	
+	public void awaitingItemToBePlacedInScanningArea(ItemsControl ic);
 	
 	public void noMoreItemsAvailableInCart(ItemsControl ic);
 	

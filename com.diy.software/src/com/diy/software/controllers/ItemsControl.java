@@ -8,6 +8,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
+import com.diy.hardware.Product;
 import com.diy.hardware.external.ProductDatabases;
 import com.diy.software.listeners.ItemsControlListener;
 import com.jimmyselectronics.AbstractDevice;
@@ -18,6 +19,8 @@ import com.jimmyselectronics.necchi.BarcodeScanner;
 import com.jimmyselectronics.necchi.BarcodeScannerListener;
 import com.jimmyselectronics.virgilio.ElectronicScale;
 import com.jimmyselectronics.virgilio.ElectronicScaleListener;
+
+import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
 
 public class ItemsControl implements ActionListener, BarcodeScannerListener, ElectronicScaleListener {
 	private StationControl sc;
@@ -44,6 +47,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		sc.station.handheldScanner.register(this);
 		sc.station.mainScanner.register(this);
 		sc.station.baggingArea.register(this);
+		sc.station.scanningArea.register(this);
 		this.listeners = new ArrayList<>();
 	}
 	
@@ -145,7 +149,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 	}
 
-	public void placeItemOnScale() {
+	public void placeItemOnBaggingArea() {
 		scaleExpectedWeight = sc.weightOfItemScanned;
 		weighSuccess = false;
 		baggingAreaTimerEnd = System.currentTimeMillis();
@@ -174,6 +178,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			// if weighSuccess is still false after listeners have been called, we can show
 			// and alert showing a failed weigh-in if time permits.
 		}
+	}
+	
+	public void placeItemOnScanningArea() {
+		sc.station.scanningArea.add
 	}
 	
 	/**
@@ -228,9 +236,13 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				System.out.println("Customer put back current item");
 				putUnscannedItemBack();
 				break;
+			case "weight item":
+				System.out.println("Customer weight item in scanning area");
+				placeItemOnScanningArea();
+				break;
 			case "bag":
 				System.out.println("Customer put item in bagging area");
-				placeItemOnScale();
+				placeItemOnBaggingArea();
 				break;
 			case "removeFromScale":
 				System.out.println("Customer requests to not bag last item from scale");
@@ -267,10 +279,43 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 	@Override
 	public void barcodeScanned(BarcodeScanner barcodeScanner, Barcode barcode) {
-		scanSuccess = true;
-		for (ItemsControlListener l : listeners)
-			l.awaitingItemToBePlacedInBaggingArea(this);
+		// Verify product and inventory in the product database
+		Product product = findProduct(barcode);
+		checkInventory(product);
+		
+		// Check if product price is per unit or weight
+		if(product.isPerUnit()) {
+			sc.addNewItem(barcode);
+			scanSuccess = true;
+			for (ItemsControlListener l : listeners)
+				l.awaitingItemToBePlacedInBaggingArea(this);
+		}else {
+			for (ItemsControlListener l : listeners)
+				FakeDataInitializer.
+				l.awaitingItemToBePlacedInScanningArea(this);
+		}
+		
 	}
+	
+	private void checkInventory(Product product) {
+		if(ProductDatabases.INVENTORY.containsKey(product) && ProductDatabases.INVENTORY.get(product) >= 1) {
+			ProductDatabases.INVENTORY.put(product, ProductDatabases.INVENTORY.get(product)-1); //updates INVENTORY with new total
+		}else {
+			// TODO: inform customer and attendant
+			System.out.print("Out of stock");
+		}
+	}
+	
+	private BarcodedProduct findProduct(Barcode Barcode) throws NullPointerSimulationException {
+    	if(ProductDatabases.BARCODED_PRODUCT_DATABASE.containsKey(Barcode)) {
+            return ProductDatabases.BARCODED_PRODUCT_DATABASE.get(Barcode);        
+        }
+    	else {
+    		// TODO: Inform customer station
+    		System.out.println("Cannot find the product. Please try again or ask for assistant!");
+    		throw new NullPointerSimulationException();
+    	}
+    }
 	
 	/**
 	 * sets user message to announce weight on the indicated scale has changed
