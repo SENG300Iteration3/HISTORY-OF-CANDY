@@ -64,6 +64,7 @@ public class StationControl
 	private AttendantControl ac;
 	private WalletControl wc;
 	private MembershipControl mc;
+	private BagDispenserControl bdc;
 	private CashControl cc;
 
 	private boolean isLocked = false;
@@ -167,6 +168,10 @@ public class StationControl
 	
 	public MembershipControl getMembershipControl() {
 		return mc;
+	}
+	
+	public BagDispenserControl getBagDispenserControl() {
+		return bdc;
 	}
 
 	public PinPadControl getPinPadControl() {
@@ -351,6 +356,11 @@ public class StationControl
 			l.startMembershipCardInput(this);
 		wc.membershipCardInputEnabled();
 		membershipInput = true;
+	}
+	
+	public void startPurchaseBagsWorkflow() {
+		for (StationControlListener l : listeners)
+			l.triggerPurchaseBagsWorkflow(this);
 	}
 	
 	public void cancelMembershipCardInput() {
