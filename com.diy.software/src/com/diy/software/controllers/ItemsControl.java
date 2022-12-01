@@ -135,10 +135,12 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 	}
 
-	public void addItemByPLU(PriceLookUpCode code) {
+	public void addItemByPLU(String code) {
 		baggingAreaTimerStart = System.currentTimeMillis();
 
-		PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(code);
+		PriceLookUpCode pluCode = new PriceLookUpCode(code);
+		PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode);
+		
 		if(product != null) {
 			double price = (double)product.getPrice();
 			this.addItemToCheckoutList(new Tuple<String,Double>(product.getDescription(), price));
@@ -242,7 +244,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				break;
 			case "enter plu":
 				System.out.println("Customer entered a PLU Code");
-				addItemByPLU();
 				break;
 			case "put back":
 				System.out.println("Customer put back current item");

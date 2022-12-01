@@ -8,11 +8,13 @@ import java.util.ArrayList;
 
 public class PLUCodeControl implements ActionListener {
 	private StationControl sc;
+	private ItemsControl ic;
 	private String pluCode = "";
 	private ArrayList<PLUCodeControlListener> listeners;
 
 	public PLUCodeControl(StationControl sc) {
 		this.sc = sc;
+		this.ic = sc.getItemsControl();
 		this.listeners = new ArrayList<>();
 	}
 	
@@ -48,7 +50,7 @@ public class PLUCodeControl implements ActionListener {
 					l.pluHasBeenUpdated(this, pluCode);
 				break;
 			case "submit":
-				//TODO: insert the line of code here. something like pin pad controls "sc.getWalletControl().insertCard(pin);"
+				ic.addItemByPLU(pluCode);
 				pluCode = "";
 				break;
 			default:
