@@ -433,6 +433,7 @@ public class StationControl
 					ic.updateCheckoutTotal(-amountOnCard);
 					//TODO: tell customer that their card wasn't enough maybe?
 				}
+				cc.cashInserted();
 				return;
 			}
 

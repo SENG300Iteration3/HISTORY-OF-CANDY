@@ -75,7 +75,7 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 			listener.noteInsertionDisabled(this);
 	}
   
-	private void cashInserted() {
+	public void cashInserted() {
 		for(CashControlListener listener : listeners)
 			listener.cashInserted(this);
 	}

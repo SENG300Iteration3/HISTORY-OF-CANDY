@@ -34,7 +34,10 @@ public class PresentGiftCardOrCashScreen extends Screen implements CashControlLi
 		
 		lastRecievedCash = 0;
 		
-		systemControl.getCashControl().enablePayments();
+		if(!isGiftCard) {
+			systemControl.getCashControl().enablePayments();
+		}
+		
 		systemControl.getCashControl().addListener(this);
 
 		this.isGiftCard = isGiftCard;
