@@ -87,7 +87,6 @@ public class StationControl
 		station.printer.register(this);
 		station.mainScanner.register(this);
 		station.handheldScanner.register(this);
-		station.mainScanner.register(this);
 		station.baggingArea.register(this);
 		station.cardReader.register(this);
 
@@ -517,8 +516,8 @@ public class StationControl
 			membershipInput = false;
 			wc.membershipCardInputCanceled();
 		} else {
-      Product product = findProduct(barcode);
-		  checkInventory(product);
+			Product product = findProduct(barcode);
+			checkInventory(product);
 			weightOfItemScanned = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
 			// Add the barcode to the ArrayList within itemControl
 			this.ic.addScannedItemToCheckoutList(barcode);
