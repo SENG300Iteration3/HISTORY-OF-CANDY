@@ -182,3 +182,4 @@ public class CustomerBagsPanel extends JPanel
 		
 	}
 }
+
