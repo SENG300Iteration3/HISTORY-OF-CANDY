@@ -2,13 +2,20 @@ package swing.screens;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 
 import com.diy.software.controllers.StationControl;
 
@@ -26,46 +33,131 @@ public class TextSearchScreen extends Screen
 	
 	private GUI_JPanel backgroundPanel;
 	private JTextField searchbar;
+	private GUI_JPanel searchResultPanel;
+	
+	private GridBagConstraints gridBagConstraints = new GridBagConstraints();
+	Border emptyBorder = BorderFactory.createEmptyBorder();
 	
 	
 	public TextSearchScreen(StationControl systemControl) 
 	{
 		super(systemControl, headerTitle);
 		
-		initalizeSearchbarBackground();
+		// Initializing all GUI Components
+		initalizeSearchAreaBackground();
 		initailizeSearchBar();
+		initailizeSearchResultHolder();
+		initailizeSearchButton();
 	}
 	
-	private void initalizeSearchbarBackground()
+	private void initalizeSearchAreaBackground()
 	{
 		//Set up variables 
 		int panelWidth = 100;
 		int panelHeight  = 550;
-		int borderSize = 20;
-		int gridLayoutRow = 3;
-		int gridLayoutCol = 0;
 		
+		//Setting up the background panel
 		backgroundPanel = new GUI_JPanel();
 		backgroundPanel.setBackground(GUI_Color_Palette.DARK_BLUE);
 		backgroundPanel.setPreferredSize(new Dimension(this.width - panelWidth, panelHeight));
-		backgroundPanel.setBorder(BorderFactory.createMatteBorder(borderSize, borderSize, borderSize, borderSize, GUI_Color_Palette.DARK_BLUE));
-		backgroundPanel.setLayout(new GridLayout(gridLayoutRow,gridLayoutCol));
+		backgroundPanel.setLayout(new GridBagLayout());
+		
+		//Adding the component to the Screen
 		this.addLayer(backgroundPanel,0);
 	}
 	
 	private void initailizeSearchBar()
 	{
-		int seacrhBarHeight = 100;
-		int seacrhBarWidth = 500;
+		//Search bar set up variable
+		int seacrhBarHeight = 80;
+		int seacrhBarWidth = 1100;
+		int insetSpace = 10;
 		
-		searchbar = new JTextField("pin".toUpperCase());
+		//Setting up Search bar
+		searchbar = new JTextField("Search Bar".toUpperCase());
 		searchbar.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		searchbar.setHorizontalAlignment(JLabel.CENTER);
+		searchbar.setBorder(emptyBorder);
+		searchbar.setPreferredSize(new Dimension(seacrhBarWidth,seacrhBarHeight));		
 		
-		searchbar.setPreferredSize(new Dimension(seacrhBarHeight,seacrhBarWidth));
-		searchbar.setBorder(BorderFactory.createLineBorder(GUI_Color_Palette.DARK_BLUE, 10));
+		//Setting up grid Bag Constraints on the search bar
+		gridBagConstraints.gridx = 0;
+		gridBagConstraints.gridy = 0;
+		gridBagConstraints.insets = new Insets(0, 0, insetSpace, 0);
 		
-		backgroundPanel.add(searchbar);
+		//Adding the component to the main Background
+		backgroundPanel.add(searchbar,gridBagConstraints);		
+	}
+	
+	private void initailizeSearchResultHolder()
+	{
+		//Search bar set up variable
+		int searchResultHolderHeight = 300;
+		int searchResultHolderWidth = 1100;
+		int insetSpace = 15;
+		
+		//Setting up Search results holder
+		searchResultPanel = new GUI_JPanel();
+		searchResultPanel.setBorder(emptyBorder);
+		searchResultPanel.setBackground(GUI_Color_Palette.DARK_BROWN);
+		searchResultPanel.setPreferredSize(new Dimension(0,700));
+		searchResultPanel.setLayout(new GridLayout(20, 0));
+		
+		//Setting up grid Bag Constraints on the result holder
+		gridBagConstraints.gridx = 0;
+		gridBagConstraints.gridy = 2;
+		gridBagConstraints.insets = new Insets(insetSpace, 0,0 , 0);
+		
+		//Setting up the scrollPane
+		JScrollPane resultScrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		resultScrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(20, 0));
+		resultScrollPane.setBackground(GUI_Color_Palette.DARK_BROWN);
+		resultScrollPane.setBorder(emptyBorder);
+		
+		resultScrollPane.getVerticalScrollBar().setBorder(emptyBorder);
+		resultScrollPane.getViewport().setBackground(GUI_Color_Palette.DARK_BROWN);
+		resultScrollPane.getVerticalScrollBar().setBackground(GUI_Color_Palette.DARK_BROWN);
+		resultScrollPane.setPreferredSize(new Dimension(searchResultHolderWidth, searchResultHolderHeight));
+		
+		//Adding the results holder to the scroll pane
+		resultScrollPane.getViewport().add(searchResultPanel);
+		
+		//Adding the component to the main Background
+		backgroundPanel.add(resultScrollPane,gridBagConstraints);	
+	}
+	
+	
+	private void initailizeSearchButton()
+	{
+		//Setup variables 
+		int searchButtonHeight = 70;
+		int searchButtonWidth = 500;
+		
+		//Setting up  the search button
+		GUI_JButton searchButton = new GUI_JButton("Search".toUpperCase());
+		searchButton.setFont(GUI_Fonts.FRANKLIN_BOLD);
+		searchButton.setPreferredSize(new Dimension(searchButtonWidth, searchButtonHeight));
+		searchButton.setLayout(new BorderLayout());
+		searchButton.setBorder(emptyBorder);
+		
+		//Setting up grid Bag Constraints on the search button
+		gridBagConstraints.gridx = 0;
+		gridBagConstraints.gridy = 3;
+		gridBagConstraints.insets = new Insets(20,0,0,0);
+		
+		//Adding the component to the main Background
+		backgroundPanel.add(searchButton, gridBagConstraints);
+		
+		searchButton.addActionListener(new ActionListener() 
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				searchResultPanel.add(makeItemComponent("Item " + 1, 1));
+				searchResultPanel.repaint();
+				searchResultPanel.revalidate();
+			}
+		});
 	}
 	
 	
@@ -75,10 +167,8 @@ public class TextSearchScreen extends Screen
 		//Setting up the button 
 		int buttonSize  = 200;
 		GUI_JButton itemButton = new GUI_JButton();
-		itemButton.setPreferredSize(new Dimension(this.width - buttonSize, 50));
+		itemButton.setPreferredSize(new Dimension(this.width - buttonSize, 100));
 		itemButton.setLayout(new BorderLayout());
-		//Removing the border button
-		Border emptyBorder = BorderFactory.createEmptyBorder();
 		itemButton.setBorder(emptyBorder);
 		
 		//Setting up and adding the total label
@@ -96,6 +186,13 @@ public class TextSearchScreen extends Screen
 		return itemButton;
 	}
 	
+	//Clears the search results panel
+	public void clearSearchResults() 
+	{
+		searchResultPanel.removeAll();
+	}
+	
+	//Turns a double in a formated dollar string
 	private String formatDollars(double dollarAmount) 
 	{
 		return "$" + String.format("%.2f", dollarAmount);
