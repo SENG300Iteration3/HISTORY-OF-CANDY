@@ -118,6 +118,18 @@ public class MembershipControlTest {
 			message = memberNumber;
 			
 		}
+
+		@Override
+		public void scanSwipeSelected(MembershipControl mc) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void disableMembershipInput(MembershipControl mc) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 

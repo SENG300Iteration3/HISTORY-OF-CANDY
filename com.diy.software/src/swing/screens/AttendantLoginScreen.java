@@ -41,6 +41,9 @@ public class AttendantLoginScreen extends Screen {
 	
 	public AttendantLoginScreen(ArrayList<StationControl> arrayList) {
 		super(null, HeaderText);
+		
+		super.rootPanel.setOpaque(true);
+		super.rootPanel.setBackground(GUI_Color_Palette.WHITE);
 		tl = new testListener();
 		
 		ac = arrayList.get(0).getAttendantControl();

@@ -189,5 +189,41 @@ public class CashControlTest {
 			cashInserted = true;
 			
 		}
+
+		@Override
+		public void coinInsertionEnabled(CashControl cc) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void noteInsertionEnabled(CashControl cc) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void coinInsertionDisabled(CashControl cc) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void noteInsertionDisabled(CashControl cc) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void cashRejected(CashControl cc) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void changeReturned(CashControl cc) {
+			// TODO Auto-generated method stub
+			
+		}
 	}
 }

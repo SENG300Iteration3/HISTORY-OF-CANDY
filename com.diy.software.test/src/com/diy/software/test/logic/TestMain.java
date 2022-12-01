@@ -311,6 +311,18 @@ public class TestMain {
 			message = memberNumber;
 			
 		}
+
+		@Override
+		public void scanSwipeSelected(MembershipControl mc) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void disableMembershipInput(MembershipControl mc) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 
@@ -911,6 +923,24 @@ public class TestMain {
 			flag = true;
 			System.out.println("ERERER");
 		}
+
+		@Override
+		public void membershipCardHasBeenSelected(WalletControl wc) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void membershipCardInputEnabled(WalletControl wc) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void membershipCardInputCanceled(WalletControl walletControl) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 
@@ -967,6 +997,24 @@ public class TestMain {
 
 		@Override
 		public void triggerMembershipWorkflow(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void startMembershipCardInput(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void membershipCardInputFinished(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void membershipCardInputCanceled(StationControl systemControl, String reason) {
 			// TODO Auto-generated method stub
 			
 		}
