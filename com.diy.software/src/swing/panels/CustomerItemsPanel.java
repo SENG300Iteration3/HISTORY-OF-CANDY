@@ -175,6 +175,11 @@ public class CustomerItemsPanel extends JPanel
 	}
 
 	@Override
+	public void attendantPreventUse(AttendantControl ac) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
 	public void readyToAcceptNewBagsInBaggingArea(BagsControl bc) {
 		// TODO Auto-generated method stub
 

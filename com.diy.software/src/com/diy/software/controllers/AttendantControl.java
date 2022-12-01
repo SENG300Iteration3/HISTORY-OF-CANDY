@@ -46,6 +46,20 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	}
 
 	/**
+	 * Allow attendant to shut down a station in order to do maintenance
+	 *
+	 * Precondition: The system is otherwise ready for customer interaction.
+	 * The station to suspend is not in the midst of a customer session.
+	 *
+	 */
+	public void preventStationUse(){
+		sc.blockStation();
+		for(AttendantControlListener l : listeners){
+			l.attendantPreventUse(this);
+		}
+	}
+
+	/**
 	 * allow attendant to add paper to receipt printer
 	 * adds 500 units of paper
 	 * 
@@ -192,6 +206,9 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 					attendantNotifications = ("approved no bagging request");
 					removeLastBaggedItem();
 					break;
+				case "prevent_use":
+					attendantNotifications = ("Preventing use on station for maintenance");
+					preventStationUse();
 				default:
 					break;
 			}
