@@ -12,25 +12,22 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
+import com.diy.software.controllers.NumpadControl;
 import com.diy.software.controllers.StationControl;
 
-import swing.styling.GUI_Color_Palette;
-import swing.styling.GUI_Fonts;
-import swing.styling.GUI_JButton;
-import swing.styling.GUI_JLabel;
-import swing.styling.GUI_JPanel;
-import swing.styling.Screen;
+import com.diy.software.listeners.NumpadControlListener;
+import swing.styling.*;
 
-public class NumpadScreen extends Screen {
+public class NumpadScreen extends Screen implements NumpadControlListener {
 
     private ActionListener controller;
 
     private GridBagConstraints gridConstraint = new GridBagConstraints();
 
     private JButton[] numpadButtons = new JButton[10];
-    private JButton cancelButton = createPinPadButton("X");
-    private JButton correctButton = createPinPadButton("O");
-    private JButton submitButton = createPinPadButton(">");
+    private JButton cancelButton = createNumpadButton("X");
+    private JButton correctButton = createNumpadButton("O");
+    private JButton submitButton = createNumpadButton(">");
 
     GUI_JPanel numpadPanel;
 
@@ -45,6 +42,8 @@ public class NumpadScreen extends Screen {
         //TODO: pass in listeners? -> did i break it by passing in an ActionListener? -> have interface that implements ActionListener and add a addListener() method?
         //pinPadController = sc.getPinPadControl();
         //pinPadController.addListener(this);
+
+
 
         this.controller = controller;
         this.messageLabelText = messageLabelText;
@@ -63,7 +62,7 @@ public class NumpadScreen extends Screen {
         gridConstraint.ipady = 10;
 
         for (int i = 0; i < 10; i++) {
-            JButton currButton = createPinPadButton("" + (i + 1) % 10);
+            JButton currButton = createNumpadButton("" + (i + 1) % 10);
             currButton.setActionCommand("INPUT_BUTTON: " + (i + 1) % 10);
             //TODO: change controller class to generic (this.?)
             currButton.addActionListener(this.controller);
@@ -137,7 +136,13 @@ public class NumpadScreen extends Screen {
 
     }
 
-    private GUI_JButton createPinPadButton(String text) {
+    @Override
+    public void numberHasBeenUpdated(NumpadControl npc, String number) {
+
+
+    }
+
+    private GUI_JButton createNumpadButton(String text) {
         int overallMargin = 10;
 
         /* Setup of the title's panel */

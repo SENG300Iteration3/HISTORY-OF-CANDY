@@ -73,6 +73,7 @@ public class StationControl
 	private PinPadControl ppc;
 	private PaymentControl pc;
 	private	ReceiptControl rc;
+	private NumpadControl nc;
 
 	private boolean isLocked = false;
 	public String memberName;
@@ -80,11 +81,13 @@ public class StationControl
 	private boolean membershipInput = false;
 	private int bagInStock;
 
-
-	
 	// used for receipt listeners
 	boolean isOutOfPaper = false;
 	boolean isOutOfInk = false;
+
+	
+	
+	
 	/**
 	 * Constructor for the SystemControl class. Instantiates an object of type
 	 * DoItYourselfStation as well as a set of listeners which are registered to the
@@ -101,7 +104,7 @@ public class StationControl
 		cc = new CashControl(this);
 		bdc = new BagDispenserControl(this);
 		ac = new AttendantControl(this);
-
+		
 		station.printer.register(this);
 		station.mainScanner.register(this);
 		station.handheldScanner.register(this);
@@ -110,34 +113,34 @@ public class StationControl
 		station.reusableBagDispenser.register(this);
 		rc = new ReceiptControl(this);
 		
-
+		
 		startUp();
 		
 		fillStation();
 		
 		/*
-		 * loads maximum number of bags to the reusable bag dispenser 
-		 */
+		* loads maximum number of bags to the reusable bag dispenser 
+		*/
 		station.reusableBagDispenser.plugIn();
 		station.reusableBagDispenser.turnOn();
 		bagInStock = station.reusableBagDispenser.getCapacity();
 		loadBags();
-
+		
 		/*
-		 * simulates what the printer has in it before the printing starts
-		 * to simulate low paper and low ink
-		 */
+		* simulates what the printer has in it before the printing starts
+		* to simulate low paper and low ink
+		*/
 		try {
 			station.printer.addInk(100);
 			station.printer.addPaper(1);
 		} catch (OverloadException e1) {
-
+			
 		}
 		wc = new WalletControl(this);
 		ppc = new PinPadControl(this);
 		pc = new PaymentControl(this);
 	}
-
+	
 	/**
 	 * Constructor for injecting fake data
 	 */
@@ -149,16 +152,16 @@ public class StationControl
 		this.fakeData.addPLUCodedProduct();
 		this.fakeData.addFakeMembers();
 		this.fakeData.addFakeAttendantLogin();
-
+		
 		// for (Card c: this.fakeData.getCards()) customer.wallet.cards.add(c);
 		// for (Item i: this.fakeData.getItems()) customer.shoppingCart.add(i);
-
+		
 		for (Card c : this.fakeData.getCards())
-			customer.wallet.cards.add(c);
+		customer.wallet.cards.add(c);
 		for (Item i : this.fakeData.getItems())
-			customer.shoppingCart.add(i);
+		customer.shoppingCart.add(i);
 	}
-
+	
 	/**
 	 * Registers a Listener for SystemControlListener
 	 */
@@ -172,7 +175,7 @@ public class StationControl
 	public void unregister(StationControlListener l) {
 		listeners.remove(l);
 	}
-
+	
 	public void startUp() {
 		station.plugIn();
 		station.turnOn();
@@ -185,11 +188,11 @@ public class StationControl
 	public BagsControl getBagsControl() {
 		return bc;
 	}
-
+	
 	public AttendantControl getAttendantControl() {
 		return ac;
 	}
-
+	
 	public WalletControl getWalletControl() {
 		return wc;
 	}
@@ -204,16 +207,16 @@ public class StationControl
 	public ReceiptControl getReceiptControl() {
 		return rc;
 	}
-
-
+	
+	
 	public PinPadControl getPinPadControl() {
 		return ppc;
 	}
-
+	
 	public PaymentControl getPaymentControl() {
 		return pc;
 	};
-
+	
 	public CashControl getCashControl() {
 		return cc;
 	}
@@ -222,13 +225,17 @@ public class StationControl
 		return station;
 	}
 	
+	public NumpadControl getNumpadControl() {
+		return nc;
+	}
+
 	private void loadBags() {
 		try {
 			for(int i = 0; i < bagInStock; i++) {
 				ReusableBag aBag = new ReusableBag();
 				station.reusableBagDispenser.load(aBag);
 			}
-
+			
 		}catch(OverloadException e) {}
 	}
 	
