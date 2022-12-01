@@ -419,19 +419,22 @@ public class StationControl
 			Double amountOwed = this.ic.getCheckoutTotal();
 			String cardNumber = data.getNumber();
 			CardIssuer bank = fakeData.getCardIssuer();
-		
+			
 			if(data.getType().equals(GiftcardDatabase.CompanyGiftCard)) {
 				Double amountOnCard = GiftcardDatabase.giftcardMap.get(cardNumber);
 				Double dif = amountOnCard - amountOwed;
 				if(dif >= 0) {
 					GiftcardDatabase.giftcardMap.put(cardNumber, dif);
-					//TODO: update amount owed to 0
-					//TODO: notify GUI of successful payment
+					ic.updateCheckoutTotal(-amountOwed);
+					for (StationControlListener l : listeners) {
+						l.paymentHasBeenMade(this, data);
+					}
 				}else {
 					GiftcardDatabase.giftcardMap.put(cardNumber, 0.0);
-					//TODO: update amount owed to -1*dif
-					//TODO: nofity GUI that amountOwed has changed
+					ic.updateCheckoutTotal(-amountOnCard);
+					//TODO: tell customer that their card wasn't enough maybe?
 				}
+				return;
 			}
 
 			long holdNum = bank.authorizeHold(cardNumber, amountOwed);
