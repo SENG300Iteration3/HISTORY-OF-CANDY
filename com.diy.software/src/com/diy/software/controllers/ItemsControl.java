@@ -8,6 +8,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
+import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.external.ProductDatabases;
 import com.diy.software.listeners.ItemsControlListener;
 import com.jimmyselectronics.AbstractDevice;
@@ -131,6 +132,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			// exception should never occur since this code path is only ever called when
 			// currentItem is not null
 		}
+	}
+
+	public void addItemByID(PriceLookUpCode code) {
+
 	}
 
 	// TODO: scanItem now differtiates between using handheldScanner and mainScanner

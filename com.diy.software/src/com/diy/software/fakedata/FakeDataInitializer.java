@@ -6,6 +6,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 import com.diy.hardware.BarcodedProduct;
+import com.diy.hardware.PLUCodedProduct;
+import com.diy.hardware.PriceLookUpCode;
+import com.diy.hardware.Product;
 import com.diy.hardware.external.CardIssuer;
 import com.diy.hardware.external.ProductDatabases;
 import com.jimmyselectronics.necchi.Barcode;
@@ -47,6 +50,20 @@ public class FakeDataInitializer {
 		ProductDatabases.INVENTORY.put(bp3, 100);
 		ProductDatabases.INVENTORY.put(bp4, 100);
 
+	}
+
+	/**
+	 * Assigns PLU Codes to every BarcodedProduct in the database, and
+	 * populates the PLU_PRODUCT_DATABASE with said PLU code and PLUProduct.
+	 */
+	public void initializePLUProducts() {
+		// Right now the generated PLU Code should be the same as the Barcode
+		for(Product product : ProductDatabases.INVENTORY.keySet()) {
+			BarcodedProduct bproduct = (BarcodedProduct)product;
+			PriceLookUpCode code = new PriceLookUpCode(bproduct.getBarcode().toString());
+			PLUCodedProduct pluProduct = new PLUCodedProduct(code, bproduct.getDescription(), bproduct.getPrice());
+			ProductDatabases.PLU_PRODUCT_DATABASE.put(code, pluProduct);
+		}
 	}
 	
 	/**
