@@ -189,6 +189,7 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	public void outOfPaper(IReceiptPrinter printer) {
 		// TODO Auto-generated method stub
 		System.out.println("out of paper");
+		sc.getAttendantControl().lowPaper(printer);
 	}
 
 	@Override
@@ -196,7 +197,7 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 //		for (AttendantControlListener la : listenersAttendant)
 //			la.addInkState();
 		System.out.println("out of ink");
-		
+		sc.getAttendantControl().lowInk(printer);
 	}
 
 	@Override
