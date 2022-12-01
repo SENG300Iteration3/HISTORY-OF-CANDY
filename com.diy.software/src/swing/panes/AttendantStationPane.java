@@ -106,6 +106,11 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	}
 
 	@Override
+	public void attendantPreventUse(AttendantControl ac) {
+		// TODO: implement method
+	}
+
+	@Override
 	public void readyToAcceptNewBagsInBaggingArea(BagsControl bc) {
 		approveAddedBagsButton.setEnabled(false);
 		weightDisplayLabel.setText("");

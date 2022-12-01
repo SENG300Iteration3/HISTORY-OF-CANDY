@@ -179,7 +179,7 @@ public class ItemsControlTest {
 		assertFalse(stub.bagging);
 		
 		while (!stub.bagging) {
-			itemsControl.scanCurrentItem();
+			itemsControl.scanCurrentItem(true);
 		}
 		assertTrue(stub.bagging);
 	}
@@ -192,7 +192,7 @@ public class ItemsControlTest {
 		stub.bagging = true;
 		while(stub.bagging){
 			stub.bagging = false;
-			itemsControl.scanCurrentItem();
+			itemsControl.scanCurrentItem(true);
 		}
 		assertFalse(stub.bagging);
 	}
@@ -216,7 +216,7 @@ public class ItemsControlTest {
 		assertFalse(stub.bagging);
 		
 		while (!stub.bagging) {
-			itemsControl.scanCurrentItem();
+			itemsControl.scanCurrentItem(true);
 		}
 		assertTrue(stub.bagging);
 		stub.bagging = true;
@@ -371,7 +371,7 @@ public class ItemsControlTest {
 	
 	@Test
 	public void testActionPerformedScan() {
-		ActionEvent e = new ActionEvent(this, 0, "scan");
+		ActionEvent e = new ActionEvent(this, 0, "handheld scan");		
 		
 		systemControl.customer.shoppingCart.add(item);
 		
@@ -625,8 +625,13 @@ public class ItemsControlTest {
     	public void attendantApprovedBags(AttendantControl ac) {
     		attendantBags = true;
     	}
-    	
-    	public boolean getAttendantBags() {
+
+		@Override
+		public void attendantPreventUse(AttendantControl ac) {
+			// TODO Auto-generated method stub
+		}
+
+		public boolean getAttendantBags() {
     		return attendantBags;
     	}
 

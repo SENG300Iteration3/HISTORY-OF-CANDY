@@ -18,12 +18,11 @@ public class FakeDataInitializer {
 	private Barcode barcode1, barcode2, barcode3, barcode4;
 	private BarcodedItem item1, item2, item3, item4;
 	private BarcodedProduct bp1, bp2, bp3, bp4;
-	private Card card1, card2, card3;
+	private Card card1, card2, card3, card4;
 	private CardIssuer fakebank;
 	private final Double AMOUNT_AVAILABLE = 1000.0;
 	Calendar expire_date = Calendar.getInstance();
 	
-	// FIXME: need to add to products to inventory
 	public void addProductAndBarcodeData () {
 		barcode1 = new Barcode(new Numeral[] { Numeral.one, Numeral.two, Numeral.three, Numeral.four }); 
 		item1 = new BarcodedItem(barcode1, 450); 
@@ -42,6 +41,11 @@ public class FakeDataInitializer {
 		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode3, bp3);
 		bp4 = new BarcodedProduct(barcode4, "Cauliflower", 6, 550);
 		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode4, bp4);
+		
+		ProductDatabases.INVENTORY.put(bp1, 100);
+		ProductDatabases.INVENTORY.put(bp2, 100);
+		ProductDatabases.INVENTORY.put(bp3, 100);
+		ProductDatabases.INVENTORY.put(bp4, 100);
 
 	}
 	
@@ -63,10 +67,12 @@ public class FakeDataInitializer {
 		card1 = new Card("AMEX", "0000000000001234", "Stephen Strange", "000", "1234", false, true);
 		card2 = new Card("VISA", "0000000000004321", "Tony Stark", "111", "0987", true, true);
 		card3 = new Card("MAST", "0000000000009999", "Natasha Romanoff", "222", "1111", true, false);
+		card4 = new Card("MEMBERSHIP", "1234", "Itadori", "000", "0000", false, true);
 		
 		fakebank.addCardData("0000000000001234", "Stephen Strange", expire_date, "000", AMOUNT_AVAILABLE);
 		fakebank.addCardData("0000000000004321", "Tony Stark", expire_date, "111", AMOUNT_AVAILABLE);
 		fakebank.addCardData("0000000000009999", "Natasha Romanoff", expire_date, "222", AMOUNT_AVAILABLE);
+		fakebank.addCardData("1234", "Itadori", expire_date, "000", AMOUNT_AVAILABLE);
 	}
 	
 	public Barcode[] getBarcodes() {
@@ -78,7 +84,7 @@ public class FakeDataInitializer {
 	}
 	
 	public Card[] getCards() {
-		return new Card[] {card1, card2, card3};
+		return new Card[] {card1, card2, card3, card4};
 	}
 	
 	public CardIssuer getCardIssuer() {
