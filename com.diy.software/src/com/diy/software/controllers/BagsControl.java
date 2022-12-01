@@ -47,7 +47,7 @@ public class BagsControl implements ActionListener {
 	// FIXME: need to update price
 	public void placePurchasedBagsInBaggingArea() {
 		sc.updateWeightOfLastItemAddedToBaggingArea(abritraryWeightOfBags);
-		sc.getItemsControl().addItemToCheckoutList(new Tuple<String,Double>("Reusable Bag",abritraryPriceOfBags));
+		sc.getItemsControl().addItemToCheckoutList("Reusable Bag",abritraryPriceOfBags);
 		sc.updateExpectedCheckoutWeight(abritraryWeightOfBags,true);
 		sc.getItemsControl().updateCheckoutTotal(abritraryPriceOfBags);
 		sc.unblockStation(); // call this to update total on gui

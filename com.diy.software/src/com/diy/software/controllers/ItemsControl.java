@@ -3,6 +3,8 @@ package com.diy.software.controllers;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -23,7 +25,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	private StationControl sc;
 	private ArrayList<ItemsControlListener> listeners;
 	public ArrayList<Tuple<BarcodedProduct,Integer>> tempList = new ArrayList<>();
-	private ArrayList<Tuple<String, Double>> checkoutList = new ArrayList<>();
+	private Map<String, Double> checkoutList = new HashMap<>();
 	private double checkoutListTotal = 0.0;
 
 	private boolean scanSuccess = true, weighSuccess = true;
@@ -59,8 +61,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		listeners.remove(l);
 	}
 	
-	public void addItemToCheckoutList(Tuple<String, Double> item) {
-		checkoutList.add(item);
+	public void addItemToCheckoutList(String productName, Double price) {
+		checkoutList.put(productName, price);
 		refreshGui();
 	}
 	
@@ -69,7 +71,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		double price;
 		if (barcodedProduct != null) {
 			price = (double) barcodedProduct.getPrice();
-			this.addItemToCheckoutList(new Tuple<String, Double>(barcodedProduct.getDescription(), price));
+			this.addItemToCheckoutList(barcodedProduct.getDescription(), price);
 			this.updateCheckoutTotal(price);
 		} else {
 			System.err.println("Scanned item is not in product database!");
@@ -86,7 +88,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		return checkoutListTotal;
 	}
 	
-	public ArrayList<Tuple<String, Double>> getCheckoutList () {
+	public Map<String, Double> getCheckoutList () {
 		return checkoutList;
 	}
 	

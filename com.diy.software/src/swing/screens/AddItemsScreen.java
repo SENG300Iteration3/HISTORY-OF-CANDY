@@ -3,6 +3,8 @@ package swing.screens;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -181,6 +183,8 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 		GUI_JPanel itemPanel = new GUI_JPanel();
 		itemPanel.setPreferredSize(new Dimension(this.width - 200, 50));
 		itemPanel.setLayout(new BorderLayout());
+		
+		System.out.println();
 
 		GUI_JLabel totalLabel = new GUI_JLabel(itemName.toUpperCase());
 		totalLabel.setFont(GUI_Fonts.SUB_HEADER);
@@ -249,23 +253,34 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 
 	}
 
+//	@Override
+//	public void itemsHaveBeenUpdated(ItemsControl itemsControl) {
+//		ArrayList<Tuple<String, Double>> checkoutList = itemsControl.getCheckoutList();
+//
+//		String[] itemDescriptions = new String[checkoutList.size()];
+//		double[] itemPrices = new double[checkoutList.size()];
+//
+//		for (int i = 0; i < checkoutList.size(); i++) {
+//			itemDescriptions[i] = checkoutList.get(i).x;
+//			itemPrices[i] = checkoutList.get(i).y;
+//		}
+//		this.invalidateAllScannedItems();
+//		for (int i = 0; i < itemDescriptions.length; i++) {
+//			this.addScannedItem(i+1 + ". " + itemDescriptions[i], itemPrices[i]);
+//		}
+//	}
+
 	@Override
 	public void itemsHaveBeenUpdated(ItemsControl itemsControl) {
-		ArrayList<Tuple<String, Double>> checkoutList = itemsControl.getCheckoutList();
-
-		String[] itemDescriptions = new String[checkoutList.size()];
-		double[] itemPrices = new double[checkoutList.size()];
-
-		for (int i = 0; i < checkoutList.size(); i++) {
-			itemDescriptions[i] = checkoutList.get(i).x;
-			itemPrices[i] = checkoutList.get(i).y;
-		}
+		Map<String, Double> checkoutList = itemsControl.getCheckoutList();
+		int i = 0;
 		this.invalidateAllScannedItems();
-		for (int i = 0; i < itemDescriptions.length; i++) {
-			this.addScannedItem(itemDescriptions[i], itemPrices[i]);
+		for (String productName: checkoutList.keySet()) {
+			this.addScannedItem(i+1 + ". " + productName, checkoutList.get(productName));
+			i++;
 		}
 	}
-
+	
 	@Override
 	public void productSubtotalUpdated(ItemsControl itemsControl) {
 		subtotalLabel.setText("Subtotal: $" + itemsControl.getCheckoutTotal());
