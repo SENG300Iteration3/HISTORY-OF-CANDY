@@ -15,8 +15,11 @@ import com.diy.hardware.BarcodedProduct;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.MembershipControlListener;
 import com.diy.software.listeners.ReceiptControlListener;
+import com.diy.software.util.Tuple;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
+import com.jimmyselectronics.EmptyException;
+import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.abagnale.IReceiptPrinter;
 import com.jimmyselectronics.abagnale.ReceiptPrinterListener;
 
@@ -26,14 +29,18 @@ import swing.panes.AttendantStationPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
 
 public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	private StationControl sc;
 	private ArrayList<ReceiptControlListener> listenersReceipt;
 	private ArrayList<AttendantControlListener> listenersAttendant;
+	private ArrayList<Tuple<String, Double>> checkoutList = new ArrayList<>();
 	private static final DecimalFormat formatPrice = new DecimalFormat("0.00");
+	private int retreivedMemNum;
 	
 	public ReceiptControl (StationControl sc) {
 		this.sc = sc;
@@ -51,134 +58,86 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	
 	
 	/**
-	 * Finds what the contents of the receipt should be when there is a member number inputed
+	 * Finds what the contents of the receipt should be based on checked out items
 	 */
-	private void printItems() {
-		String testPrint = "asfdfhfg";
-		sc.printReceipt(testPrint);
-		System.out.println("test print receipt");
+	public void printItems() {
+		for(Tuple<String, Double> item : sc.getItemsControl().getCheckoutList()) {
+			System.out.println(item.x + " , $" + item.y);
+			printReceipt(item.x + " , $" + item.y + "\n");
+		}
+		//System.out.println("test print receipt");
 	}
-
-	/*
-	 * Finds what the contents of the receipt should be when there is a member number inputed
-	 * 
-	 * @param items 
-	 * 		The ScannedList of items to put on the receipt
-	 * @param memberNumber 
-	 * 		The memberNumer to put on the receipt
-	 * @return
-	 * 		The full receipt as a string
+	
+	/**
+	 * Finds the total cost of all items checked out
 	 */
-//    public static String fullReceipt(ScannedList items, int memberNumber){
-//        String receipt = "";
-//        double totalCost = 0;   
-//        BarcodedProduct AlphabeticalItems[]=new BarcodedProduct[ScannedList.CART.size()];
-//        
-//        //checking if membership number is valid
-//        if(!MembershipDatabaseDemo.MEMBERSHIP_DATABASE.contains(memberNumber)) {
-//        	throw new InvalidArgumentSimulationException("Invalid membership number");
-//        }
-//        
-//        //sorting the items so they show up alphabetically on the receipt (needed for testing)
-//        int len = ScannedList.CART.size();
-//        int i = 0;
-//        for(BarcodedProduct key : ScannedList.CART.keySet()) {
-//        	AlphabeticalItems[i] = key;
-//        	i++;
-//        }
-//        for(int j = 0; j < len; j++){
-//        	for (int k = j + 1; k < len; k++) {
-//        		/*
-//        		 * NOTE: There is a small chance that 100% branch coverage will not be gotten on the below statement
-//        		 * since it is sorting the elements stored in a hashmap in alphabetical order. Since a hashmap is ordered
-//        		 * randomly there is a chance that all the products in the hashmap will already be in alphabetical order
-//        		 * (or reverse alphabetical order), meaning the if statement will always pass or fail.
-//        		 * 
-//        		 * Please rerun the test if occurs
-//        		 */
-//                if(AlphabeticalItems[j].getDescription().compareTo(AlphabeticalItems[k].getDescription()) > 0) { 
-//                	BarcodedProduct temp = AlphabeticalItems[j];  
-//                    AlphabeticalItems[j] = AlphabeticalItems[k];  
-//                    AlphabeticalItems[k] = temp; 
-//                }
-//        	}
-//        }
-//        
-//        //finding what the receipt should print
-//        for (int j = 0; j < len; j++){
-//            String decription = AlphabeticalItems[j].getDescription();
-//            Double price = ScannedList.CART.get(AlphabeticalItems[j]);
-//            //price = price/100;
-//
-//            receipt += decription + "\n";
-//            receipt += "$" + formatPrice.format(price) + "\n";
-//            totalCost += price;
-//        }
-//
-//        receipt += "\nTotal Cost: $" + formatPrice.format(totalCost) + "\n";
-//
-//        receipt += "Membership Number: " + memberNumber + "\n";
-//
-//        receipt += "Thank you for shopping with us!\n";
-//
-//        return receipt;
-//    }
-
-	/*
-	 * Finds what the contents of the receipt should be when there is not a member number inputed
-	 * 
-	 * @param items 
-	 * 		The ScannedList of items to put on the receipt
-	 * @return
-	 * 		The full receipt as a string
+	public void printTotalCost() {
+		double total = 0.0;
+		for(Tuple<String, Double> item : sc.getItemsControl().getCheckoutList()) {
+			total += item.y;
+		}
+		System.out.println("Total: $" + total);
+		printReceipt("Total: $" + total + "\n");
+	}
+	
+	/**
+	 * If there was a valid membership number entered, find it and print it on the receipt
 	 */
-//    public static String fullReceipt(ScannedList items){
-//        String receipt = "";
-//        double totalCost = 0;
-//        BarcodedProduct AlphabeticalItems[]=new BarcodedProduct[ScannedList.CART.size()];
-//        
-//        //sorting the items so they show up alphabetically on the receipt (needed for testing)
-//        int len = ScannedList.CART.size();
-//        int i = 0;
-//        for(BarcodedProduct key : ScannedList.CART.keySet()) {
-//        	AlphabeticalItems[i] = key;
-//        	i++;
-//        }
-//        for(int j = 0; j < len; j++){
-//        	for (int k = j + 1; k < len; k++) {
-//        		/*
-//        		 * NOTE: There is a small chance that 100% branch coverage will not be gotten on the below statement
-//        		 * since it is sorting the elements stored in a hashmap in alphabetical order. Since a hashmap is ordered
-//        		 * randomly there is a chance that all the products in the hashmap will already be in alphabetical order
-//        		 * (or reverse alphabetical order), meaning the if statement will always pass or fail.
-//        		 * 
-//        		 * Please rerun the test if occurs
-//        		 */
-//                if(AlphabeticalItems[j].getDescription().compareTo(AlphabeticalItems[k].getDescription()) > 0) { 
-//                	BarcodedProduct temp = AlphabeticalItems[j];  
-//                    AlphabeticalItems[j] = AlphabeticalItems[k];  
-//                    AlphabeticalItems[k] = temp; 
-//                }
-//        	}
-//        }
-//        
-//        //finding what the receipt should print
-//        for (int j = 0; j < len; j++){
-//            String decription = AlphabeticalItems[j].getDescription();
-//            Double price = ScannedList.CART.get(AlphabeticalItems[j]);
-//            //price = price/100;
-//
-//            receipt += decription + "\n";
-//            receipt += "$" + formatPrice.format(price) + "\n";
-//            totalCost += price;
-//        }
-//
-//        receipt += "\nTotal Cost: $" + formatPrice.format(totalCost) + "\n";
-//
-//        receipt += "Thank you for shopping with us!\n";
-//
-//        return receipt;
-//    }
+	public void printMembership() {
+		retreivedMemNum = sc.getMembershipControl().getValidMembershipNumber();
+		//String retreivedMemName = sc.getMembershipControl().memberName;
+		
+		if(retreivedMemNum == -1) {
+			// Do nothing
+			System.out.println("No member found");
+			printReceipt("No member found");
+		}else {
+			System.out.println("Membership number: " + retreivedMemNum);
+			printReceipt("Membership number: " + retreivedMemNum + "\n");
+		}
+		
+	}
+	
+	/**
+	 * prints date and time receipt was printed at
+	 */
+	public void printDateTime() {
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");  
+	    Date receiptPrintDate = new Date();  
+	    System.out.println(formatter.format(receiptPrintDate));
+	    printReceipt(formatter.format(receiptPrintDate) + "\n");
+	}
+	
+	/**
+	 * printing a thank you message
+	 */
+	public void printThankyouMsg() {
+		if (retreivedMemNum == -1) {
+			System.out.println("Thank you for shopping with us!");
+		}else {
+			System.out.println("Thank you for shopping with us " + sc.getMembershipControl().memberName + " !");
+		}
+		
+	}
+	
+	/**
+	 * simulates printing the receipt to the customer based on what they purchased
+	 * 
+	 * @param receipt the customer receipt as a string
+	 */
+	private void printReceipt(String receipt) {
+
+		for (char receiptChar : receipt.toCharArray()) {
+			try {
+				sc.station.printer.print(receiptChar);
+				//System.out.println(receiptChar);
+			} catch (EmptyException e) {
+
+			} catch (OverloadException e) {
+
+			}
+		}
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -188,10 +147,10 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 			case "printReceipt":
 				System.out.println("Customer prints receipt");
 				printItems();
-//				printTotalCost();
-//				printMembership();
-//				printDateTime();
-//				printThankyouMsg();
+				printTotalCost();
+				printMembership();
+				printDateTime();
+				printThankyouMsg();
 				break;
 			default:
 				break;
@@ -229,25 +188,31 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	@Override
 	public void outOfPaper(IReceiptPrinter printer) {
 		// TODO Auto-generated method stub
-		
+		System.out.println("out of paper");
 	}
 
 	@Override
 	public void outOfInk(IReceiptPrinter printer) {
-		// TODO Auto-generated method stub
+//		for (AttendantControlListener la : listenersAttendant)
+//			la.addInkState();
+		System.out.println("out of ink");
 		
 	}
 
 	@Override
 	public void lowInk(IReceiptPrinter printer) {
-		for (AttendantControlListener la : listenersAttendant)
-			la.addInkState();	
+//		for (AttendantControlListener la : listenersAttendant)
+//			la.addInkState();
+		System.out.println("RC low ink");
+		sc.getAttendantControl().lowInk(printer);
 	}
 
 	@Override
 	public void lowPaper(IReceiptPrinter printer) {
-		for (AttendantControlListener la : listenersAttendant)
-			la.addPaperState();
+//		for (AttendantControlListener la : listenersAttendant)
+//			la.addPaperState();
+		System.out.println("RC low paper");
+		sc.getAttendantControl().lowPaper(printer);
 	}
 
 	@Override

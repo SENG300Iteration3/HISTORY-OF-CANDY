@@ -83,22 +83,33 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 * 
 	 * @throws OverloadException too much paper added, printer cant handle it
 	 */
-	public void addPaper() throws OverloadException {
-		sc.station.printer.addPaper(500);
+	public void addPaper() {
+		
+		try {
+			sc.station.printer.addPaper(500);
+		} catch (OverloadException e) {
+			for (AttendantControlListener l : listeners)
+				l.signalWeightDescrepancy("Added too much paper!");
+		}
 		for (AttendantControlListener l : listeners)
 			l.printerNotLowState();
 	}
 
 	/**
 	 * allow attendant to add ink to receipt printer
-	 * adds 2000 characters worth of ink
+	 * adds 208000 characters worth of ink
 	 * 
 	 * precondition: printer is low on ink or out of ink
 	 * 
 	 * @throws OverloadException if more ink than the printer can handle is added
 	 */
-	public void addInk() throws OverloadException {
-		sc.station.printer.addInk(208000);
+	public void addInk(){
+		try {
+			sc.station.printer.addInk(208000);
+		} catch (OverloadException e) {
+			for (AttendantControlListener l : listeners)
+				l.signalWeightDescrepancy("Added too much ink!");
+		}
 		for (AttendantControlListener l : listeners)
 			l.printerNotLowState();
 	}
@@ -334,6 +345,11 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 					System.out.println("Station has been started up");
 					startUpStation();
 					break;
+				case "printReceipt":
+					//attendantNotifications = ("approved no bagging request");
+					System.out.println("AC print receipt");
+					sc.getReceiptControl().printItems();
+					break;
 				default:
 					break;
 			}
@@ -368,6 +384,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 
 	@Override
 	public void outOfPaper(IReceiptPrinter printer) {
+		System.out.println("AC low paper");
 		for (AttendantControlListener l : listeners)
 			l.addPaperState();
 
@@ -375,6 +392,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 
 	@Override
 	public void outOfInk(IReceiptPrinter printer) {
+		System.out.println("AC low ink");
 		for (AttendantControlListener l : listeners)
 			l.addInkState();
 
@@ -382,6 +400,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 
 	@Override
 	public void lowInk(IReceiptPrinter printer) {
+		System.out.println("AC low ink");
 		for (AttendantControlListener l : listeners)
 			l.addInkState();
 
@@ -389,6 +408,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 
 	@Override
 	public void lowPaper(IReceiptPrinter printer) {
+		System.out.println("AC low paper");
 		for (AttendantControlListener l : listeners)
 			l.addPaperState();
 

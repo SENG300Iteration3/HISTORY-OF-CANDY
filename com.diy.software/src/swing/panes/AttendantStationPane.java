@@ -11,6 +11,7 @@ import javax.swing.JScrollPane;
 
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.BagsControl;
+import com.diy.software.controllers.ReceiptControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
@@ -247,5 +248,33 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		StationControl sc = new StationControl();
 		AttendantStationPane ap = new AttendantStationPane(sc);
 		ap.openInNewJFrame();
+	}
+
+
+	@Override
+	public String lowInk(ReceiptControl rc, String message) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public String lowPaper(ReceiptControl rc, String dateTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public String outOfInk(ReceiptControl rc, String message) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public String outOfPaper(ReceiptControl rc, String message) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
