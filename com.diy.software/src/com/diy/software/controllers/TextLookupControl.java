@@ -26,6 +26,10 @@ import com.diy.software.util.Tuple;
  * 7. Option of "Clear" button to start search over if results are unsatisfactory 
  * 8. Option of "Back" button to bring attendant to main screen where "Search Products" can be reselected
  * 9. GUI is updated on customers station after "Add Item" is selected
+ * 
+ * Functionality TODO's:
+ * 1. Add TextLookupControl object to attendant and finish functionality there
+ * 2. Connect to keyboard through listeners
  */
 
 public class TextLookupControl implements ActionListener{
