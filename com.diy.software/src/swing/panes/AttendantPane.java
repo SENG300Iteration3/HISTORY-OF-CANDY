@@ -1,5 +1,6 @@
 package swing.panes;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class AttendantPane implements AttendantControlListener {
 		for (StationControl sc : pc.getStationControls()) {
 			sc.getAttendantControl().addListener(this);
 			JPanel tempPanel = new JPanel();
-			tempPanel.add(( new AttendantStationPane(sc)).getRootPanel());
+			tempPanel.add(( new AttendantStationPane(sc)).getRootPanel(), BorderLayout.CENTER);
 			tabbedPane.addTab("Station " + i++, tempPanel);
 		}
 		 
@@ -46,7 +47,6 @@ public class AttendantPane implements AttendantControlListener {
 		this.rooPanel = new JPanel();
 		this.rooPanel.setOpaque(false);
 		FlowLayout lm = new FlowLayout();
-		lm.setHgap(0);
 		lm.setVgap(0);
 		rooPanel.setLayout(lm);
 		this.rooPanel.add(currentPanel);
@@ -129,6 +129,12 @@ public class AttendantPane implements AttendantControlListener {
 		}else{
 			//logout
 		}
+		
+	}
+
+	@Override
+	public void attendantPreventUse(AttendantControl ac) {
+		// TODO Auto-generated method stub
 		
 	}
 }
