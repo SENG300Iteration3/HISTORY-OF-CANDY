@@ -38,7 +38,7 @@ public class BagsControl implements ActionListener {
 	
 	// FIXME: where is the bag dispensery in the hardware mentioned in the use case
 	public void ownBagsPlacedInBaggingArea() {
-		sc.blockStation("Please Wait For Attendant's Approval");
+		sc.blockStation();
 		for (BagsControlListener l : listeners) {
 			l.awaitingAttendantToVerifyBagsPlacedInBaggingArea(this);
 		}
