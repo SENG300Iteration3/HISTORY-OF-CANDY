@@ -48,13 +48,14 @@ public class TextSearchScreen extends Screen
 		initailizeSearchBar();
 		initailizeSearchResultHolder();
 		initailizeSearchButton();
+		initailizeBackButton();
 	}
 	
 	private void initalizeSearchAreaBackground()
 	{
 		//Set up variables 
 		int panelWidth = 100;
-		int panelHeight  = 550;
+		int panelHeight  = 580;
 		
 		//Setting up the background panel
 		backgroundPanel = new GUI_JPanel();
@@ -69,7 +70,7 @@ public class TextSearchScreen extends Screen
 	private void initailizeSearchBar()
 	{
 		//Search bar set up variable
-		int seacrhBarHeight = 80;
+		int seacrhBarHeight = 60;
 		int seacrhBarWidth = 1100;
 		int insetSpace = 10;
 		
@@ -83,7 +84,7 @@ public class TextSearchScreen extends Screen
 		//Setting up grid Bag Constraints on the search bar
 		gridBagConstraints.gridx = 0;
 		gridBagConstraints.gridy = 0;
-		gridBagConstraints.insets = new Insets(0, 0, insetSpace, 0);
+		gridBagConstraints.insets = new Insets(20, 0, insetSpace, 0);
 		
 		//Adding the component to the main Background
 		backgroundPanel.add(searchbar,gridBagConstraints);		
@@ -132,8 +133,8 @@ public class TextSearchScreen extends Screen
 	private void initailizeSearchButton()
 	{
 		//Setup variables 
-		int searchButtonHeight = 70;
-		int searchButtonWidth = 500;
+		int searchButtonHeight = 45;
+		int searchButtonWidth = 350;
 		
 		//Setting up  the search button
 		GUI_JButton searchButton = new GUI_JButton("Search".toUpperCase());
@@ -160,6 +161,28 @@ public class TextSearchScreen extends Screen
 				searchResultPanel.revalidate();
 			}
 		});
+	}
+	
+	private void initailizeBackButton()
+	{
+		//Setup variables 
+		int searchButtonHeight = 35;
+		int searchButtonWidth = 130;
+		
+		//Setting up  the search button
+		GUI_JButton backButton = new GUI_JButton("Back".toUpperCase());
+		backButton.setFont(GUI_Fonts.FRANKLIN_BOLD);
+		backButton.setPreferredSize(new Dimension(searchButtonWidth, searchButtonHeight));
+		backButton.setLayout(new BorderLayout());
+		backButton.setBorder(emptyBorder);
+		
+		//Setting up grid Bag Constraints on the search button
+		gridBagConstraints.gridx = 0;
+		gridBagConstraints.gridy = 5;
+		gridBagConstraints.insets = new Insets(20 ,0,20,0);
+		
+		//Adding the component to the main Background
+		backgroundPanel.add(backButton, gridBagConstraints);
 	}
 	
 	
