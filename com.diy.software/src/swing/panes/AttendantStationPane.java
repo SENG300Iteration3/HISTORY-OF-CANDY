@@ -61,7 +61,7 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		addPaperToPrinterButton.setPreferredSize(new Dimension(width, height));
 		
 		approveNoBagging = createPinPadButton("Approve no bagging");
-		approveNoBagging.setActionCommand("no_bagging");
+		approveNoBagging.setActionCommand("approve no bag");
 		approveNoBagging.addActionListener(ac);
 		approveNoBagging.setPreferredSize(new Dimension(width, height));
 
@@ -168,7 +168,7 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	}
 
 	@Override
-	public void noBaggingRequestState() {
+	public void noBagRequest() {
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(false);
 		addPaperToPrinterButton.setEnabled(false);	

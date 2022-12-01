@@ -30,7 +30,7 @@ public interface AttendantControlListener {
 	/**
 	 * state to approve no bagging request
 	 */
-	public void noBaggingRequestState();
+	public void noBagRequest();
 	
 	/**
 	 * returns the attendant station to initial starting state when stations have no issues

@@ -4,7 +4,7 @@ import javax.swing.*;
 
 import com.diy.software.controllers.StationControl;
 
-import swing.panels.CustomerBagsPanel;
+//import swing.panels.CustomerBagsPanel;
 import swing.panels.CustomerItemsPanel;
 import swing.panels.CustomerWalletPanel;
 import swing.styling.GUI_Color_Palette;
@@ -19,7 +19,7 @@ public class CustomerActionsPane {
 
 	CustomerItemsPanel itemsPanel;
 	CustomerWalletPanel walletPanel;
-	CustomerBagsPanel bagsPanel;
+	//CustomerBagsPanel bagsPanel;
 	CustomerCashPanel cashPanel;
 
 	public CustomerActionsPane(StationControl sc) {
@@ -30,12 +30,12 @@ public class CustomerActionsPane {
 
 		walletPanel = new CustomerWalletPanel(sc);
 		itemsPanel = new CustomerItemsPanel(sc);
-		bagsPanel = new CustomerBagsPanel(sc);
+		//bagsPanel = new CustomerBagsPanel(sc);
 		cashPanel = new CustomerCashPanel(sc);
 
 		container.add(walletPanel);
 		container.add(itemsPanel);
-		container.add(bagsPanel);
+		//container.add(bagsPanel);
 		container.add(cashPanel);
 	}
 
