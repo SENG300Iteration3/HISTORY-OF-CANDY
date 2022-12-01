@@ -260,7 +260,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 		this.invalidateAllScannedItems();
 		for (Barcode barcode: checkoutList.keySet()) {
 			this.addScannedItem(i+1 + ". " + ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getDescription(), checkoutList.get(barcode));
-			System.out.println("Product = " + ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getDescription() + "\t Price = " + checkoutList.get(barcode));
+			//System.out.println("Product = " + ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getDescription() + "\t Price = " + checkoutList.get(barcode));
 			i++;
 		}
 	}

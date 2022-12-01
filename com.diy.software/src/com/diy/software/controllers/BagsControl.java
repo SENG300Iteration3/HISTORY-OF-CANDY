@@ -18,16 +18,16 @@ public class BagsControl implements ActionListener {
 	private ArrayList<BagsControlListener> listeners;
 	private static final double abritraryWeightOfBags = 50;
 	private static final double abritraryPriceOfBags = 3.5;
-	private static Barcode purchasableBagBarcode;
-	private static BarcodedItem purchasableBagItem;
-	private static BarcodedProduct purchasableBagProduct;
+	private Barcode purchasableBagBarcode;
+	private BarcodedItem purchasableBagItem;
+	private BarcodedProduct purchasableBagProduct;
 	
 	public BagsControl(StationControl sc) {
 		this.sc = sc;
 		this.listeners = new ArrayList<>();
-		Barcode purchasableBagBarcode = new Barcode(new Numeral[] { Numeral.one, Numeral.one, Numeral.one, Numeral.one }); 
-		BarcodedItem purchasableBagItem = new BarcodedItem(purchasableBagBarcode, 50); 	
-		BarcodedProduct purchasableBagProduct = new BarcodedProduct(purchasableBagBarcode, "Purchasable Bag", 350, 50);
+		purchasableBagBarcode = new Barcode(new Numeral[] { Numeral.one, Numeral.one, Numeral.one, Numeral.nine }); 
+		purchasableBagItem = new BarcodedItem(purchasableBagBarcode, 50); 	
+		purchasableBagProduct = new BarcodedProduct(purchasableBagBarcode, "Purchasable Bag", 350, 50);
 		FakeDataInitializer.BARCODED_ITEM_DATABASE.put(purchasableBagBarcode, purchasableBagItem);
 		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(purchasableBagBarcode, purchasableBagProduct);
 		ProductDatabases.INVENTORY.put(purchasableBagProduct, 1000);
@@ -65,7 +65,7 @@ public class BagsControl implements ActionListener {
 		sc.getItemsControl().setWeighSuccess(true);
 		sc.updateExpectedCheckoutWeight(abritraryWeightOfBags,true);
 		sc.station.baggingArea.add(purchasableBagItem);
-		sc.getItemsControl().addItemToCheckoutList(this.purchasableBagBarcode,abritraryPriceOfBags);
+		sc.getItemsControl().addItemToCheckoutList(purchasableBagBarcode,abritraryPriceOfBags);
 		sc.getItemsControl().updateCheckoutTotal(abritraryPriceOfBags);
 		sc.unblockStation(); // call this to update total on gui
 	}

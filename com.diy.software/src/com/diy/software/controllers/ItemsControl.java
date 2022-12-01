@@ -63,6 +63,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	
 	public void addItemToCheckoutList(Barcode barcode, Double price) {
 		checkoutList.put(barcode, price);
+		System.out.println("Size of list = " + this.checkoutList.size());
 		refreshGui();
 	}
 	
