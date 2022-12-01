@@ -171,7 +171,7 @@ public class CustomerBagsPanel extends JPanel
 	}
 
 	@Override
-	public void noBaggingRequestState() {
+	public void noBagRequest() {
 		// TODO Auto-generated method stub
 		
 	}
@@ -181,5 +181,4 @@ public class CustomerBagsPanel extends JPanel
 		// TODO Auto-generated method stub
 		
 	}
-
 }

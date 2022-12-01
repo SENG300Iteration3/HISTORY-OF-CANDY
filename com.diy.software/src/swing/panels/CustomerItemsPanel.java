@@ -61,8 +61,8 @@ public class CustomerItemsPanel extends JPanel
 		placeItemInBaggingAreaButton.addActionListener(ic);
 		
 		removeItemInBaggingAreaButton = new JButton("Request no bagging");
-		removeItemInBaggingAreaButton.setActionCommand("removeFromScale");
-		removeItemInBaggingAreaButton.addActionListener(ic);
+//		removeItemInBaggingAreaButton.setActionCommand("removeFromScale");
+//		removeItemInBaggingAreaButton.addActionListener(ic);
 
 		this.setLayout(new GridBagLayout());
 
@@ -223,9 +223,7 @@ public class CustomerItemsPanel extends JPanel
 	}
 
 	@Override
-	public void noBaggingRequestState() {
-		// TODO Auto-generated method stub
-		
+	public void noBagRequest() {
 	}
 
 	@Override
