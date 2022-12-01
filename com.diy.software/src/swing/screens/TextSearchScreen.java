@@ -94,13 +94,15 @@ public class TextSearchScreen extends Screen
 		//Search bar set up variable
 		int searchResultHolderHeight = 300;
 		int searchResultHolderWidth = 1100;
+		int searchResultPanelHeight = 850;
+		int searchResultPanelWidth = 0; 
 		int insetSpace = 15;
 		
 		//Setting up Search results holder
 		searchResultPanel = new GUI_JPanel();
 		searchResultPanel.setBorder(emptyBorder);
 		searchResultPanel.setBackground(GUI_Color_Palette.DARK_BROWN);
-		searchResultPanel.setPreferredSize(new Dimension(0,700));
+		searchResultPanel.setPreferredSize(new Dimension(searchResultPanelWidth,searchResultPanelHeight));
 		searchResultPanel.setLayout(new GridLayout(20, 0));
 		
 		//Setting up grid Bag Constraints on the result holder
