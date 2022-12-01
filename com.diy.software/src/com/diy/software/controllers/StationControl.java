@@ -26,6 +26,9 @@ import com.jimmyselectronics.opeechee.Card;
 import com.jimmyselectronics.opeechee.Card.CardData;
 import com.jimmyselectronics.opeechee.CardReader;
 import com.jimmyselectronics.opeechee.CardReaderListener;
+import com.jimmyselectronics.svenden.ReusableBag;
+import com.jimmyselectronics.svenden.ReusableBagDispenser;
+import com.jimmyselectronics.svenden.ReusableBagDispenserListener;
 import com.jimmyselectronics.virgilio.ElectronicScale;
 import com.jimmyselectronics.virgilio.ElectronicScaleListener;
 import com.unitedbankingservices.TooMuchCashException;
@@ -44,7 +47,7 @@ import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
  *
  */
 public class StationControl
-		implements BarcodeScannerListener, ElectronicScaleListener, CardReaderListener, ReceiptPrinterListener {
+		implements BarcodeScannerListener, ElectronicScaleListener, CardReaderListener, ReceiptPrinterListener, ReusableBagDispenserListener {
 	public FakeDataInitializer fakeData;
 	private double expectedCheckoutWeight = 0.0;
 	private double bagWeight = 0.0;
@@ -90,7 +93,8 @@ public class StationControl
 		station.handheldScanner.register(this);
 		station.baggingArea.register(this);
 		station.cardReader.register(this);
-
+		station.reusableBagDispenser.register(this);
+		
 		station.plugIn();
 		station.turnOn();
 		
@@ -102,6 +106,19 @@ public class StationControl
 		bdc = new BagDispenserControl(this);
 		cc = new CashControl(this);
 		ac = new AttendantControl(this);
+		
+		/*
+		 * loads maximum number of bags to the reusable bag dispenser 
+		 */
+		station.reusableBagDispenser.plugIn();
+		station.reusableBagDispenser.turnOn();
+		try {
+			for(int i = 0; i < station.reusableBagDispenser.getCapacity() - 1; i++) {
+				ReusableBag aBag = new ReusableBag();
+				station.reusableBagDispenser.load(aBag);
+			}
+
+		}catch(OverloadException e) {}
 
 		/*
 		 * simulates what the printer has in it before the printing starts
@@ -633,5 +650,23 @@ public class StationControl
 	public void inkAdded(IReceiptPrinter printer) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void bagDispensed(ReusableBagDispenser dispenser) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void outOfBags(ReusableBagDispenser dispenser) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void bagsLoaded(ReusableBagDispenser dispenser, int count) {
+		// TODO Auto-generated method stub
+		
 	}
 }
