@@ -98,12 +98,14 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	}
 
 	/**
-	 * removes the last bagged item through the approval of no bagging request
+	 * Approve the no bagging request from customer
+	 * Customer may leave the item in cart
 	 */
-	public void removeLastBaggedItem() {
-		sc.getItemsControl().removeLastBaggedItem();
+	public void approveNoBagRequest() {
+		sc.ItemApprovedToNotBag();
 		for (AttendantControlListener l : listeners)
 			l.initialState();
+		sc.getItemsControl().placeBulkyItemInCart();
 	}
 	
 	/*
@@ -202,9 +204,13 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 					attendantNotifications = ("stations printer needs more paper!");
 					addPaper();
 					break;
-				case "no_bagging":
-					attendantNotifications = ("approved no bagging request");
-					removeLastBaggedItem();
+				case "request no bag":
+					attendantNotifications = ("customer requests no bagging");
+					System.out.println("request no bag");
+					noBagRequest();
+					break;
+				case "approve no bag":
+					approveNoBagRequest();
 					break;
 				case "prevent_use":
 					attendantNotifications = ("Preventing use on station for maintenance");
@@ -281,9 +287,9 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 
 	}
 
-	public void approveNoBaggingRequest() {
+	public void noBagRequest() {
 		for (AttendantControlListener l : listeners)
-			l.noBaggingRequestState();
+			l.noBagRequest();
 
 	}
 }
