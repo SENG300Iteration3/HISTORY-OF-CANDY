@@ -89,7 +89,12 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 		approveAddedBagsButton.setEnabled(false);
 		weightDisplayLabel.setText("");
 	}
-	
+
+	@Override
+	public void attendantPreventUse(AttendantControl ac) {
+		// TODO: implement method
+	}
+
 	@Override
 	public void readyToAcceptNewBagsInBaggingArea(BagsControl bc) {
 		
