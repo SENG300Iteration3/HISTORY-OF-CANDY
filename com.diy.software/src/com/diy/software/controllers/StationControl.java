@@ -103,8 +103,8 @@ public class StationControl
 		station.cardReader.register(this);
 		station.reusableBagDispenser.register(this);
 		
-		station.plugIn();
-		station.turnOn();
+
+		startUp();
 		
 		fillStation();
 		
@@ -165,6 +165,11 @@ public class StationControl
 		listeners.remove(l);
 	}
 
+	public void startUp() {
+		station.plugIn();
+		station.turnOn();
+	}
+	
 	public ItemsControl getItemsControl() {
 		return ic;
 	}
