@@ -550,6 +550,12 @@ public class StationControl
     		throw new NullPointerSimulationException();
     	}
     }
+	
+	public void ItemApprovedToNotBag() {
+		this.updateExpectedCheckoutWeight(-weightOfItemScanned);
+		this.updateWeightOfLastItemAddedToBaggingArea(-weightOfItemScanned);
+		this.unblockStation();
+	}
 
 	/**
 	 * Compares the expected weight after adding an item to the actual weight being
