@@ -31,16 +31,22 @@ import java.util.Map;
 
 public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	private StationControl sc;
-	private ArrayList<ReceiptControlListener> listeners;
+	private ArrayList<ReceiptControlListener> listenersReceipt;
+	private ArrayList<AttendantControlListener> listenersAttendant;
 	private static final DecimalFormat formatPrice = new DecimalFormat("0.00");
 	
 	public ReceiptControl (StationControl sc) {
 		this.sc = sc;
-		this.listeners = new ArrayList<>();
+		this.listenersReceipt = new ArrayList<>();
+		this.listenersAttendant = new ArrayList<>();
 	}
 
-	public void addListener(ReceiptControlListener l) {
-		listeners.add((ReceiptControlListener) l);
+	public void addListenerReceipt(ReceiptControlListener lr) {
+		listenersReceipt.add(lr);
+	}
+	
+	public void addListenerAttendant(AttendantControlListener la) {
+		listenersAttendant.add(la);
 	}
 	
 	
@@ -234,15 +240,14 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 
 	@Override
 	public void lowInk(IReceiptPrinter printer) {
-		for (ReceiptControlListener l : listeners)
-			l.addInkState();
-		
+		for (AttendantControlListener la : listenersAttendant)
+			la.addInkState();	
 	}
 
 	@Override
 	public void lowPaper(IReceiptPrinter printer) {
-		for (ReceiptControlListener l : listeners)
-			l.addPaperState();
+		for (AttendantControlListener la : listenersAttendant)
+			la.addPaperState();
 	}
 
 	@Override
