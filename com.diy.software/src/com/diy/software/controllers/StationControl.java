@@ -27,6 +27,9 @@ import com.jimmyselectronics.opeechee.Card;
 import com.jimmyselectronics.opeechee.Card.CardData;
 import com.jimmyselectronics.opeechee.CardReader;
 import com.jimmyselectronics.opeechee.CardReaderListener;
+import com.jimmyselectronics.svenden.ReusableBag;
+import com.jimmyselectronics.svenden.ReusableBagDispenser;
+import com.jimmyselectronics.svenden.ReusableBagDispenserListener;
 import com.jimmyselectronics.virgilio.ElectronicScale;
 import com.jimmyselectronics.virgilio.ElectronicScaleListener;
 import com.unitedbankingservices.TooMuchCashException;
@@ -45,7 +48,7 @@ import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
  *
  */
 public class StationControl
-		implements BarcodeScannerListener, ElectronicScaleListener, CardReaderListener, ReceiptPrinterListener {
+		implements BarcodeScannerListener, ElectronicScaleListener, CardReaderListener, ReceiptPrinterListener, ReusableBagDispenserListener {
 	public FakeDataInitializer fakeData;
 	private double expectedCheckoutWeight = 0.0;
 	private double bagWeight = 0.0;
@@ -65,15 +68,16 @@ public class StationControl
 	private AttendantControl ac;
 	private WalletControl wc;
 	private MembershipControl mc;
+	private BagDispenserControl bdc;
 	private CashControl cc;
+	private PinPadControl ppc;
+	private PaymentControl pc;
 
 	private boolean isLocked = false;
 	public String memberName;
 	public double weightOfItemScanned;
 	private boolean membershipInput = false;
-
-	private PinPadControl ppc;
-	private PaymentControl pc;
+	private int bagInStock;
 
 	/**
 	 * Constructor for the SystemControl class. Instantiates an object of type
@@ -89,6 +93,7 @@ public class StationControl
 		bc = new BagsControl(this);
 		mc = new MembershipControl(this);
 		cc = new CashControl(this);
+		bdc = new BagDispenserControl(this);
 		ac = new AttendantControl(this);
 
 		station.printer.register(this);
@@ -96,11 +101,20 @@ public class StationControl
 		station.handheldScanner.register(this);
 		station.baggingArea.register(this);
 		station.cardReader.register(this);
-
+		station.reusableBagDispenser.register(this);
+		
 		station.plugIn();
 		station.turnOn();
 		
 		fillStation();
+		
+		/*
+		 * loads maximum number of bags to the reusable bag dispenser 
+		 */
+		station.reusableBagDispenser.plugIn();
+		station.reusableBagDispenser.turnOn();
+		bagInStock = station.reusableBagDispenser.getCapacity();
+		loadBags();
 
 		/*
 		 * simulates what the printer has in it before the printing starts
@@ -125,6 +139,7 @@ public class StationControl
 		this.fakeData = fakeData;
 		this.fakeData.addCardData();
 		this.fakeData.addProductAndBarcodeData();
+		this.fakeData.addPLUCodedProduct();
 		this.fakeData.addFakeMembers();
 
 		// for (Card c: this.fakeData.getCards()) customer.wallet.cards.add(c);
@@ -169,6 +184,10 @@ public class StationControl
 	public MembershipControl getMembershipControl() {
 		return mc;
 	}
+	
+	public BagDispenserControl getBagDispenserControl() {
+		return bdc;
+	}
 
 	public PinPadControl getPinPadControl() {
 		return ppc;
@@ -180,6 +199,16 @@ public class StationControl
 
 	public CashControl getCashControl() {
 		return cc;
+	}
+	
+	private void loadBags() {
+		try {
+			for(int i = 0; i < bagInStock; i++) {
+				ReusableBag aBag = new ReusableBag();
+				station.reusableBagDispenser.load(aBag);
+			}
+
+		}catch(OverloadException e) {}
 	}
 	
 	private void fillStation() {
@@ -353,6 +382,11 @@ public class StationControl
 			l.startMembershipCardInput(this);
 		wc.membershipCardInputEnabled();
 		
+	}
+	
+	public void startPurchaseBagsWorkflow() {
+		for (StationControlListener l : listeners)
+			l.triggerPurchaseBagsWorkflow(this);
 	}
 	
 	public void cancelMembershipCardInput() {
@@ -596,6 +630,16 @@ public class StationControl
     	}
     }
 	
+	public void addReusableBag(ReusableBag lastDispensedReusableBag) {
+		// ADD: update inventory
+
+		weightOfItemScanned = lastDispensedReusableBag.getWeight();
+		
+		// Set the expected weight in SystemControl
+		this.updateExpectedCheckoutWeight(weightOfItemScanned);
+		this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
+	}
+	
 	public void ItemApprovedToNotBag() {
 		this.updateExpectedCheckoutWeight(-weightOfItemScanned);
 		this.updateWeightOfLastItemAddedToBaggingArea(-weightOfItemScanned);
@@ -611,6 +655,10 @@ public class StationControl
 	 */
 	public boolean expectedWeightMatchesActualWeight(double actualWeight) {
 		return (this.getExpectedWeight() == actualWeight + bagWeight);
+	}
+	
+	public int getBagInStock() {
+		return bagInStock;
 	}
 
 	@Override
@@ -647,8 +695,37 @@ public class StationControl
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public void bagDispensed(ReusableBagDispenser dispenser) {
+		--bagInStock;
+	}
+
+	@Override
+	public void outOfBags(ReusableBagDispenser dispenser) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void bagsLoaded(ReusableBagDispenser dispenser, int count) {
+		// TODO Auto-generated method stub
+  }
 	
 	public boolean isMembershipInput() {
 		return membershipInput;
+	}
+	
+	
+	public void notifyNoBagsInStock() {
+		for (StationControlListener l: listeners) {
+			l.noBagsInStock(this);
+		}
+	}
+	
+	public void notifyNotEnoughBagsInStock(int numBag) {
+		for (StationControlListener l: listeners) {
+			l.notEnoughBagsInStock(this, numBag);
+		}
 	}
 }
