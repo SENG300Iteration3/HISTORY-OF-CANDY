@@ -215,6 +215,8 @@ public class CustomerItemsPanel extends JPanel
 
 	@Override
 	public void printerNotLowState() {}
+	
+	// FIXME: Should this have @Override below it?
 	public void productSubtotalUpdated(ItemsControl ic) {
 		// TODO Auto-generated method stub
 
