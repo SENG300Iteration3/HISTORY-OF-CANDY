@@ -620,7 +620,7 @@ public class StationControl
 		System.out.println("SC out of paper");
 		rc.outOfPaper(printer);
 		blockStation();
-		rc.lowPaper(printer);
+		rc.outOfPaper(printer);
 	}
 
 	@Override
@@ -630,7 +630,7 @@ public class StationControl
 		 rc.outOfInk(printer);
 		 blockStation();
 		// have the same functionality as low ink for now
-		 rc.lowInk(printer);
+		 rc.outOfInk(printer);
 	}
 
 	@Override
