@@ -25,7 +25,6 @@ public class BagDispenserControl implements ActionListener {
 	private void dispenseBag() {
 		while(numBag > 0) {
 			try {
-				System.out.println("purchase: " + numBag);
 				// add the dispensed bag to checkout item list
 				lastDispensedReusableBag = sc.station.reusableBagDispenser.dispense();
 				
