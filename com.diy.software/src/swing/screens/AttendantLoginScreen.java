@@ -23,9 +23,8 @@ import swing.styling.GUI_JLabel;
 import swing.styling.GUI_JPanel;
 import swing.styling.Screen;
 
-public class AttendantLoginScreen extends Screen {
+public class AttendantLoginScreen extends Screen implements ActionListener {
 	
-	private StationControl sc;
 	private AttendantControl ac;
 	GUI_JButton loginButton;
 	private JTextField loginInfo;
@@ -34,7 +33,6 @@ public class AttendantLoginScreen extends Screen {
 	private int width = 450;
 	private int height = 50;
 	private int overallMargin = 10;
-	testListener tl;
 	GUI_JPanel centerPanel;
 	
 	private static String HeaderText = "Attendant Login Screen".toUpperCase();
@@ -44,7 +42,6 @@ public class AttendantLoginScreen extends Screen {
 		
 		super.rootPanel.setOpaque(true);
 		super.rootPanel.setBackground(GUI_Color_Palette.WHITE);
-		tl = new testListener();
 		
 		ac = arrayList.get(0).getAttendantControl();
 		
@@ -70,7 +67,6 @@ public class AttendantLoginScreen extends Screen {
 	}
 	
 	public void loginFail() {
-		System.out.println("failure");
 		loginFail.setText("Incorrect login Information".toUpperCase());
 		
 	}
@@ -88,7 +84,7 @@ public class AttendantLoginScreen extends Screen {
 		loginButton.setLayout(new BorderLayout());
 		
 		loginButton.setActionCommand("LOGIN");
-		loginButton.addActionListener(tl);
+		loginButton.addActionListener(this);
 		loginButton.setPreferredSize(new Dimension(width, height));
 		addLayer(loginButton, 0);
 		
@@ -109,19 +105,16 @@ public class AttendantLoginScreen extends Screen {
 		loginInfo = new JTextField();
 		loginInfo.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		loginInfo.setHorizontalAlignment(JLabel.CENTER);
+		loginInfo.addActionListener(this);
 		loginInfo.setBorder(BorderFactory.createLineBorder(GUI_Color_Palette.DARK_BLUE, 10));
 
 
 		centerPanel.add(loginInfo, 1);
 		
 	}
-	
-	public class testListener implements ActionListener{
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			ac.login(loginInfo.getText());
-		}
-		
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		ac.login(loginInfo.getText());
 	}
 }

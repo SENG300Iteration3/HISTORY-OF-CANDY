@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.Panel;
 import java.util.ArrayList;
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
@@ -20,25 +21,18 @@ import swing.styling.GUI_JFrame;
 import swing.styling.Screen;
 
 public class AttendantPane implements AttendantControlListener {
-	private PaneControl pc;
-	
-	//private GUI_JFrame rooPanel;
-	private Component currentPanel;
-	private ArrayList<JPanel> panelStack;
+
+	private Component currentComponent;
 	
 	private AttendantLoginScreen loginScreen;
-	private AttendantStationPane stationScreen;
 
 	private JTabbedPane tabbedPane;
 
-	private GUI_JFrame frame;
+	private JFrame frame;
 	
-	public AttendantPane(PaneControl pc, GUI_JFrame frame) {
-		
-		this.pc = pc;
+	public AttendantPane(PaneControl pc, JFrame frame) {
 		this.frame = frame;
 		
-		this.panelStack = new ArrayList<>();
 		this.loginScreen = new AttendantLoginScreen(pc.getStationControls());
 		this.tabbedPane = new JTabbedPane();
 		int i = 1;
@@ -49,32 +43,22 @@ public class AttendantPane implements AttendantControlListener {
 			tabbedPane.addTab("Station " + i++, tempPanel);
 		}
 		 
-		this.currentPanel = new JPanel();
-		this.frame.getContentPane().add(currentPanel, BorderLayout.CENTER);
+		this.currentComponent = new JPanel();
+		this.frame.getContentPane().add(currentComponent, BorderLayout.CENTER);
 		
-		addScreenToStack(loginScreen);
+		changeComponents(loginScreen.getRootPanel());
 		
 	}
 	
-	//public JPanel getRootPanel() {
-		//return rooPanel;
-	//}
-	
-	private void addPanel(Component newPanel) {
-		JPanel parent = (JPanel) currentPanel.getParent();
-		parent.remove(currentPanel);
-		currentPanel = newPanel;
-		parent.add(currentPanel);
-		parent.invalidate();
-		parent.validate();
-		parent.repaint();
-	
+	private void changeComponents(Component newComponent) {
+		frame.remove(currentComponent);
+		currentComponent = newComponent;
+		frame.add(currentComponent);
+		frame.invalidate();
+		frame.validate();
+		frame.repaint();
 	}
 	
-	private void addScreenToStack(Screen newScreen) {
-		addPanel(newScreen.getRootPanel());
-		panelStack.add(newScreen.getRootPanel());
-	}
 
 	@Override
 	public void attendantApprovedBags(AttendantControl ac) {
@@ -121,10 +105,10 @@ public class AttendantPane implements AttendantControlListener {
 	@Override
 	public void loggedIn(boolean isLoggedIn) {
 		if (isLoggedIn) {
-			addPanel(tabbedPane);
+			changeComponents(tabbedPane);
 			
 			
-		}else if (currentPanel.equals(loginScreen.getRootPanel())){
+		}else if (currentComponent.equals(loginScreen.getRootPanel())){
 		
 			loginScreen.loginFail();
 		}else{
