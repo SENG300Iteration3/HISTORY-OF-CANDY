@@ -13,6 +13,7 @@ import com.diy.software.listeners.PaymentControlListener;
 import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.opeechee.Card.CardData;
 
+import swing.panels.CatalogPanel;
 import swing.screens.AddItemsScreen;
 import swing.screens.AddOwnBagsPromptScreen;
 import swing.screens.BlockedPromptScreen;
@@ -41,7 +42,8 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	private OkayPromptScreen okayPromptScreen;
 	private MembershipScreen membershipSceen;
 	private PresentMembershipCardScreen presentMembershipCardScreen;
-
+	private CatalogPanel catalogPanel;
+	
 	public CustomerStationPane(StationControl sc) {
 		this.sc = sc;
 
@@ -214,5 +216,9 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 		addScreenToStack(membershipSceen);
 	}
 
-	
+	@Override
+	public void triggerBrowsingCatalog(StationControl systemControl) {
+		addPanelToStack(catalogPanel);
+		
+	}
 }

@@ -355,6 +355,11 @@ public class StationControl
 		
 	}
 	
+	public void startCatalogWorkflow() {
+		for (StationControlListener l : listeners)
+			l.triggerBrowsingCatalog(this);
+	}
+	
 	public void cancelMembershipCardInput() {
 		membershipInput = false;
 		wc.membershipCardInputCanceled();
@@ -566,9 +571,11 @@ public class StationControl
 			weightOfItemScanned = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
 			// Add the barcode to the ArrayList within itemControl
 			this.ic.addScannedItemToCheckoutList(barcode);
+			
 			// Set the expected weight in SystemControl
 			this.updateExpectedCheckoutWeight(weightOfItemScanned);
 			this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
+			
 			// Call method within SystemControl that handles the rest of the item scanning
 			// procedure
 			this.blockStation();
