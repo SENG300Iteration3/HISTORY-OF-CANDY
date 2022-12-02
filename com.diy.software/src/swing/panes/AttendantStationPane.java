@@ -64,7 +64,7 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		addPaperToPrinterButton.addActionListener(ac);
 		addPaperToPrinterButton.setPreferredSize(new Dimension(width, height));
 		
-		approveNoBagging = createPinPadButton("Approve no bagging");
+		approveNoBagging = makeButton("Approve no bagging");
 		approveNoBagging.setActionCommand("approve no bag");
 		approveNoBagging.addActionListener(ac);
 		approveNoBagging.setPreferredSize(new Dimension(width, height));
