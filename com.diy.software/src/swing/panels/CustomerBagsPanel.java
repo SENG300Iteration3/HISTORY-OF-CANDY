@@ -180,27 +180,23 @@ public class CustomerBagsPanel extends JPanel
 	}
 
 	@Override
-	public String lowInk(ReceiptControl rc, String message) {
+	public void lowInk(ReceiptControl rc, String message) {
 		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
-	public String lowPaper(ReceiptControl rc, String dateTime) {
+	public void lowPaper(ReceiptControl rc, String dateTime) {
 		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
-	public String outOfInk(ReceiptControl rc, String message) {
+	public void outOfInk(ReceiptControl rc, String message) {
 		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
-	public String outOfPaper(ReceiptControl rc, String message) {
+	public void outOfPaper(ReceiptControl rc, String message) {
 		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
