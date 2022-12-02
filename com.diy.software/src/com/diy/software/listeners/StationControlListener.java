@@ -16,6 +16,9 @@ public interface StationControlListener {
 	 */
 	public void systemControlLocked(StationControl systemControl, boolean isLocked);
 	
+
+	public void systemControlLocked(StationControl systemControl, boolean isLocked, String reason);
+	
 	/**
 	 * An event announcing a payment has been made
 	 * 
@@ -49,6 +52,12 @@ public interface StationControlListener {
 	 */
 	public void paymentsHaveBeenEnabled(StationControl systemControl);
 	
+	
+	public void startMembershipCardInput(StationControl systemControl);
+	
+	public void membershipCardInputFinished(StationControl systemControl);
+	
+	public void membershipCardInputCanceled(StationControl systemControl, String reason);
 	
 	/**
 	 * An event meant to prompt the user for pin input for when a card has been inserted

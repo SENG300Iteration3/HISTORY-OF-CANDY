@@ -5,6 +5,8 @@ import com.diy.software.controllers.ReceiptControl;
 
 public interface AttendantControlListener {
 	public void attendantApprovedBags(AttendantControl ac);
+
+	public void attendantPreventUse(AttendantControl ac);
 	
 	/**
 	 * used to notify low ink state
@@ -49,7 +51,7 @@ public interface AttendantControlListener {
 	/**
 	 * state to approve no bagging request
 	 */
-	public void noBaggingRequestState();
+	public void noBagRequest();
 	
 	/**
 	 * returns the attendant station to initial starting state when stations have no issues

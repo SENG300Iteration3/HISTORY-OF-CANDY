@@ -15,6 +15,7 @@ import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.opeechee.Card.CardData;
 
 import swing.screens.AddItemsScreen;
+import swing.screens.AddOwnBagsPromptScreen;
 import swing.screens.BlockedPromptScreen;
 import swing.screens.MembershipScreen;
 import swing.screens.OkayPromptScreen;
@@ -22,6 +23,7 @@ import swing.screens.PaymentScreen;
 import swing.screens.PinPadScreen;
 import swing.screens.PresentCardScreen;
 import swing.screens.PresentCashScreen;
+import swing.screens.PresentMembershipCardScreen;
 import swing.styling.Screen;
 
 public class CustomerStationPane implements StationControlListener, PaymentControlListener {
@@ -39,6 +41,7 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	private BlockedPromptScreen blockedPromptScreen;
 	private OkayPromptScreen okayPromptScreen;
 	private MembershipScreen membershipSceen;
+	private PresentMembershipCardScreen presentMembershipCardScreen;
 
 	public CustomerStationPane(StationControl sc) {
 		this.sc = sc;
@@ -112,6 +115,23 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 			triggerPanelBack(systemControl);
 		}
 	}
+	
+	@Override
+	public void systemControlLocked(StationControl systemControl, boolean isLocked, String reason) {
+		if (isLocked) {
+			if (reason == "use own bags") {
+				AddOwnBagsPromptScreen screen = new AddOwnBagsPromptScreen(systemControl, 
+						"Please Place Your Bags In the Bagging Area");
+				addScreenToStack(screen);
+				
+			} else {
+				blockedPromptScreen = new BlockedPromptScreen(systemControl, reason);
+				addScreenToStack(blockedPromptScreen);
+			}
+		} else {
+			triggerPanelBack(systemControl);
+		}
+	}
 
 	@Override
 	public void paymentHasBeenMade(StationControl systemControl, CardData cardData) {
@@ -129,6 +149,22 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	public void paymentsHaveBeenEnabled(StationControl systemControl) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	public void startMembershipCardInput(StationControl systemControl) {
+		presentMembershipCardScreen = new PresentMembershipCardScreen(sc);
+		addScreenToStack(presentMembershipCardScreen);
+	}
+	
+	
+	public void membershipCardInputFinished(StationControl systemControl) {
+		triggerPanelBack(systemControl);
+	}
+	
+	@Override
+	public void membershipCardInputCanceled(StationControl systemControl, String reason) {
+		okayPromptScreen = new OkayPromptScreen(systemControl, reason, false);
+		addPanel(okayPromptScreen.getRootPanel());
 	}
 
 	@Override
@@ -175,4 +211,6 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	public void triggerMembershipWorkflow(StationControl systemControl) {
 		addScreenToStack(membershipSceen);
 	}
+
+	
 }
