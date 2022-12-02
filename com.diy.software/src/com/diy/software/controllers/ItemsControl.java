@@ -218,13 +218,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	}
 	
 	/**
-	 * request no bagging for last item added to scale
-	 */
-	public void requestNoBagging() {	
-		sc.getAttendantControl().approveNoBaggingRequest();
-	}
-	
-	/**
 	 * removes the last wrongly added item from the scale
 	 */
 	public void removeLastBaggedItem() {
@@ -235,11 +228,12 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			l.awaitingItemToBeSelected(this);
 	}
 
-	// TODO: verify what happens in this case
-	// TODO: potentially add to GUI?
+	/**
+	 * After the attendant approved no bag request, customer leave the item in cart
+	 */
 	public void placeBulkyItemInCart() {
 		try {
-			// placing an item could potentially fail so allow for retries
+			// Customer leaves the current item in the cart. 
 			sc.customer.leaveBulkyItemInCart();
 			for (ItemsControlListener l : listeners)
 				l.awaitingItemToBeSelected(this);
@@ -272,10 +266,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			case "bag":
 				System.out.println("Customer put item in bagging area");
 				placeItemOnScale();
-				break;
-			case "removeFromScale":
-				System.out.println("Customer requests to not bag last item from scale");
-				requestNoBagging();
 				break;
 			case "pay":
 				System.out.println("Starting payment workflow");
@@ -312,9 +302,11 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 	@Override
 	public void barcodeScanned(BarcodeScanner barcodeScanner, Barcode barcode) {
-		scanSuccess = true;
-		for (ItemsControlListener l : listeners)
-			l.awaitingItemToBePlacedInBaggingArea(this);
+		if (!sc.isMembershipInput()) {
+			scanSuccess = true;
+			for (ItemsControlListener l : listeners)
+				l.awaitingItemToBePlacedInBaggingArea(this);
+		}
 	}
 	
 	/**

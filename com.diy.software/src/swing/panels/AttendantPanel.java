@@ -22,7 +22,7 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 	JButton approveAddedBagsButton;
 	JButton addInkToPrinterButton;
 	JButton addPaperToPrinterButton;
-	JButton approveNoBagging;
+	JButton approveNoBagButton;
 	JLabel weightDisplayLabel, weightDescrepancyMssg;
 	GridBagConstraints grid = new GridBagConstraints();
 	
@@ -47,9 +47,9 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 		addPaperToPrinterButton.setActionCommand("addPaper");
 		addPaperToPrinterButton.addActionListener(ac);
 		
-		approveNoBagging = new JButton("Approve no bagging");
-		approveNoBagging.setActionCommand("No bagging");
-		approveNoBagging.addActionListener(ac);
+		approveNoBagButton = new JButton("Approve no bagging");
+		approveNoBagButton.setActionCommand("approve");
+		approveNoBagButton.addActionListener(ac);
 		
 		
 		weightDisplayLabel = new JLabel("");
@@ -65,13 +65,13 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
     	grid.gridy = 3;
     	this.add(addPaperToPrinterButton);
     	grid.gridy = 4;
-    	this.add(approveNoBagging);
+    	this.add(approveNoBagButton);
     	
     	this.add(weightDescrepancyMssg);
     	
     	addInkToPrinterButton.setEnabled(false);
 		addPaperToPrinterButton.setEnabled(false);
-		approveNoBagging.setEnabled(false);
+		approveNoBagButton.setEnabled(false);
 		
     	approveAddedBagsButton.setEnabled(cusAddedBags);
 	}
@@ -136,11 +136,11 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 	}
 
 	@Override
-	public void noBaggingRequestState() {
+	public void noBagRequest() {
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(false);
 		addPaperToPrinterButton.setEnabled(false);	
-		approveNoBagging.setEnabled(true);
+		approveNoBagButton.setEnabled(true);
 	}
 
 	@Override
@@ -148,7 +148,7 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(false);
 		addPaperToPrinterButton.setEnabled(false);	
-		approveNoBagging.setEnabled(false);
+		approveNoBagButton.setEnabled(false);
 		weightDescrepancyMssg.setText("");
 	}
 }

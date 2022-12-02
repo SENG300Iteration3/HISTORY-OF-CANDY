@@ -91,6 +91,12 @@ public class StationControl
 		customer = new Customer();
 		station = new DoItYourselfStation();
 		customer.useStation(station);
+		
+		ic = new ItemsControl(this);
+		bc = new BagsControl(this);
+		mc = new MembershipControl(this);
+		cc = new CashControl(this);
+		ac = new AttendantControl(this);
 
 		station.printer.register(this);
 		station.mainScanner.register(this);
@@ -102,12 +108,6 @@ public class StationControl
 		station.turnOn();
 		
 		fillStation();
-
-		ic = new ItemsControl(this);
-		bc = new BagsControl(this);
-		mc = new MembershipControl(this);
-		cc = new CashControl(this);
-		ac = new AttendantControl(this);
 
 		/*
 		 * simulates what the printer has in it before the printing starts
@@ -263,6 +263,27 @@ public class StationControl
 		}
 		// System.out.println("Station Locked"); // Remove before release}
 	}
+	
+	public void blockStation(String reason) {
+		if (!isLocked) {
+			boolean loop = true;
+			while (loop) {
+				try {
+					this.station.handheldScanner.disable();
+					this.station.cardReader.disable();
+					for (StationControlListener l : listeners) {
+						l.systemControlLocked(this, true, reason);
+					}
+					isLocked = true;
+				} catch (NoPowerException e) {
+					System.out.println(e.getMessage());
+				} finally {
+					if (this.station.handheldScanner.isPoweredUp())
+						loop = false;
+				}
+			}
+		}
+	}
 
 	/**
 	 * Enables pieces of hardware so the Customer can continue checking out now that
@@ -346,15 +367,16 @@ public class StationControl
 	}
 	
 	public void startMembershipCardInput() {
+		membershipInput = true;
 		for (StationControlListener l : listeners)
 			l.startMembershipCardInput(this);
 		wc.membershipCardInputEnabled();
-		membershipInput = true;
+		
 	}
 	
 	public void cancelMembershipCardInput() {
-		wc.membershipCardInputCanceled();
 		membershipInput = false;
+		wc.membershipCardInputCanceled();
 	}
 
 	@Override
@@ -537,8 +559,8 @@ public class StationControl
 			membershipInput = false;
 			wc.membershipCardInputCanceled();
 		} else {
-      Product product = findProduct(barcode);
-		  checkInventory(product);
+			Product product = findProduct(barcode);
+			checkInventory(product);
 			weightOfItemScanned = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
 			// Add the barcode to the ArrayList within itemControl
 			this.ic.addScannedItemToCheckoutList(barcode);
@@ -571,6 +593,12 @@ public class StationControl
     		throw new NullPointerSimulationException();
     	}
     }
+	
+	public void ItemApprovedToNotBag() {
+		this.updateExpectedCheckoutWeight(-weightOfItemScanned);
+		this.updateWeightOfLastItemAddedToBaggingArea(-weightOfItemScanned);
+		this.unblockStation();
+	}
 
 	/**
 	 * Compares the expected weight after adding an item to the actual weight being
@@ -616,5 +644,9 @@ public class StationControl
 	public void inkAdded(IReceiptPrinter printer) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	public boolean isMembershipInput() {
+		return membershipInput;
 	}
 }
