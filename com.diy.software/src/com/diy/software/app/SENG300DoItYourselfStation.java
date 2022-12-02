@@ -66,6 +66,12 @@ public class SENG300DoItYourselfStation {
 		BarcodedProduct bp4 = new BarcodedProduct(barcode4, "Cauliflower", 6,550);
 		ProductDatabases.INVENTORY.put(bp4, 10);
 		
+				
+		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode1, bp1);
+		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode2, bp2);
+		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode3, bp3);
+		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode4, bp4);
+		
 		PLUCodedProduct pcp1 = new PLUCodedProduct(plu1, "Gomu Gomu Devil Fruit", 260);
 		ProductDatabases.INVENTORY.put(pcp1, 10);
 		PLUCodedProduct pcp2 = new PLUCodedProduct(plu2, "Hana Hana Devil Fruit", 250);
@@ -75,6 +81,11 @@ public class SENG300DoItYourselfStation {
 		PLUCodedProduct pcp4 = new PLUCodedProduct(plu4, "Hito Hito Devil Fruit", 350);
 		ProductDatabases.INVENTORY.put(pcp4, 10);
 		
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(plu1, pcp1);
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(plu2, pcp2);
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(plu3, pcp3);
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(plu4, pcp4);
+
 		
 		
 		PriceLookUpCode code1 = new PriceLookUpCode("1234");
@@ -93,6 +104,11 @@ public class SENG300DoItYourselfStation {
 		ProductDatabases.INVENTORY.put(pp2, 100);
 		ProductDatabases.INVENTORY.put(pp3, 100);
 		ProductDatabases.INVENTORY.put(pp4, 100);
+		
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(code1, pp1);
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(code2, pp2);
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(code3, pp3);
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(code4, pp4);
 	}
 	
 }
