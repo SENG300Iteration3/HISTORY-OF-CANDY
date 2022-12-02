@@ -28,7 +28,7 @@ public class FakeDataInitializer {
 	private PriceLookUpCode code1, code2, code3, code4;
 	private PLUCodedItem pitem1, pitem2, pitem3, pitem4;
 	private PLUCodedProduct pp1, pp2, pp3, pp4;
-	private Card card1, card2, card3, card4;
+	private Card card1, card2, card3, card4, card5;
 	private CardIssuer fakebank;
 	private final Double AMOUNT_AVAILABLE = 1000.0;
 	Calendar expire_date = Calendar.getInstance();
@@ -51,11 +51,6 @@ public class FakeDataInitializer {
 		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode3, bp3);
 		bp4 = new BarcodedProduct(barcode4, "Cauliflower", 6, 550);
 		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode4, bp4);
-		
-		ProductDatabases.INVENTORY.put(bp1, 100);
-		ProductDatabases.INVENTORY.put(bp2, 100);
-		ProductDatabases.INVENTORY.put(bp3, 100);
-		ProductDatabases.INVENTORY.put(bp4, 100);
 
 	}
 
@@ -124,6 +119,9 @@ public class FakeDataInitializer {
 		fakebank.addCardData("0000000000004321", "Tony Stark", expire_date, "111", AMOUNT_AVAILABLE);
 		fakebank.addCardData("0000000000009999", "Natasha Romanoff", expire_date, "222", AMOUNT_AVAILABLE);
 		fakebank.addCardData("1234", "Itadori", expire_date, "000", AMOUNT_AVAILABLE);
+		
+		card5 = new Card(GiftcardDatabase.CompanyGiftCard, "00001234", "Jimmy James", null, null, false, false);
+		GiftcardDatabase.giftcardMap.put("00001234", 50.00);
 	}
 	
 	public Barcode[] getBarcodes() {
@@ -140,7 +138,7 @@ public class FakeDataInitializer {
 	}
 	
 	public Card[] getCards() {
-		return new Card[] {card1, card2, card3, card4};
+		return new Card[] {card1, card2, card3, card4, card5};
 	}
 	
 	public CardIssuer getCardIssuer() {

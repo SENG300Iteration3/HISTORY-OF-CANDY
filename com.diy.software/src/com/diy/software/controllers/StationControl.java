@@ -14,6 +14,7 @@ import com.diy.hardware.external.ProductDatabases;
 import com.diy.simulation.Customer;
 import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.PLUCodeControlListener;
+import com.diy.software.fakedata.GiftcardDatabase;
 import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
@@ -88,6 +89,12 @@ public class StationControl
 		customer = new Customer();
 		station = new DoItYourselfStation();
 		customer.useStation(station);
+		
+		ic = new ItemsControl(this);
+		bc = new BagsControl(this);
+		mc = new MembershipControl(this);
+		cc = new CashControl(this);
+		ac = new AttendantControl(this);
 
 		station.printer.register(this);
 		station.mainScanner.register(this);
@@ -99,12 +106,6 @@ public class StationControl
 		station.turnOn();
 		
 		fillStation();
-
-		ic = new ItemsControl(this);
-		bc = new BagsControl(this);
-		mc = new MembershipControl(this);
-		cc = new CashControl(this);
-		ac = new AttendantControl(this);
 
 		/*
 		 * simulates what the printer has in it before the printing starts
@@ -364,15 +365,21 @@ public class StationControl
 	}
 	
 	public void startMembershipCardInput() {
+		membershipInput = true;
 		for (StationControlListener l : listeners)
 			l.startMembershipCardInput(this);
 		wc.membershipCardInputEnabled();
-		membershipInput = true;
+		
+	}
+	
+	public void startCatalogWorkflow() {
+		for (StationControlListener l : listeners)
+			l.triggerBrowsingCatalog(this);
 	}
 	
 	public void cancelMembershipCardInput() {
-		wc.membershipCardInputCanceled();
 		membershipInput = false;
+		wc.membershipCardInputCanceled();
 	}
 
 	@Override
@@ -433,6 +440,29 @@ public class StationControl
 			Double amountOwed = this.ic.getCheckoutTotal();
 			String cardNumber = data.getNumber();
 			CardIssuer bank = fakeData.getCardIssuer();
+			
+			if(data.getType().equals(GiftcardDatabase.CompanyGiftCard)) {
+				if(amountOwed == 0) {
+					cc.paymentFailed();
+					return;
+				}
+				
+				Double amountOnCard = GiftcardDatabase.giftcardMap.get(cardNumber);
+				Double dif = amountOnCard - amountOwed;
+				if(dif >= 0) {
+					GiftcardDatabase.giftcardMap.put(cardNumber, dif);
+					ic.updateCheckoutTotal(-amountOwed);
+					for (StationControlListener l : listeners) {
+						l.paymentHasBeenMade(this, data);
+					}
+				}else {
+					GiftcardDatabase.giftcardMap.put(cardNumber, 0.0);
+					ic.updateCheckoutTotal(-amountOnCard);
+					//TODO: tell customer that their card wasn't enough maybe?
+				}
+				cc.cashInserted();
+				return;
+			}
 
 			long holdNum = bank.authorizeHold(cardNumber, amountOwed);
 			if (holdNum <= -1) {
@@ -561,6 +591,7 @@ public class StationControl
 			checkInventory(product);
 			weightOfItemScanned = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
 			this.ic.addScannedItemToCheckoutList(barcode);
+			
 			// Set the expected weight in SystemControl
 			this.updateExpectedCheckoutWeight(weightOfItemScanned);
 			this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
@@ -672,5 +703,7 @@ public class StationControl
 
 	}
 
-	
+	public boolean isMembershipInput() {
+		return membershipInput;
+	}
 }

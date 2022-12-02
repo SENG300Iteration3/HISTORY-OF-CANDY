@@ -1,7 +1,6 @@
 package swing.panes;
 
-
-import  com.diy.hardware.DoItYourselfStation;
+import com.diy.hardware.DoItYourselfStation;
 
 import java.util.ArrayList;
 
@@ -15,6 +14,7 @@ import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.opeechee.Card.CardData;
 
 import swing.screens.*;
+import swing.panels.CatalogPanel;
 import swing.screens.AddItemsScreen;
 import swing.screens.BlockedPromptScreen;
 import swing.screens.MembershipScreen;
@@ -22,8 +22,8 @@ import swing.screens.OkayPromptScreen;
 import swing.screens.PaymentScreen;
 import swing.screens.PinPadScreen;
 import swing.screens.PresentCardScreen;
-import swing.screens.PresentCashScreen;
 import swing.screens.PresentMembershipCardScreen;
+import swing.screens.PresentGiftCardOrCashScreen;
 import swing.styling.Screen;
 
 public class CustomerStationPane implements StationControlListener, PaymentControlListener {
@@ -37,21 +37,22 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	private PaymentScreen paymentScreen;
 	private PinPadScreen pinPadScren;
 	private PresentCardScreen presentCardScreen;
-	private PresentCashScreen presentCashScreen;
+	private PresentGiftCardOrCashScreen presentCashScreen;
 	private BlockedPromptScreen blockedPromptScreen;
 	private OkayPromptScreen okayPromptScreen;
 	private MembershipScreen membershipSceen;
 	private PresentMembershipCardScreen presentMembershipCardScreen;
 	private PLUCodeScreen pluCodeScreen;
+	private CatalogPanel catalogPanel;
+	
 
 	public CustomerStationPane(StationControl sc) {
 		this.sc = sc;
 
-		
 		/******** Register StationGUI in all listeners ********/
 		this.sc.register(this);
 		this.sc.getPaymentControl().addListener(this);
-		
+
 		/******** Initialize all Panels ********/
 		this.panelStack = new ArrayList<>();
 		this.addItemsScreen = new AddItemsScreen(sc);
@@ -59,6 +60,8 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 		this.paymentScreen = new PaymentScreen(sc);
 		this.membershipSceen = new MembershipScreen(sc);
 		this.pluCodeScreen = new PLUCodeScreen(sc);
+
+		this.catalogPanel = new CatalogPanel(sc);
 		this.currentPanel = new JPanel();
 		this.rooPanel = new JPanel();
 		this.rooPanel.add(currentPanel);
@@ -72,8 +75,8 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	}
 
 	public static void configureDiItYourselfStationAR() {
-		DoItYourselfStation.configureBanknoteDenominations(new int [] {100, 50, 20, 10, 5, 1});
-    DoItYourselfStation.configureCoinDenominations(new long [] {200, 100, 25, 10, 5, 1});
+		DoItYourselfStation.configureBanknoteDenominations(new int[] { 100, 50, 20, 10, 5, 1 });
+		DoItYourselfStation.configureCoinDenominations(new long[] { 200, 100, 25, 10, 5, 1 });
 	}
 
 	private void addScreenToStack(Screen newScreen) {
@@ -177,8 +180,12 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	@Override
 	public void paymentMethodSelected(PaymentControl pc, PaymentType type) {
 		switch (type) {
+			case GiftCard:
+				presentCashScreen = new PresentGiftCardOrCashScreen(sc, true);
+				addScreenToStack(presentCashScreen);
+				break;
 			case Cash:
-				presentCashScreen = new PresentCashScreen(sc);
+				presentCashScreen = new PresentGiftCardOrCashScreen(sc, false);
 				addScreenToStack(presentCashScreen);
 				break;
 			case Credit:
@@ -220,4 +227,8 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	}
 
 	
+	public void triggerBrowsingCatalog(StationControl systemControl) {
+		addPanelToStack(catalogPanel);
+		
+	}
 }
