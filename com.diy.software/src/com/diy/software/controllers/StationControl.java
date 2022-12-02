@@ -65,6 +65,7 @@ public class StationControl
 	private WalletControl wc;
 	private MembershipControl mc;
 	private CashControl cc;
+	private	ReceiptControl rc;
 
 	private boolean isLocked = false;
 	public String memberName;
@@ -73,7 +74,10 @@ public class StationControl
 
 	private PinPadControl ppc;
 	private PaymentControl pc;
-
+	
+	// used for receipt listeners
+	boolean isOutOfPaper = false;
+	boolean isOutOfInk = false;
 	/**
 	 * Constructor for the SystemControl class. Instantiates an object of type
 	 * DoItYourselfStation as well as a set of listeners which are registered to the
@@ -83,6 +87,12 @@ public class StationControl
 		customer = new Customer();
 		station = new DoItYourselfStation();
 		customer.useStation(station);
+		
+		ic = new ItemsControl(this);
+		bc = new BagsControl(this);
+		mc = new MembershipControl(this);
+		cc = new CashControl(this);
+		ac = new AttendantControl(this);
 
 		station.printer.register(this);
 		station.mainScanner.register(this);
@@ -92,20 +102,22 @@ public class StationControl
 
 		startUp();
 		
-		fillStation();
 
 		ic = new ItemsControl(this);
 		bc = new BagsControl(this);
 		mc = new MembershipControl(this);
 		cc = new CashControl(this);
 		ac = new AttendantControl(this);
+		rc = new ReceiptControl(this);
+		
+		fillStation();
 
 		/*
 		 * simulates what the printer has in it before the printing starts
 		 * to simulate low paper and low ink
 		 */
 		try {
-			station.printer.addInk(500);
+			station.printer.addInk(100);
 			station.printer.addPaper(1);
 		} catch (OverloadException e1) {
 
@@ -172,6 +184,11 @@ public class StationControl
 	public MembershipControl getMembershipControl() {
 		return mc;
 	}
+	
+	public ReceiptControl getReceiptControl() {
+		return rc;
+	}
+
 
 	public PinPadControl getPinPadControl() {
 		return ppc;
@@ -351,15 +368,16 @@ public class StationControl
 	}
 	
 	public void startMembershipCardInput() {
+		membershipInput = true;
 		for (StationControlListener l : listeners)
 			l.startMembershipCardInput(this);
 		wc.membershipCardInputEnabled();
-		membershipInput = true;
+		
 	}
 	
 	public void cancelMembershipCardInput() {
-		wc.membershipCardInputCanceled();
 		membershipInput = false;
+		wc.membershipCardInputCanceled();
 	}
 
 	@Override
@@ -478,6 +496,8 @@ public class StationControl
 	}
 
 	/**
+	 * TODO
+	 * Delete later, moved to receipt controller
 	 * simulates printing the receipt to the customer based on what they purchased
 	 * 
 	 * @param receipt the customer receipt as a string
@@ -487,6 +507,7 @@ public class StationControl
 		for (char receiptChar : receipt.toCharArray()) {
 			try {
 				station.printer.print(receiptChar);
+				//System.out.println(receiptChar);
 			} catch (EmptyException e) {
 
 			} catch (OverloadException e) {
@@ -592,39 +613,57 @@ public class StationControl
 	public boolean expectedWeightMatchesActualWeight(double actualWeight) {
 		return (this.getExpectedWeight() == actualWeight + bagWeight);
 	}
-
+	
 	@Override
 	public void outOfPaper(IReceiptPrinter printer) {
-
+		isOutOfPaper = true;
+		System.out.println("SC out of paper");
+		rc.outOfPaper(printer);
+		blockStation();
+		rc.lowPaper(printer);
 	}
 
 	@Override
 	public void outOfInk(IReceiptPrinter printer) {
-		// System.out.println("out of ink");
+		isOutOfInk = true;
+		 System.out.println("SC out of ink");	
+		 rc.outOfInk(printer);
+		 blockStation();
 		// have the same functionality as low ink for now
-		// ac.lowInk(printer);
+		 rc.lowInk(printer);
 	}
 
 	@Override
 	public void lowInk(IReceiptPrinter printer) {
-		// System.out.println("low ink");
-		ac.lowInk(printer);
+		System.out.println("SC low ink");
+		rc.lowInk(printer);
 	}
 
 	@Override
 	public void lowPaper(IReceiptPrinter printer) {
-		ac.lowPaper(printer);
+		System.out.println("SC low paper");
+		rc.lowPaper(printer);
 	}
 
 	@Override
 	public void paperAdded(IReceiptPrinter printer) {
-		// TODO Auto-generated method stub
-
+		isOutOfPaper = false;
+		// unblock station when enough paper is added, checks if theres enough ink
+		if(!isOutOfInk) {
+			unblockStation();
+		}
 	}
 
 	@Override
 	public void inkAdded(IReceiptPrinter printer) {
-		// TODO Auto-generated method stub
-
+		isOutOfInk = false;
+		// unblock station when enough ink is added, checks if theres enough paper
+		if(!isOutOfPaper) {
+			unblockStation();
+		}
+	}
+	
+	public boolean isMembershipInput() {
+		return membershipInput;
 	}
 }
