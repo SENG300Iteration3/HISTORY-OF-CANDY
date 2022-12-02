@@ -31,8 +31,6 @@ import com.jimmyselectronics.opeechee.Card.CardData;
 import com.jimmyselectronics.opeechee.CardReader;
 import com.jimmyselectronics.opeechee.CardReaderListener;
 import com.jimmyselectronics.svenden.ReusableBag;
-import com.jimmyselectronics.svenden.ReusableBagDispenser;
-import com.jimmyselectronics.svenden.ReusableBagDispenserListener;
 import com.jimmyselectronics.virgilio.ElectronicScale;
 import com.jimmyselectronics.virgilio.ElectronicScaleListener;
 import com.unitedbankingservices.TooMuchCashException;
@@ -144,6 +142,7 @@ public class StationControl
 		this.fakeData = fakeData;
 		this.fakeData.addCardData();
 		this.fakeData.addProductAndBarcodeData();
+		this.fakeData.initializePLUProducts();
 		this.fakeData.addFakeMembers();
 
 		// for (Card c: this.fakeData.getCards()) customer.wallet.cards.add(c);
@@ -631,21 +630,30 @@ public class StationControl
 	
 	@Override
 	public void pluCodeEntered(PLUCodeControl ppc, String pluCode) {
-		PriceLookUpCode code = new PriceLookUpCode(pluCode);
-		Product product = findProduct(code);
-		checkInventory(product);
+		try {
+			PriceLookUpCode code = new PriceLookUpCode(pluCode);
+			System.out.println(pluCode);
+			Product product = findProduct(code);
 
-		// Add the barcode to the ArrayList within itemControl
-		boolean check = this.ic.addItemByPLU(code);
-		// Not sure if this is supposed to be called 
-		// this.updateExpectedCheckoutWeight(weightOfItemCodeEntered);
-		// this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemCodeEntered);
-		// Call method within SystemControl that handles the rest of the item scanning
-		// procedure
-		if(check) {
-			// Trigger the GUI to display "place the scanned item in the Bagging Area"
-			this.blockStation();
+			checkInventory(product);
+
+			// Add the barcode to the ArrayList within itemControl
+			boolean check = this.ic.addItemByPLU(code);
+			// Not sure if this is supposed to be called 
+			// this.updateExpectedCheckoutWeight(weightOfItemCodeEntered);
+			// this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemCodeEntered);
+			// Call method within SystemControl that handles the rest of the item scanning
+			// procedure
+			if(check) {
+				// Trigger the GUI to display "place the scanned item in the Bagging Area"
+				this.blockStation();
+			}
+		} catch(NullPointerSimulationException e) {
+			System.err.println(e.getMessage());
 		}
+		
+
+		
 		
 		
 	}

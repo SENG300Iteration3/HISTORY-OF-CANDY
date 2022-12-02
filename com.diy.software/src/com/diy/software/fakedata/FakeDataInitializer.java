@@ -8,6 +8,7 @@ import java.util.HashMap;
 import javax.swing.text.PlainDocument;
 
 import com.diy.hardware.BarcodedProduct;
+import com.diy.hardware.PLUCodedItem;
 import com.diy.hardware.PLUCodedProduct;
 import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.external.CardIssuer;
@@ -24,8 +25,9 @@ public class FakeDataInitializer {
 	private BarcodedItem item1, item2, item3, item4;
 	private BarcodedProduct bp1, bp2, bp3, bp4;
 	
-	private PriceLookUpCode code1, code2, reusableBagCode;
-	private PLUCodedProduct plu1, plu2, reusableBagProduct;
+	private PriceLookUpCode code1, code2, code3, code4, reusableBagCode;
+	private PLUCodedProduct pp1, pp2, pp3, pp4, reusableBagProduct;
+	private PLUCodedItem pitem1, pitem2, pitem3, pitem4, reusableBagItem;
 	
 	private Card card1, card2, card3, card4, card5;
 	private CardIssuer fakebank;
@@ -53,20 +55,36 @@ public class FakeDataInitializer {
 
 	}
 	
-	public void addPLUCodedProduct() {
+	public void initializePLUProducts() {
 		code1 = new PriceLookUpCode("1234");
-		code2 = new PriceLookUpCode("1235");
-		reusableBagCode = new PriceLookUpCode("1236");
+		pitem1 = new PLUCodedItem(code1, 223);
+		pp1 = new PLUCodedProduct(code1, "Green Apples", 8);
 		
-		plu1 = new PLUCodedProduct(code1, "banana", 1);
-		plu2 = new PLUCodedProduct(code2, "Romania tomamto", 2);
-		reusableBagProduct = new PLUCodedProduct(reusableBagCode, "reusable bag", 2);
-		
-		ProductDatabases.PLU_PRODUCT_DATABASE.put(code1,plu1);
-		ProductDatabases.PLU_PRODUCT_DATABASE.put(code2,plu2);
-		ProductDatabases.PLU_PRODUCT_DATABASE.put(reusableBagCode, reusableBagProduct);
-		
-		//FIXME: Add to inventory
+		code2 = new PriceLookUpCode("9876");
+		pitem2 = new PLUCodedItem(code2, 350);
+		pp2 = new PLUCodedProduct(code2, "Broccoli", 5);
+
+		code3 = new PriceLookUpCode("11111");
+		pitem3 = new PLUCodedItem(code3, 85);
+		pp3 = new PLUCodedProduct(code3, "Tomatoes", 4);
+
+		code4 = new PriceLookUpCode("23456");
+		pitem4 = new PLUCodedItem(code4, 140);
+		pp4 = new PLUCodedProduct(code4, "Oranges", 7);
+
+		reusableBagCode = new PriceLookUpCode("0000");
+		reusableBagItem = new PLUCodedItem(code1, 1);
+		reusableBagProduct = new PLUCodedProduct(code1, "Reusable bag", 2);
+
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(code1, pp1);
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(code2, pp2);
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(code3, pp3);
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(code4, pp4);
+
+		ProductDatabases.INVENTORY.put(pp1, 100);
+		ProductDatabases.INVENTORY.put(pp2, 100);
+		ProductDatabases.INVENTORY.put(pp3, 100);
+		ProductDatabases.INVENTORY.put(pp4, 100);
 	}
 	
 	/**
@@ -107,7 +125,7 @@ public class FakeDataInitializer {
 	}
 	
 	public PriceLookUpCode[] getPLUCode() {
-		return new PriceLookUpCode[] {code1, code2, reusableBagCode};
+		return new PriceLookUpCode[] {code1, code2, code3, code4, reusableBagCode};
 	}
 	
 	public double getReusableBagPrice() {

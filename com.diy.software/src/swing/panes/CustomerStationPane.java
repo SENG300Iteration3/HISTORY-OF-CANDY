@@ -252,7 +252,7 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 
 	@Override
 	public void triggerPLUCodeWorkflow(StationControl systemControl) {
-		// TODO Auto-generated method stub
+		addScreenToStack(pluCodeScreen);
 		
 	}
 }
