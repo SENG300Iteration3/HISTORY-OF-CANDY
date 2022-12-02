@@ -16,6 +16,7 @@ import com.diy.software.listeners.ItemsControlListener;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.Item;
+import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodeScanner;
 import com.jimmyselectronics.necchi.BarcodeScannerListener;
@@ -30,6 +31,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	public ArrayList<Tuple<BarcodedProduct,Integer>> tempList = new ArrayList<>();
 	private ArrayList<Tuple<String, Double>> checkoutList = new ArrayList<>();
 	private double checkoutListTotal = 0.0;
+	private Item currentItem;
 
 	private boolean scanSuccess = true, weighSuccess = true;
 	
@@ -115,10 +117,15 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	public void pickupNextItem() {
 		try {
 			// Should be the next item selected
-			Item item = sc.customer.shoppingCart.get(sc.customer.shoppingCart.size() - 1);
-			if(item.getClass() == PLUCodedItem.class) {
+			// Not sure if we are allowed to do this as there is no other way to get the weight of the item selected
+			// Technically scanning an item requires it to be placed on the scanning scale so it should weigh the item regardless
+			// of it being scanned or not.
+			// Saving the item is required for getting the weight of the item
+			// TODO: Not sure if this should be here, need another opinion!!!
+			this.currentItem = sc.customer.shoppingCart.get(sc.customer.shoppingCart.size() - 1);
+			if(this.currentItem.getClass() == PLUCodedItem.class) {
 				isPLU = true;
-				expectedPLU = ((PLUCodedItem)item).getPLUCode();
+				expectedPLU = ((PLUCodedItem)this.currentItem).getPLUCode();
 			} else {
 				isPLU = false;
 				expectedPLU = null;
@@ -163,13 +170,15 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 					PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(code);
 					
 					if(product != null) {
-						System.out.println(this.scaleReceivedWeight + " Scale weight");
-						if(this.scaleReceivedWeight == 0.0) {
+						// lol this is broken 
+						double weight = sc.station.scanningArea.getCurrentWeight();
+						System.out.println(weight + " Scale weight");
+						if(weight == 0.0) {
 							System.err.println("Please place the item on the scale before entering the code!!");
 							return false;
 						} else {
 							// price per kg
-							double price = (double)product.getPrice() * this.scaleExpectedWeight;
+							double price = (double)product.getPrice() * weight;
 							this.addItemToCheckoutList(new Tuple<String,Double>(product.getDescription(), price));
 							this.updateCheckoutTotal(price);
 						
@@ -186,7 +195,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				return false;
 			}
 			
-		} catch(InvalidArgumentSimulationException e) {
+		} catch(InvalidArgumentSimulationException | OverloadException e) {
 			System.err.println(e.getMessage());
 			return false;
 		}
@@ -241,6 +250,13 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			// if weighSuccess is still false after listeners have been called, we can show
 			// and alert showing a failed weigh-in if time permits.
 		}
+	}
+
+	/**
+	 * Weighs the item before entering the plu code.
+	 */
+	public void weightItem() {
+		sc.station.scanningArea.add(currentItem);
 	}
 
 	/**
@@ -306,7 +322,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				break;
 			case "weigh":
 				System.out.println("Weighing item");
-				placeItemOnScale();
+				weightItem();
 				break;
 			default:
 				break;
