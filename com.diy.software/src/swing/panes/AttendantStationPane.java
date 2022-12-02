@@ -35,7 +35,8 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	GUI_JButton addPaperToPrinterButton;
 	GUI_JButton approveNoBagging;
 	GUI_JButton startUpButton;
-	GUI_JLabel weightDisplayLabel, weightDescrepancyMssg, lowInkLabel, lowPaperLabel, adjustCoinLabel, adjustBanknoteLabel;
+	GUI_JLabel weightDisplayLabel, weightDescrepancyMssg, inkLabel, paperLabel, adjustCoinLabel, adjustBanknoteLabel;
+	GUI_JButton printReceiptButton;
 
 	private static String HeaderText = "Attendant Screen";
 
@@ -78,8 +79,8 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		
 		weightDescrepancyMssg = initalizeLabel("weightDiscrepancyMsg");
 		weightDisplayLabel = initalizeLabel("weightDisplayLabel");
-		lowInkLabel = initalizeLabel("Low ink");
-		lowPaperLabel = initalizeLabel("Low paper");
+		inkLabel = initalizeLabel("Low ink");
+		paperLabel = initalizeLabel("Low paper");
 		adjustCoinLabel = initalizeLabel("Adjust coin");
 		adjustBanknoteLabel = initalizeLabel("Adjust Banknote");
 		
@@ -89,8 +90,8 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		
 		notificationPanel.add(weightDescrepancyMssg);
 		notificationPanel.add(weightDisplayLabel);
-		notificationPanel.add(lowInkLabel);
-		notificationPanel.add(lowPaperLabel);
+		notificationPanel.add(inkLabel);
+		notificationPanel.add(paperLabel);
 		notificationPanel.add(adjustCoinLabel);
 		notificationPanel.add(adjustBanknoteLabel);
 		
@@ -119,6 +120,12 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		
 		this.addLayer(buttonScrollPane, 50);
 
+		this.printReceiptButton = makeCentralButton("PRINT RECEIPT", this.width - 200, 25);
+		
+		printReceiptButton.setActionCommand("printReceipt");
+		printReceiptButton.addActionListener(systemControl.getReceiptControl());
+		
+		this.addLayer(printReceiptButton, 0);
 		
 		addInkToPrinterButton.setEnabled(false);
 		addPaperToPrinterButton.setEnabled(false);
@@ -254,7 +261,8 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	@Override
 	public void lowInk(ReceiptControl rc, String message) {
 		// TODO Auto-generated method stub
-		
+		inkLabel.setText(message);
+		inkLabel.setBackground(GUI_Color_Palette.RED_BROWN);
 	}
 
 
