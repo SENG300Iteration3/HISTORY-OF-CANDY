@@ -143,6 +143,7 @@ public class StationControl
 		this.fakeData = fakeData;
 		this.fakeData.addCardData();
 		this.fakeData.addProductAndBarcodeData();
+		this.fakeData.addPLUCodedProduct();
 		this.fakeData.addFakeMembers();
 
 		// for (Card c: this.fakeData.getCards()) customer.wallet.cards.add(c);
@@ -599,6 +600,16 @@ public class StationControl
     		throw new NullPointerSimulationException();
     	}
     }
+	
+	public void addReusableBag(ReusableBag lastDispensedReusableBag) {
+		// ADD: update inventory
+
+		weightOfItemScanned = lastDispensedReusableBag.getWeight();
+		
+		// Set the expected weight in SystemControl
+		this.updateExpectedCheckoutWeight(weightOfItemScanned);
+		this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
+	}
 	
 	public void ItemApprovedToNotBag() {
 		this.updateExpectedCheckoutWeight(-weightOfItemScanned);
