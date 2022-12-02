@@ -34,7 +34,7 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	GUI_JButton addPaperToPrinterButton;
 	GUI_JButton approveNoBagging;
 	GUI_JButton startUpButton;
-	GUI_JLabel weightDisplayLabel, weightDescrepancyMssg, inkLabel, paperLabel, adjustCoinLabel, adjustBanknoteLabel;
+	GUI_JLabel weightDisplayLabel, weightDescrepancyMssg, lowInkLabel, lowPaperLabel, adjustCoinLabel, adjustBanknoteLabel;
 
 	private static String HeaderText = "Attendant Screen";
 
@@ -77,8 +77,8 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		
 		weightDescrepancyMssg = initalizeLabel("weightDiscrepancyMsg");
 		weightDisplayLabel = initalizeLabel("weightDisplayLabel");
-		inkLabel = initalizeLabel("Low ink");
-		paperLabel = initalizeLabel("Low paper");
+		lowInkLabel = initalizeLabel("Low ink");
+		lowPaperLabel = initalizeLabel("Low paper");
 		adjustCoinLabel = initalizeLabel("Adjust coin");
 		adjustBanknoteLabel = initalizeLabel("Adjust Banknote");
 		
@@ -88,8 +88,8 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		
 		notificationPanel.add(weightDescrepancyMssg);
 		notificationPanel.add(weightDisplayLabel);
-		notificationPanel.add(inkLabel);
-		notificationPanel.add(paperLabel);
+		notificationPanel.add(lowInkLabel);
+		notificationPanel.add(lowPaperLabel);
 		notificationPanel.add(adjustCoinLabel);
 		notificationPanel.add(adjustBanknoteLabel);
 		
@@ -242,8 +242,7 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	@Override
 	public void lowInk(ReceiptControl rc, String message) {
 		// TODO Auto-generated method stub
-		inkLabel.setText(message);
-		inkLabel.setBackground(GUI_Color_Palette.RED_BROWN);
+		
 	}
 
 
