@@ -80,9 +80,9 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 			listener.cashInserted(this);
 	}
 
-	private void cashRejected() {
+	private void checkCashRejected() {
 		for (CashControlListener listener : listeners) 
-			listener.cashRejected(this);
+			listener.checkCashRejected(this);
 	}
   
 	private void changeReturned() {
@@ -192,7 +192,7 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 	 */
 	@Override
   	public void banknoteEjected(BanknoteInsertionSlot slot) {
-		cashRejected();
+		//cashRejected();
 	}
 
 	/**
@@ -204,7 +204,7 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 	 */
 	@Override
 	public void invalidCoinDetected(CoinValidator validator) {
-		cashRejected();
+		//cashRejected();
 	}
 
 	/**
@@ -277,6 +277,7 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 					System.out.println("Coin storage unit is full");
 				}
 			}
+			checkCashRejected();
 		} catch (Exception ex) {
 			System.err.println("Error: " + ex.getMessage());
 		}
