@@ -103,4 +103,6 @@ public interface StationControlListener {
 	 */
 	public void triggerMembershipWorkflow(StationControl systemControl);
 	
+	public void triggerBrowsingCatalog(StationControl systemControl);
+	
 }

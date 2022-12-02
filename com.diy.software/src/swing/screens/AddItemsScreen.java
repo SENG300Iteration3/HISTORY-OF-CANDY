@@ -11,6 +11,7 @@ import javax.swing.border.LineBorder;
 
 import com.diy.software.util.Tuple;
 
+import swing.panels.CatalogPanel;
 import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Fonts;
 import swing.styling.GUI_JButton;
@@ -34,6 +35,9 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 	protected GUI_JPanel scannedPanel;
 	protected GUI_JButton payBtn;
 	protected GUI_JButton memberBtn;
+	protected GUI_JButton catalogBtn;
+	
+	private CatalogPanel catalogPanel;
 
 	protected GUI_JButton requestNoBaggingBtn;
 	protected GUI_JButton addOwnBagsBtn;
@@ -163,6 +167,8 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		this.addLayer(mainPanel, 0);
 
 		//Bottom 3 buttons
+		this.addLayer(totalPanelBg, 0);
+				
 		JPanel buttonPanel = new JPanel(new GridLayout(1, 3));
 		buttonPanel.setPreferredSize(new Dimension(this.width - 125, 80));
 		this.addLayer(buttonPanel, 30);
@@ -174,10 +180,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		this.memberBtn = makeButton("enter member id", buttonPanel);
 		this.memberBtn.setActionCommand("member");
 		this.memberBtn.addActionListener(itemsControl);
-
 		this.searchCatalogueBtn = makeButton("Browse Items", buttonPanel);
-
-
 	}
 
 	public void invalidateAllScannedItems() {
