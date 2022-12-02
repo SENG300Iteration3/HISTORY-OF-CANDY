@@ -275,6 +275,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 		if (inCatalog) {
 			addItemByBrowsing(c);
+			if (c.compareTo("cancel catalog") == 0) {
+				sc.goBackOnUI();
+				inCatalog = false;
+			}
 		} else {
 			try {
 				switch (c) {
