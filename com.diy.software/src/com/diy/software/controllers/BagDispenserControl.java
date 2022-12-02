@@ -50,6 +50,7 @@ public class BagDispenserControl implements ActionListener {
 			dispenseBag(); 
 		}else if(sc.getBagInStock() == 0){
 			// customer can choose "ask for more bag"
+			sc.notifyNoBagsInStock();
 		}else {
 			// customer can choose "ask for more bag" or "take [the number of bag left]"
 			// if choose "ask for more bag" -> notify attendant
@@ -57,6 +58,7 @@ public class BagDispenserControl implements ActionListener {
 			//		setNumBag(sc.getBagInStock());
 			//		dispenseBag();
 			// }
+			sc.notifyNotEnoughBagsInStock(sc.getBagInStock());
 		}
 	}
 	
@@ -97,6 +99,10 @@ public class BagDispenserControl implements ActionListener {
 				if(numBag > 0) {
 					checkBagInStock();
 				}
+				break;
+			case "dispense remaining":
+				setNumBag(sc.getBagInStock());
+				dispenseBag();
 				break;
 			default:
 				break;

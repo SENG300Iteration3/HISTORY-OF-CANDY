@@ -110,4 +110,9 @@ public interface StationControlListener {
 	 * 			The default SystemControl unit for the current instance
 	 */
 	public void triggerPurchaseBagsWorkflow(StationControl systemControl);
+	
+	public void noBagsInStock(StationControl systemControl);
+	
+	public void notEnoughBagsInStock(StationControl systemControl, int numBag);
+	
 }

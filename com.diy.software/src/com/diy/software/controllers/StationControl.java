@@ -692,4 +692,17 @@ public class StationControl
 	public boolean isMembershipInput() {
 		return membershipInput;
 	}
+	
+	
+	public void notifyNoBagsInStock() {
+		for (StationControlListener l: listeners) {
+			l.noBagsInStock(this);
+		}
+	}
+	
+	public void notifyNotEnoughBagsInStock(int numBag) {
+		for (StationControlListener l: listeners) {
+			l.notEnoughBagsInStock(this, numBag);
+		}
+	}
 }
