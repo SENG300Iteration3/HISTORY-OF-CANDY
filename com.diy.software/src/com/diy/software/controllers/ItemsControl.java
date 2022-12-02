@@ -45,7 +45,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	private long baggingAreaTimerEnd;
 	private final static double PROBABILITY_OF_BAGGING_WRONG_ITEM = 0.20;
 	private final static ThreadLocalRandom random = ThreadLocalRandom.current();
-	private Item wrongBaggedItem = new Item(235){};
+	private Item wrongBaggedItem = new Item(235) {
+	};
 	private boolean isPLU;
 	private PriceLookUpCode expectedPLU = null;
 	private boolean removedWrongBaggedItem;
@@ -158,6 +159,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 	public boolean addItemByPLU(PriceLookUpCode code) {
 		try {
+
 			baggingAreaTimerStart = System.currentTimeMillis();
 
 			PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(code);
@@ -196,13 +198,13 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	// ALSO: note that a new weight area called scanningArea exists now to grab
 	// weight of items during general scanning phase
 	public void scanCurrentItem(boolean useHandheld) {
-		if(!isPLU) {
+		if (!isPLU) {
 			baggingAreaTimerStart = System.currentTimeMillis();
 			scanSuccess = false;
 			sc.customer.scanItem(useHandheld);
 			if (!scanSuccess) {
-			// if scanSuccess is still false after listeners have been called, we can show
-			// an alert showing a failed scan if time permits.
+				// if scanSuccess is still false after listeners have been called, we can show
+				// an alert showing a failed scan if time permits.
 			}
 		} else {
 			System.err.println("Item does not have a barcode, please enter the PLU code!");
@@ -360,10 +362,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 					System.out.println("Customer uses handheld scanner to scan next item");
 					scanCurrentItem(true);
 					break;
-        case "enter plu":
-          System.out.println("Customer entered a PLU Code");
-          sc.startPLUCodeWorkflow();
-          break;
+				case "enter plu":
+					System.out.println("Customer entered a PLU Code");
+					sc.startPLUCodeWorkflow();
+					break;
 				case "put back":
 					System.out.println("Customer put back current item");
 					putUnscannedItemBack();
