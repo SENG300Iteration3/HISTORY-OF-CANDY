@@ -36,7 +36,7 @@ public class BagsControl implements ActionListener {
 		}
 	}
 	
-	// FIXME: where is the bag dispensery in the hardware mentioned in the use case
+	// FIXME: where is the bag dispenser in the hardware mentioned in the use case
 	public void ownBagsPlacedInBaggingArea() {
 		sc.blockStation();
 		for (BagsControlListener l : listeners) {
@@ -49,7 +49,6 @@ public class BagsControl implements ActionListener {
 		sc.updateWeightOfLastItemAddedToBaggingArea(abritraryWeightOfBags);
 		sc.getItemsControl().addItemToCheckoutList("Reusable Bag",abritraryPriceOfBags);
 		sc.updateExpectedCheckoutWeight(abritraryWeightOfBags,true);
-		sc.getItemsControl().updateCheckoutTotal(abritraryPriceOfBags);
 		sc.unblockStation(); // call this to update total on gui
 	}
 

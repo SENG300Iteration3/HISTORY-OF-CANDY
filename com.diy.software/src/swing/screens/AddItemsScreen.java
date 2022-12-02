@@ -143,6 +143,8 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 		JPanel fourthButtonPanel = new JPanel(new GridLayout());
 		this.removeItemBtn = makeButton("Remove Item", fourthButtonPanel);
 		rightSidebuttonPanel.add(fourthButtonPanel);
+		this.removeItemBtn.setActionCommand("remove item");
+		this.removeItemBtn.addActionListener(itemsControl);
 
 		this.addLayer(mainPanel, 0);
 
@@ -160,6 +162,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 		this.memberBtn.addActionListener(itemsControl);
 
 		this.searchCatalogueBtn = makeButton("Browse Items", buttonPanel);
+		
 
 
 	}
@@ -271,5 +274,6 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 		// TODO Auto-generated method stub
 
 	}
+
 
 }

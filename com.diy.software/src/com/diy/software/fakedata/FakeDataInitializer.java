@@ -100,6 +100,10 @@ public class FakeDataInitializer {
 		return new Card[] {card1, card2, card3, card4};
 	}
 	
+	public Map<String, BarcodedItem> getItemsMap() {
+		return this.BARCODED_ITEM_DATABASE; 
+	}
+	
 	public CardIssuer getCardIssuer() {
 		return fakebank;
 	}

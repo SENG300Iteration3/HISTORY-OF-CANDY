@@ -2,6 +2,8 @@ package com.diy.software.controllers;
 
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
@@ -22,6 +24,7 @@ import com.jimmyselectronics.abagnale.ReceiptPrinterListener;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodeScanner;
 import com.jimmyselectronics.necchi.BarcodeScannerListener;
+import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.opeechee.Card;
 import com.jimmyselectronics.opeechee.Card.CardData;
 import com.jimmyselectronics.opeechee.CardReader;
@@ -57,6 +60,11 @@ public class StationControl
 	public String userMessage;
 
 	public ArrayList<StationControlListener> listeners = new ArrayList<>();
+	/**
+	 * The known Barcoded Items. Indexed by barcode.
+	 */
+	public Map<String, BarcodedItem> BARCODED_ITEM_DATABASE = new HashMap<>();
+	public ArrayList<BarcodedItem> itemArray; 
 
 	/******** Control Classes ********/
 	private ItemsControl ic;
@@ -87,7 +95,6 @@ public class StationControl
 		station.printer.register(this);
 		station.mainScanner.register(this);
 		station.handheldScanner.register(this);
-		station.mainScanner.register(this);
 		station.baggingArea.register(this);
 		station.cardReader.register(this);
 
@@ -130,10 +137,22 @@ public class StationControl
 		// for (Card c: this.fakeData.getCards()) customer.wallet.cards.add(c);
 		// for (Item i: this.fakeData.getItems()) customer.shoppingCart.add(i);
 
+		this.itemArray = new ArrayList();
+		
+		System.out.println("Station Control id = " + this.toString());
 		for (Card c : this.fakeData.getCards())
 			customer.wallet.cards.add(c);
-		for (Item i : this.fakeData.getItems())
+		int index = 0;
+		for (BarcodedItem i : this.fakeData.getItems()) {
 			customer.shoppingCart.add(i);
+			itemArray.add(i);
+			System.out.println("Customer item id = " + i.toString());
+			
+		}
+//		this.BARCODED_ITEM_DATABASE = this.fakeData.getItemsMap();
+//		for (String string : this.BARCODED_ITEM_DATABASE.keySet()) {
+//			System.out.println("DATABASE item id = " + this.BARCODED_ITEM_DATABASE.get(string).toString());
+//		}
 	}
 
 	/**
@@ -427,7 +446,7 @@ public class StationControl
 		customer.placeItemInBaggingArea();
 		this.unblockStation();
 	}
-	
+
 	/**
 	 * Removing item from electronic scale
 	 * 
@@ -484,10 +503,10 @@ public class StationControl
 		// Any time the system registers a weight changed event it checks to see if the
 		// expected weight matches the actual weight
 		// If the expected weight doesn't match the actual weight, it blocks the system.
+		System.out.println("Expected weight = " + this.expectedCheckoutWeight + "\tActual Weight = " + weightInGrams);
 		if (this.expectedWeightMatchesActualWeight(weightInGrams)) {
 			this.unblockStation();
 			userMessage = "Weight of scale has changed to: " + weightInGrams;
-			System.out.println("Expected Weight = " + this.expectedCheckoutWeight +  "\t Actual weight = " + weightInGrams);
 		} else {
 			this.blockStation();
 			System.err.println("System has been blocked!");
