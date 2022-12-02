@@ -16,6 +16,7 @@ import com.jimmyselectronics.Item;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodeScanner;
 import com.jimmyselectronics.necchi.BarcodeScannerListener;
+import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.virgilio.ElectronicScale;
 import com.jimmyselectronics.virgilio.ElectronicScaleListener;
 
@@ -74,6 +75,21 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		} else {
 			System.err.println("Scanned item is not in product database!");
 		}
+	}
+	
+	public void removeItem(int index) {
+		index--; // decrement index so it matches actual array index!
+		Barcode barcode = this.checkoutList.get(index);
+		// getting the actual object that the customer had in his shopping cart and was subsequently added to the baggingArea
+		BarcodedItem item = this.sc.items.get(barcode);
+		double price = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getPrice();
+		System.out.println(price);
+		double weight = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
+		this.sc.station.baggingArea.remove(item);
+		this.updateCheckoutTotal(-price);	// decrement price
+		this.sc.updateExpectedCheckoutWeight(-weight);  // decrement weight
+		checkoutList.remove(index); // remove the barcode from checkoutList so GUI updates accordingly
+		refreshGui();
 	}
 	
 	public void updateCheckoutTotal(double amount) {
@@ -233,7 +249,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			case "member":
 				sc.startMembershipWorkflow();
 				break;
-			default:
+			case "remove item":
+				this.removeItem(1);
 				break;
 			}
 		} catch (Exception ex) {

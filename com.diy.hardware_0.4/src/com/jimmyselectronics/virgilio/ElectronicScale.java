@@ -132,9 +132,6 @@ public class ElectronicScale extends AbstractDevice<ElectronicScaleListener> {
 	 *             If the item is not on the scale (including if it is null).
 	 */
 	public synchronized void remove(Item item) {
-		for (Item anItem: items) {
-			System.out.println(anItem.toString());
-		}
 		if(!isPoweredUp())
 			throw new NoPowerException();
 

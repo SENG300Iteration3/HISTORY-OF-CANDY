@@ -157,10 +157,12 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		JPanel thirdButtonPanel = new JPanel(new GridLayout());
 		this.addItemByPLUBtn = makeButton("Add Item by PLU", thirdButtonPanel);
 		rightSidebuttonPanel.add(thirdButtonPanel);
-
+		
 		JPanel fourthButtonPanel = new JPanel(new GridLayout());
 		this.removeItemBtn = makeButton("Remove Item", fourthButtonPanel);
 		rightSidebuttonPanel.add(fourthButtonPanel);
+		this.removeItemBtn.setActionCommand("remove item");
+		this.removeItemBtn.addActionListener(itemsControl);
 
 		this.addLayer(mainPanel, 0);
 
@@ -273,11 +275,10 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		ArrayList<Barcode> checkoutList = itemsControl.getCheckoutList();
 
 		this.invalidateAllScannedItems();
-		
-		for (Barcode barcode: checkoutList) {
-			double price = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getPrice();
-			String name = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getDescription();
-			this.addScannedItem(name, price);
+		for (int i = 0; i < checkoutList.size(); i ++) {
+			double price = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(checkoutList.get(i)).getPrice();
+			String name = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(checkoutList.get(i)).getDescription();
+			this.addScannedItem(i+1 + " - " + name, price);
 		}
 	}
 

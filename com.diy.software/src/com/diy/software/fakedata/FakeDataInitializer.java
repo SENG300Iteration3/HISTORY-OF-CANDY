@@ -54,9 +54,9 @@ public class FakeDataInitializer {
 		FakeDataInitializer.BARCODED_ITEM_DATABASE.put(barcode4, item4);
 		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode4, bp4);
 		
-		purchasableBagBarcode = new Barcode(new Numeral[] { Numeral.one, Numeral.one, Numeral.one, Numeral.nine }); 
+		purchasableBagBarcode = new Barcode(new Numeral[] { Numeral.one, Numeral.one, Numeral.one, Numeral.nine}); 
 		purchasableBagItem = new BarcodedItem(purchasableBagBarcode, 50); 	
-		purchasableBagProduct = new BarcodedProduct(barcode4, "Purchasable Bag", 350, 50);
+		purchasableBagProduct = new BarcodedProduct(barcode4, "Purchasable Bag", 3, 50);
 		FakeDataInitializer.BARCODED_ITEM_DATABASE.put(purchasableBagBarcode, purchasableBagItem);
 		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(purchasableBagBarcode, purchasableBagProduct);
 		
