@@ -39,7 +39,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	private long baggingAreaTimerEnd;
 	private final static double PROBABILITY_OF_BAGGING_WRONG_ITEM = 0.20;
 	private final static ThreadLocalRandom random = ThreadLocalRandom.current();
-	private Item wrongBaggedItem = new Item(235){};
+	private Item wrongBaggedItem = new Item(235) {
+	};
 	private boolean isPLU;
 	private PriceLookUpCode expectedPLU = null;
 	private boolean removedWrongBaggedItem;
@@ -115,9 +116,9 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		try {
 			// Should be the next item selected
 			Item item = sc.customer.shoppingCart.get(sc.customer.shoppingCart.size() - 1);
-			if(item.getClass() == PLUCodedItem.class) {
+			if (item.getClass() == PLUCodedItem.class) {
 				isPLU = true;
-				expectedPLU = ((PLUCodedItem)item).getPLUCode();
+				expectedPLU = ((PLUCodedItem) item).getPLUCode();
 			} else {
 				isPLU = false;
 				expectedPLU = null;
@@ -151,18 +152,18 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 	public void addItemByPLU(PriceLookUpCode code) {
 		try {
-			if(isPLU && expectedPLU != null) {
-				
-				if(!code.toString().equals(expectedPLU.toString())) {
+			if (isPLU && expectedPLU != null) {
+
+				if (!code.toString().equals(expectedPLU.toString())) {
 					System.err.println("PLU Code is not the right plu code for the selected item!");
 				} else {
 					baggingAreaTimerStart = System.currentTimeMillis();
 
 					PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(code);
-					
-					if(product != null) {
-						double price = (double)product.getPrice();
-						this.addItemToCheckoutList(new Tuple<String,Double>(product.getDescription(), price));
+
+					if (product != null) {
+						double price = (double) product.getPrice();
+						this.addItemToCheckoutList(new Tuple<String, Double>(product.getDescription(), price));
 						this.updateCheckoutTotal(price);
 						System.out.println("Added item to checkout list!");
 					} else {
@@ -172,8 +173,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			} else {
 				System.err.println("Item selected does not have a plu code!");
 			}
-			
-		} catch(InvalidArgumentSimulationException e) {
+
+		} catch (InvalidArgumentSimulationException e) {
 			System.err.println(e.getMessage());
 		}
 	}
@@ -186,13 +187,13 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	// ALSO: note that a new weight area called scanningArea exists now to grab
 	// weight of items during general scanning phase
 	public void scanCurrentItem(boolean useHandheld) {
-		if(!isPLU) {
+		if (!isPLU) {
 			baggingAreaTimerStart = System.currentTimeMillis();
 			scanSuccess = false;
 			sc.customer.scanItem(useHandheld);
 			if (!scanSuccess) {
-			// if scanSuccess is still false after listeners have been called, we can show
-			// an alert showing a failed scan if time permits.
+				// if scanSuccess is still false after listeners have been called, we can show
+				// an alert showing a failed scan if time permits.
 			}
 		} else {
 			System.err.println("Item does not have a barcode, please enter the PLU code!");
@@ -343,10 +344,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 					System.out.println("Customer uses handheld scanner to scan next item");
 					scanCurrentItem(true);
 					break;
-        case "enter plu":
-          System.out.println("Customer entered a PLU Code");
-          sc.startPLUCodeWorkflow();
-          break;
+				case "enter plu":
+					System.out.println("Customer entered a PLU Code");
+					sc.startPLUCodeWorkflow();
+					break;
 				case "put back":
 					System.out.println("Customer put back current item");
 					putUnscannedItemBack();

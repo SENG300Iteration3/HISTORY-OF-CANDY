@@ -89,10 +89,7 @@ public class FakeDataInitializer {
 		ProductDatabases.PLU_PRODUCT_DATABASE.put(code3, pp3);
 		ProductDatabases.PLU_PRODUCT_DATABASE.put(code4, pp4);
 
-		ProductDatabases.INVENTORY.put(pp1, 100);
-		ProductDatabases.INVENTORY.put(pp2, 100);
-		ProductDatabases.INVENTORY.put(pp3, 100);
-		ProductDatabases.INVENTORY.put(pp4, 100);
+
 	}
 	
 	/**

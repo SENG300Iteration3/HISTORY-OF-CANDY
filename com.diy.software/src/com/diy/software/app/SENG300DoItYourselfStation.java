@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.DoItYourselfStation;
+import com.diy.hardware.PLUCodedItem;
 import com.diy.hardware.PLUCodedProduct;
 import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.external.ProductDatabases;
@@ -73,5 +74,25 @@ public class SENG300DoItYourselfStation {
 		ProductDatabases.INVENTORY.put(pcp3, 10);
 		PLUCodedProduct pcp4 = new PLUCodedProduct(plu4, "Hito Hito Devil Fruit", 350);
 		ProductDatabases.INVENTORY.put(pcp4, 10);
+		
+		
+		
+		PriceLookUpCode code1 = new PriceLookUpCode("1234");
+		PLUCodedProduct pp1 = new PLUCodedProduct(code1, "Green Apples", 8);
+		
+		PriceLookUpCode code2 = new PriceLookUpCode("9876");
+		PLUCodedProduct pp2 = new PLUCodedProduct(code2, "Broccoli", 5);
+
+		PriceLookUpCode code3 = new PriceLookUpCode("11111");
+		PLUCodedProduct pp3 = new PLUCodedProduct(code3, "Tomatoes", 4);
+
+		PriceLookUpCode code4 = new PriceLookUpCode("23456");
+		PLUCodedProduct pp4 = new PLUCodedProduct(code4, "Oranges", 7);
+		
+		ProductDatabases.INVENTORY.put(pp1, 100);
+		ProductDatabases.INVENTORY.put(pp2, 100);
+		ProductDatabases.INVENTORY.put(pp3, 100);
+		ProductDatabases.INVENTORY.put(pp4, 100);
 	}
+	
 }
