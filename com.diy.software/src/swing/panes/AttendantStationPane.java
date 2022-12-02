@@ -12,6 +12,7 @@ import com.diy.software.controllers.BagsControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
+import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Fonts;
@@ -186,6 +187,12 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 
 	@Override
 	public void attendantPermitStationUse(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void coinIsLowState(CoinStorageUnit unit, int amount) {
 		// TODO Auto-generated method stub
 		
 	}

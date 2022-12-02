@@ -1,6 +1,7 @@
 package com.diy.software.listeners;
 
 import com.diy.software.controllers.AttendantControl;
+import com.unitedbankingservices.coin.CoinStorageUnit;
 
 public interface AttendantControlListener {
 	public void attendantApprovedBags(AttendantControl ac);
@@ -41,5 +42,14 @@ public interface AttendantControlListener {
 	/** 
 	 * attendant permits customer station use
 	 */
+	/**
+	 * notify atendant to that coin to this unit is low, and allow atendant to change it
+	 * @param unit
+	 * 		the unit that needs refilling
+	 * 
+	 * @param amount
+	 * 		the amount of max coins to fill (if 10 then fill coins to 10 each)
+	 */
+	public void coinIsLowState(CoinStorageUnit unit, int amount);
 		
 }

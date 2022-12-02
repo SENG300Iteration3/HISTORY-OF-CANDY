@@ -199,15 +199,16 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 *
 	 *@param unit
 	 *		the unit that needs to be filled up
+	 *@param AMOUNT
+	 *		the amount of coins to fill up
 	 * @throws TooMuchCashException 
 	 * @throws SimulationException 
 
 	 */
-	public void adjustCoinsForChange(CoinStorageUnit unit) throws SimulationException, TooMuchCashException  {
+	public void adjustCoinsForChange(CoinStorageUnit unit, int AMOUNT) throws SimulationException, TooMuchCashException  {
 		
 		this.unit = unit;
 		//take system out of service
-		int AMOUNT = 10; //AMOUNT IM NOT SURE, FOR NOW 10 OF EACH TYPE OF COINS 
 		
 		sc.getCashControl().disablePayments();
 		
