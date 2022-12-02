@@ -23,8 +23,6 @@ public class BagDispenserControl implements ActionListener {
 	}
 	
 	private void dispenseBag() {
-		resetInput();
-		
 		while(numBag > 0) {
 			try {
 				System.out.println("purchase: " + numBag);
@@ -44,6 +42,27 @@ public class BagDispenserControl implements ActionListener {
 			}
 		}
 		sc.goBackOnUI();
+	}
+	
+	// FIXME: GUI team pls help me w creating GUI for the commented code below
+	private void checkBagInStock() {
+		resetInput();
+		if(sc.getBagInStock() >= numBag) {
+			dispenseBag(); 
+		}else if(sc.getBagInStock() == 0){
+			// customer can choose "ask for more bag"
+		}else {
+			// customer can choose "ask for more bag" or "take [the number of bag left]"
+			// if choose "ask for more bag" -> notify attendant
+			// else{
+			//		setNumBag(sc.getBagInStock());
+			//		dispenseBag();
+			// }
+		}
+	}
+	
+	private void setNumBag(int value) {
+		numBag = value;
 	}
 	
 	private void resetInput() {
@@ -77,7 +96,7 @@ public class BagDispenserControl implements ActionListener {
 			case "submit":
 				numBag = Integer.parseInt(input); 
 				if(numBag > 0) {
-					dispenseBag();
+					checkBagInStock();
 				}
 				break;
 			default:

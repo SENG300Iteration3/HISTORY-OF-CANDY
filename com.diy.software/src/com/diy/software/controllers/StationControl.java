@@ -69,14 +69,14 @@ public class StationControl
 	private MembershipControl mc;
 	private BagDispenserControl bdc;
 	private CashControl cc;
+	private PinPadControl ppc;
+	private PaymentControl pc;
 
 	private boolean isLocked = false;
 	public String memberName;
 	public double weightOfItemScanned;
 	private boolean membershipInput = false;
-
-	private PinPadControl ppc;
-	private PaymentControl pc;
+	private int bagInStock;
 
 	/**
 	 * Constructor for the SystemControl class. Instantiates an object of type
@@ -112,8 +112,9 @@ public class StationControl
 		 */
 		station.reusableBagDispenser.plugIn();
 		station.reusableBagDispenser.turnOn();
+		bagInStock = station.reusableBagDispenser.getCapacity();
 		try {
-			for(int i = 0; i < station.reusableBagDispenser.getCapacity() - 1; i++) {
+			for(int i = 0; i < bagInStock; i++) {
 				ReusableBag aBag = new ReusableBag();
 				station.reusableBagDispenser.load(aBag);
 			}
@@ -627,6 +628,10 @@ public class StationControl
 	public boolean expectedWeightMatchesActualWeight(double actualWeight) {
 		return (this.getExpectedWeight() == actualWeight + bagWeight);
 	}
+	
+	public int getBagInStock() {
+		return bagInStock;
+	}
 
 	@Override
 	public void outOfPaper(IReceiptPrinter printer) {
@@ -665,8 +670,7 @@ public class StationControl
 
 	@Override
 	public void bagDispensed(ReusableBagDispenser dispenser) {
-		// TODO Auto-generated method stub
-		
+		--bagInStock;
 	}
 
 	@Override
