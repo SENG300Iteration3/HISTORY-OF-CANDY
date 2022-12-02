@@ -36,7 +36,6 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	GUI_JButton approveNoBagging;
 	GUI_JButton startUpButton;
 	GUI_JLabel weightDisplayLabel, weightDescrepancyMssg, inkLabel, paperLabel, adjustCoinLabel, adjustBanknoteLabel;
-	GUI_JButton printReceiptButton;
 
 	private static String HeaderText = "Attendant Screen";
 
@@ -120,12 +119,6 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		
 		this.addLayer(buttonScrollPane, 50);
 
-		this.printReceiptButton = makeCentralButton("PRINT RECEIPT", this.width - 200, 25);
-		
-		printReceiptButton.setActionCommand("printReceipt");
-		printReceiptButton.addActionListener(systemControl.getReceiptControl());
-		
-		this.addLayer(printReceiptButton, 0);
 		
 		addInkToPrinterButton.setEnabled(false);
 		addPaperToPrinterButton.setEnabled(false);
