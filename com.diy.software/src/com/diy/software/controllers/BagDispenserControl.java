@@ -5,12 +5,8 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import com.diy.software.listeners.BagDispenserControlListener;
-import com.jimmyselectronics.AbstractDevice;
-import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.EmptyException;
 import com.jimmyselectronics.svenden.ReusableBag;
-import com.jimmyselectronics.svenden.ReusableBagDispenser;
-import com.jimmyselectronics.svenden.ReusableBagDispenserListener;
 
 public class BagDispenserControl implements ActionListener {
 	private StationControl sc;
