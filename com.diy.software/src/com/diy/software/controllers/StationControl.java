@@ -420,6 +420,11 @@ public class StationControl
 			CardIssuer bank = fakeData.getCardIssuer();
 			
 			if(data.getType().equals(GiftcardDatabase.CompanyGiftCard)) {
+				if(amountOwed == 0) {
+					cc.paymentFailed();
+					return;
+				}
+				
 				Double amountOnCard = GiftcardDatabase.giftcardMap.get(cardNumber);
 				Double dif = amountOnCard - amountOwed;
 				if(dif >= 0) {

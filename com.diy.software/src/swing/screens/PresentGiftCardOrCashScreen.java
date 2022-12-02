@@ -195,4 +195,12 @@ public class PresentGiftCardOrCashScreen extends Screen implements CashControlLi
 			System.out.println("You recieved $" + returnedCash + " as change from the machine");
 		}
 	}
+	
+	@Override
+	  public void paymentFailed(CashControl cc) {
+		if (isGiftCard) {
+			this.prompt.setText("Payment failed: No cost associated with current transaction");
+		}
+		  
+	  }
 }
