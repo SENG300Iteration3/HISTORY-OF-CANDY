@@ -104,4 +104,16 @@ public interface StationControlListener {
 	public void triggerMembershipWorkflow(StationControl systemControl);
 
 	void triggerPLUCodeWorkflow(StationControl systemControl);
+	/**
+	 * An event specifically for the main gui to perform a screen push to the purchase bag workflow\
+	 * 
+	 * @param systemControl
+	 * 			The default SystemControl unit for the current instance
+	 */
+	public void triggerPurchaseBagsWorkflow(StationControl systemControl);
+	
+	public void noBagsInStock(StationControl systemControl);
+	
+	public void notEnoughBagsInStock(StationControl systemControl, int numBag);
+	
 }

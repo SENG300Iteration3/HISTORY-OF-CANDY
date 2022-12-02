@@ -8,6 +8,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
+import com.diy.hardware.PriceLookUpCode;
+import com.diy.hardware.Product;
 import com.diy.hardware.PLUCodedItem;
 import com.diy.hardware.PLUCodedProduct;
 import com.diy.hardware.PriceLookUpCode;
@@ -20,6 +22,7 @@ import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodeScanner;
 import com.jimmyselectronics.necchi.BarcodeScannerListener;
+import com.jimmyselectronics.svenden.ReusableBag;
 import com.jimmyselectronics.virgilio.ElectronicScale;
 import com.jimmyselectronics.virgilio.ElectronicScaleListener;
 
@@ -30,6 +33,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	private ArrayList<ItemsControlListener> listeners;
 	public ArrayList<Tuple<BarcodedProduct,Integer>> tempList = new ArrayList<>();
 	private ArrayList<Tuple<String, Double>> checkoutList = new ArrayList<>();
+	private ArrayList<ReusableBag> bags = new ArrayList<ReusableBag>();			// stores reusable bag item with no barcode
 	private double checkoutListTotal = 0.0;
 	private Item currentItem;
 
@@ -90,6 +94,14 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		if (checkoutListTotal + amount >= 0) 
 			checkoutListTotal += amount;
 		refreshGui();
+	}
+	
+	public void addReusableBags(ReusableBag aBag) {
+		bags.add(aBag);		// add to reusable bags doesnt really need it for now
+		
+		double reusableBagPrice = sc.fakeData.getReusableBagPrice();
+		this.updateCheckoutTotal(reusableBagPrice);	// update total balance
+		this.addItemToCheckoutList(new Tuple<String, Double>("Reusable bag", reusableBagPrice));
 	}
 	
 	public double getCheckoutTotal() {
@@ -348,9 +360,11 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 	@Override
 	public void barcodeScanned(BarcodeScanner barcodeScanner, Barcode barcode) {
-		scanSuccess = true;
-		for (ItemsControlListener l : listeners)
-			l.awaitingItemToBePlacedInBaggingArea(this);
+		if (!sc.isMembershipInput()) {
+			scanSuccess = true;
+			for (ItemsControlListener l : listeners)
+				l.awaitingItemToBePlacedInBaggingArea(this);
+		}
 	}
 	
 	/**
