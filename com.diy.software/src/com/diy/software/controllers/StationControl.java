@@ -83,6 +83,12 @@ public class StationControl
 		customer = new Customer();
 		station = new DoItYourselfStation();
 		customer.useStation(station);
+		
+		ic = new ItemsControl(this);
+		bc = new BagsControl(this);
+		mc = new MembershipControl(this);
+		cc = new CashControl(this);
+		ac = new AttendantControl(this);
 
 		station.printer.register(this);
 		station.mainScanner.register(this);
@@ -94,12 +100,6 @@ public class StationControl
 		station.turnOn();
 		
 		fillStation();
-
-		ic = new ItemsControl(this);
-		bc = new BagsControl(this);
-		mc = new MembershipControl(this);
-		cc = new CashControl(this);
-		ac = new AttendantControl(this);
 
 		/*
 		 * simulates what the printer has in it before the printing starts
@@ -347,15 +347,16 @@ public class StationControl
 	}
 	
 	public void startMembershipCardInput() {
+		membershipInput = true;
 		for (StationControlListener l : listeners)
 			l.startMembershipCardInput(this);
 		wc.membershipCardInputEnabled();
-		membershipInput = true;
+		
 	}
 	
 	public void cancelMembershipCardInput() {
-		wc.membershipCardInputCanceled();
 		membershipInput = false;
+		wc.membershipCardInputCanceled();
 	}
 
 	@Override
@@ -622,5 +623,9 @@ public class StationControl
 	public void inkAdded(IReceiptPrinter printer) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	public boolean isMembershipInput() {
+		return membershipInput;
 	}
 }
