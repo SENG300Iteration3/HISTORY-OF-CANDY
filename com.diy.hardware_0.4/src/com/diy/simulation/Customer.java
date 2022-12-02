@@ -171,7 +171,6 @@ public final class Customer {
 	 *             If the currently selected item does not have a barcode.
 	 */
 	public void scanItem(boolean useHandheld) throws NoSuchElementException {
-		System.out.println("Item id in customers hand = " + currentItem.toString());
 		if(station == null)
 			throw new NullPointerSimulationException("station");
 

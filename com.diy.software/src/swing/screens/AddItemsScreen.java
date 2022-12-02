@@ -2,7 +2,6 @@ package swing.screens;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Objects;
 
 import javax.swing.*;
@@ -11,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import com.diy.software.util.Tuple;
+import com.jimmyselectronics.necchi.Barcode;
 
 import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Fonts;
@@ -19,6 +19,7 @@ import swing.styling.GUI_JLabel;
 import swing.styling.GUI_JPanel;
 import swing.styling.Screen;
 
+import com.diy.hardware.external.ProductDatabases;
 import com.diy.software.controllers.BagsControl;
 import com.diy.software.controllers.ItemsControl;
 import com.diy.software.controllers.StationControl;
@@ -160,8 +161,6 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		JPanel fourthButtonPanel = new JPanel(new GridLayout());
 		this.removeItemBtn = makeButton("Remove Item", fourthButtonPanel);
 		rightSidebuttonPanel.add(fourthButtonPanel);
-		this.removeItemBtn.setActionCommand("remove item");
-		this.removeItemBtn.addActionListener(itemsControl);
 
 		this.addLayer(mainPanel, 0);
 
@@ -179,7 +178,6 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		this.memberBtn.addActionListener(itemsControl);
 
 		this.searchCatalogueBtn = makeButton("Browse Items", buttonPanel);
-		
 
 
 	}
@@ -272,12 +270,14 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 
 	@Override
 	public void itemsHaveBeenUpdated(ItemsControl itemsControl) {
-		Map<String, Double> checkoutList = itemsControl.getCheckoutList();
-		int i = 0;
+		ArrayList<Barcode> checkoutList = itemsControl.getCheckoutList();
+
 		this.invalidateAllScannedItems();
-		for (String productName: checkoutList.keySet()) {
-			this.addScannedItem(i+1 + ". " + productName, checkoutList.get(productName));
-			i++;
+		
+		for (Barcode barcode: checkoutList) {
+			double price = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getPrice();
+			String name = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getDescription();
+			this.addScannedItem(name, price);
 		}
 	}
 
@@ -309,4 +309,3 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		
 	}
 }
-

@@ -5,6 +5,10 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import com.diy.software.util.Tuple;
+import com.jimmyselectronics.necchi.Barcode;
+import com.jimmyselectronics.necchi.BarcodedItem;
+import com.jimmyselectronics.necchi.Numeral;
+import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.BagsControlListener;
 
 public class BagsControl implements ActionListener {
@@ -12,10 +16,12 @@ public class BagsControl implements ActionListener {
 	private ArrayList<BagsControlListener> listeners;
 	private static final double abritraryWeightOfBags = 50;
 	private static final double abritraryPriceOfBags = 3.5;
+	private static final Barcode purchasableBagBarcode = new Barcode(new Numeral[] { Numeral.one, Numeral.one, Numeral.one, Numeral.nine }); 
 	
 	public BagsControl(StationControl sc) {
 		this.sc = sc;
 		this.listeners = new ArrayList<>();
+		
 	}
 	
 	public void addListener(BagsControlListener l) {
@@ -36,7 +42,7 @@ public class BagsControl implements ActionListener {
 		}
 	}
 	
-	// FIXME: where is the bag dispenser in the hardware mentioned in the use case
+	// FIXME: where is the bag dispensery in the hardware mentioned in the use case
 	public void ownBagsPlacedInBaggingArea() {
 		sc.blockStation("Please Wait For Attendant's Approval");
 		for (BagsControlListener l : listeners) {
@@ -47,8 +53,12 @@ public class BagsControl implements ActionListener {
 	// FIXME: need to update price
 	public void placePurchasedBagsInBaggingArea() {
 		sc.updateWeightOfLastItemAddedToBaggingArea(abritraryWeightOfBags);
-		sc.getItemsControl().addItemToCheckoutList("Reusable Bag",abritraryPriceOfBags);
-		sc.updateExpectedCheckoutWeight(abritraryWeightOfBags,true);
+		sc.updateExpectedCheckoutWeight(abritraryWeightOfBags,false);
+		BarcodedItem purchasableBag = new BarcodedItem(purchasableBagBarcode, 50); 
+		sc.station.baggingArea.add(purchasableBag);
+		sc.items.put(purchasableBagBarcode, purchasableBag);
+		sc.getItemsControl().addItemToCheckoutList(purchasableBagBarcode);
+		sc.getItemsControl().updateCheckoutTotal(abritraryPriceOfBags);
 		sc.unblockStation(); // call this to update total on gui
 	}
 

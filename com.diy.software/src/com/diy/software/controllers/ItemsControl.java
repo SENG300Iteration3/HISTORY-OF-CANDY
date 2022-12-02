@@ -3,15 +3,12 @@ package com.diy.software.controllers;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.external.ProductDatabases;
-import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.ItemsControlListener;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
@@ -19,7 +16,6 @@ import com.jimmyselectronics.Item;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodeScanner;
 import com.jimmyselectronics.necchi.BarcodeScannerListener;
-import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.virgilio.ElectronicScale;
 import com.jimmyselectronics.virgilio.ElectronicScaleListener;
 
@@ -27,7 +23,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	private StationControl sc;
 	private ArrayList<ItemsControlListener> listeners;
 	public ArrayList<Tuple<BarcodedProduct,Integer>> tempList = new ArrayList<>();
-	private Map<String, Double> checkoutList = new LinkedHashMap<>(); // LinkedHashMap keeps order
+	public ArrayList<Barcode> checkoutList = new ArrayList<>();
 	private double checkoutListTotal = 0.0;
 
 	private boolean scanSuccess = true, weighSuccess = true;
@@ -63,9 +59,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		listeners.remove(l);
 	}
 	
-	public void addItemToCheckoutList(String productName, Double price) {
-		checkoutList.put(productName, price);
-		this.updateCheckoutTotal(price);
+	public void addItemToCheckoutList(Barcode barcode) {
+		checkoutList.add(barcode);
 		refreshGui();
 	}
 	
@@ -73,49 +68,13 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		BarcodedProduct barcodedProduct = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode);
 		double price;
 		if (barcodedProduct != null) {
-			System.out.println("Scanned object id = " + this.sc.BARCODED_ITEM_DATABASE.get(barcodedProduct.getDescription()));
 			price = (double) barcodedProduct.getPrice();
-			this.addItemToCheckoutList(barcodedProduct.getDescription(), price);
+			this.addItemToCheckoutList(barcode);
 			this.updateCheckoutTotal(price);
 		} else {
 			System.err.println("Scanned item is not in product database!");
 		}
 	}
-	
-	public void removeItem(int itemIndex) {
-		System.out.println("Checkout list size before remove = " + checkoutList.size());
-		itemIndex--; // Decrement itemIndex so its lower bound is zero
-		int i = 0;
-		System.out.println("Removed item name = " + this.sc.itemArray.get(0));
-		this.sc.station.baggingArea.remove(this.sc.itemArray.get(0));
-//		for (String itemName: checkoutList.keySet()) {
-//			if (i == itemIndex) { // itemIndex matches Hashmap index
-//				if (itemName == "Reusable Bag") {
-//					// Reusable bags have different logic than items
-//					
-//				}
-//				else {
-//					BarcodedItem tempItem = sc.BARCODED_ITEM_DATABASE.get(itemName);
-//					// Increment inventory eventually
-////					BarcodedProduct product = 
-////					ProductDatabases.INVENTORY.put(bp1, 100);
-////					ProductDatabases.BARCODED_PRODUCT_DATABASE.get(product)
-//					this.sc.updateExpectedCheckoutWeight(-1 * tempItem.getWeight()); // decrement expected weight
-//					System.out.println(tempItem.getBarcode());
-//					this.updateCheckoutTotal(-1* checkoutList.get(itemName)); // decrement checkoutTotal
-//					checkoutList.remove(itemName);							// remove item from checkoutList
-//					//System.out.println("Checkout list size after remove = " + checkoutList.size());
-//					//System.out.println("Temp item barcode = " + tempItem.getBarcode());
-//					//System.out.println("Temp item name = " + tempItem.toString());
-//					//this.sc.station.baggingArea.remove(tempItem);			// remove item from bagging area (actual weight will change)
-//					System.out.println("Removed item name = " + this.sc.itemArray.get(0));
-//					this.sc.station.baggingArea.remove(this.sc.itemArray.get(0));
-//					refreshGui();
-//				}
-//			}
-//			i++;
-		}
-	
 	
 	public void updateCheckoutTotal(double amount) {
 		if (checkoutListTotal + amount >= 0) 
@@ -127,7 +86,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		return checkoutListTotal;
 	}
 	
-	public Map<String, Double> getCheckoutList () {
+	public ArrayList<Barcode> getCheckoutList () {
 		return checkoutList;
 	}
 	
@@ -274,10 +233,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			case "member":
 				sc.startMembershipWorkflow();
 				break;
-			case "remove item":
-				System.out.println("Removing item");
-				removeItem(1);
-			break;
 			default:
 				break;
 			}
