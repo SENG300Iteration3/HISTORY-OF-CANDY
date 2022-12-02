@@ -55,6 +55,10 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 	public void removeListener(AttendantControlListener l) {
 		listeners.remove(l);
 	}
+	
+	public KeyboardControl getKeyboardControl() {
+		return kc;
+	}
 
 	public void approveBagsAdded() {
 		sc.unblockStation();

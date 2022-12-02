@@ -17,6 +17,7 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 
+import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.KeyboardControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.controllers.TextLookupControl;
@@ -49,9 +50,9 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 	private TextLookupControl tlc;
 	
 	
-	public TextSearchScreen(StationControl systemControl) 
+	public TextSearchScreen(StationControl sc, AttendantControl ac) 
 	{
-		super(systemControl, headerTitle);
+		super(sc, headerTitle);
 		
 		// Initializing all GUI Components
 		initalizeSearchAreaBackground();
@@ -60,7 +61,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 		initailizeSearchButton();
 		initailizeBackButton();
 		
-		kc = systemControl.getKeyboardControl();
+		kc = ac.getKeyboardControl();
 		searchbar.addActionListener(kc);
 	}
 	
@@ -241,7 +242,8 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 	public static void main(String[] args) 
 	{
 		StationControl stationControl = new StationControl();
-		TextSearchScreen testGui = new TextSearchScreen(stationControl);
+		AttendantControl attendantControl = new AttendantControl(stationControl);
+		TextSearchScreen testGui = new TextSearchScreen(stationControl, attendantControl);
 		testGui.openInNewJFrame();
 	}
 
