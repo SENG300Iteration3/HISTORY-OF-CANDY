@@ -42,6 +42,9 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	private static final DecimalFormat formatPrice = new DecimalFormat("0.00");
 	private int retreivedMemNum;
 	
+	private boolean outOfPaperCheck = false;
+	private boolean outOfInkCheck = false;
+	
 	public ReceiptControl (StationControl sc) {
 		this.sc = sc;
 		this.listenersReceipt = new ArrayList<>();
@@ -130,9 +133,19 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 		for (char receiptChar : receipt.toCharArray()) {
 			try {
 				sc.station.printer.print(receiptChar);
-				//System.out.println(receiptChar);
+//				System.out.println("ink:" + outOfInkCheck + "paper:"+ outOfPaperCheck);
+//				if(!outOfInkCheck && !outOfPaperCheck) {
+					for (ReceiptControlListener l : listenersReceipt) {
+						l.setTakeReceiptState(this);
+					}
+					sc.station.printer.cutPaper();
+//				}else {
+//					for (ReceiptControlListener l : listenersReceipt) {
+//						l.setNoReceiptState(this);
+//					}
+//				}
 			} catch (EmptyException e) {
-
+				
 			} catch (OverloadException e) {
 
 			}
@@ -151,6 +164,9 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 				printMembership();
 				printDateTime();
 				printThankyouMsg();
+				break;
+			case "takeReceipt":
+				sc.station.printer.removeReceipt();
 				break;
 			default:
 				break;
@@ -187,17 +203,18 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 
 	@Override
 	public void outOfPaper(IReceiptPrinter printer) {
-		// TODO Auto-generated method stub
+		outOfPaperCheck = true;
 		System.out.println("out of paper");
-		sc.getAttendantControl().lowPaper(printer);
+		sc.getAttendantControl().outOfPaper(printer);
 	}
 
 	@Override
 	public void outOfInk(IReceiptPrinter printer) {
 //		for (AttendantControlListener la : listenersAttendant)
 //			la.addInkState();
+		outOfInkCheck = true;
 		System.out.println("out of ink");
-		sc.getAttendantControl().lowInk(printer);
+		sc.getAttendantControl().outOfInk(printer);
 	}
 
 	@Override
@@ -218,14 +235,13 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 
 	@Override
 	public void paperAdded(IReceiptPrinter printer) {
-		// TODO Auto-generated method stub
+		outOfPaperCheck = false;
 		
 	}
 
 	@Override
 	public void inkAdded(IReceiptPrinter printer) {
-		// TODO Auto-generated method stub
-		
+		outOfInkCheck = false;
 	}
 
 

@@ -78,8 +78,8 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		
 		weightDescrepancyMssg = initalizeLabel("weightDiscrepancyMsg");
 		weightDisplayLabel = initalizeLabel("weightDisplayLabel");
-		inkLabel = initalizeLabel("Low ink");
-		paperLabel = initalizeLabel("Low paper");
+		inkLabel = initalizeLabel("Ink status");
+		paperLabel = initalizeLabel("Paper status");
 		adjustCoinLabel = initalizeLabel("Adjust coin");
 		adjustBanknoteLabel = initalizeLabel("Adjust Banknote");
 		
@@ -200,20 +200,24 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(false);
 		addPaperToPrinterButton.setEnabled(true);
+		
 	}
 
 	@Override
 	public void addInkState() {
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(true);
-		addPaperToPrinterButton.setEnabled(false);	
+		addPaperToPrinterButton.setEnabled(false);
+		
 	}
 
 	@Override
 	public void printerNotLowState() {
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(false);
-		addPaperToPrinterButton.setEnabled(false);	
+		addPaperToPrinterButton.setEnabled(false);
+		inkLabel.setText("Ink status");
+		paperLabel.setText("Paper status");
 	}
 
 	@Override
@@ -247,30 +251,29 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 
 
 	@Override
-	public void lowInk(ReceiptControl rc, String message) {
-		// TODO Auto-generated method stub
+	public void lowInk(AttendantControl ac, String message) {
 		inkLabel.setText(message);
 		inkLabel.setBackground(GUI_Color_Palette.RED_BROWN);
 	}
 
 
 	@Override
-	public void lowPaper(ReceiptControl rc, String dateTime) {
-		// TODO Auto-generated method stub
-		
+	public void lowPaper(AttendantControl ac, String message) {
+		paperLabel.setText(message);
+		paperLabel.setBackground(GUI_Color_Palette.RED_BROWN);
 	}
 
 
 	@Override
-	public void outOfInk(ReceiptControl rc, String message) {
-		// TODO Auto-generated method stub
-		
+	public void outOfInk(AttendantControl ac, String message) {
+		inkLabel.setText(message);
+		inkLabel.setBackground(GUI_Color_Palette.RED_BROWN);	
 	}
 
 
 	@Override
-	public void outOfPaper(ReceiptControl rc, String message) {
-		// TODO Auto-generated method stub
-		
+	public void outOfPaper(AttendantControl ac, String message) {
+		paperLabel.setText(message);
+		paperLabel.setBackground(GUI_Color_Palette.RED_BROWN);
 	}
 }

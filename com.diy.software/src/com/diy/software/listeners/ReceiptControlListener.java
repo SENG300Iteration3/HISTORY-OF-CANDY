@@ -7,7 +7,7 @@ public interface ReceiptControlListener {
 	/**
 	 * used to notify customer why the station is locked
 	 */
-	public String outOfInkOrPaper(ReceiptControl rc, String message);
+	public void outOfInkOrPaper(ReceiptControl rc, String message);
 	
 	/**
 	 * used to pass a list of checked out items
@@ -28,6 +28,16 @@ public interface ReceiptControlListener {
 	 * thank you message
 	 */
 	public void setThankyouMessage(ReceiptControl rc, String dateTime);
+	
+	/**
+	 * successfully printed receipt and activates take receipt button
+	 */
+	public void setTakeReceiptState(ReceiptControl rc);
+	
+	/**
+	 * turn off take receipt button 
+	 */
+	public void setNoReceiptState(ReceiptControl rc);
 	
 	
 }
