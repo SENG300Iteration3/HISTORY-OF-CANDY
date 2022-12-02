@@ -51,7 +51,7 @@ import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
  *
  */
 public class StationControl
-		implements BarcodeScannerListener, ElectronicScaleListener, CardReaderListener, ReceiptPrinterListener {
+		implements BarcodeScannerListener, ElectronicScaleListener, CardReaderListener, ReceiptPrinterListener, PLUCodeControlListener {
 	public FakeDataInitializer fakeData;
 	private double expectedCheckoutWeight = 0.0;
 	private double bagWeight = 0.0;
@@ -106,7 +106,6 @@ public class StationControl
 		station.handheldScanner.register(this);
 		station.baggingArea.register(this);
 		station.cardReader.register(this);
-		station.reusableBagDispenser.register(this);
 		
 		station.plugIn();
 		station.turnOn();
@@ -747,22 +746,6 @@ public class StationControl
 		// TODO Auto-generated method stub
 
 	}
-
-	@Override
-	public void bagDispensed(ReusableBagDispenser dispenser) {
-		--bagInStock;
-	}
-
-	@Override
-	public void outOfBags(ReusableBagDispenser dispenser) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void bagsLoaded(ReusableBagDispenser dispenser, int count) {
-		// TODO Auto-generated method stub
-  }
 	
 	public boolean isMembershipInput() {
 		return membershipInput;

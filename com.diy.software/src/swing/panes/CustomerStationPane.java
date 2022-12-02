@@ -249,4 +249,10 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 		addPanelToStack(catalogPanel);
 		
 	}
+
+	@Override
+	public void triggerPLUCodeWorkflow(StationControl systemControl) {
+		// TODO Auto-generated method stub
+		
+	}
 }

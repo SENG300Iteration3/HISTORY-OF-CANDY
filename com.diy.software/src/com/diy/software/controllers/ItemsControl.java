@@ -127,20 +127,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	 */
 	public void pickupNextItem() {
 		try {
-			// Should be the next item selected
-			// Not sure if we are allowed to do this as there is no other way to get the weight of the item selected
-			// Technically scanning an item requires it to be placed on the scanning scale so it should weigh the item regardless
-			// of it being scanned or not.
-			// Saving the item is required for getting the weight of the item
-			// TODO: Not sure if this should be here, need another opinion!!!
+			// TODO: Find another way to do this 
 			this.currentItem = sc.customer.shoppingCart.get(sc.customer.shoppingCart.size() - 1);
-			if(this.currentItem.getClass() == PLUCodedItem.class) {
-				isPLU = true;
-				expectedPLU = ((PLUCodedItem)this.currentItem).getPLUCode();
-			} else {
-				isPLU = false;
-				expectedPLU = null;
-			}
 			sc.customer.selectNextItem();
 			for (ItemsControlListener l : listeners)
 				l.itemWasSelected(this);
@@ -170,42 +158,30 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 	public boolean addItemByPLU(PriceLookUpCode code) {
 		try {
-			if(isPLU && expectedPLU != null) {
-				
-				if(!code.toString().equals(expectedPLU.toString())) {
-					System.err.println("PLU Code is not the right plu code for the selected item!");
+			baggingAreaTimerStart = System.currentTimeMillis();
+
+			PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(code);
+			
+			if(product != null) {
+				// lol this is broken 
+				double weight = sc.station.scanningArea.getCurrentWeight();
+				System.out.println(weight + " Scale weight");
+				if(weight == 0.0) {
+					System.err.println("Please place the item on the scale before entering the code!!");
 					return false;
 				} else {
-					baggingAreaTimerStart = System.currentTimeMillis();
-
-					PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(code);
-					
-					if(product != null) {
-						// lol this is broken 
-						double weight = sc.station.scanningArea.getCurrentWeight();
-						System.out.println(weight + " Scale weight");
-						if(weight == 0.0) {
-							System.err.println("Please place the item on the scale before entering the code!!");
-							return false;
-						} else {
-							// price per kg
-							double price = (double)product.getPrice() * weight;
-							this.addItemToCheckoutList(new Tuple<String,Double>(product.getDescription(), price));
-							this.updateCheckoutTotal(price);
-						
-							System.out.println("Added item to checkout list!");
-							return true;
-						}
-					} else {
-						System.err.println("PLU Code does not correspond to a product in the database!");
-						return false;
-					}
+					// price per kg
+					double price = (double)product.getPrice() * weight;
+					this.addItemToCheckoutList(new Tuple<String,Double>(product.getDescription(), price));
+					this.updateCheckoutTotal(price);
+				
+					System.out.println("Added item to checkout list!");
+					return true;
 				}
 			} else {
-				System.err.println("Item selected does not have a plu code!");
+				System.err.println("PLU Code does not correspond to a product in the database!");
 				return false;
 			}
-			
 		} catch(InvalidArgumentSimulationException | OverloadException e) {
 			System.err.println(e.getMessage());
 			return false;

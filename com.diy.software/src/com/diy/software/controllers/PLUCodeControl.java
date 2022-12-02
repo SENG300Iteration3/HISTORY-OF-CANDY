@@ -19,7 +19,6 @@ public class PLUCodeControl implements ActionListener {
 		this.sc = sc;
 		this.ic = sc.getItemsControl();
 		this.listeners = new ArrayList<>();
-		this.addListener(sc);
 	}
 	
 	public void addListener(PLUCodeControlListener l) {
