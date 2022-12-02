@@ -92,6 +92,7 @@ public class StationControl
 		bc = new BagsControl(this);
 		mc = new MembershipControl(this);
 		cc = new CashControl(this);
+		bdc = new BagDispenserControl(this);
 		ac = new AttendantControl(this);
 
 		station.printer.register(this);
@@ -112,13 +113,7 @@ public class StationControl
 		station.reusableBagDispenser.plugIn();
 		station.reusableBagDispenser.turnOn();
 		bagInStock = station.reusableBagDispenser.getCapacity();
-		try {
-			for(int i = 0; i < bagInStock; i++) {
-				ReusableBag aBag = new ReusableBag();
-				station.reusableBagDispenser.load(aBag);
-			}
-
-		}catch(OverloadException e) {}
+		loadBags();
 
 		/*
 		 * simulates what the printer has in it before the printing starts
@@ -203,6 +198,16 @@ public class StationControl
 
 	public CashControl getCashControl() {
 		return cc;
+	}
+	
+	private void loadBags() {
+		try {
+			for(int i = 0; i < bagInStock; i++) {
+				ReusableBag aBag = new ReusableBag();
+				station.reusableBagDispenser.load(aBag);
+			}
+
+		}catch(OverloadException e) {}
 	}
 	
 	private void fillStation() {
