@@ -164,7 +164,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 					
 					if(product != null) {
 						System.out.println(this.scaleReceivedWeight + " Scale weight");
-
 						if(this.scaleReceivedWeight == 0.0) {
 							System.err.println("Please place the item on the scale before entering the code!!");
 							return false;
@@ -243,7 +242,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			// and alert showing a failed weigh-in if time permits.
 		}
 	}
-	
+
 	/**
 	 * removes the last wrongly added item from the scale
 	 */
@@ -304,6 +303,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				break;
 			case "member":
 				sc.startMembershipWorkflow();
+				break;
+			case "weigh":
+				System.out.println("Weighing item");
+				placeItemOnScale();
 				break;
 			default:
 				break;

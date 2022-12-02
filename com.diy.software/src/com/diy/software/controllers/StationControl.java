@@ -590,7 +590,7 @@ public class StationControl
 		
 		
 	}
-	
+
 	private void checkInventory(Product product) {
 		if(ProductDatabases.INVENTORY.containsKey(product) && ProductDatabases.INVENTORY.get(product) >= 1) {
 			ProductDatabases.INVENTORY.put(product, ProductDatabases.INVENTORY.get(product)-1); //updates INVENTORY with new total

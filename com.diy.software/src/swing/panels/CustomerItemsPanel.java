@@ -23,7 +23,7 @@ public class CustomerItemsPanel extends JPanel
 	private AttendantControl ac;
 	private BagsControl bc;
 	private boolean itemsAvailable;
-	JButton selectNextItemButton, mainScannerButton, handheldScannerButton, deselectCurrentItemButton, placeItemInBaggingAreaButton;
+	JButton selectNextItemButton, mainScannerButton, handheldScannerButton, deselectCurrentItemButton, placeItemInBaggingAreaButton, itemWeight;
 	GridBagConstraints buttonGrid = new GridBagConstraints();
 	JLabel weightDescrepancyMessage;
 
@@ -60,6 +60,10 @@ public class CustomerItemsPanel extends JPanel
 		placeItemInBaggingAreaButton.setActionCommand("bag");
 		placeItemInBaggingAreaButton.addActionListener(ic);
 
+		itemWeight = new JButton("weighItem()");
+		itemWeight.setActionCommand("weigh");
+		itemWeight.addActionListener(ic);
+
 		
 
 //		removeItemInBaggingAreaButton.setActionCommand("removeFromScale");
@@ -82,9 +86,12 @@ public class CustomerItemsPanel extends JPanel
 
 		buttonGrid.gridx = 4;
 		this.add(placeItemInBaggingAreaButton, buttonGrid);
-		
-		buttonGrid.gridy = 1;
+
 		buttonGrid.gridx = 5;
+		this.add(itemWeight, buttonGrid);
+
+		buttonGrid.gridy = 1;
+		buttonGrid.gridx = 6;
 		this.add(weightDescrepancyMessage);
 		
 
@@ -96,6 +103,7 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
+		itemWeight.setEnabled(false);
 	}
 
 	@Override
@@ -105,6 +113,7 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
+		itemWeight.setEnabled(false);
 		weightDescrepancyMessage.setText("");
 	}
 
@@ -115,6 +124,7 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(true);
 		deselectCurrentItemButton.setEnabled(true);
 		placeItemInBaggingAreaButton.setEnabled(false);
+		itemWeight.setEnabled(true);
 	}
 
 	@Override
@@ -124,6 +134,7 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(true);
+		itemWeight.setEnabled(false);
 	}
 
 	@Override
@@ -145,6 +156,7 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
+		itemWeight.setEnabled(false);
 	}
 
 	@Override
@@ -154,6 +166,7 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
+		itemWeight.setEnabled(false);
 	}
 
 	@Override
@@ -163,6 +176,7 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
+		itemWeight.setEnabled(false);
 	}
 
 	@Override
@@ -183,6 +197,7 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
+		itemWeight.setEnabled(false);
 		weightDescrepancyMessage.setText(updateMessage);
 	}
 
