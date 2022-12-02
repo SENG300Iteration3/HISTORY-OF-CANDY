@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
+import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.diy.software.util.Tuple;
@@ -26,6 +27,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	public ArrayList<Tuple<BarcodedProduct,Integer>> tempList = new ArrayList<>();
 	public ArrayList<Barcode> checkoutList = new ArrayList<>();
 	private double checkoutListTotal = 0.0;
+	private int index = 0;
 
 	private boolean scanSuccess = true, weighSuccess = true;
 	
@@ -39,6 +41,9 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	private boolean removedWrongBaggedItem;
 	private double scaleExpectedWeight;
 	private double scaleReceivedWeight;
+	
+	// TODO REMOVE BEFORE RELEASE
+	Scanner scanner = new Scanner(System.in);
 
 	public ItemsControl(StationControl sc) {
 		this.sc = sc;
@@ -46,6 +51,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		sc.station.mainScanner.register(this);
 		sc.station.baggingArea.register(this);
 		this.listeners = new ArrayList<>();
+		
+		
 	}
 	
 	public Item getWrongBaggedItem() {
@@ -77,17 +84,16 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 	}
 	
-	public void removeItem(int index) {
-		index--; // decrement index so it matches actual array index!
+	public void removeItem() {
+		this.index--; // decrement index so it matches actual array index!
 		Barcode barcode = this.checkoutList.get(index);
 		// getting the actual object that the customer had in his shopping cart and was subsequently added to the baggingArea
 		BarcodedItem item = this.sc.items.get(barcode);
 		double price = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getPrice();
-		System.out.println(price);
 		double weight = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
+		this.sc.updateExpectedCheckoutWeight(-weight);  // decrement weight
 		this.sc.station.baggingArea.remove(item);
 		this.updateCheckoutTotal(-price);	// decrement price
-		this.sc.updateExpectedCheckoutWeight(-weight);  // decrement weight
 		checkoutList.remove(index); // remove the barcode from checkoutList so GUI updates accordingly
 		refreshGui();
 	}
@@ -250,7 +256,9 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				sc.startMembershipWorkflow();
 				break;
 			case "remove item":
-				this.removeItem(1);
+				System.out.print("Enter the number of the item to be removed: ");
+				index = scanner.nextInt();
+				this.removeItem();
 				break;
 			}
 		} catch (Exception ex) {
@@ -326,5 +334,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	public void outOfOverload(ElectronicScale scale) {
 		userMessage = "Excessive weight removed, continue scanning";
 		sc.unblockStation();
+	}
+
+
+	public void setIndex(int itemIndex) {
+		this.index = itemIndex;
 	}
 }

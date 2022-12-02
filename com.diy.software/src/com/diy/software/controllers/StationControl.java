@@ -500,6 +500,18 @@ public class StationControl
 		}
 	}
 
+	
+	/**
+	 * Compares the expected weight after adding an item to the actual weight being
+	 * read on the scale.
+	 * 
+	 * @return Boolean True if weights match, false otherwise
+	 * @throws OverloadException If the weight has overloaded the scale.
+	 */
+	public boolean expectedWeightMatchesActualWeight(double actualWeight) {
+		return (this.getExpectedWeight() == actualWeight + bagWeight);
+	}
+	
 	/**
 	 * sets user message to announce weight on the indicated scale has changed
 	 * 
@@ -521,6 +533,8 @@ public class StationControl
 			System.err.println("System has been blocked!");
 		}
 	}
+	
+	
 
 	@Override
 	public void overload(ElectronicScale scale) {
@@ -587,16 +601,6 @@ public class StationControl
 		this.unblockStation();
 	}
 
-	/**
-	 * Compares the expected weight after adding an item to the actual weight being
-	 * read on the scale.
-	 * 
-	 * @return Boolean True if weights match, false otherwise
-	 * @throws OverloadException If the weight has overloaded the scale.
-	 */
-	public boolean expectedWeightMatchesActualWeight(double actualWeight) {
-		return (this.getExpectedWeight() == actualWeight + bagWeight);
-	}
 
 	@Override
 	public void outOfPaper(IReceiptPrinter printer) {
