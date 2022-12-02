@@ -59,7 +59,7 @@ public class CustomerWalletPanel extends JPanel implements WalletControlListener
 		
 		scanMemButton = new JButton("scan membership card");
 		scanMemButton.setActionCommand("scan");
-		scanMemButton.addActionListener(wc); //CORRECT CONTROLLER?
+		scanMemButton.addActionListener(wc);
 		scanMemButton.setEnabled(false);
 
 		cc1.setSelected(true);
@@ -67,7 +67,7 @@ public class CustomerWalletPanel extends JPanel implements WalletControlListener
 		cc1.addActionListener(wc);
 		cc2.addActionListener(wc);
 		cc3.addActionListener(wc);
-		m.addActionListener(wc); //CORRECT CONTROLLER
+		m.addActionListener(wc);
 
 		ButtonGroup ccButtonGroup = new ButtonGroup();
 		ccButtonGroup.add(cc1);
