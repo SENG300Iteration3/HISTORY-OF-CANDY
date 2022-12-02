@@ -12,12 +12,12 @@ public interface AttendantControlListener {
 	/**
 	 * used to notify low ink state
 	 */
-	public void lowInk(ReceiptControl rc, String message);
+	public void lowInk(AttendantControl ac, String message);
 	
 	/**
 	 * used to notify low paper state
 	 */
-	public void lowPaper(ReceiptControl rc, String dateTime);
+	public void lowPaper(AttendantControl ac, String message);
 	
 	/**
 	 * changes GUI state to match printer with not low ink and not low paper
@@ -27,12 +27,12 @@ public interface AttendantControlListener {
 	/**
 	 * used to notify out of ink state
 	 */
-	public void outOfInk(ReceiptControl rc, String message);
+	public void outOfInk(AttendantControl ac, String message);
 
 	/**
 	 * used to notify out of paper state
 	 */
-	public void outOfPaper(ReceiptControl rc, String message);
+	public void outOfPaper(AttendantControl ac, String message);
 	
 	/**
 	 * allowing attendant to add ink to the printer when the printer is out or low on ink 

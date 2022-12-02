@@ -170,17 +170,23 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 	}
 
 	@Override
-	public void lowPaper(ReceiptControl rc, String dateTime) {
+	public void lowPaper(AttendantControl ac, String message) {
 		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public void outOfInk(ReceiptControl rc, String message) {
+	public void outOfInk(AttendantControl ac, String message) {
 		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public void outOfPaper(ReceiptControl rc, String message) {
+	public void outOfPaper(AttendantControl ac, String message) {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void lowInk(AttendantControl ac, String message) {
+		// TODO Auto-generated method stub
+		
 	}
 }

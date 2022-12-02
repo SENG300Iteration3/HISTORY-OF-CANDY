@@ -16,16 +16,18 @@ import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
 import com.diy.software.listeners.ItemsControlListener;
 import com.unitedbankingservices.coin.CoinStorageUnit;
+import com.diy.software.listeners.ReceiptControlListener;
 
 public class CustomerItemsPanel extends JPanel
-		implements ItemsControlListener, AttendantControlListener, BagsControlListener {
+		implements ItemsControlListener, AttendantControlListener, BagsControlListener, ReceiptControlListener {
 
 	private static final long serialVersionUID = 1L;
 	private ItemsControl ic;
 	private AttendantControl ac;
 	private BagsControl bc;
+	private ReceiptControl rc;
 	private boolean itemsAvailable;
-	JButton selectNextItemButton, mainScannerButton, handheldScannerButton, deselectCurrentItemButton, placeItemInBaggingAreaButton;
+	JButton selectNextItemButton, mainScannerButton, handheldScannerButton, deselectCurrentItemButton, placeItemInBaggingAreaButton, takeReceiptButton;
 	GridBagConstraints buttonGrid = new GridBagConstraints();
 	JLabel weightDescrepancyMessage;
 
@@ -39,6 +41,9 @@ public class CustomerItemsPanel extends JPanel
 
 		bc = sc.getBagsControl();
 		bc.addListener(this);
+		
+		rc = sc.getReceiptControl();
+		rc.addListenerReceipt(this);
 		
 		weightDescrepancyMessage = new JLabel();
 		
@@ -61,7 +66,10 @@ public class CustomerItemsPanel extends JPanel
 		placeItemInBaggingAreaButton = new JButton("placeItemInBagginArea()");
 		placeItemInBaggingAreaButton.setActionCommand("bag");
 		placeItemInBaggingAreaButton.addActionListener(ic);
-
+		
+		takeReceiptButton = new JButton("Take Receipt");
+		takeReceiptButton.setActionCommand("takeReceipt");
+		takeReceiptButton.addActionListener(rc);
 		
 
 //		removeItemInBaggingAreaButton.setActionCommand("removeFromScale");
@@ -85,8 +93,11 @@ public class CustomerItemsPanel extends JPanel
 		buttonGrid.gridx = 4;
 		this.add(placeItemInBaggingAreaButton, buttonGrid);
 		
-		buttonGrid.gridy = 1;
 		buttonGrid.gridx = 5;
+		this.add(takeReceiptButton, buttonGrid);
+		
+		buttonGrid.gridy = 1;
+		buttonGrid.gridx = 6;
 		this.add(weightDescrepancyMessage);
 		
 
@@ -98,6 +109,7 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
+		takeReceiptButton.setEnabled(false);
 	}
 
 	@Override
@@ -234,22 +246,60 @@ public class CustomerItemsPanel extends JPanel
 		// TODO Auto-generated method stub
 	}
 		
-	public void lowInk(ReceiptControl rc, String message) {
+	public void lowInk(AttendantControl ac, String message) {
 		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public void lowPaper(ReceiptControl rc, String dateTime) {
+	public void lowPaper(AttendantControl ac, String message) {
 		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public void outOfInk(ReceiptControl rc, String message) {
+	public void outOfInk(AttendantControl ac, String message) {
 		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public void outOfPaper(ReceiptControl rc, String message) {
+	public void outOfPaper(AttendantControl ac, String message) {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void outOfInkOrPaper(ReceiptControl rc, String message) {
+	}
+
+	@Override
+	public void setCheckedoutItems(ReceiptControl rc, String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setTotalCost(ReceiptControl rc, String totalCost) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setDateandTime(ReceiptControl rc, String dateTime) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setThankyouMessage(ReceiptControl rc, String dateTime) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setTakeReceiptState(ReceiptControl rc) {
+		takeReceiptButton.setEnabled(true);
+	}
+
+	@Override
+	public void setNoReceiptState(ReceiptControl rc) {
+		takeReceiptButton.setEnabled(false);
 	}
 }

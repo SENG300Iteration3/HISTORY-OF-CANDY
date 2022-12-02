@@ -79,8 +79,8 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		
 		weightDescrepancyMssg = initalizeLabel("weightDiscrepancyMsg");
 		weightDisplayLabel = initalizeLabel("weightDisplayLabel");
-		inkLabel = initalizeLabel("Low ink");
-		paperLabel = initalizeLabel("Low paper");
+		inkLabel = initalizeLabel("Ink status");
+		paperLabel = initalizeLabel("Paper status");
 		adjustCoinLabel = initalizeLabel("Adjust coin");
 		adjustBanknoteLabel = initalizeLabel("Adjust Banknote");
 		
@@ -112,8 +112,8 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		buttonScrollPane.getViewport().add(buttonsPanel);
 		
 		buttonsPanel.add(approveAddedBagsButton);
-		buttonsPanel.add(addInkToPrinterButton);
-		buttonsPanel.add(addPaperToPrinterButton);
+//		buttonsPanel.add(addInkToPrinterButton);
+//		buttonsPanel.add(addPaperToPrinterButton);
 		buttonsPanel.add(approveNoBagging);
 		buttonsPanel.add(startUpButton);
 		
@@ -127,8 +127,8 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		
 		this.addLayer(printReceiptButton, 0);
 		
-		addInkToPrinterButton.setEnabled(false);
-		addPaperToPrinterButton.setEnabled(false);
+//		addInkToPrinterButton.setEnabled(false);
+//		addPaperToPrinterButton.setEnabled(false);
 		approveNoBagging.setEnabled(false);
 		approveAddedBagsButton.setEnabled(cusAddedBags);
 		startUpButton.setEnabled(true);
@@ -199,22 +199,26 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	@Override
 	public void addPaperState() {
 		approveAddedBagsButton.setEnabled(false);
-		addInkToPrinterButton.setEnabled(false);
-		addPaperToPrinterButton.setEnabled(true);
+//		addInkToPrinterButton.setEnabled(false);
+//		addPaperToPrinterButton.setEnabled(true);
+		
 	}
 
 	@Override
 	public void addInkState() {
 		approveAddedBagsButton.setEnabled(false);
-		addInkToPrinterButton.setEnabled(true);
-		addPaperToPrinterButton.setEnabled(false);	
+//		addInkToPrinterButton.setEnabled(true);
+//		addPaperToPrinterButton.setEnabled(false);
+		
 	}
 
 	@Override
 	public void printerNotLowState() {
 		approveAddedBagsButton.setEnabled(false);
-		addInkToPrinterButton.setEnabled(false);
-		addPaperToPrinterButton.setEnabled(false);	
+//		addInkToPrinterButton.setEnabled(false);
+//		addPaperToPrinterButton.setEnabled(false);
+		inkLabel.setText("Ink status");
+		paperLabel.setText("Paper status");
 	}
 
 	@Override
@@ -226,16 +230,16 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	@Override
 	public void noBagRequest() {
 		approveAddedBagsButton.setEnabled(false);
-		addInkToPrinterButton.setEnabled(false);
-		addPaperToPrinterButton.setEnabled(false);	
+//		addInkToPrinterButton.setEnabled(false);
+//		addPaperToPrinterButton.setEnabled(false);	
 		approveNoBagging.setEnabled(true);
 	}
 
 	@Override
 	public void initialState() {
 		approveAddedBagsButton.setEnabled(false);
-		addInkToPrinterButton.setEnabled(false);
-		addPaperToPrinterButton.setEnabled(false);	
+//		addInkToPrinterButton.setEnabled(false);
+//		addPaperToPrinterButton.setEnabled(false);	
 		approveNoBagging.setEnabled(false);
 		weightDescrepancyMssg.setText("");
 	}
@@ -259,29 +263,29 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 
 
 	@Override
-	public void lowInk(ReceiptControl rc, String message) {
-		// TODO Auto-generated method stub
+	public void lowInk(AttendantControl ac, String message) {
 		inkLabel.setText(message);
 		inkLabel.setBackground(GUI_Color_Palette.RED_BROWN);
 	}
 
 
 	@Override
-	public void lowPaper(ReceiptControl rc, String dateTime) {
-		// TODO Auto-generated method stub
-		
+	public void lowPaper(AttendantControl ac, String message) {
+		paperLabel.setText(message);
+		paperLabel.setBackground(GUI_Color_Palette.RED_BROWN);
 	}
 
 
 	@Override
-	public void outOfInk(ReceiptControl rc, String message) {
-		// TODO Auto-generated method stub
-		
+	public void outOfInk(AttendantControl ac, String message) {
+		inkLabel.setText(message);
+		inkLabel.setBackground(GUI_Color_Palette.RED_BROWN);	
 	}
 
 
 	@Override
-	public void outOfPaper(ReceiptControl rc, String message) {
-		// TODO Auto-generated method stub
+	public void outOfPaper(AttendantControl ac, String message) {
+		paperLabel.setText(message);
+		paperLabel.setBackground(GUI_Color_Palette.RED_BROWN);
 	}
 }
