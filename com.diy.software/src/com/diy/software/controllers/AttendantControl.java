@@ -3,9 +3,6 @@ package com.diy.software.controllers;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Currency;
-import java.util.List;
-
 import com.diy.software.listeners.AttendantControlListener;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
@@ -13,15 +10,12 @@ import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.abagnale.IReceiptPrinter;
 import com.jimmyselectronics.abagnale.ReceiptPrinterListener;
 import com.unitedbankingservices.TooMuchCashException;
-import com.unitedbankingservices.banknote.Banknote;
-
 import ca.ucalgary.seng300.simulation.SimulationException;
 
 public class AttendantControl implements ActionListener, ReceiptPrinterListener {
 
 	private StationControl sc;
 	private ArrayList<AttendantControlListener> listeners;
-	private Currency currency;
 	String attendantNotifications;
 
 	public AttendantControl(StationControl sc) {
@@ -100,60 +94,9 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 * 			Too much cash is loaded onto the storage
 	 */
 	public void adjustBanknotesForChange() throws SimulationException, TooMuchCashException {
-		//Maybe change amount to add??
-		int totalOnes = 20;
-		int totalFives = 20;
-		int totalTens = 20;
-		int totalTwenties = 20;
-		int totalFifties = 20;
-		int totalHundreds = 20;
-		
-		sc.getCashControl().disablePayments();
-		List<Banknote> unloadedBanknotes = sc.station.banknoteStorage.unload();
-		sc.getCashControl().banknotesUnloaded(sc.station.banknoteStorage);	
-		
-		for(Banknote banknote : unloadedBanknotes) {
-			if (banknote.getValue() == 1) {
-				totalOnes--;
-			}
-			if (banknote.getValue() == 5) {
-				totalFives--;
-			}
-			if (banknote.getValue() == 10) {
-				totalTens--;
-			}
-			if (banknote.getValue() == 20) {
-				totalTwenties--;
-			}
-			if (banknote.getValue() == 50) {
-				totalFifties--;
-			}
-			if (banknote.getValue() == 100) {
-				totalHundreds--;
-			}
-		}
-		
-		for (int i = 0; i < totalOnes; i++) {
-			sc.station.banknoteStorage.load(new Banknote(currency, 1));
-		}
-		for (int i = 0; i < totalFives; i++) {
-			sc.station.banknoteStorage.load(new Banknote(currency, 5));
-		}
-		for (int i = 0; i < totalTens; i++) {
-			sc.station.banknoteStorage.load(new Banknote(currency, 10));
-		}
-		for (int i = 0; i < totalTwenties; i++) {
-			sc.station.banknoteStorage.load(new Banknote(currency, 20));
-		}
-		for (int i = 0; i < totalFifties; i++) {
-			sc.station.banknoteStorage.load(new Banknote(currency, 50));
-		}
-		for(int i = 0; i < totalHundreds; i++) {
-			sc.station.banknoteStorage.load(new Banknote(currency, 100));
-		}
-				
-		sc.getCashControl().banknotesLoaded(sc.station.banknoteStorage);
-		sc.getCashControl().enablePayments();
+		sc.getCashControl().adjustBanknotesForChange();
+		for (AttendantControlListener l : listeners)
+			l.adjustBanknotesInStorageState();
 	}
 
 	/**

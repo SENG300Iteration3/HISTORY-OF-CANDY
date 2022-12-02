@@ -427,6 +427,12 @@ public class TestAttendantControl {
 			ini = true;
 			
 		}
+
+		@Override
+		public void adjustBanknotesInStorageState() {
+			// TODO Auto-generated method stub
+			
+		}
     }
 
 

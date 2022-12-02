@@ -34,5 +34,10 @@ public interface AttendantControlListener {
 	 * returns the attendant station to initial starting state when stations have no issues
 	 */
 	public void initialState();
-		
+	
+	/*
+	 * allows attendant to load banknotes to storage when amount of banknotes is low
+	 */
+	public void adjustBanknotesInStorageState();
+	
 }
