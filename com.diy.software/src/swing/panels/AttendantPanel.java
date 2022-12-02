@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.BagsControl;
+import com.diy.software.controllers.ReceiptControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
@@ -150,5 +151,25 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 		addPaperToPrinterButton.setEnabled(false);	
 		approveNoBagButton.setEnabled(false);
 		weightDescrepancyMssg.setText("");
+	}
+
+	@Override
+	public void lowInk(AttendantControl ac, String message) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void lowPaper(AttendantControl ac, String message) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void outOfInk(AttendantControl ac, String message) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void outOfPaper(AttendantControl ac, String message) {
+		// TODO Auto-generated method stub
 	}
 }

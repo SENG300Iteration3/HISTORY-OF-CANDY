@@ -11,6 +11,7 @@ import javax.swing.JScrollPane;
 
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.BagsControl;
+import com.diy.software.controllers.ReceiptControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
@@ -33,7 +34,8 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	GUI_JButton addPaperToPrinterButton;
 	GUI_JButton approveNoBagging;
 	GUI_JButton startUpButton;
-	GUI_JLabel weightDisplayLabel, weightDescrepancyMssg, lowInkLabel, lowPaperLabel, adjustCoinLabel, adjustBanknoteLabel;
+	GUI_JLabel weightDisplayLabel, weightDescrepancyMssg, inkLabel, paperLabel, adjustCoinLabel, adjustBanknoteLabel;
+	GUI_JButton printReceiptButton;
 
 	private static String HeaderText = "Attendant Screen";
 
@@ -76,8 +78,8 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		
 		weightDescrepancyMssg = initalizeLabel("weightDiscrepancyMsg");
 		weightDisplayLabel = initalizeLabel("weightDisplayLabel");
-		lowInkLabel = initalizeLabel("Low ink");
-		lowPaperLabel = initalizeLabel("Low paper");
+		inkLabel = initalizeLabel("Ink status");
+		paperLabel = initalizeLabel("Paper status");
 		adjustCoinLabel = initalizeLabel("Adjust coin");
 		adjustBanknoteLabel = initalizeLabel("Adjust Banknote");
 		
@@ -87,8 +89,8 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		
 		notificationPanel.add(weightDescrepancyMssg);
 		notificationPanel.add(weightDisplayLabel);
-		notificationPanel.add(lowInkLabel);
-		notificationPanel.add(lowPaperLabel);
+		notificationPanel.add(inkLabel);
+		notificationPanel.add(paperLabel);
 		notificationPanel.add(adjustCoinLabel);
 		notificationPanel.add(adjustBanknoteLabel);
 		
@@ -117,6 +119,12 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		
 		this.addLayer(buttonScrollPane, 50);
 
+		this.printReceiptButton = makeCentralButton("PRINT RECEIPT", this.width - 200, 25);
+		
+		printReceiptButton.setActionCommand("printReceipt");
+		printReceiptButton.addActionListener(systemControl.getReceiptControl());
+		
+		this.addLayer(printReceiptButton, 0);
 		
 		addInkToPrinterButton.setEnabled(false);
 		addPaperToPrinterButton.setEnabled(false);
@@ -192,20 +200,24 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(false);
 		addPaperToPrinterButton.setEnabled(true);
+		
 	}
 
 	@Override
 	public void addInkState() {
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(true);
-		addPaperToPrinterButton.setEnabled(false);	
+		addPaperToPrinterButton.setEnabled(false);
+		
 	}
 
 	@Override
 	public void printerNotLowState() {
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(false);
-		addPaperToPrinterButton.setEnabled(false);	
+		addPaperToPrinterButton.setEnabled(false);
+		inkLabel.setText("Ink status");
+		paperLabel.setText("Paper status");
 	}
 
 	@Override
@@ -235,5 +247,33 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		StationControl sc = new StationControl();
 		AttendantStationPane ap = new AttendantStationPane(sc);
 		ap.openInNewJFrame();
+	}
+
+
+	@Override
+	public void lowInk(AttendantControl ac, String message) {
+		inkLabel.setText(message);
+		inkLabel.setBackground(GUI_Color_Palette.RED_BROWN);
+	}
+
+
+	@Override
+	public void lowPaper(AttendantControl ac, String message) {
+		paperLabel.setText(message);
+		paperLabel.setBackground(GUI_Color_Palette.RED_BROWN);
+	}
+
+
+	@Override
+	public void outOfInk(AttendantControl ac, String message) {
+		inkLabel.setText(message);
+		inkLabel.setBackground(GUI_Color_Palette.RED_BROWN);	
+	}
+
+
+	@Override
+	public void outOfPaper(AttendantControl ac, String message) {
+		paperLabel.setText(message);
+		paperLabel.setBackground(GUI_Color_Palette.RED_BROWN);
 	}
 }
