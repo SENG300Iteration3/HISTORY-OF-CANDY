@@ -57,6 +57,7 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 		this.pinPadScren = new PinPadScreen(sc);
 		this.paymentScreen = new PaymentScreen(sc);
 		this.membershipSceen = new MembershipScreen(sc);
+		this.catalogPanel = new CatalogPanel(sc);
 		this.currentPanel = new JPanel();
 		this.rooPanel = new JPanel();
 		this.rooPanel.add(currentPanel);

@@ -31,7 +31,9 @@ public class CatalogPanel extends JPanel implements ItemsControlListener{
 		String strProductName;
 
 		JButton button;
-	
+		
+		System.out.print("here");
+		
 		// Iterate through Inventory to Create Buttons
 		for (Entry<Product, Integer> entry : ProductDatabases.INVENTORY.entrySet()) {
 			product = entry.getKey();
