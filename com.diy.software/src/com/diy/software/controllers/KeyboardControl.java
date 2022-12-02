@@ -1,5 +1,7 @@
 package com.diy.software.controllers;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import com.diy.software.listeners.KeyboardControlListener;
@@ -8,8 +10,8 @@ import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.nightingale.Keyboard;
 import com.jimmyselectronics.nightingale.KeyboardListener;
 
-public class KeyboardControl implements KeyboardListener{
-	private StationControl sc;
+public class KeyboardControl implements ActionListener, KeyboardListener{
+	private AttendantControl ac;
 	private ArrayList<KeyboardControlListener> listeners;
 	private ArrayList<String> chars;
 	private String query;
@@ -17,10 +19,11 @@ public class KeyboardControl implements KeyboardListener{
 	private boolean shiftPressed;
 	private int pointer;
 	
-	public KeyboardControl(StationControl sc) {
-		this.sc = sc;
+	public KeyboardControl(AttendantControl ac) {
+		this.ac = ac;
+		this.listeners = new ArrayList<>();
 		chars = new ArrayList<String>();
-		capsLockOn = false; 			// assumes caps lock is initially off
+		capsLockOn = false; 				// assumes caps lock is initially off
 		shiftPressed = false;
 		pointer = -1;
 		query = "";
@@ -195,6 +198,13 @@ public class KeyboardControl implements KeyboardListener{
 		isShiftPressed(label);
 		for (KeyboardControlListener l : listeners)
 			l.awaitingKeyboardInput(this);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String k = e.getActionCommand();
+		System.out.println(k);
+		
 	}
 
 }

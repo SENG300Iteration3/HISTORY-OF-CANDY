@@ -6,28 +6,46 @@ import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 
+import com.diy.hardware.AttendantStation;
 import com.diy.software.listeners.AttendantControlListener;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.abagnale.IReceiptPrinter;
 import com.jimmyselectronics.abagnale.ReceiptPrinterListener;
+import com.jimmyselectronics.nightingale.Key;
+import com.jimmyselectronics.nightingale.KeyListener;
+import com.jimmyselectronics.nightingale.Keyboard;
+import com.jimmyselectronics.nightingale.KeyboardListener;
 import com.unitedbankingservices.TooMuchCashException;
 import com.unitedbankingservices.banknote.Banknote;
 import com.unitedbankingservices.banknote.BanknoteStorageUnit;
 
 import ca.ucalgary.seng300.simulation.SimulationException;
 
-public class AttendantControl implements ActionListener, ReceiptPrinterListener {
+public class AttendantControl implements ActionListener, ReceiptPrinterListener, KeyboardListener, KeyListener {
 
+	public AttendantStation station;
 	private StationControl sc;
 	private ArrayList<AttendantControlListener> listeners;
 	private Currency currency;
 	String attendantNotifications;
+	
+	private KeyboardControl kc;
+	private TextLookupControl tlc;
 
 	public AttendantControl(StationControl sc) {
 		this.sc = sc;
+		this.station = new AttendantStation();
 		this.listeners = new ArrayList<>();
+		
+		station.keyboard.register(this);
+		
+		station.plugIn();
+		station.turnOn();
+		
+		kc = new KeyboardControl(this);
+		tlc = new TextLookupControl(this, this.sc);
 	}
 
 	public void addListener(AttendantControlListener l) {
@@ -285,5 +303,29 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		for (AttendantControlListener l : listeners)
 			l.noBaggingRequestState();
 
+	}
+
+	@Override
+	public void pressed(Key k) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void released(Key k) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyPressed(Keyboard keyboard, String label) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyReleased(Keyboard keyboard, String label) {
+		// TODO Auto-generated method stub
+		
 	}
 }
