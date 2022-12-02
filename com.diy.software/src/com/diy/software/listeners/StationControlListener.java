@@ -16,6 +16,9 @@ public interface StationControlListener {
 	 */
 	public void systemControlLocked(StationControl systemControl, boolean isLocked);
 	
+
+	public void systemControlLocked(StationControl systemControl, boolean isLocked, String reason);
+	
 	/**
 	 * An event announcing a payment has been made
 	 * 
@@ -99,5 +102,17 @@ public interface StationControlListener {
 	 * 			The default SystemControl unit for the current instance
 	 */
 	public void triggerMembershipWorkflow(StationControl systemControl);
+	
+	/**
+	 * An event specifically for the main gui to perform a screen push to the purchase bag workflow\
+	 * 
+	 * @param systemControl
+	 * 			The default SystemControl unit for the current instance
+	 */
+	public void triggerPurchaseBagsWorkflow(StationControl systemControl);
+	
+	public void noBagsInStock(StationControl systemControl);
+	
+	public void notEnoughBagsInStock(StationControl systemControl, int numBag);
 	
 }

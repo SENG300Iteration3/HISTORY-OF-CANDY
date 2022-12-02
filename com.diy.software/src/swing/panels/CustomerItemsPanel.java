@@ -23,7 +23,7 @@ public class CustomerItemsPanel extends JPanel
 	private AttendantControl ac;
 	private BagsControl bc;
 	private boolean itemsAvailable;
-	JButton selectNextItemButton, mainScannerButton, handheldScannerButton, deselectCurrentItemButton, placeItemInBaggingAreaButton, removeItemInBaggingAreaButton;
+	JButton selectNextItemButton, mainScannerButton, handheldScannerButton, deselectCurrentItemButton, placeItemInBaggingAreaButton;
 	GridBagConstraints buttonGrid = new GridBagConstraints();
 	JLabel weightDescrepancyMessage;
 
@@ -59,10 +59,11 @@ public class CustomerItemsPanel extends JPanel
 		placeItemInBaggingAreaButton = new JButton("placeItemInBagginArea()");
 		placeItemInBaggingAreaButton.setActionCommand("bag");
 		placeItemInBaggingAreaButton.addActionListener(ic);
+
 		
-		removeItemInBaggingAreaButton = new JButton("Request no bagging");
-		removeItemInBaggingAreaButton.setActionCommand("removeFromScale");
-		removeItemInBaggingAreaButton.addActionListener(ic);
+
+//		removeItemInBaggingAreaButton.setActionCommand("removeFromScale");
+//		removeItemInBaggingAreaButton.addActionListener(ic);
 
 		this.setLayout(new GridBagLayout());
 
@@ -82,11 +83,8 @@ public class CustomerItemsPanel extends JPanel
 		buttonGrid.gridx = 4;
 		this.add(placeItemInBaggingAreaButton, buttonGrid);
 		
-		buttonGrid.gridx = 5;
-		this.add(removeItemInBaggingAreaButton, buttonGrid);
-		
 		buttonGrid.gridy = 1;
-		buttonGrid.gridx = 6;
+		buttonGrid.gridx = 5;
 		this.add(weightDescrepancyMessage);
 		
 
@@ -98,7 +96,6 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
-		removeItemInBaggingAreaButton.setEnabled(false);
 	}
 
 	@Override
@@ -108,7 +105,6 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
-		removeItemInBaggingAreaButton.setEnabled(false);
 		weightDescrepancyMessage.setText("");
 	}
 
@@ -119,7 +115,6 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(true);
 		deselectCurrentItemButton.setEnabled(true);
 		placeItemInBaggingAreaButton.setEnabled(false);
-		removeItemInBaggingAreaButton.setEnabled(false);
 	}
 
 	@Override
@@ -129,7 +124,6 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(true);
-		removeItemInBaggingAreaButton.setEnabled(false);
 	}
 
 	@Override
@@ -151,7 +145,6 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
-		removeItemInBaggingAreaButton.setEnabled(false);
 	}
 
 	@Override
@@ -161,7 +154,6 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
-		removeItemInBaggingAreaButton.setEnabled(false);
 	}
 
 	@Override
@@ -171,7 +163,6 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
-		removeItemInBaggingAreaButton.setEnabled(false);
 	}
 
 	@Override
@@ -192,7 +183,6 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
-		removeItemInBaggingAreaButton.setEnabled(true);
 		weightDescrepancyMessage.setText(updateMessage);
 	}
 
@@ -223,9 +213,7 @@ public class CustomerItemsPanel extends JPanel
 	}
 
 	@Override
-	public void noBaggingRequestState() {
-		// TODO Auto-generated method stub
-		
+	public void noBagRequest() {
 	}
 
 	@Override
