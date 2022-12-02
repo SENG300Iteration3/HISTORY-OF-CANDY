@@ -24,6 +24,7 @@ import swing.screens.PinPadScreen;
 import swing.screens.PresentCardScreen;
 import swing.screens.PresentCashScreen;
 import swing.screens.PresentMembershipCardScreen;
+import swing.screens.PurchaseBagScreen;
 import swing.styling.Screen;
 
 public class CustomerStationPane implements StationControlListener, PaymentControlListener {
@@ -41,6 +42,7 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	private BlockedPromptScreen blockedPromptScreen;
 	private OkayPromptScreen okayPromptScreen;
 	private MembershipScreen membershipSceen;
+	private PurchaseBagScreen purchaseBagScreen;
 	private PresentMembershipCardScreen presentMembershipCardScreen;
 
 	public CustomerStationPane(StationControl sc) {
@@ -57,6 +59,7 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 		this.pinPadScren = new PinPadScreen(sc);
 		this.paymentScreen = new PaymentScreen(sc);
 		this.membershipSceen = new MembershipScreen(sc);
+		this.purchaseBagScreen = new PurchaseBagScreen(sc);
 		this.currentPanel = new JPanel();
 		this.rooPanel = new JPanel();
 		this.rooPanel.add(currentPanel);
@@ -210,6 +213,11 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	@Override
 	public void triggerMembershipWorkflow(StationControl systemControl) {
 		addScreenToStack(membershipSceen);
+	}
+
+	@Override
+	public void triggerPurchaseBagsWorkflow(StationControl systemControl) {
+		addScreenToStack(purchaseBagScreen);
 	}
 
 	
