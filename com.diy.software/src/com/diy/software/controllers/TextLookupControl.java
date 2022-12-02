@@ -1,20 +1,15 @@
 package com.diy.software.controllers;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Random;
 
 import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.PLUCodedProduct;
 import com.diy.hardware.external.ProductDatabases;
+import com.diy.software.listeners.KeyboardControlListener;
 import com.diy.software.listeners.TextLookupControlListener;
 import com.diy.software.util.CodedProduct;
 import com.diy.software.util.Tuple;
-import com.jimmyselectronics.AbstractDevice;
-import com.jimmyselectronics.AbstractDeviceListener;
-import com.jimmyselectronics.nightingale.Keyboard;
-import com.jimmyselectronics.nightingale.KeyboardListener;
 
 /* 
  * GUI TODO's:
@@ -32,11 +27,10 @@ import com.jimmyselectronics.nightingale.KeyboardListener;
  * 9. GUI is updated on customers station after "Add Item" is selected
  * 
  * Functionality TODO's:
- * 1. Add TextLookupControl object to attendant and finish functionality there
- * 2. Connect to keyboard through listeners
+ * 1. Connect to keyboard through listeners
  */
 
-public class TextLookupControl implements ActionListener, KeyboardListener{
+public class TextLookupControl implements KeyboardControlListener{
 	private AttendantControl ac;
 	private StationControl sc;
 	private ArrayList<TextLookupControlListener> listeners;
@@ -52,7 +46,6 @@ public class TextLookupControl implements ActionListener, KeyboardListener{
 	public TextLookupControl(AttendantControl ac, StationControl sc) {
 		this.ac = ac;
 		this.sc = sc;
-		ac.station.keyboard.register(this);
 		this.listeners = new ArrayList<>();
 		this.results = new ArrayList<>();
 	}
@@ -130,45 +123,21 @@ public class TextLookupControl implements ActionListener, KeyboardListener{
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void awaitingKeyboardInput(KeyboardControl kc) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void enabled(AbstractDevice<? extends AbstractDeviceListener> device) {
+	public void keyboardInputRecieved(KeyboardControl kc) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void disabled(AbstractDevice<? extends AbstractDeviceListener> device) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void turnedOn(AbstractDevice<? extends AbstractDeviceListener> device) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void turnedOff(AbstractDevice<? extends AbstractDeviceListener> device) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void keyPressed(Keyboard keyboard, String label) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void keyReleased(Keyboard keyboard, String label) {
-		// TODO Auto-generated method stub
-		
+	public void keyboardInputCompleted(KeyboardControl kc, String query) {
+		findProduct(query);
+		System.out.println(results);
 	}
 	
 }

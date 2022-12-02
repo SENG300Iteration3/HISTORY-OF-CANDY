@@ -22,10 +22,7 @@ import com.diy.software.controllers.KeyboardControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.controllers.TextLookupControl;
 import com.diy.software.listeners.KeyboardControlListener;
-import com.jimmyselectronics.AbstractDevice;
-import com.jimmyselectronics.AbstractDeviceListener;
-import com.jimmyselectronics.nightingale.Key;
-import com.jimmyselectronics.nightingale.KeyListener;
+import com.diy.software.listeners.TextLookupControlListener;
 
 import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Fonts;
@@ -34,7 +31,7 @@ import swing.styling.GUI_JLabel;
 import swing.styling.GUI_JPanel;
 import swing.styling.Screen;
 
-public class TextSearchScreen extends Screen implements KeyboardControlListener, KeyListener
+public class TextSearchScreen extends Screen implements KeyboardControlListener, TextLookupControlListener
 {
 	
 	private static String headerTitle = "Search Screen";
@@ -62,7 +59,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 		initailizeBackButton();
 		
 		kc = ac.getKeyboardControl();
-		searchbar.addActionListener(kc);
+		kc.addListener(this);
 	}
 	
 	private void initalizeSearchAreaBackground()
@@ -266,39 +263,33 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 	}
 
 	@Override
-	public void enabled(AbstractDevice<? extends AbstractDeviceListener> device) {
+	public void searchItemWasSelected(TextLookupControl tlc) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void disabled(AbstractDevice<? extends AbstractDeviceListener> device) {
+	public void searchQueryWasEntered(TextLookupControl tlc) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void turnedOn(AbstractDevice<? extends AbstractDeviceListener> device) {
+	public void resultWasChosen(TextLookupControl tlc) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void turnedOff(AbstractDevice<? extends AbstractDeviceListener> device) {
+	public void awaitsBaggingOfItem(TextLookupControl tlc) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void pressed(Key k) {
+	public void checkoutHasBeenUpdated(TextLookupControl tlc) {
 		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public void released(Key k) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	
 }
