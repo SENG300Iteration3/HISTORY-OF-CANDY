@@ -103,6 +103,7 @@ public interface StationControlListener {
 	 */
 	public void triggerMembershipWorkflow(StationControl systemControl);
 
+	void triggerPLUCodeWorkflow(StationControl systemControl);
 
 	void triggerBrowsingCatalog(StationControl systemControl);
 	

@@ -175,6 +175,10 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		this.memberBtn.setActionCommand("member");
 		this.memberBtn.addActionListener(itemsControl);
 
+
+		this.addItemByPLUBtn.setActionCommand("enter plu");
+		this.addItemByPLUBtn.addActionListener(itemsControl);
+
 		this.catalogBtn = makeButton("Browse Items", buttonPanel);
 		this.catalogBtn.setActionCommand("catalog");
 		this.catalogBtn.addActionListener(itemsControl);

@@ -6,11 +6,14 @@ import java.util.Currency;
 import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.DoItYourselfStation;
+import com.diy.hardware.PLUCodedProduct;
+import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.Product;
 import com.diy.hardware.external.CardIssuer;
 import com.diy.hardware.external.ProductDatabases;
 import com.diy.simulation.Customer;
 import com.diy.software.fakedata.FakeDataInitializer;
+import com.diy.software.listeners.PLUCodeControlListener;
 import com.diy.software.fakedata.GiftcardDatabase;
 import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.AbstractDevice;
@@ -45,7 +48,7 @@ import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
  *
  */
 public class StationControl
-		implements BarcodeScannerListener, ElectronicScaleListener, CardReaderListener, ReceiptPrinterListener {
+		implements BarcodeScannerListener, ElectronicScaleListener, CardReaderListener, ReceiptPrinterListener, PLUCodeControlListener {
 	public FakeDataInitializer fakeData;
 	private double expectedCheckoutWeight = 0.0;
 	private double bagWeight = 0.0;
@@ -70,10 +73,12 @@ public class StationControl
 	private boolean isLocked = false;
 	public String memberName;
 	public double weightOfItemScanned;
+	public double weightOfItemCodeEntered;
 	private boolean membershipInput = false;
 
 	private PinPadControl ppc;
 	private PaymentControl pc;
+	private PLUCodeControl pcc;
 
 	/**
 	 * Constructor for the SystemControl class. Instantiates an object of type
@@ -115,6 +120,7 @@ public class StationControl
 		wc = new WalletControl(this);
 		ppc = new PinPadControl(this);
 		pc = new PaymentControl(this);
+		pcc = new PLUCodeControl(this);
 	}
 
 	/**
@@ -125,6 +131,7 @@ public class StationControl
 		this.fakeData = fakeData;
 		this.fakeData.addCardData();
 		this.fakeData.addProductAndBarcodeData();
+		this.fakeData.initializePLUProducts();
 		this.fakeData.addFakeMembers();
 
 		// for (Card c: this.fakeData.getCards()) customer.wallet.cards.add(c);
@@ -134,6 +141,7 @@ public class StationControl
 			customer.wallet.cards.add(c);
 		for (Item i : this.fakeData.getItems())
 			customer.shoppingCart.add(i);
+			
 	}
 
 	/**
@@ -180,6 +188,10 @@ public class StationControl
 
 	public CashControl getCashControl() {
 		return cc;
+	}
+
+	public PLUCodeControl getPLUCodeControl() {
+		return pcc;
 	}
 	
 	private void fillStation() {
@@ -345,6 +357,11 @@ public class StationControl
 	public void startMembershipWorkflow() {
 		for (StationControlListener l : listeners)
 			l.triggerMembershipWorkflow(this);
+	}
+
+	public void startPLUCodeWorkflow() {
+		for (StationControlListener l : listeners)
+			l.triggerPLUCodeWorkflow(this);;
 	}
 	
 	public void startMembershipCardInput() {
@@ -555,7 +572,11 @@ public class StationControl
 
 	}
 
-	// FIXME: only barcoded products have barcodes, product only have price/weight
+	@Override
+	public void pluHasBeenUpdated(PLUCodeControl ppc, String pluCode) {
+
+	}
+
 	@Override
 	public void barcodeScanned(BarcodeScanner barcodeScanner, Barcode barcode) {
 		if (membershipInput) {
@@ -569,18 +590,35 @@ public class StationControl
 			Product product = findProduct(barcode);
 			checkInventory(product);
 			weightOfItemScanned = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
-			// Add the barcode to the ArrayList within itemControl
 			this.ic.addScannedItemToCheckoutList(barcode);
 			
 			// Set the expected weight in SystemControl
 			this.updateExpectedCheckoutWeight(weightOfItemScanned);
 			this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
-			
-			// Call method within SystemControl that handles the rest of the item scanning
+			// Call method within SystemControl that handles the rest of the item adding
 			// procedure
 			this.blockStation();
-			// Trigger the GUI to display "place the scanned item in the Bagging Area"
+			// Trigger the GUI to display "place the item in the Bagging Area"
 		}
+	}
+	
+	@Override
+	public void pluCodeEntered(PLUCodeControl ppc, String pluCode) {
+		PriceLookUpCode code = new PriceLookUpCode(pluCode);
+		Product product = findProduct(code);
+		checkInventory(product);
+
+		// Index 0 should be the current item
+		weightOfItemCodeEntered = customer.shoppingCart.get(0).getWeight();
+		// Add the barcode to the ArrayList within itemControl
+		this.ic.addItemByPLU(code);
+		// Set the expected weight in SystemControl
+		this.updateExpectedCheckoutWeight(weightOfItemCodeEntered);
+		this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemCodeEntered);
+		// Call method within SystemControl that handles the rest of the item scanning
+		// procedure
+		this.blockStation();
+		// Trigger the GUI to display "place the scanned item in the Bagging Area"
 	}
 	
 	private void checkInventory(Product product) {
@@ -602,6 +640,16 @@ public class StationControl
     		throw new NullPointerSimulationException();
     	}
     }
+	private PLUCodedProduct findProduct(PriceLookUpCode code) throws NullPointerSimulationException {
+		if(ProductDatabases.PLU_PRODUCT_DATABASE.containsKey(code)) {
+					return ProductDatabases.PLU_PRODUCT_DATABASE.get(code);        
+			}
+		else {
+			// TODO: Inform customer station
+			System.out.println("Cannot find the product. Please try again or ask for assistant!");
+			throw new NullPointerSimulationException();
+		}
+	}
 	
 	public void ItemApprovedToNotBag() {
 		this.updateExpectedCheckoutWeight(-weightOfItemScanned);
@@ -654,7 +702,7 @@ public class StationControl
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	public boolean isMembershipInput() {
 		return membershipInput;
 	}
