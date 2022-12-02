@@ -29,7 +29,7 @@ public class TestPLU {
     controller = new StationControl();
 
     fakeData.addProductAndBarcodeData();
-    fakeData.initializePLUProducts();
+    fakeData.addPLUCodedProduct();
   }
 
   @Test
