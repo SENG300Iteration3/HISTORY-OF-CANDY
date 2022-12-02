@@ -30,6 +30,7 @@ import com.jimmyselectronics.opeechee.Card;
 import com.jimmyselectronics.opeechee.Card.CardData;
 import com.jimmyselectronics.opeechee.CardReader;
 import com.jimmyselectronics.opeechee.CardReaderListener;
+import com.jimmyselectronics.svenden.ReusableBag;
 import com.jimmyselectronics.virgilio.ElectronicScale;
 import com.jimmyselectronics.virgilio.ElectronicScaleListener;
 import com.unitedbankingservices.TooMuchCashException;
@@ -68,16 +69,17 @@ public class StationControl
 	private AttendantControl ac;
 	private WalletControl wc;
 	private MembershipControl mc;
+	private BagDispenserControl bdc;
 	private CashControl cc;
+	private PinPadControl ppc;
+	private PaymentControl pc;
 
 	private boolean isLocked = false;
 	public String memberName;
 	public double weightOfItemScanned;
 	public double weightOfItemCodeEntered;
 	private boolean membershipInput = false;
-
-	private PinPadControl ppc;
-	private PaymentControl pc;
+	private int bagInStock;
 	private PLUCodeControl pcc;
 
 	/**
@@ -94,6 +96,7 @@ public class StationControl
 		bc = new BagsControl(this);
 		mc = new MembershipControl(this);
 		cc = new CashControl(this);
+		bdc = new BagDispenserControl(this);
 		ac = new AttendantControl(this);
 
 		station.printer.register(this);
@@ -101,11 +104,19 @@ public class StationControl
 		station.handheldScanner.register(this);
 		station.baggingArea.register(this);
 		station.cardReader.register(this);
-
+		
 		station.plugIn();
 		station.turnOn();
 		
 		fillStation();
+		
+		/*
+		 * loads maximum number of bags to the reusable bag dispenser 
+		 */
+		station.reusableBagDispenser.plugIn();
+		station.reusableBagDispenser.turnOn();
+		bagInStock = station.reusableBagDispenser.getCapacity();
+		loadBags();
 
 		/*
 		 * simulates what the printer has in it before the printing starts
@@ -176,6 +187,10 @@ public class StationControl
 	public MembershipControl getMembershipControl() {
 		return mc;
 	}
+	
+	public BagDispenserControl getBagDispenserControl() {
+		return bdc;
+	}
 
 	public PinPadControl getPinPadControl() {
 		return ppc;
@@ -188,9 +203,15 @@ public class StationControl
 	public CashControl getCashControl() {
 		return cc;
 	}
+	
+	private void loadBags() {
+		try {
+			for(int i = 0; i < bagInStock; i++) {
+				ReusableBag aBag = new ReusableBag();
+				station.reusableBagDispenser.load(aBag);
+			}
 
-	public PLUCodeControl getPLUCodeControl() {
-		return pcc;
+		}catch(OverloadException e) {}
 	}
 	
 	private void fillStation() {
@@ -371,6 +392,11 @@ public class StationControl
 		
 	}
 	
+	public void startPurchaseBagsWorkflow() {
+		for (StationControlListener l : listeners)
+			l.triggerPurchaseBagsWorkflow(this);
+	}
+	
 	public void startCatalogWorkflow() {
 		for (StationControlListener l : listeners)
 			l.triggerBrowsingCatalog(this);
@@ -418,6 +444,7 @@ public class StationControl
 	}
 
 	@Override
+	// <<<<<<< HEAD
 	/*
 	 * Reads the data from the card and pays for the transaction using the card. On
 	 * success, the amount owed will be updated to 0.0 and the hold placed on the
@@ -573,7 +600,6 @@ public class StationControl
 
 	@Override
 	public void pluHasBeenUpdated(PLUCodeControl ppc, String pluCode) {
-
 	}
 
 	@Override
@@ -603,23 +629,34 @@ public class StationControl
 	
 	@Override
 	public void pluCodeEntered(PLUCodeControl ppc, String pluCode) {
-		PriceLookUpCode code = new PriceLookUpCode(pluCode);
-		Product product = findProduct(code);
-		checkInventory(product);
+		try {
+			PriceLookUpCode code = new PriceLookUpCode(pluCode);
+			System.out.println(pluCode);
+			Product product = findProduct(code);
 
-		// Index 0 should be the current item
-		weightOfItemCodeEntered = customer.shoppingCart.get(0).getWeight();
-		// Add the barcode to the ArrayList within itemControl
-		this.ic.addItemByPLU(code);
-		// Set the expected weight in SystemControl
-		this.updateExpectedCheckoutWeight(weightOfItemCodeEntered);
-		this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemCodeEntered);
-		// Call method within SystemControl that handles the rest of the item scanning
-		// procedure
-		this.blockStation();
-		// Trigger the GUI to display "place the scanned item in the Bagging Area"
+			checkInventory(product);
+
+			// Add the barcode to the ArrayList within itemControl
+			boolean check = this.ic.addItemByPLU(code);
+			// Not sure if this is supposed to be called 
+			// this.updateExpectedCheckoutWeight(weightOfItemCodeEntered);
+			// this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemCodeEntered);
+			// Call method within SystemControl that handles the rest of the item scanning
+			// procedure
+			if(check) {
+				// Trigger the GUI to display "place the scanned item in the Bagging Area"
+				this.blockStation();
+			}
+		} catch(NullPointerSimulationException e) {
+			System.err.println(e.getMessage());
+		}
+		
+
+		
+		
+		
 	}
-	
+
 	private void checkInventory(Product product) {
 		if(ProductDatabases.INVENTORY.containsKey(product) && ProductDatabases.INVENTORY.get(product) >= 1) {
 			ProductDatabases.INVENTORY.put(product, ProductDatabases.INVENTORY.get(product)-1); //updates INVENTORY with new total
@@ -639,6 +676,7 @@ public class StationControl
     		throw new NullPointerSimulationException();
     	}
     }
+
 	private PLUCodedProduct findProduct(PriceLookUpCode code) throws NullPointerSimulationException {
 		if(ProductDatabases.PLU_PRODUCT_DATABASE.containsKey(code)) {
 					return ProductDatabases.PLU_PRODUCT_DATABASE.get(code);        
@@ -648,6 +686,16 @@ public class StationControl
 			System.out.println("Cannot find the product. Please try again or ask for assistant!");
 			throw new NullPointerSimulationException();
 		}
+	}
+	
+	public void addReusableBag(ReusableBag lastDispensedReusableBag) {
+		// ADD: update inventory
+
+		weightOfItemScanned = lastDispensedReusableBag.getWeight();
+		
+		// Set the expected weight in SystemControl
+		this.updateExpectedCheckoutWeight(weightOfItemScanned);
+		this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
 	}
 	
 	public void ItemApprovedToNotBag() {
@@ -665,6 +713,10 @@ public class StationControl
 	 */
 	public boolean expectedWeightMatchesActualWeight(double actualWeight) {
 		return (this.getExpectedWeight() == actualWeight + bagWeight);
+	}
+	
+	public int getBagInStock() {
+		return bagInStock;
 	}
 
 	@Override
@@ -701,8 +753,25 @@ public class StationControl
 		// TODO Auto-generated method stub
 
 	}
-
+	
 	public boolean isMembershipInput() {
 		return membershipInput;
+	}
+	
+	
+	public void notifyNoBagsInStock() {
+		for (StationControlListener l: listeners) {
+			l.noBagsInStock(this);
+		}
+	}
+	
+	public void notifyNotEnoughBagsInStock(int numBag) {
+		for (StationControlListener l: listeners) {
+			l.notEnoughBagsInStock(this, numBag);
+		}
+	}
+
+	public PLUCodeControl getPLUCodeControl() {
+		return pcc;
 	}
 }

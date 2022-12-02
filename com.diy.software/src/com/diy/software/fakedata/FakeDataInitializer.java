@@ -11,7 +11,6 @@ import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.PLUCodedItem;
 import com.diy.hardware.PLUCodedProduct;
 import com.diy.hardware.PriceLookUpCode;
-import com.diy.hardware.Product;
 import com.diy.hardware.external.CardIssuer;
 import com.diy.hardware.external.ProductDatabases;
 import com.jimmyselectronics.Item;
@@ -25,9 +24,11 @@ public class FakeDataInitializer {
 	private Barcode barcode1, barcode2, barcode3, barcode4;
 	private BarcodedItem item1, item2, item3, item4;
 	private BarcodedProduct bp1, bp2, bp3, bp4;
-	private PriceLookUpCode code1, code2, code3, code4;
-	private PLUCodedItem pitem1, pitem2, pitem3, pitem4;
-	private PLUCodedProduct pp1, pp2, pp3, pp4;
+	
+	private PriceLookUpCode code1, code2, code3, code4, reusableBagCode;
+	private PLUCodedProduct pp1, pp2, pp3, pp4, reusableBagProduct;
+	private PLUCodedItem pitem1, pitem2, pitem3, pitem4, reusableBagItem;
+	
 	private Card card1, card2, card3, card4, card5;
 	private CardIssuer fakebank;
 	private final Double AMOUNT_AVAILABLE = 1000.0;
@@ -53,21 +54,8 @@ public class FakeDataInitializer {
 		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode4, bp4);
 
 	}
-
-	/**
-	 * (NOTE: PLU Codes should only be for produce products but its for every product right now!)
-	 * Assigns PLU Codes to every BarcodedProduct in the database, and
-	 * populates the PLU_PRODUCT_DATABASE with said PLU code and PLUProduct.
-	 */
+	
 	public void initializePLUProducts() {
-		// Right now the generated PLU Code should be the same as the Barcode
-		// for(Product product : ProductDatabases.INVENTORY.keySet()) {
-		// 	BarcodedProduct bproduct = (BarcodedProduct)product;
-		// 	PriceLookUpCode code = new PriceLookUpCode(bproduct.getBarcode().toString());
-		// 	PLUCodedProduct pluProduct = new PLUCodedProduct(code, bproduct.getDescription(), bproduct.getPrice());
-		// 	ProductDatabases.PLU_PRODUCT_DATABASE.put(code, pluProduct);
-		// }
-
 		code1 = new PriceLookUpCode("1234");
 		pitem1 = new PLUCodedItem(code1, 223);
 		pp1 = new PLUCodedProduct(code1, "Green Apples", 8);
@@ -83,6 +71,10 @@ public class FakeDataInitializer {
 		code4 = new PriceLookUpCode("23456");
 		pitem4 = new PLUCodedItem(code4, 140);
 		pp4 = new PLUCodedProduct(code4, "Oranges", 7);
+
+		reusableBagCode = new PriceLookUpCode("0000");
+		reusableBagItem = new PLUCodedItem(code1, 1);
+		reusableBagProduct = new PLUCodedProduct(code1, "Reusable bag", 2);
 
 		ProductDatabases.PLU_PRODUCT_DATABASE.put(code1, pp1);
 		ProductDatabases.PLU_PRODUCT_DATABASE.put(code2, pp2);
@@ -125,13 +117,16 @@ public class FakeDataInitializer {
 		return new Barcode[] {barcode1, barcode2, barcode3, barcode4};
 	}
 
-	public PriceLookUpCode[] getPLUCodes() {
-		return new PriceLookUpCode[] {code1, code2, code3, code4};
+	public BarcodedItem[] getItems() {
+		return new BarcodedItem[] {item1, item2, item3, item4};
 	}
 	
+	public PriceLookUpCode[] getPLUCode() {
+		return new PriceLookUpCode[] {code1, code2, code3, code4, reusableBagCode};
+	}
 	
-	public Item[] getItems() {
-		return new Item[]{item1, item2, item3, item4, pitem1};
+	public double getReusableBagPrice() {
+		return ProductDatabases.PLU_PRODUCT_DATABASE.get(reusableBagCode).getPrice();
 	}
 	
 	public Card[] getCards() {

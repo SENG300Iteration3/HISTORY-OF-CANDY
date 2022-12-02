@@ -18,11 +18,13 @@ import swing.panels.CatalogPanel;
 import swing.screens.AddItemsScreen;
 import swing.screens.BlockedPromptScreen;
 import swing.screens.MembershipScreen;
+import swing.screens.NotEnoughBagsScreen;
 import swing.screens.OkayPromptScreen;
 import swing.screens.PaymentScreen;
 import swing.screens.PinPadScreen;
 import swing.screens.PresentCardScreen;
 import swing.screens.PresentMembershipCardScreen;
+import swing.screens.PurchaseBagScreen;
 import swing.screens.PresentGiftCardOrCashScreen;
 import swing.styling.Screen;
 
@@ -41,6 +43,7 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	private BlockedPromptScreen blockedPromptScreen;
 	private OkayPromptScreen okayPromptScreen;
 	private MembershipScreen membershipSceen;
+	private PurchaseBagScreen purchaseBagScreen;
 	private PresentMembershipCardScreen presentMembershipCardScreen;
 	private PLUCodeScreen pluCodeScreen;
 	private CatalogPanel catalogPanel;
@@ -60,6 +63,7 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 		this.paymentScreen = new PaymentScreen(sc);
 		this.membershipSceen = new MembershipScreen(sc);
 		this.pluCodeScreen = new PLUCodeScreen(sc);
+		this.purchaseBagScreen = new PurchaseBagScreen(sc);
 
 		this.catalogPanel = new CatalogPanel(sc);
 		this.currentPanel = new JPanel();
@@ -222,13 +226,33 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	}
 
 	@Override
-	public void triggerPLUCodeWorkflow(StationControl systemControl) {
-		addScreenToStack(pluCodeScreen);
+	public void triggerPurchaseBagsWorkflow(StationControl systemControl) {
+		addScreenToStack(purchaseBagScreen);
+	}
+
+	@Override
+	public void noBagsInStock(StationControl systemControl) {
+		okayPromptScreen = new OkayPromptScreen(systemControl, "No Bags In Stock. Please Ask Attendant For Assistance.", false);
+		addPanel(okayPromptScreen.getRootPanel());
+		
+	}
+
+	@Override
+	public void notEnoughBagsInStock(StationControl systemControl, int numBag) {
+		NotEnoughBagsScreen screen = new NotEnoughBagsScreen(systemControl, numBag);
+		addPanel(screen.getRootPanel());
+		
 	}
 
 	
 	public void triggerBrowsingCatalog(StationControl systemControl) {
 		addPanelToStack(catalogPanel);
+		
+	}
+
+	@Override
+	public void triggerPLUCodeWorkflow(StationControl systemControl) {
+		addScreenToStack(pluCodeScreen);
 		
 	}
 }

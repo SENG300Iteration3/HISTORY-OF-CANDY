@@ -3,6 +3,8 @@ package com.diy.software.controllers;
 import com.diy.hardware.PriceLookUpCode;
 import com.diy.software.listeners.PLUCodeControlListener;
 
+import ca.ucalgary.seng300.simulation.InvalidArgumentSimulationException;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ public class PLUCodeControl implements ActionListener {
 		this.sc = sc;
 		this.ic = sc.getItemsControl();
 		this.listeners = new ArrayList<>();
+		this.addListener(sc);
 	}
 	
 	public void addListener(PLUCodeControlListener l) {
@@ -50,11 +53,16 @@ public class PLUCodeControl implements ActionListener {
 					l.pluHasBeenUpdated(this, pluCode);
 				break;
 			case "submit":
-				PriceLookUpCode code = new PriceLookUpCode(pluCode);
-				for (PLUCodeControlListener l: listeners)
-					l.pluCodeEntered(this, pluCode);
-				pluCode = "";
-				break;
+				try {
+					PriceLookUpCode code = new PriceLookUpCode(pluCode);
+					for (PLUCodeControlListener l: listeners)
+						l.pluCodeEntered(this, pluCode);
+					pluCode = "";
+					break;
+				} catch(InvalidArgumentSimulationException exc) {
+					System.err.println(exc.getMessage());
+					break;
+				}
 			default:
 				break;
 			}
