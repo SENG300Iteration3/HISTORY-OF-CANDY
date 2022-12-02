@@ -44,7 +44,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 
 	protected GUI_JButton purchaseBagsBtn;
 	protected GUI_JButton addItemByPLUBtn;
-	protected GUI_JButton searchCatalogueBtn;
+	protected GUI_JButton catalogBtn;
 	
 	private AddOwnBagsPromptScreen ownBagsPromptScreen;
 
@@ -181,11 +181,13 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		this.memberBtn.setActionCommand("member");
 		this.memberBtn.addActionListener(itemsControl);
 
+
 		this.addItemByPLUBtn.setActionCommand("enter plu");
 		this.addItemByPLUBtn.addActionListener(itemsControl);
 
-		this.searchCatalogueBtn = makeButton("Browse Items", buttonPanel);
-
+		this.catalogBtn = makeButton("Browse Items", buttonPanel);
+		this.catalogBtn.setActionCommand("catalog");
+		this.catalogBtn.addActionListener(itemsControl);
 
 	}
 

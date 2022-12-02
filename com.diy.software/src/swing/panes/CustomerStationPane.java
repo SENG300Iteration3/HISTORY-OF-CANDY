@@ -14,6 +14,7 @@ import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.opeechee.Card.CardData;
 
 import swing.screens.*;
+import swing.panels.CatalogPanel;
 import swing.screens.AddItemsScreen;
 import swing.screens.BlockedPromptScreen;
 import swing.screens.MembershipScreen;
@@ -45,6 +46,8 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	private PurchaseBagScreen purchaseBagScreen;
 	private PresentMembershipCardScreen presentMembershipCardScreen;
 	private PLUCodeScreen pluCodeScreen;
+	private CatalogPanel catalogPanel;
+	
 
 	public CustomerStationPane(StationControl sc) {
 		this.sc = sc;
@@ -61,6 +64,8 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 		this.membershipSceen = new MembershipScreen(sc);
 		this.pluCodeScreen = new PLUCodeScreen(sc);
 		this.purchaseBagScreen = new PurchaseBagScreen(sc);
+
+		this.catalogPanel = new CatalogPanel(sc);
 		this.currentPanel = new JPanel();
 		this.rooPanel = new JPanel();
 		this.rooPanel.add(currentPanel);
@@ -240,4 +245,8 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	}
 
 	
+	public void triggerBrowsingCatalog(StationControl systemControl) {
+		addPanelToStack(catalogPanel);
+		
+	}
 }

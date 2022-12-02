@@ -13,6 +13,8 @@ import com.diy.hardware.external.CardIssuer;
 import com.diy.hardware.external.ProductDatabases;
 import com.diy.simulation.Customer;
 import com.diy.software.fakedata.FakeDataInitializer;
+import com.diy.software.listeners.PLUCodeControlListener;
+import com.diy.software.fakedata.GiftcardDatabase;
 import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
@@ -398,6 +400,11 @@ public class StationControl
 			l.triggerPurchaseBagsWorkflow(this);
 	}
 	
+	public void startCatalogWorkflow() {
+		for (StationControlListener l : listeners)
+			l.triggerBrowsingCatalog(this);
+	}
+	
 	public void cancelMembershipCardInput() {
 		membershipInput = false;
 		wc.membershipCardInputCanceled();
@@ -612,6 +619,7 @@ public class StationControl
 			checkInventory(product);
 			weightOfItemScanned = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
 			this.ic.addScannedItemToCheckoutList(barcode);
+			
 			// Set the expected weight in SystemControl
 			this.updateExpectedCheckoutWeight(weightOfItemScanned);
 			this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);

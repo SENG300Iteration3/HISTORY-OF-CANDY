@@ -116,4 +116,7 @@ public interface StationControlListener {
 	
 	public void notEnoughBagsInStock(StationControl systemControl, int numBag);
 	
+
+	void triggerBrowsingCatalog(StationControl systemControl);
+	
 }

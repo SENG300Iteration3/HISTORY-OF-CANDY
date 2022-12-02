@@ -50,11 +50,6 @@ public class FakeDataInitializer {
 		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode3, bp3);
 		bp4 = new BarcodedProduct(barcode4, "Cauliflower", 6, 550);
 		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode4, bp4);
-		
-		ProductDatabases.INVENTORY.put(bp1, 100);
-		ProductDatabases.INVENTORY.put(bp2, 100);
-		ProductDatabases.INVENTORY.put(bp3, 100);
-		ProductDatabases.INVENTORY.put(bp4, 100);
 
 	}
 	
