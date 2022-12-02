@@ -268,9 +268,11 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 	@Override
 	public void barcodeScanned(BarcodeScanner barcodeScanner, Barcode barcode) {
-		scanSuccess = true;
-		for (ItemsControlListener l : listeners)
-			l.awaitingItemToBePlacedInBaggingArea(this);
+		if (!sc.isMembershipInput()) {
+			scanSuccess = true;
+			for (ItemsControlListener l : listeners)
+				l.awaitingItemToBePlacedInBaggingArea(this);
+		}
 	}
 	
 	/**

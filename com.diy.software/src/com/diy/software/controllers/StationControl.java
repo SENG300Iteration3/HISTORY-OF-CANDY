@@ -87,6 +87,12 @@ public class StationControl
 		customer = new Customer();
 		station = new DoItYourselfStation();
 		customer.useStation(station);
+		
+		ic = new ItemsControl(this);
+		bc = new BagsControl(this);
+		mc = new MembershipControl(this);
+		cc = new CashControl(this);
+		ac = new AttendantControl(this);
 
 		station.printer.register(this);
 		station.mainScanner.register(this);
@@ -99,13 +105,6 @@ public class StationControl
 		station.turnOn();
 		
 		fillStation();
-
-		ic = new ItemsControl(this);
-		bc = new BagsControl(this);
-		mc = new MembershipControl(this);
-		bdc = new BagDispenserControl(this);
-		cc = new CashControl(this);
-		ac = new AttendantControl(this);
 		
 		/*
 		 * loads maximum number of bags to the reusable bag dispenser 
@@ -372,10 +371,11 @@ public class StationControl
 	}
 	
 	public void startMembershipCardInput() {
+		membershipInput = true;
 		for (StationControlListener l : listeners)
 			l.startMembershipCardInput(this);
 		wc.membershipCardInputEnabled();
-		membershipInput = true;
+		
 	}
 	
 	public void startPurchaseBagsWorkflow() {
@@ -384,8 +384,8 @@ public class StationControl
 	}
 	
 	public void cancelMembershipCardInput() {
-		wc.membershipCardInputCanceled();
 		membershipInput = false;
+		wc.membershipCardInputCanceled();
 	}
 
 	@Override
@@ -682,6 +682,9 @@ public class StationControl
 	@Override
 	public void bagsLoaded(ReusableBagDispenser dispenser, int count) {
 		// TODO Auto-generated method stub
-		
+  }
+	
+	public boolean isMembershipInput() {
+		return membershipInput;
 	}
 }
