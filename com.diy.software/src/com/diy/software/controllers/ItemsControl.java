@@ -150,32 +150,46 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 	}
 
-	public void addItemByPLU(PriceLookUpCode code) {
+	public boolean addItemByPLU(PriceLookUpCode code) {
 		try {
 			if(isPLU && expectedPLU != null) {
 				
 				if(!code.toString().equals(expectedPLU.toString())) {
 					System.err.println("PLU Code is not the right plu code for the selected item!");
+					return false;
 				} else {
 					baggingAreaTimerStart = System.currentTimeMillis();
 
 					PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(code);
 					
 					if(product != null) {
-						double price = (double)product.getPrice();
-						this.addItemToCheckoutList(new Tuple<String,Double>(product.getDescription(), price));
-						this.updateCheckoutTotal(price);
-						System.out.println("Added item to checkout list!");
+						System.out.println(this.scaleReceivedWeight + " Scale weight");
+
+						if(this.scaleReceivedWeight == 0.0) {
+							System.err.println("Please place the item on the scale before entering the code!!");
+							return false;
+						} else {
+							// price per kg
+							double price = (double)product.getPrice() * this.scaleExpectedWeight;
+							this.addItemToCheckoutList(new Tuple<String,Double>(product.getDescription(), price));
+							this.updateCheckoutTotal(price);
+						
+							System.out.println("Added item to checkout list!");
+							return true;
+						}
 					} else {
 						System.err.println("PLU Code does not correspond to a product in the database!");
+						return false;
 					}
 				}
 			} else {
 				System.err.println("Item selected does not have a plu code!");
+				return false;
 			}
 			
 		} catch(InvalidArgumentSimulationException e) {
 			System.err.println(e.getMessage());
+			return false;
 		}
 	}
 

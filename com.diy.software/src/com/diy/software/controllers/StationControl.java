@@ -544,7 +544,6 @@ public class StationControl
 
 	@Override
 	public void pluHasBeenUpdated(PLUCodeControl ppc, String pluCode) {
-
 	}
 
 	@Override
@@ -577,17 +576,19 @@ public class StationControl
 		Product product = findProduct(code);
 		checkInventory(product);
 
-		// Index 0 should be the current item
-		weightOfItemCodeEntered = customer.shoppingCart.get(0).getWeight();
 		// Add the barcode to the ArrayList within itemControl
-		this.ic.addItemByPLU(code);
-		// Set the expected weight in SystemControl
-		this.updateExpectedCheckoutWeight(weightOfItemCodeEntered);
-		this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemCodeEntered);
+		boolean check = this.ic.addItemByPLU(code);
+		// Not sure if this is supposed to be called 
+		// this.updateExpectedCheckoutWeight(weightOfItemCodeEntered);
+		// this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemCodeEntered);
 		// Call method within SystemControl that handles the rest of the item scanning
 		// procedure
-		this.blockStation();
-		// Trigger the GUI to display "place the scanned item in the Bagging Area"
+		if(check) {
+			// Trigger the GUI to display "place the scanned item in the Bagging Area"
+			this.blockStation();
+		}
+		
+		
 	}
 	
 	private void checkInventory(Product product) {
