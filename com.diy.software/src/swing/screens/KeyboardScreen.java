@@ -3,12 +3,13 @@ package swing.screens;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import com.diy.software.controllers.StationControl;
 import com.diy.software.util.StringOps;
@@ -23,49 +24,39 @@ import swing.styling.Screen;
 
 public class KeyboardScreen extends Screen {
 
-	private static final List<String> KEYS = Keyboard.WINDOWS_QWERTY;
-	private static final String[] END_OF_ROW = new String[] { "Delete", "Backspace", "\\ |", "Enter", "Shift (Right)", "Down Arrow"};
+	public static final List<String> KEYS = Keyboard.WINDOWS_QWERTY;
+	public static final String[] END_OF_ROW = new String[] { "Delete", "Backspace", "\\ |", "Enter", "Shift (Right)", "PgDn"};
+	public static final int NUM_ROWS = END_OF_ROW.length;
 	
-	private JLabel keyboardContainer;
+	private JPanel keyboardContainer;
 	private GUI_JLabel outputText;
 	private boolean capsLockOn = false;
 	
 	public KeyboardScreen(StationControl systemControl) {
 		super(systemControl);
-		this.keyboardContainer = new JLabel();
+		this.keyboardContainer = new JPanel(new GridLayout(0, 1, 0, 0));
+		this.rootPanel.add(keyboardContainer, BorderLayout.SOUTH);
 		
 		createOutputLabel();
 		
 		int curRow = 0;
 		int curCol = 0;
+		GUI_JButton keyBtn;
+		JPanel rowContainer = addKeyRow(curRow);
 		for (String k : KEYS) {
-			addKeyButton(k, curRow, curCol, 1, 1);
-			//System.out.println(k + " " + curRow);
+			k = k.replace(" Arrow", "").replace("FnLock ", "");
+			keyBtn = addKeyButton(k);
+			rowContainer.add(keyBtn);
+			
+			System.out.println(k + " " + curRow + " " + curCol);
+			
 			curCol++;
-			if (curRow < END_OF_ROW.length-1 && k.equals(END_OF_ROW[curRow])) {
+			if (curRow < NUM_ROWS-1 && k.equals(END_OF_ROW[curRow])) {
+				rowContainer = addKeyRow(curRow);
 				curRow++;
 				curCol = 0;
 			}
 		}
-		
-//		int curRow = 0;
-//		int curCol = 0;
-//		for (String k : KEYS) {
-//			double keyWidth = 1;
-//			int keyHeight = 1;
-//			if (curRow == 0) {
-//				if (k.equals("Esc")) {
-//					keyWidth = 2;
-//				}
-//				addKeyButton(k, curRow, curCol, 1, 1);
-//			}
-//
-//			curCol++;
-//			if (curRow < END_OF_ROW.length-1 && k.equals(END_OF_ROW[curRow])) {
-//				curRow++;
-//				curCol = 0;
-//			}
-//		}
 	}
 	
 	public void createOutputLabel() {
@@ -78,18 +69,22 @@ public class KeyboardScreen extends Screen {
 		this.rootPanel.add(outputText, BorderLayout.NORTH);
 	}
 	
-	public void addKeyButton(final String key, int row, int col, int keyWidth, int keyHeight) {
+	public JPanel addKeyRow(int row) {
+		JPanel rowContainer = new JPanel(new GridLayout(1,0,0,0));
+		
+		rowContainer.setOpaque(true);
+		//rowContainer.setBackground(Color.RED);
+		this.keyboardContainer.add(rowContainer);
+		
+		return rowContainer;
+	}
+	
+	public GUI_JButton addKeyButton(final String key) {
 		final GUI_JButton keyBtn = new GUI_JButton(key);
 		
 		keyBtn.setFont(GUI_Fonts.SMALL_TEXT);
-		
-		GridBagConstraints gc = new GridBagConstraints();
-		gc.gridy = row;
-		gc.gridx = col;
-		gc.gridwidth = keyWidth;
-		gc.gridheight = keyHeight;
-		gc.anchor = (col == 0) ? GridBagConstraints.WEST : GridBagConstraints.EAST;
-	    gc.fill = (col == 0) ? GridBagConstraints.BOTH : GridBagConstraints.HORIZONTAL;
+		keyBtn.setPreferredSize(new Dimension(50,50));
+		keyBtn.setMargin(new Insets(0, 0, 0, 0));
 		
 		// Alphanumeric key
 		if (key.length() == 1) {
@@ -145,7 +140,7 @@ public class KeyboardScreen extends Screen {
 			}
 		}
 		
-		this.centralPanel.add(keyBtn, gc);
+		return keyBtn;
 	}
 	
 	/* temp: for testing purposes */
