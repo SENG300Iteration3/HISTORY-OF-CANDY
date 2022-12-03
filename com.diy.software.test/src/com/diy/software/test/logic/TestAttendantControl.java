@@ -120,7 +120,6 @@ public class TestAttendantControl {
     	assertFalse(als.noBagging);
     }
     
-    
 //    @Test 
 //    public void testRemoveLastBaggedItemWithItem() {
 //    	ac.addListener(als);
@@ -304,6 +303,23 @@ public class TestAttendantControl {
     	ac.approveNoBaggingRequest();
     	assertTrue(als.noBagging);
     }
+
+	@Test
+	public void testActionPerformedPreventUse() {
+		ActionEvent e = new ActionEvent(this, 0, "prevent_use");
+		sc.listeners.add(scl);
+		ac.addListener(als);
+
+		assertFalse(sc.station.handheldScanner.isDisabled());
+		assertFalse(sc.station.cardReader.isDisabled());
+		assertFalse(als.getPreventUse());
+
+		ac.actionPerformed(e);
+
+		assertTrue(als.getPreventUse());
+		assertTrue(sc.station.handheldScanner.isDisabled());
+		assertTrue(sc.station.cardReader.isDisabled());
+	}
     
     @Test 
     public void testActionPerformedPermitUse() {
@@ -396,6 +412,7 @@ public class TestAttendantControl {
 
     public class AttendantListenerStub implements AttendantControlListener {
     	boolean attendantBags = false;
+		boolean attendantUse = false;
     	boolean lowState = false;
     	boolean addPaper = false;
     	boolean addInk = false;
@@ -408,10 +425,15 @@ public class TestAttendantControl {
     	public void attendantApprovedBags(AttendantControl ac) {
     		attendantBags = true;
     	}
-    	
-    	public boolean getAttendantBags() {
+
+		public boolean getAttendantBags() {
     		return attendantBags;
     	}
+
+		@Override
+		public void attendantPreventUse(AttendantControl ac) { attendantUse = true; }
+
+		public boolean getPreventUse() { return attendantUse; }
 
 		@Override
 		public void addPaperState() {
