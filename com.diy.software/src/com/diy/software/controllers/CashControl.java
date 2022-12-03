@@ -370,7 +370,7 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 			}
 		}
 		
-		if(totalReturned < change*100) {
+		if(totalReturned - change*100 < -0.01) {
 			//TODO: notify attendant that customer was shortchanged by ((double)totalReturned)/100.0
 		}
 		
