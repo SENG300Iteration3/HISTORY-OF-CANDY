@@ -46,6 +46,11 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 		coinsFull = false;
 		notesFull = false;
 	}
+	
+	public void resetState() {
+		coinsFull = false;
+		notesFull = false;
+	}
 
 	public void addListener(CashControlListener listener) {
 		listeners.add(listener);

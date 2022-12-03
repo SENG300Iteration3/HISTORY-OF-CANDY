@@ -164,6 +164,16 @@ public class StationControl
 		station.plugIn();
 		station.turnOn();
 	}
+	public void shutDown() {
+		ic.resetState();
+		ac.resetState(); // this method tells all listeners in ac to set themselves to their starting state. 
+						 // Might want to put it in startUp. 
+		rc.resetState();
+		cc.resetState();
+		
+		station.unplug();
+		station.turnOff();
+	}
 	
 	public ItemsControl getItemsControl() {
 		return ic;

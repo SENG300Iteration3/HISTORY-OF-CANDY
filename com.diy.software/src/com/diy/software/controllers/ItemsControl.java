@@ -81,6 +81,18 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			checkoutListTotal += amount;
 		refreshGui();
 	}
+	//	Resets the data in ItemControl. 
+	public void resetState() {
+		checkoutList = new ArrayList<>();
+		tempList = new ArrayList<>();
+		checkoutListTotal = 0.0;
+		scanSuccess = true;
+		weighSuccess = true;
+		userMessage = "";
+		baggingAreaTimerStart = -1; // Setting to -1 b/c I can't set this to null
+		baggingAreaTimerEnd = -1; // Not sure if gonna be problematic. 
+		refreshGui();
+	}
 	
 	public double getCheckoutTotal() {
 		return checkoutListTotal;

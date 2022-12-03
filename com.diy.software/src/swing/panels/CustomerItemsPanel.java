@@ -234,6 +234,12 @@ public class CustomerItemsPanel extends JPanel
 	@Override
 	public void initialState() {
 		// TODO Auto-generated method stub
+		selectNextItemButton.setEnabled(itemsAvailable);
+		mainScannerButton.setEnabled(false);
+		handheldScannerButton.setEnabled(false);
+		deselectCurrentItemButton.setEnabled(false);
+		placeItemInBaggingAreaButton.setEnabled(false);
+		takeReceiptButton.setEnabled(false);
 		
 	}
 

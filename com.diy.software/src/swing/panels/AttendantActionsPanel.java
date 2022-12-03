@@ -164,6 +164,9 @@ public class AttendantActionsPanel extends JPanel
 	@Override
 	public void initialState() {
 		// TODO Auto-generated method stub
+		inkButton.setEnabled(false);
+		paperButton.setEnabled(false);
+		bagDispenserButton.setEnabled(false);
 		
 	}
 
