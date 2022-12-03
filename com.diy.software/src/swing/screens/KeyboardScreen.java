@@ -4,20 +4,21 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+
+import javax.swing.JLabel;
 
 import com.diy.software.controllers.StationControl;
 import com.diy.software.util.StringOps;
 import com.jimmyselectronics.nightingale.Keyboard;
 
+import swing.styling.GUI_Color_Palette;
+import swing.styling.GUI_Constants;
 import swing.styling.GUI_Fonts;
 import swing.styling.GUI_JButton;
 import swing.styling.GUI_JLabel;
-import swing.styling.GUI_Color_Palette;
-import swing.styling.GUI_Constants;
 import swing.styling.Screen;
 
 public class KeyboardScreen extends Screen {
@@ -25,11 +26,13 @@ public class KeyboardScreen extends Screen {
 	private static final List<String> KEYS = Keyboard.WINDOWS_QWERTY;
 	private static final String[] END_OF_ROW = new String[] { "Delete", "Backspace", "\\ |", "Enter", "Shift (Right)", "Down Arrow"};
 	
+	private JLabel keyboardContainer;
 	private GUI_JLabel outputText;
 	private boolean capsLockOn = false;
 	
 	public KeyboardScreen(StationControl systemControl) {
 		super(systemControl);
+		this.keyboardContainer = new JLabel();
 		
 		createOutputLabel();
 		
@@ -87,7 +90,6 @@ public class KeyboardScreen extends Screen {
 		gc.gridheight = keyHeight;
 		gc.anchor = (col == 0) ? GridBagConstraints.WEST : GridBagConstraints.EAST;
 	    gc.fill = (col == 0) ? GridBagConstraints.BOTH : GridBagConstraints.HORIZONTAL;
-		gc.insets = new Insets(10, 0, 0, 0);
 		
 		// Alphanumeric key
 		if (key.length() == 1) {
