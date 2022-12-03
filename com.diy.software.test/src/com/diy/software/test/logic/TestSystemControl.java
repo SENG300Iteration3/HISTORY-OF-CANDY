@@ -3,10 +3,13 @@ package com.diy.software.test.logic;
 import com.diy.software.util.Tuple;
 import com.diy.software.controllers.ItemsControl;
 import com.diy.software.controllers.StationControl;
+import com.diy.software.controllers.WalletControl;
 import com.diy.software.fakedata.FakeDataInitializer;
+import com.diy.software.listeners.WalletControlListener;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.necchi.Numeral;
+import com.jimmyselectronics.opeechee.Card;
 
 import ca.powerutility.PowerGrid;
 
@@ -22,9 +25,11 @@ public class TestSystemControl {
 	private StationControl systemControl;
 	private FakeDataInitializer fdi;
 	private StubSystem stub;
+	private WalletStub wStub;
 	Barcode[] barcodes;
 	BarcodedItem[] items;
 	private ItemsControl ic;
+	private Card membershipCard;
 	
 	@Before
 	public void setup() {
@@ -34,12 +39,17 @@ public class TestSystemControl {
 		barcodes = fdi.getBarcodes();
 		items = fdi.getItems();
 		
+		membershipCard = fdi.getCards()[3];
+		
 		PowerGrid.engageUninterruptiblePowerSource();
 		
 		systemControl = new StationControl();
 		stub = new StubSystem();
 		systemControl.register(stub);
 		ic = systemControl.getItemsControl();
+		
+		wStub = new WalletStub();
+		systemControl.getWalletControl().addListener(wStub);
 	}
 	
 	
@@ -158,6 +168,37 @@ public class TestSystemControl {
 		//systemControl.unblockStation();
 	}*/
 	
+	@Test
+	public void testCardDataReadMembership() {
+		//TODO
+		//systemControl.cardDataRead(, null);
+	}
+	
+	@Test
+	public void testBarcodeScannedMembership() {
+		//TODO
+	}
+	
+	@Test
+	public void startMembershipCardInput() {
+		systemControl.startMembershipCardInput();
+		assertTrue(wStub.membershipCardInputEnabled);
+	}
+	
+	@Test
+	public void testCancelMembershipCardInput() {
+		wStub.membershipCardInputEnabled = true;
+		systemControl.cancelMembershipCardInput();
+		assertFalse(wStub.membershipCardInputEnabled);
+	}
+	
+	@Test
+	public void triggerMembershipCardInputFailScreen() {
+		wStub.membershipCardInputEnabled = true;
+		systemControl.triggerMembershipCardInputFailScreen("message");
+		assertFalse(wStub.membershipCardInputEnabled);
+	}
+	
 	@After
 	public void teardown() {
 		PowerGrid.reconnectToMains();
@@ -172,4 +213,66 @@ public class TestSystemControl {
 		}
 	}
 	
+	public class WalletStub implements WalletControlListener{
+
+		public boolean cardHasBeenSelected = false;
+		public boolean paymentsEnabled = false;
+		public boolean inserted = false;
+		public boolean membershipCardSelected = false;
+		public boolean membershipCardInputEnabled = false;
+
+		@Override
+		public void cardHasBeenSelected(WalletControl wc) {
+			cardHasBeenSelected = true;
+			
+		}
+
+		@Override
+		public void cardPaymentsEnabled(WalletControl wc) {
+			paymentsEnabled = true;
+			
+		}
+
+		@Override
+		public void cardPaymentsDisabled(WalletControl wc) {
+			paymentsEnabled = false;
+			
+		}
+
+		@Override
+		public void cardHasBeenInserted(WalletControl wc) {
+			
+		}
+
+		@Override
+		public void cardWithPinInserted(WalletControl wc) {
+			inserted = true;
+			
+		}
+
+		@Override
+		public void cardWithPinRemoved(WalletControl wc) {
+			inserted = false;
+			
+		}
+
+		@Override
+		public void membershipCardHasBeenSelected(WalletControl wc) {
+			membershipCardSelected = true;
+			
+		}
+
+		@Override
+		public void membershipCardInputEnabled(WalletControl wc) {
+			membershipCardInputEnabled = true;
+			
+		}
+
+		@Override
+		public void membershipCardInputCanceled(WalletControl walletControl) {
+			membershipCardInputEnabled = false;
+			
+		}
+		
+	}
 }

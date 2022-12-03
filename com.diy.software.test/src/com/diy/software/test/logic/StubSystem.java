@@ -10,6 +10,7 @@ public class StubSystem implements StationControlListener{
 	boolean paymentStatus = false;
 	boolean triggerPaymentWorkflow = false;
 	public String paymentType;
+	boolean membershipCardInput = false;
 	
 
 	@Override
@@ -80,19 +81,19 @@ public class StubSystem implements StationControlListener{
 
 	@Override
 	public void startMembershipCardInput(StationControl systemControl) {
-		// TODO Auto-generated method stub
+		membershipCardInput = true;
 		
 	}
 
 	@Override
 	public void membershipCardInputFinished(StationControl systemControl) {
-		// TODO Auto-generated method stub
+		membershipCardInput = false;
 		
 	}
 
 	@Override
 	public void membershipCardInputCanceled(StationControl systemControl, String reason) {
-		// TODO Auto-generated method stub
+		membershipCardInput = false;
 		
 	}
 
