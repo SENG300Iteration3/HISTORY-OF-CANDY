@@ -30,6 +30,8 @@ public class KeyboardScreen extends Screen {
 	
 	private JPanel keyboardContainer;
 	private GUI_JLabel outputText;
+	private GUI_JButton cancelBtn;
+	private GUI_JButton doneBtn;
 	private boolean capsLockOn = false;
 	
 	public KeyboardScreen(StationControl systemControl) {
@@ -38,6 +40,11 @@ public class KeyboardScreen extends Screen {
 		this.rootPanel.add(keyboardContainer, BorderLayout.SOUTH);
 		
 		createOutputLabel();
+		
+		this.doneBtn = makeCentralButton("DONE", 300, 60);
+		this.addLayer(doneBtn, 0);
+		this.cancelBtn = makeCentralButton("CANCEL", 300, 60);
+		this.addLayer(cancelBtn, 10);
 		
 		int curRow = 0;
 		int curCol = 0;
