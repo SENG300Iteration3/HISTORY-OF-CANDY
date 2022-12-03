@@ -1,6 +1,7 @@
 package swing.screens;
 
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -296,7 +297,8 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 
 	@Override
 	public void productSubtotalUpdated(ItemsControl itemsControl) {
-		subtotalLabel.setText("Subtotal: $" + itemsControl.getCheckoutTotal());
+		DecimalFormat df = new DecimalFormat("0.00");
+		subtotalLabel.setText("Subtotal: $" + df.format(itemsControl.getCheckoutTotal()));
 	}
 
 	@Override
