@@ -122,6 +122,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 				case "permit_use":
 					attendantNotifications = ("Permitting use on station");
 					permitStationUse();
+					break;
 				default:
 					break;
 			}
