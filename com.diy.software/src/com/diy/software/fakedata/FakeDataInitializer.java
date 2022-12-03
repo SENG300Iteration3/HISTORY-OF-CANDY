@@ -18,6 +18,7 @@ import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.necchi.Numeral;
 import com.jimmyselectronics.opeechee.Card;
+import com.jimmyselectronics.svenden.ReusableBag;
 
 public class FakeDataInitializer {
 	
@@ -57,23 +58,23 @@ public class FakeDataInitializer {
 	
 	public void addPLUCodedProduct() {
 		code1 = new PriceLookUpCode("1234");
-		pitem1 = new PLUCodedItem(code1, 223);
+		pitem1 = new PLUCodedItem(code1, 2);
 		pp1 = new PLUCodedProduct(code1, "Green Apples", 8);
 		
 		code2 = new PriceLookUpCode("9876");
-		pitem2 = new PLUCodedItem(code2, 350);
+		pitem2 = new PLUCodedItem(code2, 3);
 		pp2 = new PLUCodedProduct(code2, "Broccoli", 5);
 
 		code3 = new PriceLookUpCode("11111");
-		pitem3 = new PLUCodedItem(code3, 85);
+		pitem3 = new PLUCodedItem(code3, 3);
 		pp3 = new PLUCodedProduct(code3, "Tomatoes", 4);
 
 		code4 = new PriceLookUpCode("23456");
-		pitem4 = new PLUCodedItem(code4, 140);
+		pitem4 = new PLUCodedItem(code4, 2);
 		pp4 = new PLUCodedProduct(code4, "Oranges", 7);
 
 		reusableBagCode = new PriceLookUpCode("0000");
-		reusableBagItem = new PLUCodedItem(code1, 1);
+		reusableBagItem = new PLUCodedItem(code1, (new ReusableBag()).getWeight());  // );
 		reusableBagProduct = new PLUCodedProduct(code1, "Reusable bag", 2);
 
 		ProductDatabases.PLU_PRODUCT_DATABASE.put(code1, pp1);
