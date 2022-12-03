@@ -81,6 +81,13 @@ public class FakeDataInitializer {
 		ProductDatabases.PLU_PRODUCT_DATABASE.put(code3, pp3);
 		ProductDatabases.PLU_PRODUCT_DATABASE.put(code4, pp4);
 		ProductDatabases.PLU_PRODUCT_DATABASE.put(reusableBagCode, reusableBagProduct);
+		
+		ProductDatabases.INVENTORY.put(pp1, 10);
+		ProductDatabases.INVENTORY.put(pp2, 10);
+		ProductDatabases.INVENTORY.put(pp3, 10);
+		ProductDatabases.INVENTORY.put(pp4, 10);
+		ProductDatabases.INVENTORY.put(reusableBagProduct, 10);
+		
 
 	}
 	
@@ -117,8 +124,9 @@ public class FakeDataInitializer {
 		return new Barcode[] {barcode1, barcode2, barcode3, barcode4};
 	}
 
-	public BarcodedItem[] getItems() {
-		return new BarcodedItem[] {item1, item2, item3, item4};
+	public Item[] getItems() {
+		return new Item[] {item1, item2, pitem3, pitem4};		//smaller list for testing
+//		return new Item[] {item1, item2, item3, item4, pitem1, pitem2, pitem3, pitem4};
 	}
 	
 	public PriceLookUpCode[] getPLUCode() {
