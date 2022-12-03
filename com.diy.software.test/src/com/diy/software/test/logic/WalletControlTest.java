@@ -21,6 +21,7 @@ import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodeScanner;
 import com.jimmyselectronics.necchi.BarcodeScannerListener;
+import com.jimmyselectronics.necchi.IllegalDigitException;
 import com.jimmyselectronics.opeechee.Card;
 import com.jimmyselectronics.opeechee.Card.CardData;
 import com.jimmyselectronics.opeechee.CardReader;
@@ -496,15 +497,21 @@ public class WalletControlTest {
 		assertTrue(mcStub.membershipInput);
 	}
 	
-	/*
-	 * TODO:
-	 *  - actionPerformed()
-	 *  	- "scan"
-	 *  		- scan successful/unsuccessful
-	 *  		- all digits/ not a digit
-	 *  - membershipCardInputEnabled()
-	 *  - membershipCardInputCanceled()
-	 */
+	@Test
+	public void testActionPerformedScanInvalidNumber() {
+		wc.addListener(wStub);
+		sc.customer.wallet.cards.add(new Card("MEMBERSHIP", "1234567890a", "Name", "000", "0000", false, true));
+		ActionEvent e = new ActionEvent(this, 0, "m");
+		wc.actionPerformed(e);
+		
+		sc.startMembershipCardInput();
+		
+		ActionEvent e2 = new ActionEvent(this, 0, "scan");
+		wc.actionPerformed(e2);
+		
+		assertNull(mcStub.memberName);
+		assertTrue(mcStub.membershipInput);
+	}
 	
 	
 	@Test
