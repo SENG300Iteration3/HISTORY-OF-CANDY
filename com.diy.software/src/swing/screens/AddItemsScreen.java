@@ -254,7 +254,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 	}
 
 	@Override
-	public void itemWasSelected(ItemsControl ic) {
+	public void barcodedItemWasSelected(ItemsControl ic) {
 		// TODO Auto-generated method stub
 
 	}
@@ -324,6 +324,18 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 
 	@Override
 	public void numberFieldHasBeenUpdated(BagDispenserControl bdp, String memberNumber) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void awaitingItemToBePlacedInScanningArea(ItemsControl itemsControl) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void plucodedItemWasSelected(ItemsControl ic) {
 		// TODO Auto-generated method stub
 		
 	}
