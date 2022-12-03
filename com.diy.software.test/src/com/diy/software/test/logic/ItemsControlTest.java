@@ -204,7 +204,7 @@ public class ItemsControlTest {
 		systemControl.customer.selectNextItem();
 		stub.bagging = true;
 		stub.selected = true;
-		itemsControl.placeItemOnScale();
+		itemsControl.placeItemOnBaggingArea();
 		assertFalse(stub.bagging);
 		assertFalse(stub.selected);
 	}
@@ -222,7 +222,7 @@ public class ItemsControlTest {
 		assertTrue(stub.bagging);
 		stub.bagging = true;
 		stub.selected = true;
-		itemsControl.placeItemOnScale();
+		itemsControl.placeItemOnBaggingArea();
 		assertFalse(stub.bagging);
 		assertFalse(stub.selected);
 	}
@@ -237,7 +237,7 @@ public class ItemsControlTest {
 		boolean loop = true;
 		
 		while (loop) {
-			itemsControl.placeItemOnScale();
+			itemsControl.placeItemOnBaggingArea();
 			try {
 				if (systemControl.station.baggingArea.getCurrentWeight() >= 1.123 && systemControl.station.baggingArea.getCurrentWeight() <= 1.123 + 0.1) {
 					itemsControl.removeLastBaggedItem();
@@ -264,7 +264,7 @@ public class ItemsControlTest {
 		systemControl.updateExpectedCheckoutWeight(100.0);
 		stub.removeItem = false;
 		while (!stub.removeItem) {
-			itemsControl.placeItemOnScale();
+			itemsControl.placeItemOnBaggingArea();
 			if (!stub.removeItem) {
 				systemControl.station.baggingArea.remove(heavyItem);
 				systemControl.customer.shoppingCart.add(heavyItem);
@@ -288,7 +288,7 @@ public class ItemsControlTest {
 		systemControl.customer.shoppingCart.add(itemsControl.getWrongBaggedItem());
 		systemControl.customer.selectNextItem();
 		
-		itemsControl.placeItemOnScale();
+		itemsControl.placeItemOnBaggingArea();
 		
 		
 		try {
