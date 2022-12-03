@@ -38,6 +38,7 @@ public class WalletControlTest {
 	Card card4;
 	WalletStub wStub;
 	MembershipStub mcStub;
+	ScannerStub sStub;
 
 	@Before
 	public void setUp() throws Exception {
@@ -51,6 +52,8 @@ public class WalletControlTest {
 		
 		mcStub = new MembershipStub();
 		sc.getMembershipControl().addListener(mcStub);
+		
+		sStub = new ScannerStub();
 		
 		sc.station.cardReader.deregisterAll();
 		sc.station.cardReader.register(readStub);
@@ -67,6 +70,12 @@ public class WalletControlTest {
 		sc.station.cardReader.plugIn();
 		sc.station.cardReader.turnOn();
 		sc.station.cardReader.enable();
+		
+		sc.station.mainScanner.register(sStub);
+		sc.station.mainScanner.plugIn();
+		sc.station.mainScanner.turnOn();
+		sc.station.mainScanner.enable();
+		
 		
 	}
 	
@@ -438,6 +447,67 @@ public class WalletControlTest {
 	}
 	
 	@Test
+	public void testActionPerformedMembership() {
+		wc.addListener(wStub);
+		sc.customer.wallet.cards.add(card4);
+		ActionEvent e = new ActionEvent(this, 0, "m");
+		wc.actionPerformed(e);
+		
+		assertTrue(wStub.membershipCardSelected);
+	}
+	
+	@Test
+	public void testActionPerformedScanSuccessful() {
+		wc.addListener(wStub);
+		sc.customer.wallet.cards.add(card4);
+		ActionEvent e = new ActionEvent(this, 0, "m");
+		wc.actionPerformed(e);
+		
+		sc.startMembershipCardInput();
+		
+		ActionEvent e2 = new ActionEvent(this, 0, "scan");
+		while (!sStub.barcodeScanned) {
+			wc.actionPerformed(e2);
+		}
+		
+		assertEquals("Welcome! Itadori", mcStub.memberName);
+		assertFalse(mcStub.membershipInput);
+	}
+	
+	@Test
+	public void testActionPerformedScanUnsuccessful() {
+		wc.addListener(wStub);
+		sc.customer.wallet.cards.add(card4);
+		ActionEvent e = new ActionEvent(this, 0, "m");
+		wc.actionPerformed(e);
+		
+		sc.startMembershipCardInput();
+		
+		ActionEvent e2 = new ActionEvent(this, 0, "scan");
+		do {
+			mcStub.memberName = null;
+			mcStub.membershipInput = true;
+			sStub.barcodeScanned = false;
+			wc.actionPerformed(e2);
+		}
+		while (sStub.barcodeScanned);
+		
+		assertNull(mcStub.memberName);
+		assertTrue(mcStub.membershipInput);
+	}
+	
+	/*
+	 * TODO:
+	 *  - actionPerformed()
+	 *  	- "scan"
+	 *  		- scan successful/unsuccessful
+	 *  		- all digits/ not a digit
+	 *  - membershipCardInputEnabled()
+	 *  - membershipCardInputCanceled()
+	 */
+	
+	
+	@Test
 	public void testCardInserted() {
 		wc.addListener(wStub);
 		
@@ -456,24 +526,22 @@ public class WalletControlTest {
 	}
 	
 	@Test
-	public void testScanCardSuccessful() {
+	public void testMembershipCardInputEnabled() {
+		wc.addListener(wStub);
+		wc.membershipCardInputEnabled();
 		
+		assertTrue(wStub.membershipCardInputEnabled);
 	}
 	
-	/*
-	 * TODO:
-	 *  - scanCard()
-	 *  	- successfulScan
-	 *      - unsuccessfulScan
-	 *  - toByteDigit()
-	 *  	- 0-9 and then smth else
-	 *  - actionPerformed()
-	 *  	- "m"
-	 *  	- "scan"
-	 *  - membershipCardInputEnabled()
-	 *  - membershipCardInputCanceled()
-	 *  	-> Need membership controller stub
-	 */
+	@Test
+	public void testMembershipCardInputCanceled() {
+		wc.addListener(wStub);
+		wc.membershipCardInputCanceled();
+		
+		assertFalse(wStub.membershipCardInputEnabled);
+	}
+	
+
 	
 	@After
 	public void teardown() {
@@ -651,18 +719,19 @@ public class WalletControlTest {
 	
 	public class MembershipStub implements MembershipControlListener{
 
-		public String message;
+		public String memberName;
+		public String memberNumber;
 		public boolean scanSwipeSelected = false;
 		public boolean membershipInput = true;
 
 		@Override
 		public void welcomeMember(MembershipControl mc, String memberName) {
-			message = memberName;
+			this.memberName = memberName;
 		}
 
 		@Override
 		public void memberFieldHasBeenUpdated(MembershipControl mc, String memberNumber) {
-			message = memberNumber;
+			this.memberNumber = memberNumber;
 			
 		}
 
