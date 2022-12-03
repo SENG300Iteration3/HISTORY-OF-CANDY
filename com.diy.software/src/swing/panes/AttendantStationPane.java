@@ -25,6 +25,7 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 
 	private StationControl sc;
 	private BagsControl bc;
+	private ItemsControl ic;
 	private AttendantControl ac;
 	private boolean cusAddedBags = false;
 	GUI_JButton approveAddedBagsButton;
@@ -45,6 +46,8 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		ac = sc.getAttendantControl();
 		ac.addListener(this);
 
+		ic = sc.getItemsControl();
+		ic.addListener(this);
 		int width = 450;
 		int height = 50;
 
@@ -202,7 +205,6 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 
 	@Override
 	public void awaitingAttendantToApproveItemRemoval(ItemsControl ic) {
-		System.out.println("TRIGGERED!");
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(false);
 		addPaperToPrinterButton.setEnabled(false);
@@ -211,8 +213,12 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	
 	@Override
 	public void attendantApprovedItemRemoval(AttendantControl bc) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("Triggered");
+		approveAddedBagsButton.setEnabled(false);
+		addInkToPrinterButton.setEnabled(false);
+		addPaperToPrinterButton.setEnabled(false);
+		approveRemoveItem.setEnabled(false);
+		approveNoBagging.setEnabled(false);	
 	}
 
 	@Override

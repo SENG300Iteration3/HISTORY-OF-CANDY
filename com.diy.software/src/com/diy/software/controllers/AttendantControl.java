@@ -51,20 +51,20 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		}
 	}
 	
-	public void approveRemoveItemSuccesful() {
+	public void removeItemSuccesful() {
 		sc.unblockStation();
 		for (AttendantControlListener l : listeners) {
 			l.attendantApprovedItemRemoval(this);
 		}
 	}
-
 	
 	public void attendantRemoveItem() {
 		int itemNumber = scanner.nextInt();
 		// TODO Add loop here that makes sure the removal happened!
 		ic.removeItem(itemNumber);
-		sc.unblockStation();
+		this.removeItemSuccesful();
 	}
+	
 	/**
 	 * Allow attendant to shut down a station in order to do maintenance
 	 *
