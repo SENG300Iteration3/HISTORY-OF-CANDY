@@ -167,12 +167,6 @@ public class CustomerBagsPanel extends JPanel
 		
 	}
 
-//	@Override
-//	public void noBaggingRequestState() {
-//		// TODO Auto-generated method stub
-//		
-//	}
-
 	@Override
 	public void initialState() {
 		// TODO Auto-generated method stub
@@ -206,24 +200,6 @@ public class CustomerBagsPanel extends JPanel
 	}
 
 	@Override
-	public void noBagRequest() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void attendantPermitStationUse(AttendantControl ac) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void coinIsLowState(CoinStorageUnit unit, int amount) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void lowInk(AttendantControl ac, String message) {
 		// TODO Auto-generated method stub
 		
@@ -246,5 +222,24 @@ public class CustomerBagsPanel extends JPanel
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void noBagRequest() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void attendantPermitStationUse(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void coinIsLowState(CoinStorageUnit unit, int amount) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

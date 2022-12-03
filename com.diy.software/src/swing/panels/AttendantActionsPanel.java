@@ -16,6 +16,7 @@ import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
 import com.diy.software.listeners.ItemsControlListener;
 import com.diy.software.listeners.ReceiptControlListener;
+import com.unitedbankingservices.coin.CoinStorageUnit;
 
 public class AttendantActionsPanel extends JPanel
 		implements ItemsControlListener, AttendantControlListener, BagsControlListener, ReceiptControlListener {
@@ -221,5 +222,17 @@ public class AttendantActionsPanel extends JPanel
 
 	@Override
 	public void setNoReceiptState(ReceiptControl rc) {
+	}
+
+	@Override
+	public void attendantPermitStationUse(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void coinIsLowState(CoinStorageUnit unit, int amount) {
+		// TODO Auto-generated method stub
+		
 	}
 }
