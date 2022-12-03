@@ -203,6 +203,9 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		weightDescrepancyMssg.setText("");
 	}
 
+	/* Customer has signaled they want to remove an item. They are blocked
+	 * and now the Attendant can use the Approve Item Removal button.
+	 */
 	@Override
 	public void awaitingAttendantToApproveItemRemoval(ItemsControl ic) {
 		approveAddedBagsButton.setEnabled(false);
@@ -211,9 +214,9 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		approveRemoveItem.setEnabled(true);
 	}
 	
+	// Sets all the attendant buttons back to false following succesful item removal
 	@Override
 	public void attendantApprovedItemRemoval(AttendantControl bc) {
-		System.out.println("Triggered");
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(false);
 		addPaperToPrinterButton.setEnabled(false);

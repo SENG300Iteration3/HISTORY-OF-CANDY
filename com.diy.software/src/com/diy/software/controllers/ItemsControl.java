@@ -83,6 +83,11 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 	}
 	
+	
+	/**
+	 * Blocks the customers DIYStation and announces that
+	 * the customer wants to remove an item to any ItemsControl listeners.
+	 */
 	public void requestRemoveItem() {
 		sc.blockStation(); // block station
 		for (ItemsControlListener l : listeners){
@@ -99,14 +104,14 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	 * @param index 
 	 * 			The item number displayed on screen which you want to remove
 	 * @return
-	 * 		True is the removal is successful. False otherwise.
+	 * 		True if the index is within . False otherwise.
 	 */
 	public boolean removeItem(int index) {
-		index--; // decrement index so it matches actual array index!
 		if (index > checkoutList.size()) {
 			return false;
 		}
 		else {
+			index--; // decrement index so it matches actual array index!
 			Barcode barcode = this.checkoutList.get(index);
 			// getting the actual object that the customer had in his shopping cart and was subsequently added to the baggingArea
 			BarcodedItem item = this.sc.items.get(barcode);

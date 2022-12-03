@@ -51,6 +51,10 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		}
 	}
 	
+	/**
+	 * Unblocks the customer DIYStation and announces that an item
+	 * has been removed to any AttendantControl listeners.
+	 */
 	public void removeItemSuccesful() {
 		sc.unblockStation();
 		for (AttendantControlListener l : listeners) {
@@ -61,8 +65,11 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	/**
 	 * This method should be triggered when the attendant selects the "Remove Item"
 	 * option from their console. It calls removeItem in ItemsControl and passes
-	 * an integer as an argument. This int should correspond to the item number which is 
-	 * to be removed.
+	 * an integer as an argument. This integer should correspond to the item number which
+	 * is to be removed.
+	 * 
+	 * Precondition: The customer must have requested "remove item" from their console.
+	 * 
 	 */
 	public void removeItem() {
 		// TODO Switch this so that the GUI uses a pinpad/numpad to enter the number
