@@ -9,10 +9,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.diy.software.controllers.MembershipControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.controllers.WalletControl;
 import com.diy.software.fakedata.FakeDataInitializer;
+import com.diy.software.listeners.MembershipControlListener;
 import com.diy.software.listeners.WalletControlListener;
+import com.diy.software.test.logic.MembershipControlTest.MembershipControlListenerStub;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.opeechee.Card;
@@ -31,6 +34,7 @@ public class WalletControlTest {
 	Card card3;
 	Card card4;
 	WalletStub wStub;
+	MembershipStub mcStub;
 
 	@Before
 	public void setUp() throws Exception {
@@ -41,6 +45,9 @@ public class WalletControlTest {
 		sc = new StationControl(fdi);
 		wc = new WalletControl(sc); 
 		readStub = new ReaderStub();
+		
+		mcStub = new MembershipStub();
+		sc.getMembershipControl().addListener(mcStub);
 		
 		sc.station.cardReader.deregisterAll();
 		sc.station.cardReader.register(readStub);
@@ -445,6 +452,21 @@ public class WalletControlTest {
 		assertFalse(wStub.inserted);
 	}
 	
+	/*
+	 * TODO:
+	 *  - scanCard()
+	 *  	- successfulScan
+	 *      - unsuccessfulScan
+	 *  - toByteDigit()
+	 *  	- 0-9 and then smth else
+	 *  - actionPerformed()
+	 *  	- "m"
+	 *  	- "scan"
+	 *  - membershipCardInputEnabled()
+	 *  - membershipCardInputCanceled()
+	 *  	-> Need membership controller stub
+	 */
+	
 	@After
 	public void teardown() {
 		PowerGrid.reconnectToMains();
@@ -576,6 +598,37 @@ public class WalletControlTest {
 		@Override
 		public void membershipCardInputCanceled(WalletControl walletControl) {
 			membershipCardInputEnabled = false;
+			
+		}
+		
+	}
+	
+	public class MembershipStub implements MembershipControlListener{
+
+		public String message;
+		public boolean scanSwipeSelected = false;
+		public boolean membershipInput = true;
+
+		@Override
+		public void welcomeMember(MembershipControl mc, String memberName) {
+			message = memberName;
+		}
+
+		@Override
+		public void memberFieldHasBeenUpdated(MembershipControl mc, String memberNumber) {
+			message = memberNumber;
+			
+		}
+
+		@Override
+		public void scanSwipeSelected(MembershipControl mc) {
+			scanSwipeSelected = true;
+			
+		}
+
+		@Override
+		public void disableMembershipInput(MembershipControl mc) {
+			membershipInput = false;
 			
 		}
 		
