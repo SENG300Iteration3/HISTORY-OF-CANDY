@@ -89,8 +89,8 @@ public class KeyboardScreen extends Screen {
 	public GUI_JButton addKeyButton(final String key) {
 		final GUI_JButton keyBtn = new GUI_JButton(key);
 		
-		keyBtn.setFont(GUI_Fonts.SMALL_TEXT);
-		keyBtn.setPreferredSize(new Dimension(50,50));
+		keyBtn.setFont(GUI_Fonts.SMALL_BOLD);
+		keyBtn.setPreferredSize(new Dimension(60,60));
 		keyBtn.setMargin(new Insets(0, 0, 0, 0));
 		
 		// Alphanumeric key
