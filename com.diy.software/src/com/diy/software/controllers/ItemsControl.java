@@ -90,18 +90,32 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 	}
 	
-	public void removeItem(int index) {
+	/**
+	 * 
+	 * @param index 
+	 * 			The item number displayed on screen which you want to remove
+	 * @return
+	 * 		True is the removal is successful. False otherwise.
+	 */
+	public boolean removeItem(int index) {
 		index--; // decrement index so it matches actual array index!
-		Barcode barcode = this.checkoutList.get(index);
-		// getting the actual object that the customer had in his shopping cart and was subsequently added to the baggingArea
-		BarcodedItem item = this.sc.items.get(barcode);
-		double price = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getPrice();
-		double weight = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
-		this.sc.updateExpectedCheckoutWeight(-weight);  // decrement weight
-		this.sc.station.baggingArea.remove(item);
-		this.updateCheckoutTotal(-price);	// decrement price
-		checkoutList.remove(index); // remove the barcode from checkoutList so GUI updates accordingly
-		refreshGui();
+		if (index > checkoutList.size()) {
+			return false;
+		}
+		else {
+			Barcode barcode = this.checkoutList.get(index);
+			// getting the actual object that the customer had in his shopping cart and was subsequently added to the baggingArea
+			BarcodedItem item = this.sc.items.get(barcode);
+			double price = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getPrice();
+			double weight = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
+			this.sc.updateExpectedCheckoutWeight(-weight);  // decrement weight
+			this.sc.station.baggingArea.remove(item);
+			this.updateCheckoutTotal(-price);	// decrement price
+			checkoutList.remove(index); // remove the barcode from checkoutList so GUI updates accordingly
+			refreshGui();
+			return true;
+		}
+
 	}
 	
 	public void updateCheckoutTotal(double amount) {

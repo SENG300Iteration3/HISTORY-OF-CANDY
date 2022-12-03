@@ -58,10 +58,14 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		}
 	}
 	
-	public void attendantRemoveItem() {
+	public void removeItem() {
+		// TODO Switch this so that the GUI uses a pinpad/numpad to enter the number
+		System.out.println("Enter the number of the item to be removed: ");
 		int itemNumber = scanner.nextInt();
-		// TODO Add loop here that makes sure the removal happened!
-		ic.removeItem(itemNumber);
+		while (!ic.removeItem(itemNumber)) {
+			System.out.println("Enter the number of the item to be removed: ");
+			itemNumber = scanner.nextInt();
+		}
 		this.removeItemSuccesful();
 	}
 	
@@ -236,8 +240,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 					attendantNotifications = ("Preventing use on station for maintenance");
 					preventStationUse();
 				case "remove item":
-					System.out.println("Enter the number of the item to be removed: ");
-					attendantRemoveItem();
+					removeItem();
 				default:
 					break;
 			}
