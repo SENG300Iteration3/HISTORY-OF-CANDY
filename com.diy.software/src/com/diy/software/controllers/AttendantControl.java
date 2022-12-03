@@ -101,12 +101,12 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 */
 	public void adjustBanknotesForChange() throws SimulationException, TooMuchCashException {
 		// amount of each kind of banknote to add
-		int totalOnes = 25;
-		int totalFives = 25;
-		int totalTens = 25;
-		int totalTwenties = 25;
-		int totalFifties = 25;
-		int totalHundreds = 25;
+		int totalOnes = sc.station.banknoteStorage.getCapacity()/6;
+		int totalFives = sc.station.banknoteStorage.getCapacity()/6;
+		int totalTens = sc.station.banknoteStorage.getCapacity()/6;
+		int totalTwenties = sc.station.banknoteStorage.getCapacity()/6;
+		int totalFifties = sc.station.banknoteStorage.getCapacity()/6;
+		int totalHundreds = sc.station.banknoteStorage.getCapacity()/6;
 
 		sc.getCashControl().disablePayments();
 		List<Banknote> unloadedBanknotes = sc.station.banknoteStorage.unload();
