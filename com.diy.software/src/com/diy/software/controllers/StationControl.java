@@ -48,8 +48,8 @@ import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
  * @author Calder Sloman
  *
  */
-public class StationControl
-		implements BarcodeScannerListener, ElectronicScaleListener, CardReaderListener, ReceiptPrinterListener, PLUCodeControlListener {
+public class StationControl implements BarcodeScannerListener, ElectronicScaleListener, CardReaderListener,
+		ReceiptPrinterListener, PLUCodeControlListener {
 	public FakeDataInitializer fakeData;
 	private double expectedCheckoutWeight = 0.0;
 	private double bagWeight = 0.0;
@@ -91,7 +91,7 @@ public class StationControl
 		customer = new Customer();
 		station = new DoItYourselfStation();
 		customer.useStation(station);
-		
+
 		ic = new ItemsControl(this);
 		bc = new BagsControl(this);
 		mc = new MembershipControl(this);
@@ -105,14 +105,14 @@ public class StationControl
 		station.baggingArea.register(this);
 		station.scanningArea.register(this);
 		station.cardReader.register(this);
-		
+
 		station.plugIn();
 		station.turnOn();
-		
+
 		fillStation();
-		
+
 		/*
-		 * loads maximum number of bags to the reusable bag dispenser 
+		 * loads maximum number of bags to the reusable bag dispenser
 		 */
 		station.reusableBagDispenser.plugIn();
 		station.reusableBagDispenser.turnOn();
@@ -120,8 +120,8 @@ public class StationControl
 		loadBags();
 
 		/*
-		 * simulates what the printer has in it before the printing starts
-		 * to simulate low paper and low ink
+		 * simulates what the printer has in it before the printing starts to simulate
+		 * low paper and low ink
 		 */
 		try {
 			station.printer.addInk(500);
@@ -153,7 +153,7 @@ public class StationControl
 			customer.wallet.cards.add(c);
 		for (Item i : this.fakeData.getItems())
 			customer.shoppingCart.add(i);
-			
+
 	}
 
 	/**
@@ -173,7 +173,7 @@ public class StationControl
 	public ItemsControl getItemsControl() {
 		return ic;
 	}
-	
+
 	public BagsControl getBagsControl() {
 		return bc;
 	}
@@ -185,11 +185,11 @@ public class StationControl
 	public WalletControl getWalletControl() {
 		return wc;
 	}
-	
+
 	public MembershipControl getMembershipControl() {
 		return mc;
 	}
-	
+
 	public BagDispenserControl getBagDispenserControl() {
 		return bdc;
 	}
@@ -205,22 +205,23 @@ public class StationControl
 	public CashControl getCashControl() {
 		return cc;
 	}
-	
+
 	private void loadBags() {
 		try {
-			for(int i = 0; i < bagInStock; i++) {
+			for (int i = 0; i < bagInStock; i++) {
 				ReusableBag aBag = new ReusableBag();
 				station.reusableBagDispenser.load(aBag);
 			}
 
-		}catch(OverloadException e) {}
+		} catch (OverloadException e) {
+		}
 	}
-	
+
 	private void fillStation() {
-		for(int i : station.banknoteDenominations) {
+		for (int i : station.banknoteDenominations) {
 			int capacity = station.banknoteDispensers.get(i).getCapacity();
 			Banknote[] bills = new Banknote[capacity];
-			for(int j = 0; j < capacity; j++) {
+			for (int j = 0; j < capacity; j++) {
 				bills[j] = new Banknote(Currency.getInstance("CAD"), i);
 			}
 			try {
@@ -229,11 +230,11 @@ public class StationControl
 				e.printStackTrace();
 			}
 		}
-		
-		for(long i : station.coinDenominations) {
+
+		for (long i : station.coinDenominations) {
 			int capacity = station.coinDispensers.get(i).getCapacity();
 			Coin[] coins = new Coin[capacity];
-			for(int j = 0; j < capacity; j++) {
+			for (int j = 0; j < capacity; j++) {
 				coins[j] = new Coin(Currency.getInstance("CAD"), i);
 			}
 			try {
@@ -278,7 +279,7 @@ public class StationControl
 		}
 		// System.out.println("Station Locked"); // Remove before release}
 	}
-	
+
 	public void blockStation(String reason) {
 		if (!isLocked) {
 			boolean loop = true;
@@ -364,7 +365,7 @@ public class StationControl
 				l.paymentHasBeenCanceled(this, null, reason);
 		}
 	}
-	
+
 	public void triggerMembershipCardInputFailScreen(String reason) {
 		for (StationControlListener l : listeners)
 			l.paymentHasBeenCanceled(this, null, reason);
@@ -383,27 +384,28 @@ public class StationControl
 
 	public void startPLUCodeWorkflow() {
 		for (StationControlListener l : listeners)
-			l.triggerPLUCodeWorkflow(this);;
+			l.triggerPLUCodeWorkflow(this);
+		;
 	}
-	
+
 	public void startMembershipCardInput() {
 		membershipInput = true;
 		for (StationControlListener l : listeners)
 			l.startMembershipCardInput(this);
 		wc.membershipCardInputEnabled();
-		
+
 	}
-	
+
 	public void startPurchaseBagsWorkflow() {
 		for (StationControlListener l : listeners)
 			l.triggerPurchaseBagsWorkflow(this);
 	}
-	
+
 	public void startCatalogWorkflow() {
 		for (StationControlListener l : listeners)
 			l.triggerBrowsingCatalog(this);
 	}
-	
+
 	public void cancelMembershipCardInput() {
 		membershipInput = false;
 		wc.membershipCardInputCanceled();
@@ -468,25 +470,25 @@ public class StationControl
 			Double amountOwed = this.ic.getCheckoutTotal();
 			String cardNumber = data.getNumber();
 			CardIssuer bank = fakeData.getCardIssuer();
-			
-			if(data.getType().equals(GiftcardDatabase.CompanyGiftCard)) {
-				if(amountOwed == 0) {
+
+			if (data.getType().equals(GiftcardDatabase.CompanyGiftCard)) {
+				if (amountOwed == 0) {
 					cc.paymentFailed();
 					return;
 				}
-				
+
 				Double amountOnCard = GiftcardDatabase.giftcardMap.get(cardNumber);
 				Double dif = amountOnCard - amountOwed;
-				if(dif >= 0) {
+				if (dif >= 0) {
 					GiftcardDatabase.giftcardMap.put(cardNumber, dif);
 					ic.updateCheckoutTotal(-amountOwed);
 					for (StationControlListener l : listeners) {
 						l.paymentHasBeenMade(this, data);
 					}
-				}else {
+				} else {
 					GiftcardDatabase.giftcardMap.put(cardNumber, 0.0);
 					ic.updateCheckoutTotal(-amountOnCard);
-					//TODO: tell customer that their card wasn't enough maybe?
+					// TODO: tell customer that their card wasn't enough maybe?
 				}
 				cc.cashInserted();
 				return;
@@ -568,14 +570,12 @@ public class StationControl
 	/**
 	 * sets user message to announce weight on the indicated scale has changed
 	 * 
-	 * @param scale
-	 *                      The scale where the event occurred.
-	 * @param weightInGrams
-	 *                      The new weight.
+	 * @param scale         The scale where the event occurred.
+	 * @param weightInGrams The new weight.
 	 */
 	@Override
 	public void weightChanged(ElectronicScale scale, double weightInGrams) {
-		if(scale == station.baggingArea) {
+		if (scale == station.baggingArea) {
 			// Any time the system registers a weight changed event it checks to see if the
 			// expected weight matches the actual weight
 			// If the expected weight doesn't match the actual weight, it blocks the system.
@@ -586,13 +586,13 @@ public class StationControl
 				this.blockStation();
 				System.err.println("System has been blocked!");
 			}
-		}else {
+		} else {
 			try {
 				addPlucodedNewItem(scale.getCurrentWeight());
 			} catch (OverloadException e) {
 			}
 		}
-		
+
 	}
 
 	@Override
@@ -626,7 +626,7 @@ public class StationControl
 			// Trigger the GUI to display "place the item in the Bagging Area"
 		}
 	}
-	
+
 	public void addBarcodedNewItem(Barcode barcode) {
 
 		weightOfItemScanned = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
@@ -636,17 +636,17 @@ public class StationControl
 		this.updateExpectedCheckoutWeight(weightOfItemScanned);
 		this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
 	}
-	
+
 	public void addPlucodedNewItem(double weight) {
 		weightOfItemScanned = weight;
 		// Add the barcode to the ArrayList within itemControl
 		this.ic.addItemByPLU();
-		
+
 		// Set the expected weight in SystemControl
 		this.updateExpectedCheckoutWeight(weightOfItemScanned);
 		this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
 	}
-	
+
 	@Override
 	public void pluCodeEntered(PLUCodeControl ppc, String pluCode) {
 		try {
@@ -658,66 +658,61 @@ public class StationControl
 
 			// Add the barcode to the ArrayList within itemControl
 			boolean check = this.ic.addItemByPLU();
-			// Not sure if this is supposed to be called 
+			// Not sure if this is supposed to be called
 			// this.updateExpectedCheckoutWeight(weightOfItemCodeEntered);
 			// this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemCodeEntered);
 			// Call method within SystemControl that handles the rest of the item scanning
 			// procedure
-			if(check) {
+			if (check) {
 				// Trigger the GUI to display "place the scanned item in the Bagging Area"
 				this.blockStation();
 			}
-		} catch(NullPointerSimulationException e) {
+		} catch (NullPointerSimulationException e) {
 			System.err.println(e.getMessage());
 		}
-		
 
-		
-		
-		
 	}
 
 	private void checkInventory(Product product) {
-		if(ProductDatabases.INVENTORY.containsKey(product) && ProductDatabases.INVENTORY.get(product) >= 1) {
-			ProductDatabases.INVENTORY.put(product, ProductDatabases.INVENTORY.get(product)-1); //updates INVENTORY with new total
-		}else {
+		if (ProductDatabases.INVENTORY.containsKey(product) && ProductDatabases.INVENTORY.get(product) >= 1) {
+			ProductDatabases.INVENTORY.put(product, ProductDatabases.INVENTORY.get(product) - 1); // updates INVENTORY
+																									// with new total
+		} else {
 			// TODO: inform customer and attendant
 			System.out.print("Out of stock");
 		}
 	}
-	
-	private BarcodedProduct findProduct(Barcode Barcode) throws NullPointerSimulationException {
-    	if(ProductDatabases.BARCODED_PRODUCT_DATABASE.containsKey(Barcode)) {
-            return ProductDatabases.BARCODED_PRODUCT_DATABASE.get(Barcode);        
-        }
-    	else {
-    		// TODO: Inform customer station
-    		System.out.println("Cannot find the product. Please try again or ask for assistant!");
-    		throw new NullPointerSimulationException();
-    	}
-    }
 
-	private PLUCodedProduct findProduct(PriceLookUpCode code) throws NullPointerSimulationException {
-		if(ProductDatabases.PLU_PRODUCT_DATABASE.containsKey(code)) {
-					return ProductDatabases.PLU_PRODUCT_DATABASE.get(code);        
-			}
-		else {
+	private BarcodedProduct findProduct(Barcode Barcode) throws NullPointerSimulationException {
+		if (ProductDatabases.BARCODED_PRODUCT_DATABASE.containsKey(Barcode)) {
+			return ProductDatabases.BARCODED_PRODUCT_DATABASE.get(Barcode);
+		} else {
 			// TODO: Inform customer station
 			System.out.println("Cannot find the product. Please try again or ask for assistant!");
 			throw new NullPointerSimulationException();
 		}
 	}
-	
+
+	private PLUCodedProduct findProduct(PriceLookUpCode code) throws NullPointerSimulationException {
+		if (ProductDatabases.PLU_PRODUCT_DATABASE.containsKey(code)) {
+			return ProductDatabases.PLU_PRODUCT_DATABASE.get(code);
+		} else {
+			// TODO: Inform customer station
+			System.out.println("Cannot find the product. Please try again or ask for assistant!");
+			throw new NullPointerSimulationException();
+		}
+	}
+
 	public void addReusableBag(ReusableBag lastDispensedReusableBag) {
 		// ADD: update inventory
 
 		weightOfItemScanned = lastDispensedReusableBag.getWeight();
-		
+
 		// Set the expected weight in SystemControl
 		this.updateExpectedCheckoutWeight(weightOfItemScanned);
 		this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
 	}
-	
+
 	public void ItemApprovedToNotBag() {
 		this.updateExpectedCheckoutWeight(-weightOfItemScanned);
 		this.updateWeightOfLastItemAddedToBaggingArea(-weightOfItemScanned);
@@ -731,10 +726,13 @@ public class StationControl
 	 * @return Boolean True if weights match, false otherwise
 	 * @throws OverloadException If the weight has overloaded the scale.
 	 */
-	public boolean expectedWeightMatchesActualWeight(double actualWeight) {
-		return (this.getExpectedWeight() - (actualWeight + bagWeight) >= 1 || this.getExpectedWeight() - (actualWeight + bagWeight) <= 1);
+	private double threshold = 0.01;
+
+	public boolean expectedWeightMatchesActualWeight(double actualWeight) {		
+		return (((1 - threshold) * this.getExpectedWeight() <= (actualWeight + bagWeight))
+				&& ((actualWeight + bagWeight) <= this.getExpectedWeight() * (1 + threshold)));
 	}
-	
+
 	public int getBagInStock() {
 		return bagInStock;
 	}
@@ -773,20 +771,19 @@ public class StationControl
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	public boolean isMembershipInput() {
 		return membershipInput;
 	}
-	
-	
+
 	public void notifyNoBagsInStock() {
-		for (StationControlListener l: listeners) {
+		for (StationControlListener l : listeners) {
 			l.noBagsInStock(this);
 		}
 	}
-	
+
 	public void notifyNotEnoughBagsInStock(int numBag) {
-		for (StationControlListener l: listeners) {
+		for (StationControlListener l : listeners) {
 			l.notEnoughBagsInStock(this, numBag);
 		}
 	}
