@@ -9,9 +9,11 @@ import javax.swing.JLabel;
 
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.BagsControl;
+import com.diy.software.controllers.ItemsControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
+import com.diy.software.listeners.ItemsControlListener;
 
 import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Fonts;
@@ -19,7 +21,7 @@ import swing.styling.GUI_JButton;
 import swing.styling.GUI_JLabel;
 import swing.styling.Screen;
 
-public class AttendantStationPane extends Screen implements AttendantControlListener, BagsControlListener {
+public class AttendantStationPane extends Screen implements AttendantControlListener, BagsControlListener, ItemsControlListener {
 
 	private StationControl sc;
 	private BagsControl bc;
@@ -29,6 +31,7 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	GUI_JButton addInkToPrinterButton;
 	GUI_JButton addPaperToPrinterButton;
 	GUI_JButton approveNoBagging;
+	GUI_JButton approveRemoveItem;
 	GUI_JLabel weightDisplayLabel, weightDescrepancyMssg;
 
 	private static String HeaderText = "Attendant Screen";
@@ -65,6 +68,11 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		approveNoBagging.addActionListener(ac);
 		approveNoBagging.setPreferredSize(new Dimension(width, height));
 
+		approveRemoveItem = createPinPadButton("Approve Item Removal");
+		approveRemoveItem.setActionCommand("remove item");
+		approveRemoveItem.addActionListener(ac);
+		approveRemoveItem.setPreferredSize(new Dimension(width, height));
+		
 		weightDescrepancyMssg = initalizeLabel();
 		weightDisplayLabel = initalizeLabel();
 		
@@ -72,11 +80,13 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		addLayer(addInkToPrinterButton,0);
 		addLayer(addPaperToPrinterButton,0);
 		addLayer(approveNoBagging,0);
+		addLayer(approveRemoveItem,0);
 		addLayer(weightDescrepancyMssg,0);
 		
 		addInkToPrinterButton.setEnabled(false);
 		addPaperToPrinterButton.setEnabled(false);
 		approveNoBagging.setEnabled(false);
+		approveRemoveItem.setEnabled(false);
 		approveAddedBagsButton.setEnabled(cusAddedBags);
 	}
 
@@ -93,6 +103,7 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		return label;
 	}
 
+	
 	@Override
 	public void awaitingAttendantToVerifyBagsPlacedInBaggingArea(BagsControl bc) {
 		approveAddedBagsButton.setEnabled(true);
@@ -145,13 +156,15 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(false);
 		addPaperToPrinterButton.setEnabled(true);
+		approveRemoveItem.setEnabled(false);
 	}
 
 	@Override
 	public void addInkState() {
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(true);
-		addPaperToPrinterButton.setEnabled(false);	
+		addPaperToPrinterButton.setEnabled(false);
+		approveRemoveItem.setEnabled(false);
 	}
 
 	@Override
@@ -159,6 +172,7 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(false);
 		addPaperToPrinterButton.setEnabled(false);	
+		approveRemoveItem.setEnabled(false);
 	}
 
 	@Override
@@ -172,6 +186,7 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(false);
 		addPaperToPrinterButton.setEnabled(false);	
+		approveRemoveItem.setEnabled(false);
 		approveNoBagging.setEnabled(true);
 	}
 
@@ -179,8 +194,43 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	public void initialState() {
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(false);
-		addPaperToPrinterButton.setEnabled(false);	
+		addPaperToPrinterButton.setEnabled(false);
+		approveRemoveItem.setEnabled(false);
 		approveNoBagging.setEnabled(false);
 		weightDescrepancyMssg.setText("");
 	}
+
+	@Override
+	public void awaitingAttendantToApproveItemRemoval(ItemsControl ic) {
+		System.out.println("TRIGGERED!");
+		approveAddedBagsButton.setEnabled(false);
+		addInkToPrinterButton.setEnabled(false);
+		addPaperToPrinterButton.setEnabled(false);
+		approveRemoveItem.setEnabled(true);
+	}
+	
+	@Override
+	public void attendantApprovedItemRemoval(AttendantControl bc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void awaitingItemToBeSelected(ItemsControl ic) {}
+	@Override
+	public void itemWasSelected(ItemsControl ic) {}
+	@Override
+	public void awaitingItemToBePlacedInBaggingArea(ItemsControl ic) {}
+	@Override
+	public void noMoreItemsAvailableInCart(ItemsControl ic) {}
+	@Override
+	public void itemsAreAvailableInCart(ItemsControl ic) {}
+	@Override
+	public void awaitingItemToBeRemoved(ItemsControl itemsControl, String updateMessage) {	}
+	@Override
+	public void itemsHaveBeenUpdated(ItemsControl ic) {}
+	@Override
+	public void productSubtotalUpdated(ItemsControl ic) {}
+	
+	
 }

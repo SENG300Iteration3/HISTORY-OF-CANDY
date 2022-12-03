@@ -20,5 +20,7 @@ public interface ItemsControlListener {
 	
 	public void productSubtotalUpdated(ItemsControl ic);
 	
+	public void awaitingAttendantToApproveItemRemoval(ItemsControl ic);
+	
 
 }

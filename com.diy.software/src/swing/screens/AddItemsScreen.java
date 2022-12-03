@@ -309,4 +309,10 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void awaitingAttendantToApproveItemRemoval(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
+import java.util.Scanner;
 
 import com.diy.software.listeners.AttendantControlListener;
 import com.jimmyselectronics.AbstractDevice;
@@ -21,12 +22,17 @@ import ca.ucalgary.seng300.simulation.SimulationException;
 public class AttendantControl implements ActionListener, ReceiptPrinterListener {
 
 	private StationControl sc;
+	private ItemsControl ic;
 	private ArrayList<AttendantControlListener> listeners;
 	private Currency currency;
 	String attendantNotifications;
+	
+	// TODO REMOVE BEFORE RELEASE
+	Scanner scanner = new Scanner(System.in);
 
 	public AttendantControl(StationControl sc) {
 		this.sc = sc;
+		this.ic = sc.getItemsControl();
 		this.listeners = new ArrayList<>();
 	}
 
@@ -44,7 +50,21 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 			l.attendantApprovedBags(this);
 		}
 	}
+	
+	public void approveRemoveItemSuccesful() {
+		sc.unblockStation();
+		for (AttendantControlListener l : listeners) {
+			l.attendantApprovedItemRemoval(this);
+		}
+	}
 
+	
+	public void attendantRemoveItem() {
+		int itemNumber = scanner.nextInt();
+		// TODO Add loop here that makes sure the removal happened!
+		ic.removeItem(itemNumber);
+		sc.unblockStation();
+	}
 	/**
 	 * Allow attendant to shut down a station in order to do maintenance
 	 *
@@ -215,6 +235,9 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 				case "prevent_use":
 					attendantNotifications = ("Preventing use on station for maintenance");
 					preventStationUse();
+				case "remove item":
+					System.out.println("Enter the number of the item to be removed: ");
+					attendantRemoveItem();
 				default:
 					break;
 			}

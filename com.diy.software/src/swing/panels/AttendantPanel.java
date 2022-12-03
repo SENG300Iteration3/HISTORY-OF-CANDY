@@ -151,4 +151,12 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 		approveNoBagButton.setEnabled(false);
 		weightDescrepancyMssg.setText("");
 	}
+
+	@Override
+	public void attendantApprovedItemRemoval(AttendantControl bc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 }

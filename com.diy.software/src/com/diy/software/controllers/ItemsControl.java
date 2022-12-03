@@ -27,7 +27,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	public ArrayList<Tuple<BarcodedProduct,Integer>> tempList = new ArrayList<>();
 	public ArrayList<Barcode> checkoutList = new ArrayList<>();
 	private double checkoutListTotal = 0.0;
-	private int index = 0;
 
 	private boolean scanSuccess = true, weighSuccess = true;
 	
@@ -84,8 +83,15 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 	}
 	
-	public void removeItem() {
-		this.index--; // decrement index so it matches actual array index!
+	public void requestRemoveItem() {
+		sc.blockStation(); // block station
+		for (ItemsControlListener l : listeners){
+			l.awaitingAttendantToApproveItemRemoval(this);
+		}
+	}
+	
+	public void removeItem(int index) {
+		index--; // decrement index so it matches actual array index!
 		Barcode barcode = this.checkoutList.get(index);
 		// getting the actual object that the customer had in his shopping cart and was subsequently added to the baggingArea
 		BarcodedItem item = this.sc.items.get(barcode);
@@ -256,9 +262,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				sc.startMembershipWorkflow();
 				break;
 			case "remove item":
-				System.out.print("Enter the number of the item to be removed: ");
-				index = scanner.nextInt();
-				this.removeItem();
+				System.out.println("Requesting item removal. Please wait for Assistance!");
+				this.requestRemoveItem();
 				break;
 			}
 		} catch (Exception ex) {
@@ -337,7 +342,5 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	}
 
 
-	public void setIndex(int itemIndex) {
-		this.index = itemIndex;
-	}
+
 }
