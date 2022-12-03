@@ -40,6 +40,6 @@ public interface AttendantControlListener {
 	/*
 	 * allows attendant to load banknotes to storage when amount of banknotes is low
 	 */
-	public void adjustBanknotesInStorageState();
+	public void banknotesInStorageLowState();
 	
 }

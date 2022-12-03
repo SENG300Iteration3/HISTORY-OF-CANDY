@@ -384,7 +384,7 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 	}
 
   /*
-   * Checks if banknote storage is below a threshold
+   * Checks if banknote storage is below a threshold and notifies system
    * 
    * @param unit
    * 			The storage unit being checked

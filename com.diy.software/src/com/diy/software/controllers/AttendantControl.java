@@ -125,6 +125,8 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		int totalHundreds = sc.station.banknoteStorage.getCapacity()/6;
 
 		sc.getCashControl().disablePayments();
+		for (AttendantControlListener l : listeners)
+			l.banknotesInStorageLowState();
 		List<Banknote> unloadedBanknotes = sc.station.banknoteStorage.unload();
 		sc.getCashControl().banknotesUnloaded(sc.station.banknoteStorage);	
 		
@@ -170,9 +172,6 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 				
 		sc.getCashControl().banknotesLoaded(sc.station.banknoteStorage);
 		sc.getCashControl().enablePayments();
-		
-		for (AttendantControlListener l : listeners)
-			l.adjustBanknotesInStorageState();
 	}
 
 	/**
