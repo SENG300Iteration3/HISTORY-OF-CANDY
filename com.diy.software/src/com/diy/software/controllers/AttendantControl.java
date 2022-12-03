@@ -133,6 +133,8 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	/*
 	 * Refills banknote storage if it is low
 	 * 
+	 * @param unit
+	 * 			The storage unit where the banknotes will be loaded
 	 * @throws SimulationException
 	 * 
 	 * @throws TooMuchCashException
