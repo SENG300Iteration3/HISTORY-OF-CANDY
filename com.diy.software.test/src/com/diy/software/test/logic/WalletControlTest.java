@@ -18,6 +18,9 @@ import com.diy.software.listeners.WalletControlListener;
 import com.diy.software.test.logic.MembershipControlTest.MembershipControlListenerStub;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
+import com.jimmyselectronics.necchi.Barcode;
+import com.jimmyselectronics.necchi.BarcodeScanner;
+import com.jimmyselectronics.necchi.BarcodeScannerListener;
 import com.jimmyselectronics.opeechee.Card;
 import com.jimmyselectronics.opeechee.Card.CardData;
 import com.jimmyselectronics.opeechee.CardReader;
@@ -452,6 +455,11 @@ public class WalletControlTest {
 		assertFalse(wStub.inserted);
 	}
 	
+	@Test
+	public void testScanCardSuccessful() {
+		
+	}
+	
 	/*
 	 * TODO:
 	 *  - scanCard()
@@ -538,6 +546,44 @@ public class WalletControlTest {
 			cd = data;
 			
 		}
+	}
+	
+	public class ScannerStub implements BarcodeScannerListener{
+		
+		public boolean enabled = false;
+		public boolean turnedOn = false;
+		public boolean barcodeScanned = false;
+
+		@Override
+		public void enabled(AbstractDevice<? extends AbstractDeviceListener> device) {
+			enabled = true;
+			
+		}
+
+		@Override
+		public void disabled(AbstractDevice<? extends AbstractDeviceListener> device) {
+			enabled = false;
+			
+		}
+
+		@Override
+		public void turnedOn(AbstractDevice<? extends AbstractDeviceListener> device) {
+			turnedOn = true;
+			
+		}
+
+		@Override
+		public void turnedOff(AbstractDevice<? extends AbstractDeviceListener> device) {
+			turnedOn = false;
+			
+		}
+
+		@Override
+		public void barcodeScanned(BarcodeScanner barcodeScanner, Barcode barcode) {
+			barcodeScanned = true;
+			
+		}
+		
 	}
 	
 	public class WalletStub implements WalletControlListener{
