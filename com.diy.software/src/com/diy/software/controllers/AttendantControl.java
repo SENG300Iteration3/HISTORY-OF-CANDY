@@ -343,11 +343,6 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 					System.out.println("Station has been started up");
 					startUpStation();
 					break;
-				case "printReceipt":
-					//attendantNotifications = ("approved no bagging request");
-					System.out.println("AC print receipt");
-					sc.getReceiptControl().printItems();
-					break;
 				default:
 					break;
 			}

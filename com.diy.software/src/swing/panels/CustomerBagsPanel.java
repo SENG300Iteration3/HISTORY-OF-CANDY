@@ -166,11 +166,7 @@ public class CustomerBagsPanel extends JPanel
 		
 	}
 
-	@Override
-	public void noBaggingRequestState() {
-		// TODO Auto-generated method stub
-		
-	}
+
 
 	@Override
 	public void initialState() {
@@ -179,27 +175,40 @@ public class CustomerBagsPanel extends JPanel
 	}
 
 	@Override
-	public String lowInk(ReceiptControl rc, String message) {
+	public void attendantPreventUse(AttendantControl ac) {
 		// TODO Auto-generated method stub
-		return null;
+		
 	}
 
 	@Override
-	public String lowPaper(ReceiptControl rc, String dateTime) {
+	public void lowInk(AttendantControl ac, String message) {
 		// TODO Auto-generated method stub
-		return null;
+		
 	}
 
 	@Override
-	public String outOfInk(ReceiptControl rc, String message) {
+	public void lowPaper(AttendantControl ac, String message) {
 		// TODO Auto-generated method stub
-		return null;
+		
 	}
 
 	@Override
-	public String outOfPaper(ReceiptControl rc, String message) {
+	public void outOfInk(AttendantControl ac, String message) {
 		// TODO Auto-generated method stub
-		return null;
+		
 	}
+
+	@Override
+	public void outOfPaper(AttendantControl ac, String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void noBagRequest() {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }
