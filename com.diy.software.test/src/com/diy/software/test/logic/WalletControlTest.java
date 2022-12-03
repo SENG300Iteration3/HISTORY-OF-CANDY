@@ -29,6 +29,7 @@ public class WalletControlTest {
 	Card card1;
 	Card card2;
 	Card card3;
+	Card card4;
 	WalletStub wStub;
 
 	@Before
@@ -47,6 +48,7 @@ public class WalletControlTest {
 		card1 = cards[0];
 		card2 = cards[1];
 		card3 = cards[2];
+		card4 = cards[3];
 		sc.customer.wallet.cards.clear();
 		sc.customer.wallet.cards.add(card1);
 		wStub = new WalletStub();
@@ -125,6 +127,18 @@ public class WalletControlTest {
 		wc.selectCard("VISA");
 		assertTrue(sc.customer.wallet.cards.contains(card1));
 		assertFalse(sc.customer.wallet.cards.contains(card2));
+		
+	}
+	
+	@Test
+	public void testSelectCardMembership() {
+		sc.customer.wallet.cards.add(card4);
+		wc.addListener(wStub);
+		
+		assertTrue(sc.customer.wallet.cards.contains(card4));
+		wc.selectCard("MEMBERSHIP");
+		assertFalse(sc.customer.wallet.cards.contains(card4));
+		assertTrue(wStub.membershipCardSelected);
 		
 	}
 	
@@ -509,6 +523,8 @@ public class WalletControlTest {
 		public boolean cardHasBeenSelected = false;
 		public boolean paymentsEnabled = false;
 		public boolean inserted = false;
+		public boolean membershipCardSelected = false;
+		public boolean membershipCardInputEnabled = false;
 
 		@Override
 		public void cardHasBeenSelected(WalletControl wc) {
@@ -542,6 +558,24 @@ public class WalletControlTest {
 		@Override
 		public void cardWithPinRemoved(WalletControl wc) {
 			inserted = false;
+			
+		}
+
+		@Override
+		public void membershipCardHasBeenSelected(WalletControl wc) {
+			membershipCardSelected = true;
+			
+		}
+
+		@Override
+		public void membershipCardInputEnabled(WalletControl wc) {
+			membershipCardInputEnabled = true;
+			
+		}
+
+		@Override
+		public void membershipCardInputCanceled(WalletControl walletControl) {
+			membershipCardInputEnabled = false;
 			
 		}
 		
