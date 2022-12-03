@@ -126,9 +126,15 @@ public class CatalogPanel extends JPanel implements ItemsControlListener {
 	}
 
 	@Override
-	public void itemWasSelected(ItemsControl ic) {
+	public void barcodedItemWasSelected(ItemsControl ic) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	@Override
+	public void plucodedItemWasSelected(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -165,5 +171,11 @@ public class CatalogPanel extends JPanel implements ItemsControlListener {
 	public void productSubtotalUpdated(ItemsControl ic) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void awaitingItemToBePlacedInScanningArea(ItemsControl itemsControl) {
+		// TODO Auto-generated method stub
+		
 	}
 }
