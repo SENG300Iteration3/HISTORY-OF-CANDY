@@ -502,19 +502,19 @@ public class StationControl
 	 * 
 	 * @param receipt the customer receipt as a string
 	 */
-	public void printReceipt(String receipt) {
-
-		for (char receiptChar : receipt.toCharArray()) {
-			try {
-				station.printer.print(receiptChar);
-				//System.out.println(receiptChar);
-			} catch (EmptyException e) {
-
-			} catch (OverloadException e) {
-
-			}
-		}
-	}
+//	public void printReceipt(String receipt) {
+//
+//		for (char receiptChar : receipt.toCharArray()) {
+//			try {
+//				station.printer.print(receiptChar);
+//				//System.out.println(receiptChar);
+//			} catch (EmptyException e) {
+//
+//			} catch (OverloadException e) {
+//
+//			}
+//		}
+//	}
 
 	/**
 	 * sets user message to announce weight on the indicated scale has changed
