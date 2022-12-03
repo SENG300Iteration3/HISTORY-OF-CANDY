@@ -23,7 +23,7 @@ public class CustomerItemsPanel extends JPanel
 	private AttendantControl ac;
 	private BagsControl bc;
 	private boolean itemsAvailable;
-	JButton selectNextItemButton, mainScannerButton, handheldScannerButton, deselectCurrentItemButton, placeItemInBaggingAreaButton, itemWeight;
+	JButton selectNextItemButton, mainScannerButton, handheldScannerButton, deselectCurrentItemButton, placeItemInBaggingAreaButton, placeItemInScanningAreaButton, itemWeight;
 	GridBagConstraints buttonGrid = new GridBagConstraints();
 	JLabel weightDescrepancyMessage;
 
@@ -55,8 +55,8 @@ public class CustomerItemsPanel extends JPanel
 		deselectCurrentItemButton = new JButton("deselectCurrentItem()");
 		deselectCurrentItemButton.setActionCommand("put back");
 		deselectCurrentItemButton.addActionListener(ic);
-
-		placeItemInBaggingAreaButton = new JButton("placeItemInBagginArea()");
+		
+		placeItemInBaggingAreaButton = new JButton("placeItemInBaggingArea()");
 		placeItemInBaggingAreaButton.setActionCommand("bag");
 		placeItemInBaggingAreaButton.addActionListener(ic);
 
@@ -118,13 +118,23 @@ public class CustomerItemsPanel extends JPanel
 	}
 
 	@Override
-	public void itemWasSelected(ItemsControl ic) {
+	public void barcodedItemWasSelected(ItemsControl ic) {
 		selectNextItemButton.setEnabled(false);
 		mainScannerButton.setEnabled(true);
 		handheldScannerButton.setEnabled(true);
 		deselectCurrentItemButton.setEnabled(true);
 		placeItemInBaggingAreaButton.setEnabled(false);
-		itemWeight.setEnabled(true);
+		itemWeight.setEnabled(false);
+	}
+	
+	@Override
+	public void plucodedItemWasSelected(ItemsControl ic) {
+		selectNextItemButton.setEnabled(false);
+		mainScannerButton.setEnabled(false);
+		handheldScannerButton.setEnabled(false);
+		deselectCurrentItemButton.setEnabled(true);
+		placeItemInBaggingAreaButton.setEnabled(false);
+		itemWeight.setEnabled(false);
 	}
 
 	@Override
@@ -159,6 +169,16 @@ public class CustomerItemsPanel extends JPanel
 		itemWeight.setEnabled(false);
 	}
 
+	@Override
+	public void awaitingItemToBePlacedInScanningArea(ItemsControl itemsControl) {
+		selectNextItemButton.setEnabled(false);
+		mainScannerButton.setEnabled(false);
+		handheldScannerButton.setEnabled(false);
+		deselectCurrentItemButton.setEnabled(false);
+		placeItemInBaggingAreaButton.setEnabled(false);
+		itemWeight.setEnabled(true);
+	}
+	
 	@Override
 	public void awaitingCustomerToFinishPlacingBagsInBaggingArea(BagsControl bc) {
 		selectNextItemButton.setEnabled(false);
@@ -236,4 +256,6 @@ public class CustomerItemsPanel extends JPanel
 		// TODO Auto-generated method stub
 		
 	}
+
+
 }
