@@ -91,6 +91,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	}
 	
 	/**
+	 * The method responsible for removing an item from the system entirely.
+	 * Its cost is subtracted from the bill total, it is removed from the bagging area,
+	 * its weight is subtracted from expected weight, the "stores" inventory is updated
+	 * and the GUI is refreshed.
 	 * 
 	 * @param index 
 	 * 			The item number displayed on screen which you want to remove
@@ -108,6 +112,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			BarcodedItem item = this.sc.items.get(barcode);
 			double price = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getPrice();
 			double weight = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
+			// TODO update inventory to increase "stock" since the item wasn't sold
 			this.sc.updateExpectedCheckoutWeight(-weight);  // decrement weight
 			this.sc.station.baggingArea.remove(item);
 			this.updateCheckoutTotal(-price);	// decrement price

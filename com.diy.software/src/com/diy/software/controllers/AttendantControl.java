@@ -58,12 +58,18 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		}
 	}
 	
+	/**
+	 * This method should be triggered when the attendant selects the "Remove Item"
+	 * option from their console. It calls removeItem in ItemsControl and passes
+	 * an integer as an argument. This int should correspond to the item number which is 
+	 * to be removed.
+	 */
 	public void removeItem() {
 		// TODO Switch this so that the GUI uses a pinpad/numpad to enter the number
-		System.out.println("Enter the number of the item to be removed: ");
+		System.out.println("Enter the number corrseponding to the item to be removed: ");
 		int itemNumber = scanner.nextInt();
 		while (!ic.removeItem(itemNumber)) {
-			System.out.println("Enter the number of the item to be removed: ");
+			System.out.println("Enter the number corrseponding to the item to be removed: ");
 			itemNumber = scanner.nextInt();
 		}
 		this.removeItemSuccesful();
