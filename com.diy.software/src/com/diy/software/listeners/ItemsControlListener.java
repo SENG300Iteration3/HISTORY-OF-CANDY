@@ -6,9 +6,7 @@ public interface ItemsControlListener {
 	
 	public void awaitingItemToBeSelected(ItemsControl ic);
 	
-	public void barcodedItemWasSelected(ItemsControl ic);
-	
-	public void plucodedItemWasSelected(ItemsControl ic);
+	public void itemWasSelected(ItemsControl ic);
 	
 	public void awaitingItemToBePlacedInBaggingArea(ItemsControl ic);
 	
