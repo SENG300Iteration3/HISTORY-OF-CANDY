@@ -3,11 +3,12 @@ package swing.screens;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -24,8 +25,7 @@ import swing.styling.Screen;
 
 public class KeyboardScreen extends Screen {
 
-	public static final List<String> KEYS = Keyboard.WINDOWS_QWERTY;
-	public static final String[] END_OF_ROW = new String[] { "Delete", "Backspace", "\\ |", "Enter", "Shift (Right)", "PgDn"};
+	public static final String[] END_OF_ROW = new String[] {"Delete", "Backspace", "\\ |", "Enter", "Shift (Right)", "PgDn"};
 	public static final int NUM_ROWS = END_OF_ROW.length;
 	
 	private JPanel keyboardContainer;
@@ -37,6 +37,7 @@ public class KeyboardScreen extends Screen {
 	public KeyboardScreen(StationControl systemControl) {
 		super(systemControl);
 		this.keyboardContainer = new JPanel(new GridLayout(0, 1, 0, 0));
+		this.keyboardContainer.setOpaque(false);
 		this.rootPanel.add(keyboardContainer, BorderLayout.SOUTH);
 		
 		createOutputLabel();
@@ -49,17 +50,24 @@ public class KeyboardScreen extends Screen {
 		int curRow = 0;
 		int curCol = 0;
 		GUI_JButton keyBtn;
-		JPanel rowContainer = addKeyRow(curRow);
-		for (String k : KEYS) {
+		JPanel rowContainer = addKeyRow(curRow, curCol);
+		for (String k : Keyboard.WINDOWS_QWERTY) {
 			k = k.replace(" Arrow", "").replace("FnLock ", "");
 			keyBtn = addKeyButton(k);
-			rowContainer.add(keyBtn);
+			
+			GridBagConstraints gc = new GridBagConstraints();
+			gc.gridx = curCol;
+			gc.gridy = 0;
+			gc.gridwidth = 1;
+			gc.gridheight = 1;
+			
+			rowContainer.add(keyBtn, gc);
 			
 			System.out.println(k + " " + curRow + " " + curCol);
 			
 			curCol++;
 			if (curRow < NUM_ROWS-1 && k.equals(END_OF_ROW[curRow])) {
-				rowContainer = addKeyRow(curRow);
+				rowContainer = addKeyRow(curRow, curCol);
 				curRow++;
 				curCol = 0;
 			}
@@ -76,11 +84,10 @@ public class KeyboardScreen extends Screen {
 		this.rootPanel.add(outputText, BorderLayout.NORTH);
 	}
 	
-	public JPanel addKeyRow(int row) {
-		JPanel rowContainer = new JPanel(new GridLayout(1,0,0,0));
+	public JPanel addKeyRow(int row, int col) {
+		JPanel rowContainer = new JPanel(new GridBagLayout());
 		
-		rowContainer.setOpaque(true);
-		//rowContainer.setBackground(Color.RED);
+		rowContainer.setOpaque(false);
 		this.keyboardContainer.add(rowContainer);
 		
 		return rowContainer;
@@ -94,6 +101,7 @@ public class KeyboardScreen extends Screen {
 		keyBtn.setMargin(new Insets(0, 0, 0, 0));
 		
 		// Alphanumeric key
+		// TODO: remove code below, this is for testing purposes
 		if (key.length() == 1) {
 			keyBtn.addActionListener(new ActionListener() {
 				@Override
@@ -104,7 +112,29 @@ public class KeyboardScreen extends Screen {
 			});
 		} else {
 			switch (key) {
+				case "Shift (Left)":
+					keyBtn.setPreferredSize(new Dimension(140,60));
+					break;
+				case "Shift (Right)":
+					keyBtn.setPreferredSize(new Dimension(140,60));
+					break;
+				case "Enter":
+					keyBtn.setPreferredSize(new Dimension(140,60));
+					break;
+				case "Ctrl (Left)":
+					keyBtn.setPreferredSize(new Dimension(120,60));
+					break;
+				case "Ctrl (Right)":
+					keyBtn.setPreferredSize(new Dimension(120,60));
+					break;
+				case "Alt (Left)":
+					keyBtn.setPreferredSize(new Dimension(100,60));
+					break;
+				case "Alt (Right)":
+					keyBtn.setPreferredSize(new Dimension(100,60));
+					break;
 				case "Backspace":
+					keyBtn.setPreferredSize(new Dimension(140,60));
 					keyBtn.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
@@ -121,6 +151,7 @@ public class KeyboardScreen extends Screen {
 					});
 					break;
 				case "Spacebar":
+					keyBtn.setPreferredSize(new Dimension(240,60));
 					keyBtn.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
@@ -129,6 +160,7 @@ public class KeyboardScreen extends Screen {
 					});
 					break;
 				case "CapsLock":
+					keyBtn.setPreferredSize(new Dimension(140,60));
 					keyBtn.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
