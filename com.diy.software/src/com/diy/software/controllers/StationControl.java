@@ -587,10 +587,7 @@ public class StationControl
 				System.err.println("System has been blocked!");
 			}
 		}else {
-			try {
-				addPlucodedNewItem(scale.getCurrentWeight());
-			} catch (OverloadException e) {
-			}
+			addPlucodedNewItem();
 		}
 		
 	}
@@ -637,11 +634,10 @@ public class StationControl
 		this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
 	}
 	
-	public void addPlucodedNewItem(double weight) {
-		weightOfItemScanned = weight;
+	public void addPlucodedNewItem() {
+		weightOfItemScanned = ic.getCurrentItem().getWeight();
 		// Add the barcode to the ArrayList within itemControl
 		this.ic.addItemByPLU();
-		
 		// Set the expected weight in SystemControl
 		this.updateExpectedCheckoutWeight(weightOfItemScanned);
 		this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);

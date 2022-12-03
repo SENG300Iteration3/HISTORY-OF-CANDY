@@ -55,6 +55,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	private boolean removedWrongBaggedItem;
 	private double scaleExpectedWeight;
 	private double scaleReceivedWeight;
+	private PriceLookUpCode currentProduct;
 
 	public ItemsControl(StationControl sc) {
 		this.sc = sc;
@@ -137,10 +138,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			sc.customer.selectNextItem();
 			if(currentItem instanceof PLUCodedItem) {
 				for (ItemsControlListener l : listeners)
-					l.plucodedItemWasSelected(this);
+					l.itemWasSelected(this);
 			}else{
 				for (ItemsControlListener l : listeners)
-					l.barcodedItemWasSelected(this);
+					l.itemWasSelected(this);
 			}
 			if (sc.customer.shoppingCart.size() == 0) {
 				for (ItemsControlListener l : listeners)
@@ -168,11 +169,9 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 	public boolean addItemByPLU() {
 		try {
-		
 			baggingAreaTimerStart = System.currentTimeMillis();
+			PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(currentProduct);
 
-			PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(((PLUCodedItem) currentItem).getPLUCode());
-			System.out.println(product.getDescription());
 			if(product != null) {
 				// lol this is broken 
 				double weight = sc.station.scanningArea.getCurrentWeight();
@@ -203,7 +202,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	// ALSO: note that a new weight area called scanningArea exists now to grab
 	// weight of items during general scanning phase
 	public void scanCurrentItem(boolean useHandheld) {
-		if (!isPLU) {
+		if (currentItem instanceof BarcodedItem) {
 			baggingAreaTimerStart = System.currentTimeMillis();
 			scanSuccess = false;
 			sc.customer.scanItem(useHandheld);
@@ -264,7 +263,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	 */
 	public void weighItem() {
 		sc.station.scanningArea.add(currentItem);
-
 	}
 
 	/**
@@ -316,7 +314,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	}
 	
 	private void pluItemSelected() {
-		sc.blockStation();
 		for (ItemsControlListener l : listeners)
 			l.awaitingItemToBePlacedInScanningArea(this);
 	}
@@ -336,9 +333,12 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 		PLUCodeIdentifier = searchPLUCodedProductDatabase(strProductName);
 		if (PLUCodeIdentifier != null) {
+			currentProduct = PLUCodeIdentifier;
 			pluItemSelected();
 			isItemSelected = true;
 		}
+		
+		// FIXME: prompt place on scanning area instead
 		if (isItemSelected) {
 			sc.goBackOnUI();
 
@@ -507,5 +507,9 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	public void outOfOverload(ElectronicScale scale) {
 		userMessage = "Excessive weight removed, continue scanning";
 		sc.unblockStation();
+	}
+	
+	public Item getCurrentItem() {
+		return currentItem;
 	}
 }
