@@ -23,7 +23,7 @@ public class CustomerItemsPanel extends JPanel
 	private AttendantControl ac;
 	private BagsControl bc;
 	private boolean itemsAvailable;
-	JButton selectNextItemButton, scanItemButton, deselectCurrentItemButton, placeItemInBaggingAreaButton, removeItemInBaggingAreaButton;
+	JButton selectNextItemButton, mainScannerButton, handheldScannerButton, deselectCurrentItemButton, placeItemInBaggingAreaButton;
 	GridBagConstraints buttonGrid = new GridBagConstraints();
 	JLabel weightDescrepancyMessage;
 
@@ -44,9 +44,13 @@ public class CustomerItemsPanel extends JPanel
 		selectNextItemButton.setActionCommand("pick up");
 		selectNextItemButton.addActionListener(ic);
 
-		scanItemButton = new JButton("scanItem()");
-		scanItemButton.setActionCommand("scan");
-		scanItemButton.addActionListener(ic);
+		mainScannerButton = new JButton("mainScanner()");
+		mainScannerButton.setActionCommand("main scan");
+		mainScannerButton.addActionListener(ic);
+		
+		handheldScannerButton = new JButton("handheldscanner()");
+		handheldScannerButton.setActionCommand("handheld scan");
+		handheldScannerButton.addActionListener(ic);
 
 		deselectCurrentItemButton = new JButton("deselectCurrentItem()");
 		deselectCurrentItemButton.setActionCommand("put back");
@@ -55,10 +59,11 @@ public class CustomerItemsPanel extends JPanel
 		placeItemInBaggingAreaButton = new JButton("placeItemInBagginArea()");
 		placeItemInBaggingAreaButton.setActionCommand("bag");
 		placeItemInBaggingAreaButton.addActionListener(ic);
+
 		
-		removeItemInBaggingAreaButton = new JButton("Request no bagging");
-		removeItemInBaggingAreaButton.setActionCommand("removeFromScale");
-		removeItemInBaggingAreaButton.addActionListener(ic);
+
+//		removeItemInBaggingAreaButton.setActionCommand("removeFromScale");
+//		removeItemInBaggingAreaButton.addActionListener(ic);
 
 		this.setLayout(new GridBagLayout());
 
@@ -67,16 +72,16 @@ public class CustomerItemsPanel extends JPanel
 		this.add(selectNextItemButton, buttonGrid);
 
 		buttonGrid.gridx = 1;
-		this.add(scanItemButton, buttonGrid);
-
+		this.add(mainScannerButton, buttonGrid);
+		
 		buttonGrid.gridx = 2;
-		this.add(deselectCurrentItemButton, buttonGrid);
+		this.add(handheldScannerButton, buttonGrid);
 
 		buttonGrid.gridx = 3;
-		this.add(placeItemInBaggingAreaButton, buttonGrid);
-		
+		this.add(deselectCurrentItemButton, buttonGrid);
+
 		buttonGrid.gridx = 4;
-		this.add(removeItemInBaggingAreaButton, buttonGrid);
+		this.add(placeItemInBaggingAreaButton, buttonGrid);
 		
 		buttonGrid.gridy = 1;
 		buttonGrid.gridx = 5;
@@ -87,38 +92,38 @@ public class CustomerItemsPanel extends JPanel
 		this.itemsAvailable = true;
 
 		selectNextItemButton.setEnabled(itemsAvailable);
-		scanItemButton.setEnabled(false);
+		mainScannerButton.setEnabled(false);
+		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
-		removeItemInBaggingAreaButton.setEnabled(false);
 	}
 
 	@Override
 	public void awaitingItemToBeSelected(ItemsControl ic) {
 		selectNextItemButton.setEnabled(itemsAvailable);
-		scanItemButton.setEnabled(false);
+		mainScannerButton.setEnabled(false);
+		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
-		removeItemInBaggingAreaButton.setEnabled(false);
 		weightDescrepancyMessage.setText("");
 	}
 
 	@Override
 	public void itemWasSelected(ItemsControl ic) {
 		selectNextItemButton.setEnabled(false);
-		scanItemButton.setEnabled(true);
+		mainScannerButton.setEnabled(true);
+		handheldScannerButton.setEnabled(true);
 		deselectCurrentItemButton.setEnabled(true);
 		placeItemInBaggingAreaButton.setEnabled(false);
-		removeItemInBaggingAreaButton.setEnabled(false);
 	}
 
 	@Override
 	public void awaitingItemToBePlacedInBaggingArea(ItemsControl ic) {
 		selectNextItemButton.setEnabled(false);
-		scanItemButton.setEnabled(false);
+		mainScannerButton.setEnabled(false);
+		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(true);
-		removeItemInBaggingAreaButton.setEnabled(false);
 	}
 
 	@Override
@@ -136,28 +141,33 @@ public class CustomerItemsPanel extends JPanel
 	@Override
 	public void awaitingAttendantToVerifyBagsPlacedInBaggingArea(BagsControl bc) {
 		selectNextItemButton.setEnabled(false);
-		scanItemButton.setEnabled(false);
+		mainScannerButton.setEnabled(false);
+		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
-		removeItemInBaggingAreaButton.setEnabled(false);
 	}
 
 	@Override
 	public void awaitingCustomerToFinishPlacingBagsInBaggingArea(BagsControl bc) {
 		selectNextItemButton.setEnabled(false);
-		scanItemButton.setEnabled(false);
+		mainScannerButton.setEnabled(false);
+		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
-		removeItemInBaggingAreaButton.setEnabled(false);
 	}
 
 	@Override
 	public void attendantApprovedBags(AttendantControl ac) {
 		selectNextItemButton.setEnabled(itemsAvailable);
-		scanItemButton.setEnabled(false);
+		mainScannerButton.setEnabled(false);
+		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
-		removeItemInBaggingAreaButton.setEnabled(false);
+	}
+
+	@Override
+	public void attendantPreventUse(AttendantControl ac) {
+		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -169,10 +179,10 @@ public class CustomerItemsPanel extends JPanel
 	@Override
 	public void awaitingItemToBeRemoved(ItemsControl itemsControl, String updateMessage) {
 		selectNextItemButton.setEnabled(false);
-		scanItemButton.setEnabled(false);
+		mainScannerButton.setEnabled(false);
+		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
-		removeItemInBaggingAreaButton.setEnabled(true);
 		weightDescrepancyMessage.setText(updateMessage);
 	}
 
@@ -203,9 +213,7 @@ public class CustomerItemsPanel extends JPanel
 	}
 
 	@Override
-	public void noBaggingRequestState() {
-		// TODO Auto-generated method stub
-		
+	public void noBagRequest() {
 	}
 
 	@Override

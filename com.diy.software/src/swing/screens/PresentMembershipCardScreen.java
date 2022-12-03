@@ -6,27 +6,24 @@ import java.awt.event.ActionListener;
 
 import javax.swing.SwingConstants;
 
-import com.diy.software.controllers.CashControl;
+import com.diy.software.controllers.MembershipControl;
 import com.diy.software.controllers.StationControl;
-import com.diy.software.listeners.CashControlListener;
 
 import swing.styling.GUI_Fonts;
 import swing.styling.GUI_JButton;
 import swing.styling.GUI_JLabel;
 import swing.styling.Screen;
 
-public class PresentCashScreen extends Screen implements CashControlListener {
-
+public class PresentMembershipCardScreen extends Screen {
 	private GUI_JLabel prompt;
 	private GUI_JButton backButton;
-	
-	public PresentCashScreen(final StationControl systemControl) {
-		super(systemControl);
-		
-		systemControl.getCashControl().enablePayments();
-		systemControl.getCashControl().addListener(this);
 
-		this.prompt = new GUI_JLabel("Please insert $" + systemControl.getItemsControl().getCheckoutTotal());
+	public PresentMembershipCardScreen(final StationControl systemControl) {
+		super(systemControl);
+
+		//systemControl.startMembershipCardInput();
+
+		this.prompt = new GUI_JLabel("Please scan or swipe your membership card.");
 		prompt.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		prompt.setHorizontalAlignment(SwingConstants.CENTER);
 		prompt.setPreferredSize(new Dimension(this.width - 200, 100));
@@ -36,27 +33,11 @@ public class PresentCashScreen extends Screen implements CashControlListener {
 		backButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				systemControl.getCashControl().disablePayments();
+				systemControl.cancelMembershipCardInput();
 				systemControl.goBackOnUI();
 			}
 		});
 		this.addLayer(backButton, 100);
 	}
 
-	@Override
-	public void cashInsertionEnabled(CashControl cc) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void cashInsertionDisabled(CashControl cc) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void cashInserted(CashControl cc) {
-		this.prompt.setText("Please insert $" + systemControl.getItemsControl().getCheckoutTotal());
-	}
 }

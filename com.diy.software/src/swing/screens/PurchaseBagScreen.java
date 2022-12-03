@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ActionListener;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 
@@ -13,10 +14,16 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import com.diy.software.controllers.BagDispenserControl;
 import com.diy.software.controllers.MembershipControl;
 import com.diy.software.controllers.StationControl;
+import com.diy.software.listeners.BagDispenserControlListener;
 import com.diy.software.listeners.MembershipControlListener;
 import com.diy.software.listeners.StationControlListener;
+import com.jimmyselectronics.AbstractDevice;
+import com.jimmyselectronics.AbstractDeviceListener;
+import com.jimmyselectronics.svenden.ReusableBagDispenser;
+import com.jimmyselectronics.svenden.ReusableBagDispenserListener;
 
 import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Fonts;
@@ -25,8 +32,8 @@ import swing.styling.GUI_JLabel;
 import swing.styling.GUI_JPanel;
 import swing.styling.Screen;
 
-public class MembershipScreen extends Screen implements MembershipControlListener{
-	private MembershipControl mc;
+public class PurchaseBagScreen extends Screen implements BagDispenserControlListener{
+	private BagDispenserControl bdc;
 
 	private GridBagConstraints gridConstraint = new GridBagConstraints();
 
@@ -34,39 +41,21 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 	private JButton cancelButton = createNumberPadButton("X");
 	private JButton correctButton = createNumberPadButton("O");
 	private JButton submitButton = createNumberPadButton(">");
-	
-	private GUI_JPanel scanSwipePanel;
-	private GUI_JButton scanSwipeButton;
 
 	private JTextField numberEntry;
 	private JLabel memberMssg = new JLabel("");
 	GUI_JPanel numberInputPanel;
-	
-	private PresentMembershipCardScreen scanSwipeScreen;
 
-	private static String HeaderText = "Membership";
+	private static String HeaderText = "Purchase Reusable Bags";
 	
-	public MembershipScreen(StationControl sc) {
+	public PurchaseBagScreen(StationControl sc) {
 		super(sc, HeaderText);
-		mc = sc.getMembershipControl();
-		mc.addListener(this);
+		bdc = sc.getBagDispenserControl();
+		bdc.addListener(this);
 		
-		scanSwipePanel = new GUI_JPanel();
-		scanSwipePanel.setLayout(new GridBagLayout());
-		scanSwipePanel.setBackground(GUI_Color_Palette.DARK_BLUE);
-		
-		scanSwipeButton = new GUI_JButton("Scan/Swipe Card");
-		scanSwipeButton.setBackground(GUI_Color_Palette.DARK_BLUE);
-		scanSwipeButton.setFont(new Font("Franklin Gothic", Font.BOLD, 22));
-		scanSwipeButton.setForeground(GUI_Color_Palette.WHITE);
 		
 		gridConstraint.gridy = 1;
 		gridConstraint.gridx = 1;
-		scanSwipeButton.setActionCommand("scan swipe membership");
-		scanSwipeButton.addActionListener(mc);
-		scanSwipePanel.add(scanSwipeButton, gridConstraint);
-		
-		addLayer(scanSwipePanel, 0);
 
 		numberInputPanel = new GUI_JPanel();
 		numberInputPanel.setLayout(new GridBagLayout());
@@ -81,8 +70,8 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 
 		for (int i = 0; i < 10; i++) {
 			GUI_JButton currButton = createNumberPadButton("" + (i + 1) % 10);
-			currButton.setActionCommand("MEMBER_INPUT_BUTTON: " + (i + 1) % 10);
-			currButton.addActionListener(mc);
+			currButton.setActionCommand("NUMBER_BAGS: " + (i + 1) % 10);
+			currButton.addActionListener(bdc);
 			numberPadButtons[i] = currButton;
 			gridConstraint.gridx = i % 3;
 			gridConstraint.gridy = (i / 3) + 2;
@@ -96,24 +85,24 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 
 		gridConstraint.gridx = 0;
 		cancelButton.setActionCommand("cancel");
-		cancelButton.addActionListener(mc);
+		cancelButton.addActionListener(bdc);
 		numberInputPanel.add(cancelButton, gridConstraint);
 
 		gridConstraint.gridx = 1;
 		correctButton.setActionCommand("correct");
-		correctButton.addActionListener(mc);
+		correctButton.addActionListener(bdc);
 		numberInputPanel.add(correctButton, gridConstraint);
 
 		gridConstraint.gridx = 2;
 		submitButton.setActionCommand("submit");
-		submitButton.addActionListener(mc);
+		submitButton.addActionListener(bdc);
 		numberInputPanel.add(submitButton, gridConstraint);
 
 		addLayer(numberInputPanel, 0);
 	}
 	
 	private void initalizeMessageLabel() {
-		memberMssg = new GUI_JLabel("Enter your member ID".toUpperCase());
+		memberMssg = new GUI_JLabel("Number of bag you want to purchase");
 		memberMssg.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		memberMssg.setHorizontalAlignment(JLabel.CENTER);
 
@@ -131,7 +120,7 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 	}
 
 	private void initalizeTextField() {
-		numberEntry = new JTextField("MemberID".toUpperCase());
+		numberEntry = new JTextField();
 		numberEntry.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		numberEntry.setHorizontalAlignment(JLabel.CENTER);
 		numberEntry.setBorder(BorderFactory.createLineBorder(GUI_Color_Palette.DARK_BLUE, 10));
@@ -166,32 +155,9 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 		/* Adding the panel to the window */
 		return numberPadButton;
 	}
-	
-	@Override
-	public void welcomeMember(MembershipControl mc, String memberName) {
-		memberMssg.setText(memberName);
-	}
-
 
 	@Override
-	public void memberFieldHasBeenUpdated(MembershipControl mc, String memberNumber) {
-		numberEntry.setText(memberNumber);
-	}
-	
-	@Override
-	public void scanSwipeSelected(MembershipControl mc) {
-		super.systemControl.startMembershipCardInput();
-		
-	}
-
-	@Override
-	public void disableMembershipInput(MembershipControl mc) {
-		scanSwipeButton.setEnabled(false);
-		for (JButton button : numberPadButtons) {
-			button.setEnabled(false);
-		}
-		correctButton.setEnabled(false);
-		submitButton.setEnabled(false);
-		
+	public void numberFieldHasBeenUpdated(BagDispenserControl bdp, String input) {
+		numberEntry.setText(input);
 	}
 }
