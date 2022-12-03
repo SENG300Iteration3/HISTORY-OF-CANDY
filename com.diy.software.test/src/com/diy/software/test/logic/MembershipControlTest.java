@@ -93,10 +93,11 @@ public class MembershipControlTest {
 	public void testActionPerformedSubmit() {
 		ActionEvent e = new ActionEvent(this, 0, "MEMBER_INPUT_BUTTON: 1234");
 		mc.actionPerformed(e);
+		assertTrue(mcStub.message.equals("1234"));
 		
 		ActionEvent e2 = new ActionEvent(this, 0, "submit");
 		mc.actionPerformed(e2);
-		assertTrue(mcStub.message.equals("1234"));
+		assertTrue(mcStub.message.equals("Welcome! Itadori"));
 	}
 	
 	@Test
