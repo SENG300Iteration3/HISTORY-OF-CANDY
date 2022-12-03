@@ -118,7 +118,7 @@ public class CustomerItemsPanel extends JPanel
 	}
 
 	@Override
-	public void barcodedItemWasSelected(ItemsControl ic) {
+	public void itemWasSelected(ItemsControl ic) {
 		selectNextItemButton.setEnabled(false);
 		mainScannerButton.setEnabled(true);
 		handheldScannerButton.setEnabled(true);
@@ -127,15 +127,15 @@ public class CustomerItemsPanel extends JPanel
 		itemWeight.setEnabled(false);
 	}
 	
-	@Override
-	public void plucodedItemWasSelected(ItemsControl ic) {
-		selectNextItemButton.setEnabled(false);
-		mainScannerButton.setEnabled(false);
-		handheldScannerButton.setEnabled(false);
-		deselectCurrentItemButton.setEnabled(true);
-		placeItemInBaggingAreaButton.setEnabled(false);
-		itemWeight.setEnabled(false);
-	}
+//	@Override
+//	public void plucodedItemWasSelected(ItemsControl ic) {
+//		selectNextItemButton.setEnabled(false);
+//		mainScannerButton.setEnabled(true);
+//		handheldScannerButton.setEnabled(true);
+//		deselectCurrentItemButton.setEnabled(true);
+//		placeItemInBaggingAreaButton.setEnabled(false);
+//		itemWeight.setEnabled(false);
+//	}
 
 	@Override
 	public void awaitingItemToBePlacedInBaggingArea(ItemsControl ic) {
