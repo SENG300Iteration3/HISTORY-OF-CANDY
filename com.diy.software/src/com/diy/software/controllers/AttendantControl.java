@@ -10,6 +10,12 @@ import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.abagnale.IReceiptPrinter;
 import com.jimmyselectronics.abagnale.ReceiptPrinterListener;
 import com.unitedbankingservices.TooMuchCashException;
+<<<<<<< HEAD
+=======
+import com.unitedbankingservices.banknote.Banknote;
+import com.unitedbankingservices.banknote.BanknoteStorageUnit;
+
+>>>>>>> parent of 0e1fe36 (clean up adjustBanknotesForChange)
 import ca.ucalgary.seng300.simulation.SimulationException;
 
 public class AttendantControl implements ActionListener, ReceiptPrinterListener {
@@ -94,9 +100,75 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 * 			Too much cash is loaded onto the storage
 	 */
 	public void adjustBanknotesForChange() throws SimulationException, TooMuchCashException {
+<<<<<<< HEAD
 		sc.getCashControl().adjustBanknotesForChange();
 		for (AttendantControlListener l : listeners)
 			l.adjustBanknotesInStorageState();
+=======
+		//Maybe change amount to add??
+		int totalOnes = 20;
+		int totalFives = 20;
+		int totalTens = 20;
+		int totalTwenties = 20;
+		int totalFifties = 20;
+		int totalHundreds = 20;
+
+		Banknote one = new Banknote(currency, 1);
+		Banknote five = new Banknote(currency, 5);
+		Banknote ten = new Banknote(currency, 10);
+		Banknote twenty = new Banknote(currency, 20);
+		Banknote fifty = new Banknote(currency, 50);
+		Banknote oneHundred = new Banknote(currency, 100);
+
+		BanknoteStorageUnit unit = sc.station.banknoteStorage;
+		
+		sc.getCashControl().disablePayments();
+		List<Banknote> unloadedBanknotes = unit.unload();
+		sc.getCashControl().banknotesUnloaded(unit);	
+		
+		for(Banknote banknote : unloadedBanknotes) {
+			if (banknote.getValue() == one.getValue()) {
+				totalOnes--;
+			}
+			if (banknote.getValue() == five.getValue()) {
+				totalFives--;
+			}
+			if (banknote.getValue() == ten.getValue()) {
+				totalTens--;
+			}
+			if (banknote.getValue() == twenty.getValue()) {
+				totalTwenties--;
+			}
+			if (banknote.getValue() == fifty.getValue()) {
+				totalFifties--;
+			}
+			if (banknote.getValue() == oneHundred.getValue()) {
+				totalHundreds--;
+			}
+		}
+		
+		for (int i = 0; i < totalOnes; i++) {
+			unit.load(one);
+		}
+		for (int i = 0; i < totalFives; i++) {
+			unit.load(five);
+		}
+		for (int i = 0; i < totalTens; i++) {
+			unit.load(ten);
+		}
+		for (int i = 0; i < totalTwenties; i++) {
+			unit.load(twenty);
+		}
+		for (int i = 0; i < totalFifties; i++) {
+			unit.load(fifty);
+		}
+		for(int i = 0; i < totalHundreds; i++) {
+			unit.load(oneHundred);
+		}
+				
+		sc.getCashControl().banknotesLoaded(unit);
+		sc.getCashControl().enablePayments();
+>>>>>>> parent of 0e1fe36 (clean up adjustBanknotesForChange)
 	}
 
 	/**
@@ -124,10 +196,6 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 				case "no_bagging":
 					attendantNotifications = ("approved no bagging request");
 					removeLastBaggedItem();
-					break;
-				case "adjustBanknotesForChange":
-					attendantNotifications = ("Station needs banknotes to be adjusted for change.");
-					adjustBanknotesForChange();
 					break;
 				default:
 					break;
