@@ -5,8 +5,6 @@ import java.awt.event.ActionListener;
 
 import java.util.ArrayList;
 import java.util.Currency;
-import java.util.List;
-
 import com.diy.software.listeners.CashControlListener;
 import com.unitedbankingservices.DisabledException;
 import com.unitedbankingservices.TooMuchCashException;
@@ -21,16 +19,12 @@ import com.unitedbankingservices.coin.CoinStorageUnitObserver;
 import com.unitedbankingservices.coin.CoinValidator;
 import com.unitedbankingservices.coin.CoinValidatorObserver;
 
-import ca.ucalgary.seng300.simulation.SimulationException;
-
 public class CashControl implements BanknoteValidatorObserver, CoinValidatorObserver, CoinStorageUnitObserver,
     BanknoteStorageUnitObserver, ActionListener {
   private StationControl sc;
   private ArrayList<CashControlListener> listeners;
   private long lastInsertedBanknote;
   private long lastInsertedCoin;
-  private Currency currency;
-
   public CashControl(StationControl sc) {
     this.sc = sc;
     sc.station.banknoteValidator.attach(this);
@@ -254,68 +248,14 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
   }
 
   /*
-   * Updates banknotes to be used for change
-   *
-   * @throws SimulationException
-   * 
-   * @throws TooMuchCashException
-   * 		Too much cash is loaded onto the storage
+   * Checks if banknote storage is below a threshold
    */
-  public void adjustBanknotesForChange() throws SimulationException, TooMuchCashException {
-	  disablePayments();
-	  List<Banknote> unloadedBanknotes = sc.station.banknoteStorage.unload();
-	  banknotesUnloaded(sc.station.banknoteStorage);
-	  
-	  // Amount of banknotes to load to storage
-	  int onesToAdd = 25;
-	  int fivesToAdd = 25;
-	  int tensToAdd = 25;
-	  int twentiesToAdd = 25;
-	  int fiftiesToAdd = 25;
-	  int hundredsToAdd = 25;
-	  
-	  for(Banknote b : unloadedBanknotes) {
-		  if (b.getValue() == 1) {
-			  onesToAdd--;
-		  }
-		  if (b.getValue() == 5) {
-			  fivesToAdd--;
-		  }
-		  if (b.getValue() == 10) {
-			  tensToAdd--;
-		  }
-		  if (b.getValue() == 20) {
-			  twentiesToAdd--;
-		  }
-		  if (b.getValue() == 50) {
-			  fiftiesToAdd--;
-		  }
-		  if (b.getValue() == 100) {
-			  hundredsToAdd--;
-		  }
+  public boolean banknotesInStorageLow() {
+	  boolean isLow = false;
+	  if (sc.station.banknoteStorage.getBanknoteCount() <= 25) {
+		  isLow = true;
 	  }
-	  
-	  for (int i = 0; i < onesToAdd; i++) {
-		  sc.station.banknoteStorage.load(new Banknote(currency, 1));
-	  }
-	  for (int i = 0; i < fivesToAdd; i++) {
-		  sc.station.banknoteStorage.load(new Banknote(currency, 5));
-	  }
-	  for (int i = 0; i < tensToAdd; i++) {
-		  sc.station.banknoteStorage.load(new Banknote(currency, 10));
-	  }
-	  for (int i = 0; i < twentiesToAdd; i++) {
-		  sc.station.banknoteStorage.load(new Banknote(currency, 20));
-	  }
-	  for (int i = 0; i < fiftiesToAdd; i++) {
-		  sc.station.banknoteStorage.load(new Banknote(currency, 50));
-	  }
-	  for (int i = 0; i < hundredsToAdd; i++) {
-		  sc.station.banknoteStorage.load(new Banknote(currency, 100));
-	  }
-	  
-	  banknotesLoaded(sc.station.banknoteStorage);
-	  enablePayments();
+	  return isLow;
   }
   
   // STUFF FOR CHANGE (leftover money kind)
