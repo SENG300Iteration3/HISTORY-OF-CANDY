@@ -1,14 +1,17 @@
 package com.diy.software.controllers;
 
 import java.util.ArrayList;
+import java.util.Currency;
 
 import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.DoItYourselfStation;
+import com.diy.hardware.Product;
 import com.diy.hardware.external.CardIssuer;
 import com.diy.hardware.external.ProductDatabases;
 import com.diy.simulation.Customer;
 import com.diy.software.fakedata.FakeDataInitializer;
+import com.diy.software.fakedata.GiftcardDatabase;
 import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
@@ -24,10 +27,17 @@ import com.jimmyselectronics.opeechee.Card;
 import com.jimmyselectronics.opeechee.Card.CardData;
 import com.jimmyselectronics.opeechee.CardReader;
 import com.jimmyselectronics.opeechee.CardReaderListener;
+import com.jimmyselectronics.svenden.ReusableBag;
+import com.jimmyselectronics.svenden.ReusableBagDispenser;
+import com.jimmyselectronics.svenden.ReusableBagDispenserListener;
 import com.jimmyselectronics.virgilio.ElectronicScale;
 import com.jimmyselectronics.virgilio.ElectronicScaleListener;
+import com.unitedbankingservices.TooMuchCashException;
+import com.unitedbankingservices.banknote.Banknote;
+import com.unitedbankingservices.coin.Coin;
 
 import ca.powerutility.NoPowerException;
+import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
 
 /**
  * SystemControl is a class that acts as an intermediary between listeners
@@ -38,7 +48,7 @@ import ca.powerutility.NoPowerException;
  *
  */
 public class StationControl
-		implements BarcodeScannerListener, ElectronicScaleListener, CardReaderListener, ReceiptPrinterListener {
+		implements BarcodeScannerListener, ElectronicScaleListener, CardReaderListener, ReceiptPrinterListener, ReusableBagDispenserListener {
 	public FakeDataInitializer fakeData;
 	private double expectedCheckoutWeight = 0.0;
 	private double bagWeight = 0.0;
@@ -58,14 +68,16 @@ public class StationControl
 	private AttendantControl ac;
 	private WalletControl wc;
 	private MembershipControl mc;
+	private BagDispenserControl bdc;
 	private CashControl cc;
+	private PinPadControl ppc;
+	private PaymentControl pc;
 
 	private boolean isLocked = false;
 	public String memberName;
 	public double weightOfItemScanned;
-
-	private PinPadControl ppc;
-	private PaymentControl pc;
+	private boolean membershipInput = false;
+	private int bagInStock;
 
 	/**
 	 * Constructor for the SystemControl class. Instantiates an object of type
@@ -76,21 +88,33 @@ public class StationControl
 		customer = new Customer();
 		station = new DoItYourselfStation();
 		customer.useStation(station);
-
-		station.printer.register(this);
-		station.handheldScanner.register(this);
-		station.baggingArea.register(this);
-		station.cardReader.register(this);
-
-		station.plugIn();
-		station.turnOn();
-
+		
 		ic = new ItemsControl(this);
 		bc = new BagsControl(this);
 		mc = new MembershipControl(this);
 		cc = new CashControl(this);
+		bdc = new BagDispenserControl(this);
 		ac = new AttendantControl(this);
+
+		station.printer.register(this);
+		station.mainScanner.register(this);
+		station.handheldScanner.register(this);
+		station.baggingArea.register(this);
+		station.cardReader.register(this);
+		station.reusableBagDispenser.register(this);
 		
+		station.plugIn();
+		station.turnOn();
+		
+		fillStation();
+		
+		/*
+		 * loads maximum number of bags to the reusable bag dispenser 
+		 */
+		station.reusableBagDispenser.plugIn();
+		station.reusableBagDispenser.turnOn();
+		bagInStock = station.reusableBagDispenser.getCapacity();
+		loadBags();
 
 		/*
 		 * simulates what the printer has in it before the printing starts
@@ -115,6 +139,7 @@ public class StationControl
 		this.fakeData = fakeData;
 		this.fakeData.addCardData();
 		this.fakeData.addProductAndBarcodeData();
+		this.fakeData.addPLUCodedProduct();
 		this.fakeData.addFakeMembers();
 
 		// for (Card c: this.fakeData.getCards()) customer.wallet.cards.add(c);
@@ -159,6 +184,10 @@ public class StationControl
 	public MembershipControl getMembershipControl() {
 		return mc;
 	}
+	
+	public BagDispenserControl getBagDispenserControl() {
+		return bdc;
+	}
 
 	public PinPadControl getPinPadControl() {
 		return ppc;
@@ -170,6 +199,44 @@ public class StationControl
 
 	public CashControl getCashControl() {
 		return cc;
+	}
+	
+	private void loadBags() {
+		try {
+			for(int i = 0; i < bagInStock; i++) {
+				ReusableBag aBag = new ReusableBag();
+				station.reusableBagDispenser.load(aBag);
+			}
+
+		}catch(OverloadException e) {}
+	}
+	
+	private void fillStation() {
+		for(int i : station.banknoteDenominations) {
+			int capacity = station.banknoteDispensers.get(i).getCapacity();
+			Banknote[] bills = new Banknote[capacity];
+			for(int j = 0; j < capacity; j++) {
+				bills[j] = new Banknote(Currency.getInstance("CAD"), i);
+			}
+			try {
+				station.banknoteDispensers.get(i).load(bills);
+			} catch (TooMuchCashException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		for(long i : station.coinDenominations) {
+			int capacity = station.coinDispensers.get(i).getCapacity();
+			Coin[] coins = new Coin[capacity];
+			for(int j = 0; j < capacity; j++) {
+				coins[j] = new Coin(Currency.getInstance("CAD"), i);
+			}
+			try {
+				station.coinDispensers.get(i).load(coins);
+			} catch (TooMuchCashException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public void updateWeightOfLastItemAddedToBaggingArea(double weight) {
@@ -190,6 +257,7 @@ public class StationControl
 			while (loop) {
 				try {
 					this.station.handheldScanner.disable();
+					this.station.mainScanner.disable();
 					this.station.cardReader.disable();
 					for (StationControlListener l : listeners) {
 						l.systemControlLocked(this, true);
@@ -205,6 +273,27 @@ public class StationControl
 		}
 		// System.out.println("Station Locked"); // Remove before release}
 	}
+	
+	public void blockStation(String reason) {
+		if (!isLocked) {
+			boolean loop = true;
+			while (loop) {
+				try {
+					this.station.handheldScanner.disable();
+					this.station.cardReader.disable();
+					for (StationControlListener l : listeners) {
+						l.systemControlLocked(this, true, reason);
+					}
+					isLocked = true;
+				} catch (NoPowerException e) {
+					System.out.println(e.getMessage());
+				} finally {
+					if (this.station.handheldScanner.isPoweredUp())
+						loop = false;
+				}
+			}
+		}
+	}
 
 	/**
 	 * Enables pieces of hardware so the Customer can continue checking out now that
@@ -216,6 +305,7 @@ public class StationControl
 			while (loop) {
 				try {
 					this.station.handheldScanner.enable();
+					this.station.mainScanner.enable();
 					this.station.cardReader.enable();
 					for (StationControlListener l : listeners)
 						l.systemControlLocked(this, false);
@@ -269,6 +359,12 @@ public class StationControl
 				l.paymentHasBeenCanceled(this, null, reason);
 		}
 	}
+	
+	public void triggerMembershipCardInputFailScreen(String reason) {
+		for (StationControlListener l : listeners)
+			l.paymentHasBeenCanceled(this, null, reason);
+		wc.membershipCardInputCanceled();
+	}
 
 	public void startPaymentWorkflow() {
 		for (StationControlListener l : listeners)
@@ -278,6 +374,24 @@ public class StationControl
 	public void startMembershipWorkflow() {
 		for (StationControlListener l : listeners)
 			l.triggerMembershipWorkflow(this);
+	}
+	
+	public void startMembershipCardInput() {
+		membershipInput = true;
+		for (StationControlListener l : listeners)
+			l.startMembershipCardInput(this);
+		wc.membershipCardInputEnabled();
+		
+	}
+	
+	public void startPurchaseBagsWorkflow() {
+		for (StationControlListener l : listeners)
+			l.triggerPurchaseBagsWorkflow(this);
+	}
+	
+	public void cancelMembershipCardInput() {
+		membershipInput = false;
+		wc.membershipCardInputCanceled();
 	}
 
 	@Override
@@ -317,7 +431,6 @@ public class StationControl
 	}
 
 	@Override
-	// <<<<<<< HEAD
 	/*
 	 * Reads the data from the card and pays for the transaction using the card. On
 	 * success, the amount owed will be updated to 0.0 and the hold placed on the
@@ -328,26 +441,58 @@ public class StationControl
 	 * set to false.
 	 */
 	public void cardDataRead(CardReader reader, CardData data) {
-		Double amountOwed = this.ic.getCheckoutTotal();
-		String cardNumber = data.getNumber();
-		CardIssuer bank = fakeData.getCardIssuer();
+		if (data.getType() == "MEMBERSHIP") {
+			mc.checkMembership(Integer.parseInt(data.getNumber()));
+			for (StationControlListener l : listeners) {
+				l.membershipCardInputFinished(this);
+			}
+			membershipInput = false;
+			wc.membershipCardInputCanceled();
+		} else {
+			Double amountOwed = this.ic.getCheckoutTotal();
+			String cardNumber = data.getNumber();
+			CardIssuer bank = fakeData.getCardIssuer();
+			
+			if(data.getType().equals(GiftcardDatabase.CompanyGiftCard)) {
+				if(amountOwed == 0) {
+					cc.paymentFailed();
+					return;
+				}
+				
+				Double amountOnCard = GiftcardDatabase.giftcardMap.get(cardNumber);
+				Double dif = amountOnCard - amountOwed;
+				if(dif >= 0) {
+					GiftcardDatabase.giftcardMap.put(cardNumber, dif);
+					ic.updateCheckoutTotal(-amountOwed);
+					for (StationControlListener l : listeners) {
+						l.paymentHasBeenMade(this, data);
+					}
+				}else {
+					GiftcardDatabase.giftcardMap.put(cardNumber, 0.0);
+					ic.updateCheckoutTotal(-amountOnCard);
+					//TODO: tell customer that their card wasn't enough maybe?
+				}
+				cc.cashInserted();
+				return;
+			}
 
-		long holdNum = bank.authorizeHold(cardNumber, amountOwed);
-		if (holdNum <= -1) {
-			for (StationControlListener l : listeners) {
-				l.paymentHasBeenCanceled(this, data, "Could not authorize bank hold.");
+			long holdNum = bank.authorizeHold(cardNumber, amountOwed);
+			if (holdNum <= -1) {
+				for (StationControlListener l : listeners) {
+					l.paymentHasBeenCanceled(this, data, "Could not authorize bank hold.");
+				}
+			} else if (bank.postTransaction(cardNumber, holdNum, amountOwed)) {
+				bank.releaseHold(cardNumber, holdNum);
+				this.ic.updateCheckoutTotal(-this.ic.getCheckoutTotal());
+				for (StationControlListener l : listeners) {
+					l.paymentHasBeenMade(this, data);
+				}
+				ic.updateCheckoutTotal(0);
+				return;
 			}
-		} else if (bank.postTransaction(cardNumber, holdNum, amountOwed)) {
-			bank.releaseHold(cardNumber, holdNum);
-			this.ic.updateCheckoutTotal(-this.ic.getCheckoutTotal());
 			for (StationControlListener l : listeners) {
-				l.paymentHasBeenMade(this, data);
+				l.paymentHasBeenCanceled(this, data, "Payment failed.");
 			}
-			ic.updateCheckoutTotal(0);
-			return;
-		}
-		for (StationControlListener l : listeners) {
-			l.paymentHasBeenCanceled(this, data, "Payment failed.");
 		}
 	}
 
@@ -442,16 +587,63 @@ public class StationControl
 	// FIXME: only barcoded products have barcodes, product only have price/weight
 	@Override
 	public void barcodeScanned(BarcodeScanner barcodeScanner, Barcode barcode) {
-		weightOfItemScanned = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
-		// Add the barcode to the ArrayList within itemControl
-		this.ic.addScannedItemToCheckoutList(barcode);
+		if (membershipInput) {
+			mc.checkMembership(Integer.parseInt(barcode.toString()));
+			for (StationControlListener l : listeners) {
+				l.membershipCardInputFinished(this);
+			}
+			membershipInput = false;
+			wc.membershipCardInputCanceled();
+		} else {
+			Product product = findProduct(barcode);
+			checkInventory(product);
+			weightOfItemScanned = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
+			// Add the barcode to the ArrayList within itemControl
+			this.ic.addScannedItemToCheckoutList(barcode);
+			// Set the expected weight in SystemControl
+			this.updateExpectedCheckoutWeight(weightOfItemScanned);
+			this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
+			// Call method within SystemControl that handles the rest of the item scanning
+			// procedure
+			this.blockStation();
+			// Trigger the GUI to display "place the scanned item in the Bagging Area"
+		}
+	}
+	
+	private void checkInventory(Product product) {
+		if(ProductDatabases.INVENTORY.containsKey(product) && ProductDatabases.INVENTORY.get(product) >= 1) {
+			ProductDatabases.INVENTORY.put(product, ProductDatabases.INVENTORY.get(product)-1); //updates INVENTORY with new total
+		}else {
+			// TODO: inform customer and attendant
+			System.out.print("Out of stock");
+		}
+	}
+	
+	private BarcodedProduct findProduct(Barcode Barcode) throws NullPointerSimulationException {
+    	if(ProductDatabases.BARCODED_PRODUCT_DATABASE.containsKey(Barcode)) {
+            return ProductDatabases.BARCODED_PRODUCT_DATABASE.get(Barcode);        
+        }
+    	else {
+    		// TODO: Inform customer station
+    		System.out.println("Cannot find the product. Please try again or ask for assistant!");
+    		throw new NullPointerSimulationException();
+    	}
+    }
+	
+	public void addReusableBag(ReusableBag lastDispensedReusableBag) {
+		// ADD: update inventory
+
+		weightOfItemScanned = lastDispensedReusableBag.getWeight();
+		
 		// Set the expected weight in SystemControl
 		this.updateExpectedCheckoutWeight(weightOfItemScanned);
 		this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
-		// Call method within SystemControl that handles the rest of the item scanning
-		// procedure
-		this.blockStation();
-		// Trigger the GUI to display "place the scanned item in the Bagging Area"
+	}
+	
+	public void ItemApprovedToNotBag() {
+		this.updateExpectedCheckoutWeight(-weightOfItemScanned);
+		this.updateWeightOfLastItemAddedToBaggingArea(-weightOfItemScanned);
+		this.unblockStation();
 	}
 
 	/**
@@ -463,6 +655,10 @@ public class StationControl
 	 */
 	public boolean expectedWeightMatchesActualWeight(double actualWeight) {
 		return (this.getExpectedWeight() == actualWeight + bagWeight);
+	}
+	
+	public int getBagInStock() {
+		return bagInStock;
 	}
 
 	@Override
@@ -498,5 +694,38 @@ public class StationControl
 	public void inkAdded(IReceiptPrinter printer) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void bagDispensed(ReusableBagDispenser dispenser) {
+		--bagInStock;
+	}
+
+	@Override
+	public void outOfBags(ReusableBagDispenser dispenser) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void bagsLoaded(ReusableBagDispenser dispenser, int count) {
+		// TODO Auto-generated method stub
+  }
+	
+	public boolean isMembershipInput() {
+		return membershipInput;
+	}
+	
+	
+	public void notifyNoBagsInStock() {
+		for (StationControlListener l: listeners) {
+			l.noBagsInStock(this);
+		}
+	}
+	
+	public void notifyNotEnoughBagsInStock(int numBag) {
+		for (StationControlListener l: listeners) {
+			l.notEnoughBagsInStock(this, numBag);
+		}
 	}
 }

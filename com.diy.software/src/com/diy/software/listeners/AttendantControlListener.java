@@ -5,6 +5,8 @@ import com.unitedbankingservices.coin.CoinStorageUnit;
 
 public interface AttendantControlListener {
 	public void attendantApprovedBags(AttendantControl ac);
+
+	public void attendantPreventUse(AttendantControl ac);
 	
 	/**
 	 * allowing attendant to add paper to the printer when the printer is out or low on paper
@@ -29,7 +31,7 @@ public interface AttendantControlListener {
 	/**
 	 * state to approve no bagging request
 	 */
-	public void noBaggingRequestState();
+	public void noBagRequest();
 	
 	/**
 	 * returns the attendant station to initial starting state when stations have no issues

@@ -18,11 +18,13 @@ public class CustomerWalletPanel extends JPanel implements WalletControlListener
 
 	private static final long serialVersionUID = 1L;
 	private WalletControl wc;
-	JRadioButton cc1, cc2, cc3;
-	JButton insertOrEjectButton, tapButton, swipeButton;
+	JRadioButton cc1, cc2, cc3, m, gc;
+	JButton insertOrEjectButton, tapButton, swipeButton, scanMemButton;
 
 	private boolean aCardIsSelected = false;
 	private boolean paymentsEnabled = false;
+	private boolean membershipCardInputEnabled = false;
+	private boolean membershipCardSelected = false;
 
 	public CustomerWalletPanel(StationControl sc) {
 		super();
@@ -36,6 +38,12 @@ public class CustomerWalletPanel extends JPanel implements WalletControlListener
 		cc2.setActionCommand("cc1");
 		cc3 = new JRadioButton(cards.get(2).kind);
 		cc3.setActionCommand("cc2");
+		
+		m = new JRadioButton(cards.get(3).kind);
+		m.setActionCommand("m");
+		
+		gc = new JRadioButton(cards.get(4).kind);
+		gc.setActionCommand("giftcard");
 
 		insertOrEjectButton = new JButton("insert");
 		insertOrEjectButton.setActionCommand("insert");
@@ -51,37 +59,83 @@ public class CustomerWalletPanel extends JPanel implements WalletControlListener
 		swipeButton.setActionCommand("swipe");
 		swipeButton.addActionListener(wc);
 		swipeButton.setEnabled(false);
+		
+		scanMemButton = new JButton("scan membership card");
+		scanMemButton.setActionCommand("scan");
+		scanMemButton.addActionListener(wc);
+		scanMemButton.setEnabled(false);
 
 		cc1.setSelected(true);
 
 		cc1.addActionListener(wc);
 		cc2.addActionListener(wc);
 		cc3.addActionListener(wc);
+		m.addActionListener(wc); //CORRECT CONTROLLER
+		gc.addActionListener(wc);
 
 		ButtonGroup ccButtonGroup = new ButtonGroup();
 		ccButtonGroup.add(cc1);
 		ccButtonGroup.add(cc2);
 		ccButtonGroup.add(cc3);
+		ccButtonGroup.add(m);
+		ccButtonGroup.add(gc);
 		ccButtonGroup.clearSelection();
 
 		this.setBackground(GUI_Color_Palette.DARK_BLUE);
 		this.add(cc1);
 		this.add(cc2);
 		this.add(cc3);
+		this.add(m);
+		this.add(gc);
 		this.add(insertOrEjectButton);
 		this.add(tapButton);
 		this.add(swipeButton);
+		this.add(scanMemButton);
 	}
 
 	private void updateButtonStates() {
-		insertOrEjectButton.setEnabled(aCardIsSelected && paymentsEnabled);
-		tapButton.setEnabled(aCardIsSelected && paymentsEnabled);
-		swipeButton.setEnabled(aCardIsSelected && paymentsEnabled);
+		if (membershipCardSelected) {
+			if (membershipCardInputEnabled) {
+				swipeButton.setEnabled(true);
+				scanMemButton.setEnabled(true);
+				insertOrEjectButton.setEnabled(false);
+				tapButton.setEnabled(false);
+			} else {
+				swipeButton.setEnabled(false);
+				scanMemButton.setEnabled(false);
+				insertOrEjectButton.setEnabled(false);
+				tapButton.setEnabled(false);
+			}
+		} else {
+			insertOrEjectButton.setEnabled(aCardIsSelected && paymentsEnabled);
+			tapButton.setEnabled(aCardIsSelected && paymentsEnabled);
+			swipeButton.setEnabled(aCardIsSelected && paymentsEnabled);
+			scanMemButton.setEnabled(false);
+		}
 	}
 
 	@Override
 	public void cardHasBeenSelected(WalletControl wc) {
 		aCardIsSelected = true;
+		membershipCardSelected = false;
+		updateButtonStates();
+	}
+	
+	@Override
+	public void membershipCardInputEnabled(WalletControl wc) {
+		membershipCardInputEnabled = true;
+		updateButtonStates();
+	}
+	
+	@Override
+	public void membershipCardInputCanceled(WalletControl walletControl) {
+		membershipCardInputEnabled = false;
+		updateButtonStates();
+	}
+	
+	@Override
+	public void membershipCardHasBeenSelected(WalletControl wc) {
+		membershipCardSelected = true;
 		updateButtonStates();
 	}
 
@@ -117,4 +171,6 @@ public class CustomerWalletPanel extends JPanel implements WalletControlListener
 		insertOrEjectButton.setActionCommand("insert");
 		updateButtonStates();
 	}
+
+	
 }

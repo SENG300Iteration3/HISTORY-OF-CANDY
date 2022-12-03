@@ -8,6 +8,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
+import com.diy.hardware.PriceLookUpCode;
+import com.diy.hardware.Product;
 import com.diy.hardware.external.ProductDatabases;
 import com.diy.software.listeners.ItemsControlListener;
 import com.jimmyselectronics.AbstractDevice;
@@ -16,6 +18,7 @@ import com.jimmyselectronics.Item;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodeScanner;
 import com.jimmyselectronics.necchi.BarcodeScannerListener;
+import com.jimmyselectronics.svenden.ReusableBag;
 import com.jimmyselectronics.virgilio.ElectronicScale;
 import com.jimmyselectronics.virgilio.ElectronicScaleListener;
 
@@ -24,8 +27,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	private ArrayList<ItemsControlListener> listeners;
 	public ArrayList<Tuple<BarcodedProduct,Integer>> tempList = new ArrayList<>();
 	private ArrayList<Tuple<String, Double>> checkoutList = new ArrayList<>();
+	private ArrayList<ReusableBag> bags = new ArrayList<ReusableBag>();			// stores reusable bag item with no barcode
 	private double checkoutListTotal = 0.0;
-
 	private boolean scanSuccess = true, weighSuccess = true;
 	
 	public String userMessage = "";
@@ -38,11 +41,11 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	private boolean removedWrongBaggedItem;
 	private double scaleExpectedWeight;
 	private double scaleReceivedWeight;
-	
 
 	public ItemsControl(StationControl sc) {
 		this.sc = sc;
 		sc.station.handheldScanner.register(this);
+		sc.station.mainScanner.register(this);
 		sc.station.baggingArea.register(this);
 		this.listeners = new ArrayList<>();
 	}
@@ -80,6 +83,14 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		if (checkoutListTotal + amount >= 0) 
 			checkoutListTotal += amount;
 		refreshGui();
+	}
+	
+	public void addReusableBags(ReusableBag aBag) {
+		bags.add(aBag);		// add to reusable bags doesnt really need it for now
+		
+		double reusableBagPrice = sc.fakeData.getReusableBagPrice();
+		this.updateCheckoutTotal(reusableBagPrice);	// update total balance
+		this.addItemToCheckoutList(new Tuple<String, Double>("Reusable bag", reusableBagPrice));
 	}
 	
 	public double getCheckoutTotal() {
@@ -135,10 +146,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 	// TODO: scanItem now differtiates between using handheldScanner and mainScanner
 	// ALSO: note that a new weight area called scanningArea exists now to grab weight of items during general scanning phase
-	public void scanCurrentItem() {
+	public void scanCurrentItem(boolean useHandheld) {
 		baggingAreaTimerStart = System.currentTimeMillis();
 		scanSuccess = false;
-		sc.customer.scanItem(true);
+		sc.customer.scanItem(useHandheld);
 		if (!scanSuccess) {
 			// if scanSuccess is still false after listeners have been called, we can show
 			// an alert showing a failed scan if time permits.
@@ -177,13 +188,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	}
 	
 	/**
-	 * request no bagging for last item added to scale
-	 */
-	public void requestNoBagging() {	
-		sc.getAttendantControl().approveNoBaggingRequest();
-	}
-	
-	/**
 	 * removes the last wrongly added item from the scale
 	 */
 	public void removeLastBaggedItem() {
@@ -194,11 +198,12 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			l.awaitingItemToBeSelected(this);
 	}
 
-	// TODO: verify what happens in this case
-	// TODO: potentially add to GUI?
+	/**
+	 * After the attendant approved no bag request, customer leave the item in cart
+	 */
 	public void placeBulkyItemInCart() {
 		try {
-			// placing an item could potentially fail so allow for retries
+			// Customer leaves the current item in the cart. 
 			sc.customer.leaveBulkyItemInCart();
 			for (ItemsControlListener l : listeners)
 				l.awaitingItemToBeSelected(this);
@@ -216,9 +221,13 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				System.out.println("Customer picks up next item");
 				pickupNextItem();	
 				break;
-			case "scan":
-				System.out.println("Customer scans next item");
-				scanCurrentItem();
+			case "main scan":
+				System.out.println("Customer uses main scanner to scan next item");
+				scanCurrentItem(false);
+				break;
+			case "handheld scan":
+				System.out.println("Customer uses handheld scanner to scan next item");
+				scanCurrentItem(true);
 				break;
 			case "put back":
 				System.out.println("Customer put back current item");
@@ -227,10 +236,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			case "bag":
 				System.out.println("Customer put item in bagging area");
 				placeItemOnScale();
-				break;
-			case "removeFromScale":
-				System.out.println("Customer requests to not bag last item from scale");
-				requestNoBagging();
 				break;
 			case "pay":
 				System.out.println("Starting payment workflow");
@@ -256,17 +261,18 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	}
 
 	@Override
-	public void turnedOn(AbstractDevice<? extends AbstractDeviceListener> device) {}
+	public void turnedOn(AbstractDevice<? extends AbstractDeviceListener> device) {	}
 
 	@Override
-	public void turnedOff(AbstractDevice<? extends AbstractDeviceListener> device) {
-	}
+	public void turnedOff(AbstractDevice<? extends AbstractDeviceListener> device) {}
 
 	@Override
 	public void barcodeScanned(BarcodeScanner barcodeScanner, Barcode barcode) {
-		scanSuccess = true;
-		for (ItemsControlListener l : listeners)
-			l.awaitingItemToBePlacedInBaggingArea(this);
+		if (!sc.isMembershipInput()) {
+			scanSuccess = true;
+			for (ItemsControlListener l : listeners)
+				l.awaitingItemToBePlacedInBaggingArea(this);
+		}
 	}
 	
 	/**
