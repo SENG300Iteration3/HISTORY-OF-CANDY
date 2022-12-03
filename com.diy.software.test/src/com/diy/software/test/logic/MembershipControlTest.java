@@ -85,8 +85,13 @@ public class MembershipControlTest {
 		ActionEvent e2 = new ActionEvent(this, 0, "correct");
 		mc.actionPerformed(e2);
 		assertTrue(mcStub.message.equals("12"));
-		
-		
+	}
+	
+	@Test
+	public void testActionPerformedCorrectZeroLength() {
+		ActionEvent e2 = new ActionEvent(this, 0, "correct");
+		mc.actionPerformed(e2);
+		assertTrue(mcStub.message.equals(""));
 	}
 	
 	@Test
@@ -98,6 +103,14 @@ public class MembershipControlTest {
 		ActionEvent e2 = new ActionEvent(this, 0, "submit");
 		mc.actionPerformed(e2);
 		assertTrue(mcStub.message.equals("Welcome! Itadori"));
+	}
+	
+	@Test
+	public void testActionPerformedSubmitEmptyNumber() {
+		ActionEvent e2 = new ActionEvent(this, 0, "submit");
+		mc.actionPerformed(e2);
+		assertNull(mcStub.message);
+		assertTrue(mcStub.membershipInput);
 	}
 	
 	@Test
