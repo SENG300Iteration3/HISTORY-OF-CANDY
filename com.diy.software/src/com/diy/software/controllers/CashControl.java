@@ -338,12 +338,15 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 			q += n;
 		}
 		
+		long totalReturned = 0;
+		
 		for(int i = 0; i < bills.size(); i++) { //returns all of the bills that you have accounted for
 			int times = returnBills.get(i);
 			int value = bills.get(i);
 			while(times > 0) {
 					try {
 						sc.station.banknoteDispensers.get(value).emit();
+						totalReturned += 100*value;
 					} catch (OutOfCashException | DisabledException | TooMuchCashException e) {
 						break;
 					}
@@ -359,11 +362,16 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 			while(times > 0) {
 				try {
 					sc.station.coinDispensers.get(value).emit();
+					totalReturned += value;
 				} catch (OutOfCashException | DisabledException | TooMuchCashException e) {
 					break;
 				}
 				times--;
 			}
+		}
+		
+		if(totalReturned < change*100) {
+			//TODO: notify attendant that customer was shortchanged by ((double)totalReturned)/100.0
 		}
 		
 		changeReturned();
