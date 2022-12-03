@@ -13,6 +13,10 @@ import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
 
+/**
+ * This class isn't linked to anything. Should it still be kept?
+ *
+ */
 public class AttendantPanel extends JPanel implements AttendantControlListener, BagsControlListener{
 
 	private static final long serialVersionUID = 1L;

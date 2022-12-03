@@ -8,6 +8,7 @@ import com.diy.software.controllers.StationControl;
 import com.diy.software.fakedata.FakeDataInitializer;
 
 import ca.powerutility.PowerGrid;
+import swing.frames.AttendantActionsGUI;
 import swing.frames.AttendantStationGUI;
 import swing.frames.CustomerActionsGUI;
 import swing.frames.CustomerStationGUI;
@@ -31,6 +32,7 @@ public class SENG300DoItYourselfStation {
     new AttendantStationGUI(pc);
     new CustomerStationGUI(pc);
     new CustomerActionsGUI(pc);
+    new AttendantActionsGUI(pc);
   }
 
   public static void configureDoItYourselfStation() {

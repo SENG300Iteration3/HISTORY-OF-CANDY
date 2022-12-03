@@ -42,6 +42,17 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		sc.startUp();
 	}
 	
+	public void shutDownStation() {
+		sc.shutDown();
+	}	
+	
+	public void resetState() {
+		sc.unblockStation(); // initial state of AttendantControl is an unblocked station.
+		for (AttendantControlListener l : listeners) {
+			l.initialState();
+		}
+	}
+	
 	public void approveBagsAdded() {
 		sc.unblockStation();
 		for (AttendantControlListener l : listeners) {
@@ -244,6 +255,10 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 				case "startUp":
 					System.out.println("Station has been started up");
 					startUpStation();
+					break;
+				case "shutDown":
+					System.out.println("Station has been shut down");
+					shutDownStation();
 					break;
 				default:
 					break;

@@ -58,6 +58,12 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	public void addListenerAttendant(AttendantControlListener la) {
 		listenersAttendant.add(la);
 	}
+//	Resets the data to its initial state. 
+	public void resetState() {
+		outOfPaperCheck = false;
+		outOfInkCheck = false;
+		retreivedMemNum = -2; // can't use null, gonnause this.
+	}
 	
 	
 	/**

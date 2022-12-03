@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.MissingResourceException;
 
+import com.diy.software.fakedata.GiftcardDatabase;
 import com.diy.software.listeners.MembershipControlListener;
 import com.diy.software.listeners.WalletControlListener;
 import com.jimmyselectronics.AbstractDevice;
@@ -169,6 +170,9 @@ public class WalletControl implements ActionListener, CardReaderListener {
 		String c = e.getActionCommand();
 		try {
 			switch (c) {
+			case "giftcard":
+				selectCard(GiftcardDatabase.CompanyGiftCard);
+				break;
 			case "cc2":
 				selectCard("MAST");
 				break;

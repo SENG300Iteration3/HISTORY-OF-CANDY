@@ -46,6 +46,11 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 		coinsFull = false;
 		notesFull = false;
 	}
+	
+	public void resetState() {
+		coinsFull = false;
+		notesFull = false;
+	}
 
 	public void addListener(CashControlListener listener) {
 		listeners.add(listener);
@@ -75,7 +80,7 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 			listener.noteInsertionDisabled(this);
 	}
   
-	private void cashInserted() {
+	public void cashInserted() {
 		for(CashControlListener listener : listeners)
 			listener.cashInserted(this);
 	}
@@ -88,6 +93,11 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 	private void changeReturned() {
 		for (CashControlListener listener : listeners) 
 			listener.changeReturned(this);
+	}
+	
+	public void paymentFailed() {
+		for(CashControlListener listener : listeners)
+			listener.paymentFailed(this);
 	}
   
 	/*
