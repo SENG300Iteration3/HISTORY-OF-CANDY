@@ -103,6 +103,7 @@ public class StationControl
 		station.mainScanner.register(this);
 		station.handheldScanner.register(this);
 		station.baggingArea.register(this);
+		station.scanningArea.register(this);
 		station.cardReader.register(this);
 		
 		station.plugIn();
@@ -574,16 +575,24 @@ public class StationControl
 	 */
 	@Override
 	public void weightChanged(ElectronicScale scale, double weightInGrams) {
-		// Any time the system registers a weight changed event it checks to see if the
-		// expected weight matches the actual weight
-		// If the expected weight doesn't match the actual weight, it blocks the system.
-		if (this.expectedWeightMatchesActualWeight(weightInGrams)) {
-			this.unblockStation();
-			userMessage = "Weight of scale has changed to: " + weightInGrams;
-		} else {
-			this.blockStation();
-			System.err.println("System has been blocked!");
+		if(scale == station.baggingArea) {
+			// Any time the system registers a weight changed event it checks to see if the
+			// expected weight matches the actual weight
+			// If the expected weight doesn't match the actual weight, it blocks the system.
+			if (this.expectedWeightMatchesActualWeight(weightInGrams)) {
+				this.unblockStation();
+				userMessage = "Weight of scale has changed to: " + weightInGrams;
+			} else {
+				this.blockStation();
+				System.err.println("System has been blocked!");
+			}
+		}else {
+			try {
+				addPlucodedNewItem(scale.getCurrentWeight());
+			} catch (OverloadException e) {
+			}
 		}
+		
 	}
 
 	@Override
@@ -613,19 +622,29 @@ public class StationControl
 			membershipInput = false;
 			wc.membershipCardInputCanceled();
 		} else {
-			Product product = findProduct(barcode);
-			checkInventory(product);
-			weightOfItemScanned = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
-			this.ic.addScannedItemToCheckoutList(barcode);
-			
-			// Set the expected weight in SystemControl
-			this.updateExpectedCheckoutWeight(weightOfItemScanned);
-			this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
-			// Call method within SystemControl that handles the rest of the item adding
-			// procedure
 			this.blockStation();
 			// Trigger the GUI to display "place the item in the Bagging Area"
 		}
+	}
+	
+	public void addBarcodedNewItem(Barcode barcode) {
+
+		weightOfItemScanned = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
+		// Add the barcode to the ArrayList within itemControl
+		this.ic.addScannedItemToCheckoutList(barcode);
+		// Set the expected weight in SystemControl
+		this.updateExpectedCheckoutWeight(weightOfItemScanned);
+		this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
+	}
+	
+	public void addPlucodedNewItem(double weight) {
+		weightOfItemScanned = weight;
+		// Add the barcode to the ArrayList within itemControl
+		this.ic.addItemByPLU();
+		
+		// Set the expected weight in SystemControl
+		this.updateExpectedCheckoutWeight(weightOfItemScanned);
+		this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
 	}
 	
 	@Override
@@ -638,7 +657,7 @@ public class StationControl
 			checkInventory(product);
 
 			// Add the barcode to the ArrayList within itemControl
-			boolean check = this.ic.addItemByPLU(code);
+			boolean check = this.ic.addItemByPLU();
 			// Not sure if this is supposed to be called 
 			// this.updateExpectedCheckoutWeight(weightOfItemCodeEntered);
 			// this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemCodeEntered);
@@ -713,7 +732,7 @@ public class StationControl
 	 * @throws OverloadException If the weight has overloaded the scale.
 	 */
 	public boolean expectedWeightMatchesActualWeight(double actualWeight) {
-		return (this.getExpectedWeight() == actualWeight + bagWeight);
+		return (this.getExpectedWeight() - (actualWeight + bagWeight) >= 1 || this.getExpectedWeight() - (actualWeight + bagWeight) <= 1);
 	}
 	
 	public int getBagInStock() {

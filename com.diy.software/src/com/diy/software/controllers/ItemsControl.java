@@ -16,6 +16,7 @@ import com.diy.hardware.PLUCodedProduct;
 import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.external.ProductDatabases;
 import com.diy.software.listeners.ItemsControlListener;
+import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.Item;
@@ -23,11 +24,13 @@ import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodeScanner;
 import com.jimmyselectronics.necchi.BarcodeScannerListener;
+import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.svenden.ReusableBag;
 import com.jimmyselectronics.virgilio.ElectronicScale;
 import com.jimmyselectronics.virgilio.ElectronicScaleListener;
 
 import ca.ucalgary.seng300.simulation.InvalidArgumentSimulationException;
+import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
 
 public class ItemsControl implements ActionListener, BarcodeScannerListener, ElectronicScaleListener {
 	private StationControl sc;
@@ -58,6 +61,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		sc.station.handheldScanner.register(this);
 		sc.station.mainScanner.register(this);
 		sc.station.baggingArea.register(this);
+		sc.station.scanningArea.register(this);
 		this.listeners = new ArrayList<>();
 	}
 
@@ -131,8 +135,13 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			// TODO: Find another way to do this 
 			this.currentItem = sc.customer.shoppingCart.get(sc.customer.shoppingCart.size() - 1);
 			sc.customer.selectNextItem();
-			for (ItemsControlListener l : listeners)
-				l.itemWasSelected(this);
+			if(currentItem instanceof PLUCodedItem) {
+				for (ItemsControlListener l : listeners)
+					l.plucodedItemWasSelected(this);
+			}else{
+				for (ItemsControlListener l : listeners)
+					l.barcodedItemWasSelected(this);
+			}
 			if (sc.customer.shoppingCart.size() == 0) {
 				for (ItemsControlListener l : listeners)
 					l.noMoreItemsAvailableInCart(this);
@@ -157,30 +166,25 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 	}
 
-	public boolean addItemByPLU(PriceLookUpCode code) {
+	public boolean addItemByPLU() {
 		try {
-
+		
 			baggingAreaTimerStart = System.currentTimeMillis();
 
-			PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(code);
-			
-			
+			PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(((PLUCodedItem) currentItem).getPLUCode());
+			System.out.println(product.getDescription());
 			if(product != null) {
 				// lol this is broken 
 				double weight = sc.station.scanningArea.getCurrentWeight();
-				System.out.println(weight + " Scale weight");
-				if(weight == 0.0) {
-					System.err.println("Please place the item on the scale before entering the code!!");
-					return false;
-				} else {
-					// price per kg
-					double price = (double)product.getPrice() * weight;
-					this.addItemToCheckoutList(new Tuple<String,Double>(product.getDescription(), price));
-					this.updateCheckoutTotal(price);
+				// price per kg
+				double price = (double)product.getPrice() * weight;
+				this.addItemToCheckoutList(new Tuple<String,Double>(product.getDescription(), price));
+				this.updateCheckoutTotal(price);
 				
-					System.out.println("Added item to checkout list!");
-					return true;
-				}
+				for (ItemsControlListener l : listeners)
+					l.awaitingItemToBePlacedInBaggingArea(this);
+				return true;
+				
 			} else {
 				System.err.println("PLU Code does not correspond to a product in the database!");
 				return false;
@@ -212,42 +216,55 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 	}
 
-	public void placeItemOnScale() {
-		scaleExpectedWeight = sc.weightOfItemScanned;
-		weighSuccess = false;
-		baggingAreaTimerEnd = System.currentTimeMillis();
-		// placing an item could potentially fail so allow for retries
-		// simulating a 40% chance of putting wrong item on the scale
-		if (random.nextDouble(0.0, 1.0) > PROBABILITY_OF_BAGGING_WRONG_ITEM) {
-			weighSuccess = true;
+	public void placeItemOnBaggingArea() {
+		if(currentItem instanceof BarcodedItem) {
+			scaleExpectedWeight = sc.weightOfItemScanned;
+			weighSuccess = false;
+			baggingAreaTimerEnd = System.currentTimeMillis();
+			// placing an item could potentially fail so allow for retries
+			// simulating a 40% chance of putting wrong item on the scale
+			if (random.nextDouble(0.0, 1.0) > PROBABILITY_OF_BAGGING_WRONG_ITEM) {
+				weighSuccess = true;
+				sc.customer.placeItemInBaggingArea();
+
+			} else {
+				// simulation weight discrepancy
+				scaleReceivedWeight = wrongBaggedItem.getWeight();
+				removedWrongBaggedItem = false;
+				sc.customer.placeItemInBaggingArea();
+				sc.station.baggingArea.add(wrongBaggedItem);
+				System.out.println(wrongBaggedItem);
+			}
+
+			if (baggingAreaTimerEnd - baggingAreaTimerStart > 10000) {
+				userMessage = "Please place item on scale!";
+				// not blocking station for now
+				// sc.blockStation();
+			}
+
+			if (!weighSuccess) {
+				// if weighSuccess is still false after listeners have been called, we can show
+				// and alert showing a failed weigh-in if time permits.
+			}
+		}else {
 			sc.customer.placeItemInBaggingArea();
-
-		} else {
-			// simulation weight discrepancy
-			scaleReceivedWeight = wrongBaggedItem.getWeight();
-			removedWrongBaggedItem = false;
-			sc.customer.placeItemInBaggingArea();
-			sc.station.baggingArea.add(wrongBaggedItem);
-
+			System.out.println("expected: " + sc.getExpectedWeight());
+			try {
+				System.out.println("actual: " + sc.station.baggingArea.getCurrentWeight());
+			} catch (OverloadException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-
-		if (baggingAreaTimerEnd - baggingAreaTimerStart > 10000) {
-			userMessage = "Please place item on scale!";
-			// not blocking station for now
-			// sc.blockStation();
-		}
-
-		if (!weighSuccess) {
-			// if weighSuccess is still false after listeners have been called, we can show
-			// and alert showing a failed weigh-in if time permits.
-		}
+		
 	}
 
 	/**
 	 * Weighs the item before entering the plu code.
 	 */
-	public void weightItem() {
+	public void weighItem() {
 		sc.station.scanningArea.add(currentItem);
+
 	}
 
 	/**
@@ -297,6 +314,12 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 		return result;
 	}
+	
+	private void pluItemSelected() {
+		sc.blockStation();
+		for (ItemsControlListener l : listeners)
+			l.awaitingItemToBePlacedInScanningArea(this);
+	}
 
 	private void addItemByBrowsing(String strProductName) {
 		Barcode barcodeIdentifier = null;
@@ -313,7 +336,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 		PLUCodeIdentifier = searchPLUCodedProductDatabase(strProductName);
 		if (PLUCodeIdentifier != null) {
-			addItemByPLU(PLUCodeIdentifier);
+			pluItemSelected();
 			isItemSelected = true;
 		}
 		if (isItemSelected) {
@@ -358,7 +381,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 					break;
 				case "bag":
 					System.out.println("Customer put item in bagging area");
-					placeItemOnScale();
+					placeItemOnBaggingArea();
 					break;
 				case "pay":
 					System.out.println("Starting payment workflow");
@@ -372,9 +395,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 					sc.startCatalogWorkflow();
 					break;
 				case "weigh":
-				System.out.println("Weighing item");
-				weightItem();
-				break;
+					weighItem();
+					break;
 			default:
 					break;
 				}
@@ -404,9 +426,37 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	public void barcodeScanned(BarcodeScanner barcodeScanner, Barcode barcode) {
 		if (!sc.isMembershipInput()) {
 			scanSuccess = true;
+			
+			// Verify product and inventory in the product database
+			Product product = findProduct(barcode);
+			checkInventory(product);
+			System.out.println("scanned item");
+			// Check if product price is per unit or weight
+			sc.addBarcodedNewItem(barcode);
+			scanSuccess = true;
 			for (ItemsControlListener l : listeners)
 				l.awaitingItemToBePlacedInBaggingArea(this);
 		}
+	}
+	
+	private void checkInventory(Product product) {
+		if(ProductDatabases.INVENTORY.containsKey(product) && ProductDatabases.INVENTORY.get(product) >= 1) {
+			ProductDatabases.INVENTORY.put(product, ProductDatabases.INVENTORY.get(product)-1); //updates INVENTORY with new total
+		}else {
+			// TODO: inform customer and attendant
+			System.out.print("Out of stock");
+		}
+	}
+
+	private BarcodedProduct findProduct(Barcode Barcode) throws NullPointerSimulationException {
+    	if(ProductDatabases.BARCODED_PRODUCT_DATABASE.containsKey(Barcode)) {
+            return ProductDatabases.BARCODED_PRODUCT_DATABASE.get(Barcode);        
+        }
+    	else {
+    		// TODO: Inform customer station
+    		System.out.println("Cannot find the product. Please try again or ask for assistant!");
+    		throw new NullPointerSimulationException();
+    	}
 	}
 
 	/**
@@ -417,31 +467,33 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	 */
 	@Override
 	public void weightChanged(ElectronicScale scale, double weightInGrams) {
-		weighSuccess = true;
-		for (ItemsControlListener l : listeners)
-			l.awaitingItemToBeSelected(this);
-		if (sc.expectedWeightMatchesActualWeight(weightInGrams)) {
-			sc.unblockStation();
-			userMessage = "Weight of scale has changed to: " + weightInGrams;
-		} else {
-			// System.out.println("Expected: " + sc.getExpectedWeight() + "Added: " +
-			// weightInGrams);
-			String weightDescrepancyMessage = "Expected item weight of: " + scaleExpectedWeight + ", "
-					+ "Weight bagged: " + scaleReceivedWeight
-					+ ". Weight Descrepancy detected please bag the right item";
-			String weightDescrepancyMessageAttendant = "Expected item weight of: " + scaleExpectedWeight + ", "
-					+ "Weight bagged: " + scaleReceivedWeight + ". Customer bagged the wrong item";
-			for (ItemsControlListener l : listeners)
-				l.awaitingItemToBeRemoved(this, weightDescrepancyMessage);
-
-			sc.getAttendantControl().updateWeightDescrepancyMessage(weightDescrepancyMessageAttendant);
-			;
-
-		}
-		if (removedWrongBaggedItem) {
-			sc.unblockStation();
+		if(scale == sc.station.baggingArea) {
+			weighSuccess = true;
 			for (ItemsControlListener l : listeners)
 				l.awaitingItemToBeSelected(this);
+			if (sc.expectedWeightMatchesActualWeight(weightInGrams)) {
+				sc.unblockStation();
+				userMessage = "Weight of scale has changed to: " + weightInGrams;
+			} else {
+				// System.out.println("Expected: " + sc.getExpectedWeight() + "Added: " +
+				// weightInGrams);
+				String weightDescrepancyMessage = "Expected item weight of: " + scaleExpectedWeight + ", "
+						+ "Weight bagged: " + scaleReceivedWeight
+						+ ". Weight Descrepancy detected please bag the right item";
+				String weightDescrepancyMessageAttendant = "Expected item weight of: " + scaleExpectedWeight + ", "
+						+ "Weight bagged: " + scaleReceivedWeight + ". Customer bagged the wrong item";
+				for (ItemsControlListener l : listeners)
+					l.awaitingItemToBeRemoved(this, weightDescrepancyMessage);
+
+				sc.getAttendantControl().updateWeightDescrepancyMessage(weightDescrepancyMessageAttendant);
+				;
+
+			}
+			if (removedWrongBaggedItem) {
+				sc.unblockStation();
+				for (ItemsControlListener l : listeners)
+					l.awaitingItemToBeSelected(this);
+			}
 		}
 	}
 
