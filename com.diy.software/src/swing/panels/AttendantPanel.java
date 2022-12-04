@@ -12,6 +12,7 @@ import com.diy.software.controllers.ReceiptControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
+import com.unitedbankingservices.coin.CoinStorageUnit;
 
 /**
  * This class isn't linked to anything. Should it still be kept?
@@ -175,5 +176,11 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 	@Override
 	public void outOfPaper(AttendantControl ac, String message) {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void coinIsLowState(CoinStorageUnit unit, int amount) {
+		// TODO Auto-generated method stub
+		
 	}
 }

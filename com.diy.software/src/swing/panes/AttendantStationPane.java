@@ -15,6 +15,7 @@ import com.diy.software.controllers.ReceiptControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
+import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Fonts;
@@ -275,5 +276,12 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	public void outOfPaper(AttendantControl ac, String message) {
 		paperLabel.setText(message);
 		paperLabel.setBackground(GUI_Color_Palette.RED_BROWN);
+	}
+
+
+	@Override
+	public void coinIsLowState(CoinStorageUnit unit, int amount) {
+		// TODO Auto-generated method stub
+		
 	}
 }

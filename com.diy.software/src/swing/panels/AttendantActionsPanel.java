@@ -16,13 +16,14 @@ import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
 import com.diy.software.listeners.ItemsControlListener;
 import com.diy.software.listeners.ReceiptControlListener;
+import com.unitedbankingservices.coin.CoinStorageUnit;
 
 public class AttendantActionsPanel extends JPanel
 		implements ItemsControlListener, AttendantControlListener, BagsControlListener, ReceiptControlListener {
 
 	private static final long serialVersionUID = 1L;
 	private ItemsControl ic;
-	private AttendantControl ac;
+	private AttendantControl ac; 
 	private BagsControl bc;
 	private ReceiptControl rc;
 	JButton inkButton, paperButton, bagDispenserButton, coinButton, banknoteButton;
@@ -226,5 +227,10 @@ public class AttendantActionsPanel extends JPanel
 
 	@Override
 	public void setNoReceiptState(ReceiptControl rc) {
+	}
+	@Override
+	public void coinIsLowState(CoinStorageUnit unit, int amount) {
+		// TODO Auto-generated method stub
+		
 	}
 }

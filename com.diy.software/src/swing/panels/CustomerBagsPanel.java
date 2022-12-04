@@ -14,6 +14,7 @@ import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
 import com.diy.software.listeners.ItemsControlListener;
+import com.unitedbankingservices.coin.CoinStorageUnit;
 
 public class CustomerBagsPanel extends JPanel
 		implements BagsControlListener, ItemsControlListener, AttendantControlListener {
@@ -206,6 +207,12 @@ public class CustomerBagsPanel extends JPanel
 
 	@Override
 	public void noBagRequest() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void coinIsLowState(CoinStorageUnit unit, int amount) {
 		// TODO Auto-generated method stub
 		
 	}
