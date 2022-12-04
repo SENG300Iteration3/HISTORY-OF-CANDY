@@ -28,6 +28,7 @@ import com.jimmyselectronics.virgilio.ElectronicScale;
 import com.jimmyselectronics.virgilio.ElectronicScaleListener;
 
 import ca.ucalgary.seng300.simulation.InvalidArgumentSimulationException;
+import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
 
 public class ItemsControl implements ActionListener, BarcodeScannerListener, ElectronicScaleListener {
 	private StationControl sc;
@@ -158,6 +159,11 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 	public boolean addItemByPLU(PriceLookUpCode code) {
 		try {
+			if(!isPLU || expectedPLU == null) {
+				System.err.println("The currently selected item has no PLU code!");
+				return false;
+			}
+
 			baggingAreaTimerStart = System.currentTimeMillis();
 
 			PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(code);
@@ -182,8 +188,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				System.err.println("PLU Code does not correspond to a product in the database!");
 				return false;
 			}
-		} catch(InvalidArgumentSimulationException | OverloadException e) {
-			System.err.println(e.getMessage());
+		} catch(InvalidArgumentSimulationException | OverloadException | NullPointerSimulationException e) {
+			System.err.println(e.toString());
 			return false;
 		}
 	}

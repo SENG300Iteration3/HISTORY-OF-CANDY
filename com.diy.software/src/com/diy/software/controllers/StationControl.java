@@ -649,7 +649,7 @@ public class StationControl
 				this.blockStation();
 			}
 		} catch(NullPointerSimulationException e) {
-			System.err.println(e.getMessage());
+			System.err.println("PLU code does not exist in the database");
 		}
 		
 
