@@ -326,6 +326,18 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 					attendantNotifications = ("stations printer needs more paper!");
 					addPaper();
 					break;
+				case "addCoin": 
+					//TODO:
+					
+					break;
+				case "addBanknote": 
+					//TODO:
+					
+					break;
+				case "addBag": 
+					//TODO:
+					
+					break;
 				case "request no bag":
 					attendantNotifications = ("customer requests no bagging");
 					System.out.println("request no bag");

@@ -26,6 +26,8 @@ public class AttendantActionsPanel extends JPanel
 	private AttendantControl ac; 
 	private BagsControl bc;
 	private ReceiptControl rc;
+	private boolean stationBlocked = true; // FIXME: Testing now. Should be false to start
+	
 	JButton inkButton, paperButton, bagDispenserButton, coinButton, banknoteButton;
 	GridBagConstraints buttonGrid = new GridBagConstraints();
 
@@ -43,11 +45,11 @@ public class AttendantActionsPanel extends JPanel
 		rc = sc.getReceiptControl();
 		rc.addListenerReceipt(this);
 
-		inkButton = initializeButton("Refill Ink Dispenser", "refill ink");
-		paperButton = initializeButton("Refill Paper Dispenser", "refill paper");
-		bagDispenserButton = initializeButton("Refill Bag Dispenser", "refill bags");
-		coinButton = initializeButton("Refill Coin Dispenser", "refill coins");
-		banknoteButton = initializeButton("Refill Banknote Dispenser", "refill banknotes");
+		inkButton = initializeButton("Refill Ink Dispenser", "addInk");
+		paperButton = initializeButton("Refill Paper Dispenser", "addPaper");
+		coinButton = initializeButton("Refill Coin Dispenser", "addCoin");
+		banknoteButton = initializeButton("Refill Banknote Dispenser", "addBanknote");
+		bagDispenserButton = initializeButton("Refill Bag Dispenser", "addBag");
 		
 		this.setLayout(new GridBagLayout());
 
@@ -120,6 +122,7 @@ public class AttendantActionsPanel extends JPanel
 	@Override
 	public void attendantPreventUse(AttendantControl ac) {
 		// TODO Auto-generated method stub
+		stationBlocked = true;
 	}
 
 	@Override
@@ -134,7 +137,10 @@ public class AttendantActionsPanel extends JPanel
 	}
 
 	@Override
-	public void addPaperState() {}
+	public void addPaperState() {
+		if(stationBlocked) paperButton.setEnabled(true);
+	}
+	
 	public void itemsHaveBeenUpdated(ItemsControl ic) {
 		// TODO Auto-generated method stub
 
@@ -142,13 +148,17 @@ public class AttendantActionsPanel extends JPanel
 
 	@Override
 	public void addInkState() {
-		// TODO Auto-generated method stub
-		
+		if (stationBlocked) inkButton.setEnabled(true);
 	}
 
 	@Override
 	public void printerNotLowState() {
-		
+		// FIXME: This is called when ink is refilled and paper is refilled, may need to be split up.
+		// In future, buttons should be disabled when the system is not blocked (permit station use) + this.
+		// Also thinking that this should be called when the paper and ink is completely full.
+		// Technically if an ink dispenser goes from 10% to 70% full it would be out of a low state, but you should still have option to add more ink to station.
+		inkButton.setEnabled(false);
+		paperButton.setEnabled(false);
 	}
 	
 	@Override
