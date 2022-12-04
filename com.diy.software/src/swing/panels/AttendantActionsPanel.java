@@ -242,7 +242,6 @@ public class AttendantActionsPanel extends JPanel
 	@Override
 	public void attendantPermitStationUse(AttendantControl ac) {
 		// TODO Auto-generated method stub
-		
 	}
 	
 	@Override

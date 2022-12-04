@@ -59,10 +59,12 @@ public interface AttendantControlListener {
 	 */
 	public void initialState();
 	
-	public void attendantPermitStationUse(AttendantControl ac);
 	/** 
 	 * attendant permits customer station use
 	 */
+	public void attendantPermitStationUse(AttendantControl ac);
+	
+
 	/**
 	 * notify atendant to that coin to this unit is low, and allow atendant to change it
 	 * @param unit

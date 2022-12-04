@@ -164,7 +164,6 @@ public class CustomerBagsPanel extends JPanel
 	@Override
 	public void signalWeightDescrepancy(String updateMessage) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -172,26 +171,6 @@ public class CustomerBagsPanel extends JPanel
 		// TODO Auto-generated method stub
 		
 	}
-
-//	@Override
-//	public void lowInk(ReceiptControl rc, String message) {
-//		// TODO Auto-generated method stub
-//	}
-//
-//	@Override
-//	public void lowPaper(ReceiptControl rc, String dateTime) {
-//		// TODO Auto-generated method stub
-//	}
-//
-//	@Override
-//	public void outOfInk(ReceiptControl rc, String message) {
-//		// TODO Auto-generated method stub
-//	}
-//
-//	@Override
-//	public void outOfPaper(ReceiptControl rc, String message) {
-//		// TODO Auto-generated method stub
-//	}
 
 	@Override
 	public void attendantPreventUse(AttendantControl ac) {
@@ -226,16 +205,16 @@ public class CustomerBagsPanel extends JPanel
 	@Override
 	public void noBagRequest() {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void coinIsLowState(CoinStorageUnit unit, int amount) {
+		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void attendantPermitStationUse(AttendantControl ac) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void coinIsLowState(CoinStorageUnit unit, int amount) {
 		// TODO Auto-generated method stub
 		
 	}

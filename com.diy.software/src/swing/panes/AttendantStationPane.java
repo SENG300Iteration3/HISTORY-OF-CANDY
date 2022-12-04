@@ -57,7 +57,7 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		approveAddedBagsButton.setActionCommand("approve added bags");
 		approveAddedBagsButton.addActionListener(ac);
 		approveAddedBagsButton.setPreferredSize(new Dimension(width, height));
-		
+//
 //		addInkToPrinterButton = makeButton("Add ink");
 //		addInkToPrinterButton.setActionCommand("addInk");
 //		addInkToPrinterButton.addActionListener(ac);
@@ -67,7 +67,7 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 //		addPaperToPrinterButton.setActionCommand("addPaper");
 //		addPaperToPrinterButton.addActionListener(ac);
 //		addPaperToPrinterButton.setPreferredSize(new Dimension(width, height));
-		
+//		
 		approveNoBagging = makeButton("Approve no bagging");
 		approveNoBagging.setActionCommand("approve no bag");
 		approveNoBagging.addActionListener(ac);
@@ -250,17 +250,6 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		approveNoBagging.setEnabled(false);
 		weightDescrepancyMssg.setText("");
 	}
-
-	@Override
-	public void attendantPermitStationUse(AttendantControl ac) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void coinIsLowState(CoinStorageUnit unit, int amount) {
-		// TODO Auto-generated method stub
-	}
 	
 	public static void main(String args[]) {
 		StationControl sc = new StationControl();
@@ -294,5 +283,18 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	public void outOfPaper(AttendantControl ac, String message) {
 		paperLabel.setText(message);
 		paperLabel.setBackground(GUI_Color_Palette.RED_BROWN);
+	}
+
+
+	@Override
+	public void coinIsLowState(CoinStorageUnit unit, int amount) {
+		// TODO Auto-generated method stub
+	}
+
+
+	@Override
+	public void attendantPermitStationUse(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
 	}
 }

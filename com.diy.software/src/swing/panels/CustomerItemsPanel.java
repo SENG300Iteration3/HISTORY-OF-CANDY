@@ -240,15 +240,6 @@ public class CustomerItemsPanel extends JPanel
 	}
 
 	@Override
-	public void attendantPermitStationUse(AttendantControl ac) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void coinIsLowState(CoinStorageUnit unit, int amount) {
-		// TODO Auto-generated method stub
-	}
-		
 	public void lowInk(AttendantControl ac, String message) {
 		// TODO Auto-generated method stub
 	}
@@ -293,7 +284,6 @@ public class CustomerItemsPanel extends JPanel
 	@Override
 	public void setThankyouMessage(ReceiptControl rc, String dateTime) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -304,5 +294,16 @@ public class CustomerItemsPanel extends JPanel
 	@Override
 	public void setNoReceiptState(ReceiptControl rc) {
 		takeReceiptButton.setEnabled(false);
+	}
+
+	@Override
+	public void coinIsLowState(CoinStorageUnit unit, int amount) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void attendantPermitStationUse(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
 	}
 }

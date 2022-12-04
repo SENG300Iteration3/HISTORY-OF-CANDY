@@ -13,6 +13,8 @@ import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.abagnale.IReceiptPrinter;
 import com.jimmyselectronics.abagnale.ReceiptPrinterListener;
 import com.unitedbankingservices.TooMuchCashException;
+import com.unitedbankingservices.coin.Coin;
+import com.unitedbankingservices.coin.CoinStorageUnit;
 import com.unitedbankingservices.banknote.Banknote;
 import com.unitedbankingservices.banknote.BanknoteStorageUnit;
 import com.unitedbankingservices.coin.Coin;
@@ -24,8 +26,8 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 
 	private StationControl sc;
 	private ArrayList<AttendantControlListener> listeners;
-	private Currency currency;
 	private CoinStorageUnit unit;
+	private Currency currency;
 	String attendantNotifications;
 
 	public AttendantControl(StationControl sc) {
