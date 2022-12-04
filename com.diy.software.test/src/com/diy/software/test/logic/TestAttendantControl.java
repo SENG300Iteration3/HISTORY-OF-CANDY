@@ -449,25 +449,25 @@ public class TestAttendantControl {
 		@Override
 		public void systemControlLocked(StationControl systemControl, boolean isLocked, String reason) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void triggerPurchaseBagsWorkflow(StationControl systemControl) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void noBagsInStock(StationControl systemControl) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void notEnoughBagsInStock(StationControl systemControl, int numBag) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 	}
@@ -552,31 +552,31 @@ public class TestAttendantControl {
 		@Override
 		public void lowInk(AttendantControl ac, String message) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void lowPaper(AttendantControl ac, String message) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void outOfInk(AttendantControl ac, String message) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void outOfPaper(AttendantControl ac, String message) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void coinIsLowState(CoinStorageUnit unit, int amount) {
 			// TODO Auto-generated method stub
-			
+
 		}
 	}
 }

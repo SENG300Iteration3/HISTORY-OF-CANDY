@@ -172,7 +172,7 @@ public class CashControlTest {
 		public boolean insertionDisabled = false;
 		public boolean cashInserted = false;
 		
-		@Override
+		/*@Override
 		public void cashInsertionEnabled(CashControl cc) {
 			insertionEnabled = true;
 			
@@ -182,7 +182,7 @@ public class CashControlTest {
 		public void cashInsertionDisabled(CashControl cc) {
 			insertionDisabled = true;
 			
-		}
+		}*/
 
 		@Override
 		public void cashInserted(CashControl cc) {
@@ -222,6 +222,12 @@ public class CashControlTest {
 
 		@Override
 		public void changeReturned(CashControl cc) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void paymentFailed(CashControl cc) {
 			// TODO Auto-generated method stub
 			
 		}

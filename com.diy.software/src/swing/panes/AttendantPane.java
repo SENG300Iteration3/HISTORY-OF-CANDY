@@ -2,7 +2,6 @@ package swing.panes;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -15,8 +14,6 @@ import com.diy.software.listeners.AttendantControlListener;
 import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import swing.screens.AttendantLoginScreen;
-import swing.styling.GUI_JFrame;
-import swing.styling.Screen;
 
 public class AttendantPane implements AttendantControlListener {
 
