@@ -22,8 +22,13 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 
 	private static String HeaderText = "PLU Code";
 
+	String errorText;
+
 	JLabel message;
+	JLabel errorMessage;
 	GUI_JLabel pluCode;
+
+	private GUI_JPanel centerPanel;
 
 	public PLUCodeScreen(StationControl sc) {
 		super(sc, HeaderText);
@@ -34,8 +39,7 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 		pluCodePanel.setLayout(new GridBagLayout());
 		pluCodePanel.setBackground(GUI_Color_Palette.DARK_BLUE);
 
-		initalizeMessageLabel();
-		initalizeTextField();
+		initializePanels();
 
 		gridConstraint.gridy = 1;
 		gridConstraint.ipadx = 100;
@@ -71,43 +75,37 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 		submitButton.addActionListener(pluCodeController);
 		pluCodePanel.add(submitButton, gridConstraint);
 
-		addLayer(pluCodePanel, 0);
+		//addLayer(pluCodePanel, 0);
 	}
 
-	private void initalizeMessageLabel() {
+	private void initializePanels() {
 		message = new GUI_JLabel("Enter the item's PLU code".toUpperCase());
 		message.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		message.setHorizontalAlignment(JLabel.CENTER);
 
-		int width = 405;
-		int height = 50;
+		errorMessage = new GUI_JLabel(errorText);
+		errorMessage.setFont(GUI_Fonts.FRANKLIN_BOLD);
+		errorMessage.setHorizontalAlignment(JLabel.CENTER);
 
-		GUI_JPanel centerPanel = new GUI_JPanel();
-		centerPanel.setBackground(GUI_Color_Palette.DARK_BLUE);
-		centerPanel.setPreferredSize(new Dimension(width, height));
-		centerPanel.setLayout(new GridLayout(1, 0));
-
-		centerPanel.add(message);
-		addLayer(centerPanel, 0);
-
-	}
-
-	private void initalizeTextField() {
 		pluCode = new GUI_JLabel("PLU code".toUpperCase());
 		pluCode.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		pluCode.setHorizontalAlignment(JLabel.CENTER);
 		pluCode.setBorder(BorderFactory.createLineBorder(GUI_Color_Palette.DARK_BLUE, 10));
 
-		int width = 405;
-		int height = 70;
+		int width = 405;				//potentially change for error message size
+		int height = 150;				//TODO: FIND NICE HEIGHT
 
-		GUI_JPanel centerPanel = new GUI_JPanel();
+		centerPanel = new GUI_JPanel();
 		centerPanel.setBackground(GUI_Color_Palette.DARK_BLUE);
 		centerPanel.setPreferredSize(new Dimension(width, height));
-		centerPanel.setLayout(new GridLayout(1, 0));
+		centerPanel.setLayout(new GridLayout(3, 0));
 
+		centerPanel.add(errorMessage);
+		centerPanel.add(message);
 		centerPanel.add(pluCode);
 		addLayer(centerPanel, 0);
+
+		addLayer(pluCodePanel, 0);
 
 	}
 
@@ -138,6 +136,14 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 	public void pluCodeEntered(PLUCodeControl ppc, String pluCode) {
 		this.pluCode.setText("");
 		
+	}
+
+	@Override
+	public void pluErrorMessageUpdated(PLUCodeControl ppc, String errorText) {
+		this.errorText = errorText;
+		//initializePanels();			//in order to call this, i need to clear the components on the screen (addLayer() breaks it)
+		//centerPanel.revalidate();
+		//centerPanel.repaint();
 	}
 
 }
