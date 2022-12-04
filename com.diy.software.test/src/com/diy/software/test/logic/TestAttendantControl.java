@@ -19,9 +19,11 @@ import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.abagnale.ReceiptPrinterND;
 import com.jimmyselectronics.opeechee.Card.CardData;
+import com.unitedbankingservices.TooMuchCashException;
 
 import ca.powerutility.PowerGrid;
 import ca.ucalgary.seng300.simulation.InvalidArgumentSimulationException;
+import ca.ucalgary.seng300.simulation.SimulationException;
 
 public class TestAttendantControl {
     AttendantControl ac;
@@ -166,7 +168,13 @@ public class TestAttendantControl {
     	assertTrue(als.addPaper);
     }
     
-
+    // Capacity of storage is 1000 in DoItYourselfStation
+    @Test
+    public void testAdjustBanknoteForChange() throws SimulationException, TooMuchCashException {
+//    	sc.station.banknoteStorage.getCapacity();
+//    	ac.adjustBanknotesForChange();
+    }
+    
     @Test
     public void testApproveBagsStationBlocked() {
     	sc.listeners.add(scl);
@@ -406,6 +414,30 @@ public class TestAttendantControl {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public void systemControlLocked(StationControl systemControl, boolean isLocked, String reason) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerPurchaseBagsWorkflow(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void noBagsInStock(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void notEnoughBagsInStock(StationControl systemControl, int numBag) {
+			// TODO Auto-generated method stub
+			
+		}
     	
     }
     
@@ -416,6 +448,7 @@ public class TestAttendantControl {
     	boolean lowState = false;
     	boolean addPaper = false;
     	boolean addInk = false;
+    	boolean banknoteLowState = false;
 		public boolean noBagging = false;
 		String testMsg = "";
 		boolean ini = false;
@@ -470,9 +503,8 @@ public class TestAttendantControl {
 		}
 
 		@Override
-		public void adjustBanknotesInStorageState() {
-			// TODO Auto-generated method stub
-			
+		public void banknotesInStorageLowState() {
+			banknoteLowState = true;
 		}
     }
 

@@ -28,22 +28,12 @@ import com.unitedbankingservices.coin.CoinValidatorObserver;
 public class CashControl implements BanknoteValidatorObserver, CoinValidatorObserver, CoinStorageUnitObserver,
 //<<<<<<< HEAD
     BanknoteStorageUnitObserver, ActionListener {
-  private StationControl sc;
-  private ArrayList<CashControlListener> listeners;
-  private long lastInsertedBanknote;
-  private long lastInsertedCoin;
-  public CashControl(StationControl sc) {
-    this.sc = sc;
-    sc.station.banknoteValidator.attach(this);
-    sc.station.coinValidator.attach(this);
-    sc.station.banknoteStorage.attach(this);
-    sc.station.coinStorage.attach(this);
-    this.listeners = new ArrayList<>();
-  }
-//=======
-    BanknoteStorageUnitObserver, BanknoteInsertionSlotObserver, BanknoteDispensationSlotObserver, ActionListener {
 	private StationControl sc;
 	private ArrayList<CashControlListener> listeners;
+	private long lastInsertedBanknote;
+	private long lastInsertedCoin;
+  
+//=======
 	private boolean coinsFull;
 	private boolean notesFull;
 
@@ -53,8 +43,8 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 		sc.station.coinValidator.attach(this);
 		sc.station.coinStorage.attach(this);
 		sc.station.banknoteStorage.attach(this);
-		sc.station.banknoteInput.attach(this);
-		sc.station.banknoteOutput.attach(this);
+//		sc.station.banknoteInput.attach(this);
+//		sc.station.banknoteOutput.attach(this);
 		this.listeners = new ArrayList<>();
     
 		coinsFull = false;
@@ -205,10 +195,10 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 	 * @param validator
 	 *                  The device on which the event occurred.
 	 */
-	@Override
-  	public void banknoteEjected(BanknoteInsertionSlot slot) {
-		cashRejected();
-	}
+//	@Override
+//  	public void banknoteEjected(BanknoteInsertionSlot slot) {
+//		cashRejected();
+//	}
 
 	/**
 	 * An event announcing that a coin has been detected and determined to be
@@ -383,20 +373,20 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 		changeReturned();
 	}
 
-  /*
-   * Checks if banknote storage is below a threshold and notifies system
-   * 
-   * @param unit
-   * 			The storage unit being checked
-   */
-  public boolean banknotesInStorageLow(BanknoteStorageUnit unit) {
-	  boolean isLow = false;
-	  //count is less than 1/10 of the capacity
-	  if (unit.getBanknoteCount() <= (unit.getCapacity()/10)) {
-		  isLow = true;
-	  }
-	  return isLow;
-  }
+	/*
+	 * Checks if banknote storage is below a threshold and notifies system
+	 * 
+	 * @param unit
+	 * 			The storage unit being checked
+	 */
+	public boolean banknotesInStorageLow(BanknoteStorageUnit unit) {
+		boolean isLow = false;
+		//count is less than 1/10 of the capacity
+		if (unit.getBanknoteCount() <= (unit.getCapacity()/10)) {
+			isLow = true;
+		}
+		return isLow;
+	}
   
   // STUFF FOR CHANGE (leftover money kind)
 
