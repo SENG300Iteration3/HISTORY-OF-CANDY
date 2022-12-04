@@ -54,7 +54,8 @@ public class StationControl
 	private double expectedCheckoutWeight = 0.0;
 	private double bagWeight = 0.0;
 	private double weightOfLastItemAddedToBaggingArea = 0.0;
-
+	private double weightOfScannerTray = 0.0;
+		
 	public Customer customer;
 	public DoItYourselfStation station; // make private after being done testing
 	// NEVER USED -- private Double amountOwed = 0.0;
@@ -135,6 +136,14 @@ public class StationControl
 		pcc = new PLUCodeControl(this);
 	}
 
+	public double getWeightOfScannerTray() {
+		return weightOfScannerTray;
+	}
+	
+	public void setWeightOfScannerTray(double weight) {
+		weightOfScannerTray = weight;
+	}
+	
 	/**
 	 * Constructor for injecting fake data
 	 */
@@ -644,11 +653,10 @@ public class StationControl
 	}
 	
 	@Override
-	public void pluCodeEntered(PLUCodeControl ppc, String pluCode) {
+	public void pluCodeEntered(PriceLookUpCode pluCode) {
 		try {
-			PriceLookUpCode code = new PriceLookUpCode(pluCode);
-			System.out.println(pluCode);
-			Product product = findProduct(code);
+
+			Product product = findProduct(pluCode);
 
 			checkInventory(product);
 
@@ -667,11 +675,31 @@ public class StationControl
 			System.err.println(e.getMessage());
 		}
 		
-
-		
-		
-		
 	}
+	
+//	@Override
+//	public void pluCodeEntered(PriceLookUpCode pluCode) {
+//		try {
+//
+//			Product product = findProduct(pluCode);
+//
+//			checkInventory(product);
+//
+//			// Add the barcode to the ArrayList within itemControl
+//			boolean check = this.ic.addItemByPLU();
+//			// Not sure if this is supposed to be called 
+//			// this.updateExpectedCheckoutWeight(weightOfItemCodeEntered);
+//			// this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemCodeEntered);
+//			// Call method within SystemControl that handles the rest of the item scanning
+//			// procedure
+//			if(check) {
+//				// Trigger the GUI to display "place the scanned item in the Bagging Area"
+//				this.blockStation();
+//			}
+//		} catch(NullPointerSimulationException e) {
+//			System.err.println(e.getMessage());
+//		}
+//	}
 
 	private void checkInventory(Product product) {
 		if(ProductDatabases.INVENTORY.containsKey(product) && ProductDatabases.INVENTORY.get(product) >= 1) {
@@ -790,4 +818,5 @@ public class StationControl
 	public PLUCodeControl getPLUCodeControl() {
 		return pcc;
 	}
+
 }

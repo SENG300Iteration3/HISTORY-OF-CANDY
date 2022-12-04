@@ -166,38 +166,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			// currentItem is not null
 		}
 	}
-
-	public boolean addItemByPLU() {
-		try {
-			baggingAreaTimerStart = System.currentTimeMillis();
-			PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(currentProduct);
-
-			if(product != null) {
-				// lol this is broken 
-				double weight = sc.station.scanningArea.getCurrentWeight();
-				// price per kg
-				double price = (double)product.getPrice() * weight;
-				this.addItemToCheckoutList(new Tuple<String,Double>(product.getDescription(), price));
-				this.updateCheckoutTotal(price);
-				
-				for (ItemsControlListener l : listeners)
-					l.awaitingItemToBePlacedInBaggingArea(this);
-				return true;
-				
-			} else {
-				System.err.println("PLU Code does not correspond to a product in the database!");
-				return false;
-			}
-		} catch(InvalidArgumentSimulationException | OverloadException e) {
-			System.err.println(e.getMessage());
-			return false;
-		}
-	}
-
-	public boolean getIsPLU() {
-		return isPLU;
-	}
-
+	
 	// TODO: scanItem now differtiates between using handheldScanner and mainScanner
 	// ALSO: note that a new weight area called scanningArea exists now to grab
 	// weight of items during general scanning phase
@@ -313,10 +282,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		return result;
 	}
 	
-	private void pluItemSelected() {
-		for (ItemsControlListener l : listeners)
-			l.awaitingItemToBePlacedInScanningArea(this);
-	}
+
 
 	private void addItemByBrowsing(String strProductName) {
 		Barcode barcodeIdentifier = null;
@@ -346,6 +312,47 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 	}
 
+	private void pluItemSelected() {
+		for (ItemsControlListener l : listeners)
+			l.awaitingItemToBePlacedInScanningArea(this);
+	}
+	
+	public boolean addItemByPLU() {
+		try {
+			baggingAreaTimerStart = System.currentTimeMillis();
+			PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(currentProduct);
+
+			if(product != null) {
+				// lol this is broken 
+				double weight = sc.station.scanningArea.getCurrentWeight();
+				
+				double itemWeight = weight - sc.getWeightOfScannerTray();
+				sc.setWeightOfScannerTray(weight);
+				System.out.println("Weight of item: "+ itemWeight);
+				// price per kg
+				double price = (double)product.getPrice() * itemWeight/1000;
+				this.addItemToCheckoutList(new Tuple<String,Double>(product.getDescription(), price));
+				this.updateCheckoutTotal(price);
+				
+				for (ItemsControlListener l : listeners)
+					l.awaitingItemToBePlacedInBaggingArea(this);
+				return true;
+				
+			} else {
+				System.err.println("PLU Code does not correspond to a product in the database!");
+				return false;
+			}
+		} catch(InvalidArgumentSimulationException | OverloadException e) {
+			System.err.println(e.getMessage());
+			return false;
+		}
+	}
+
+	public boolean getIsPLU() {
+		return isPLU;
+	}
+
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String c = e.getActionCommand();

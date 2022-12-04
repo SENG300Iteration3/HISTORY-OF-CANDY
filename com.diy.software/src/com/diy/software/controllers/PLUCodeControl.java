@@ -56,7 +56,7 @@ public class PLUCodeControl implements ActionListener {
 				try {
 					PriceLookUpCode code = new PriceLookUpCode(pluCode);
 					for (PLUCodeControlListener l: listeners)
-						l.pluCodeEntered(this, pluCode);
+						l.pluCodeEntered(code);
 					pluCode = "";
 					break;
 				} catch(InvalidArgumentSimulationException exc) {
