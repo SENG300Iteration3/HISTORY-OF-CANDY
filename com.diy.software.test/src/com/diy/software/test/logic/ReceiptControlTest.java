@@ -53,6 +53,19 @@ public class ReceiptControlTest {
 		rp.turnOff();
 		rp.turnOn();
 		rp.enable();
+		
+		//TODO currently, broken should be fixed when updated with attendant control changes
+		
+		/*
+		 * Due to limits in hardware out of ink and out of paper will only 
+		 * register when ink/paper has been added and then removed, meaning paper and ink
+		 * must be added at the start
+		 * 
+		 * must use the attendant station to add paper/ink in order for
+		 * low paper and low ink to work
+		 */
+        ac.addInk(1);
+        ac.addPaper(1);
 	}
 	
 	@After
@@ -61,9 +74,270 @@ public class ReceiptControlTest {
 		//(keep in mind when writing tests)
 	}
 	
+	/*
+	 * Tests adding ink
+	 */
 	@Test
-	public void test1() {
+	public void testAddInk() {
 	}
+	
+	/*
+	 * Tests adding paper
+	 */
+	@Test
+	public void testAddPaper() {
+	}
+	
+	/*
+	 * Tests out of ink
+	 */
+	@Test
+	public void testOutOfInk() {
+	}
+	
+	/*
+	 * Tests out of paper
+	 */
+	@Test
+	public void testOutOfPaper() {
+	}
+	
+	/*
+	 * Tests low ink
+	 */
+	@Test
+	public void testsLowInk() {
+	}
+	
+	/*
+	 * Tests low paper
+	 */
+	@Test
+	public void testLowPaper() {
+	}
+	
+	/*
+	 * Tests low ink when printing something that crosses the threshold 
+	 * between not being low on ink and being low on ink
+	 */
+	@Test
+	public void testsLowInkThreshold() {
+	}
+	
+	/*
+	 * Tests low ink when printing something that crosses the threshold 
+	 * between not being low on paper and being low on paper
+	 */
+	@Test
+	public void testLowPaperThreshold() {
+	}
+	
+	/*
+	 * Tests adding ink after running out
+	 */
+	@Test
+	public void testAddInkAfterOut() {
+	}
+	
+	/*
+	 * Tests adding paper after running out
+	 */
+	@Test
+	public void testAddPaperAfterOut() {
+	}
+	
+	/*
+	 * Test that printer is disabled when out of paper
+	 */
+	@Test
+	public void testDisabledWhenOutPaper() {
+	}
+	
+	/*
+	 * Test that printer is disabled when out of ink
+	 */
+	@Test
+	public void testDisabledWhenOutInk() {
+	}
+	
+    /*
+     *  Test EmptyException thrown when printing when out of ink
+     */
+    @Test (expected = EmptyException.class)
+    public void testPrintingWhenOutOfInk() throws EmptyException, OverloadException{
+    }
+    
+    /*
+     *  Test EmptyException thrown when printing when out of paper
+     */
+    @Test (expected = EmptyException.class)
+    public void testPrintingWhenOutOfPaper() throws EmptyException, OverloadException{
+    }
+    
+    /*
+     *  Test that a new line is added when 60+ characters are printed on the same line
+     */
+    @Test
+    public void testCharactersPerLine(){
+    	
+    }
+    
+    /*
+     *  Test that printItems prints items properly when no items are bought
+     */
+    @Test
+    public void testPrintItemsNoItems(){
+    	
+    }
+    
+    /*
+     *  Test that printItems prints items properly when one item is bought
+     */
+    @Test
+    public void testPrintItemsOneItem(){
+    	
+    }
+    
+    /*
+     *  Test that printItems prints items properly when two items are bought
+     */
+    @Test
+    public void testPrintItemsTwoItems(){
+    	
+    }
+    
+    /*
+     *  Test that TotalCost prints items properly when no items are bought
+     */
+    @Test
+    public void testPrintTotalCostNoItems(){
+    	
+    }
+    
+    /*
+     *  Test that TotalCost prints items properly when one item is bought
+     */
+    @Test
+    public void testPrintTotalCostOneItem(){
+    	
+    }
+    
+    /*
+     *  Test that TotalCost prints items properly when two items are bought
+     */
+    @Test
+    public void testPrintTotalCostTwoItems(){
+    	
+    }
+    
+    /*
+     *  Test that printMembership with membership number
+     */
+    @Test
+    public void testPrintMembershipWithMembership(){
+    	
+    }
+    
+    /*
+     *  Test that printMembership with no membership number
+     */
+    @Test
+    public void testPrintMembershipNoMembership(){
+    	
+    }
+    
+    /*
+     *  Test print date time
+     */
+    @Test
+    public void TestPrintDateTime(){
+    	
+    }
+    
+    /*
+     *  Test print thank you message
+     */
+    @Test
+    public void testPrintThankyouMsg(){
+    	
+    }
+    
+    /*
+     *  Test that the receipt is cut after printing a receipt properly
+     */
+    @Test
+    public void testCutReceipt(){
+    	
+    }
+    
+    /*
+     *  Test printFullReceipt (using action performed)
+     */
+    @Test
+    public void testPrintFullReceipt(){
+    	
+    }
+    
+    /*
+     *  Test printFullReceipt running out of ink part way though
+     */
+    @Test
+    public void testPrintFullReceiptOutOfInk(){
+    	
+    }
+    
+    /*
+     *  Test printFullReceipt running out of paper part way though
+     */
+    @Test
+    public void testPrintFullReceiptOutOfPaper(){
+    	
+    }
+    
+    /*
+     *  Test printFullReceipt running out of ink on last possible character
+     */
+    @Test
+    public void testPrintFullReceiptOutOfInkLastChar(){
+    	
+    }
+    
+    /*
+     *  Test that the receipt is cut after attempting to print a receipt but running out of paper
+     */
+    @Test
+    public void testCutReceiptOutOfInk(){
+    	
+    }
+    
+    /*
+     *  Test that the receipt is cut after attempting to print a receipt but running out of ink
+     */
+    @Test
+    public void testCutReceiptOutOfPaper(){
+    	
+    }
+    
+    /*
+     *  Test the taking of receipt (using action performed)
+     */
+    @Test
+    public void testTakeReceipt(){
+    	
+    }
+    
+    /*
+     *  Test to make sure state resets
+     *  TODO only keep is reset state is not removed
+     */
+    @Test
+    public void testResetState(){
+    	
+    }
+    
+    
+    
+    
 
 	public class StationControlListenerStub implements StationControlListener {
 
