@@ -130,7 +130,11 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		try {
 			// TODO: Find another way to do this 
 			this.currentItem = sc.customer.shoppingCart.get(sc.customer.shoppingCart.size() - 1);
-			isPLU = currentItem instanceof PLUCodedItem;
+			isPLU = currentItem.getClass() == PLUCodedItem.class;
+			if(isPLU) {
+				expectedPLU = ((PLUCodedItem)currentItem).getPLUCode();
+			}
+
 			sc.customer.selectNextItem();
 			for (ItemsControlListener l : listeners)
 				l.itemWasSelected(this);
@@ -160,6 +164,16 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 	public boolean addItemByPLU(PriceLookUpCode code) {
 		try {
+			if(!isPLU) {
+				System.err.println("The currently selected item has no PLU code! Or there is no item selected!");
+				return false;
+			}
+			if(expectedPLU.hashCode() != code.hashCode()) {
+				System.err.println("You entered the wrong PLU code for the item!");
+				System.err.printf("The expected PLU code is %s\n", expectedPLU);
+				return false;
+			}
+
 			baggingAreaTimerStart = System.currentTimeMillis();
 
 			PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(code);
