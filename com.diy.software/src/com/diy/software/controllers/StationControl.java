@@ -152,6 +152,8 @@ public class StationControl
 			customer.wallet.cards.add(c);
 		for (Item i : this.fakeData.getItems())
 			customer.shoppingCart.add(i);
+		for (Item i : this.fakeData.getItems())
+			customer.shoppingCart.add(i);
 			
 	}
 

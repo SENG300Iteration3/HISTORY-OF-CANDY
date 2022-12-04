@@ -127,6 +127,10 @@ public class FakeDataInitializer {
 	public PriceLookUpCode[] getPLUCode() {
 		return new PriceLookUpCode[] {code1, code2, code3, code4, reusableBagCode};
 	}
+
+	public PLUCodedItem[] getPLUItem() {
+		return new PLUCodedItem[] {pitem1, pitem2, pitem3, pitem4};
+	}
 	
 	public double getReusableBagPrice() {
 		return ProductDatabases.PLU_PRODUCT_DATABASE.get(reusableBagCode).getPrice();

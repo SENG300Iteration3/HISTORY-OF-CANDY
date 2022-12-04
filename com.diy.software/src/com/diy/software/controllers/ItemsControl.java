@@ -47,7 +47,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	private final static double PROBABILITY_OF_BAGGING_WRONG_ITEM = 0.20;
 	private final static ThreadLocalRandom random = ThreadLocalRandom.current();
 	private Item wrongBaggedItem = new Item(235){};
-	private boolean isPLU;
+	private boolean isPLU = false;
 	private PriceLookUpCode expectedPLU = null;
 	private boolean removedWrongBaggedItem;
 	private double scaleExpectedWeight;
@@ -130,6 +130,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		try {
 			// TODO: Find another way to do this 
 			this.currentItem = sc.customer.shoppingCart.get(sc.customer.shoppingCart.size() - 1);
+			isPLU = currentItem instanceof PLUCodedItem;
 			sc.customer.selectNextItem();
 			for (ItemsControlListener l : listeners)
 				l.itemWasSelected(this);
@@ -160,7 +161,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	public boolean addItemByPLU(PriceLookUpCode code) {
 		try {
 			if(!isPLU || expectedPLU == null) {
-				System.err.println("The currently selected item has no PLU code!");
+				System.err.println("The currently selected item has no PLU code! Or there is no item selected!");
 				return false;
 			}
 
