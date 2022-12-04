@@ -249,4 +249,9 @@ public class AttendantActionsPanel extends JPanel
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+	public void loggedIn(boolean isLoggedIn) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -11,18 +11,20 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.diy.software.controllers.PaneControl;
 import com.diy.software.controllers.StationControl;
 
 import ca.powerutility.PowerGrid;
-import swing.panes.AttendantPane;
+import swing.panes.AttendantStationPane;
 import swing.styling.GUI_JPanel;
 
 public class AttendantPaneTest {
 	StationControl sc;
 	ArrayList<StationControl> stationControls;
 	AttendantControlStub acStub;
-	AttendantPane ap;
+	AttendantStationPane ap;
 	JFrame frame;
+	PaneControl pc;
 
 	@Before
 	public void setUp() throws Exception {
@@ -33,8 +35,10 @@ public class AttendantPaneTest {
 		sc.getAttendantControl().addListener(acStub);
 		stationControls.add(sc);
 		
+		pc = new PaneControl(stationControls);
+		
 		frame = new JFrame();
-		ap = new AttendantPane(stationControls, frame);
+		ap = new AttendantStationPane(pc, frame);
 	}
 
 	@After
