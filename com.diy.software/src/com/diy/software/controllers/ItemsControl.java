@@ -176,6 +176,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	public boolean addItemByPLU(PriceLookUpCode code) {
 		try {
 
+			System.out.println(sc.customer.shoppingCart.toString());
+
 			PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(code);
 			double price;
 
@@ -189,7 +191,9 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				this.updateCheckoutTotal(product.getPrice());
 
 				System.out.println("Added a reusable bag to checkoutlist!!");
-				return true;
+
+				// Returns false b/c we don't want to block the station when adding a bag
+				return false;
 			}
 
 			if(!isPLU) {
