@@ -91,12 +91,6 @@ public class AttendantPane implements AttendantControlListener {
 	}
 
 	@Override
-	public void noBaggingRequestState() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void initialState() {
 		// TODO Auto-generated method stub
 		
@@ -119,6 +113,12 @@ public class AttendantPane implements AttendantControlListener {
 
 	@Override
 	public void attendantPreventUse(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void noBagRequest() {
 		// TODO Auto-generated method stub
 		
 	}
