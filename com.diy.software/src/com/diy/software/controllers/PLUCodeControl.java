@@ -51,12 +51,12 @@ public class PLUCodeControl implements ActionListener {
 					l.pluHasBeenUpdated(pluCode);
 				break;
 			case "submit":
+				sc.goBackOnUI();
 				try {
 					PriceLookUpCode code = new PriceLookUpCode(pluCode);
 					for (PLUCodeControlListener l: listeners)
 						l.SubmittedPLUCode(code);
 					pluCode = "";
-					sc.goBackOnUI();
 					break;
 				} catch(InvalidArgumentSimulationException exc) {
 					System.err.println(exc.getMessage());
