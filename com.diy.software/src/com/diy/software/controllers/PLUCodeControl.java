@@ -38,7 +38,7 @@ public class PLUCodeControl implements ActionListener {
 			
 			// Updates input on GUI
 			for (PLUCodeControlListener l: listeners)
-				l.pluHasBeenUpdated(pluCode);
+				l.pluHasBeenUpdated(this, pluCode);
 		} else {
 			switch (c) {
 			case "cancel":
@@ -48,18 +48,19 @@ public class PLUCodeControl implements ActionListener {
 			case "correct":
 				pluCode = "";
 				for (PLUCodeControlListener l: listeners)
-					l.pluHasBeenUpdated(pluCode);
+					l.pluHasBeenUpdated(this, pluCode);
 				break;
 			case "submit":
 				sc.goBackOnUI();
 				try {
-					PriceLookUpCode code = new PriceLookUpCode(pluCode);
 					for (PLUCodeControlListener l: listeners)
-						l.SubmittedPLUCode(code);
+						l.pluCodeEntered(this, pluCode);
 					pluCode = "";
 					break;
 				} catch(InvalidArgumentSimulationException exc) {
 					System.err.println(exc.getMessage());
+					for (PLUCodeControlListener l: listeners)
+						l.pluErrorMessageUpdated(this, exc.getMessage());
 					break;
 				}
 			default:

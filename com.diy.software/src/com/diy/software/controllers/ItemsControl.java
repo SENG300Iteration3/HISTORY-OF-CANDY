@@ -49,9 +49,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	private long baggingAreaTimerEnd;
 	private final static double PROBABILITY_OF_BAGGING_WRONG_ITEM = 0.20;
 	private final static ThreadLocalRandom random = ThreadLocalRandom.current();
-	private Item wrongBaggedItem = new Item(235) {
-	};
-	private boolean isPLU;
+	private Item wrongBaggedItem = new Item(235) {};
+	private boolean isPLU = false;
 	private PriceLookUpCode expectedPLU = null;
 	private boolean removedWrongBaggedItem;
 	private double scaleExpectedWeight;
@@ -136,6 +135,11 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		try {
 			// TODO: Find another way to do this
 			this.currentItem = sc.customer.shoppingCart.get(sc.customer.shoppingCart.size() - 1);
+			isPLU = currentItem.getClass() == PLUCodedItem.class;
+			if(isPLU) {
+				expectedPLU = ((PLUCodedItem)currentItem).getPLUCode();
+			}
+
 			sc.customer.selectNextItem();
 			if (currentItem instanceof PLUCodedItem) {
 				for (ItemsControlListener l : listeners)
@@ -166,6 +170,65 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			// exception should never occur since this code path is only ever called when
 			// currentItem is not null
 		}
+	}
+
+	public boolean addItemByPLU(PriceLookUpCode code) {
+		try {
+			if(!isPLU) {
+				System.err.println("The currently selected item has no PLU code! Or there is no item selected!");
+				return false;
+			}
+			if(expectedPLU.hashCode() != code.hashCode()) {
+				System.err.println("You entered the wrong PLU code for the item!");
+				System.err.printf("The expected PLU code is %s\n", expectedPLU);
+				return false;
+			}
+
+			baggingAreaTimerStart = System.currentTimeMillis();
+
+			PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(code);
+			double price;
+		
+			System.out.println(product.getDescription());
+
+			if(product == null) {
+				return false;
+			}
+			
+			double weight = weightofScannerTray - sc.getWeightOfScannerTray();
+			System.out.println(weight + " Scale weight");
+
+			sc.setWeightOfScannerTray(weightofScannerTray);
+			sc.updateExpectedCheckoutWeight(weight);
+			sc.updateWeightOfLastItemAddedToBaggingArea(weight);
+			
+			// Maybe add this to the right of the item in the checkout list
+			System.out.println("Weight of item: " + weight);
+
+			if(weight == 0.0) {
+				System.err.println("Please place the item on the scale before entering the code!!");
+				return false;
+			}
+
+			// price per kg
+			price = (double) product.getPrice() * weight / 1000;
+			this.addItemToCheckoutList(new Tuple<String, Double>(product.getDescription(), price));
+			this.updateCheckoutTotal(price);
+
+			System.out.println("Added item to checkout list!");
+
+			for (ItemsControlListener l : listeners)
+				l.awaitingItemToBePlacedInBaggingArea(this);
+
+			return true;
+		} catch(InvalidArgumentSimulationException | NullPointerSimulationException e) {
+			System.err.println(e.toString());
+			return false;
+		}
+	}
+
+	public boolean getIsPLU() {
+		return isPLU;
 	}
 
 	// TODO: scanItem now differtiates between using handheldScanner and mainScanner
@@ -314,44 +377,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	private void pluItemSelected() {
 		for (ItemsControlListener l : listeners)
 			l.awaitingItemToBePlacedInScanningArea(this);
-	}
-
-	@SuppressWarnings("unused")
-	public void addItemByPLU(PriceLookUpCode pluCode) {
-		baggingAreaTimerStart = System.currentTimeMillis();
-		PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode);
-		double itemWeight,price;
-		
-		System.out.println(product.getDescription());
-
-		if (product != null) {
-			itemWeight = weightofScannerTray - sc.getWeightOfScannerTray();
-			
-			
-			sc.setWeightOfScannerTray(weightofScannerTray);
-			
-//			sc.weightOfLastItem = itemWeight;
-			sc.updateExpectedCheckoutWeight(itemWeight);
-			
-			sc.updateWeightOfLastItemAddedToBaggingArea(itemWeight);
-			
-			System.out.println("Weight of item: " + itemWeight);
-			// price per kg
-			price = (double) product.getPrice() * itemWeight / 1000;
-			this.addItemToCheckoutList(new Tuple<String, Double>(product.getDescription(), price));
-			this.updateCheckoutTotal(price);
-
-			for (ItemsControlListener l : listeners)
-				l.awaitingItemToBePlacedInBaggingArea(this);
-
-		} else {
-			System.err.println("PLU Code does not correspond to a product in the database!");
-		}
-
-	}
-
-	public boolean getIsPLU() {
-		return isPLU;
 	}
 
 	@Override

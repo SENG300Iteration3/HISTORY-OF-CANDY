@@ -154,6 +154,8 @@ public class StationControl
 			customer.wallet.cards.add(c);
 		for (Item i : this.fakeData.getItems())
 			customer.shoppingCart.add(i);
+		for (Item i : this.fakeData.getPLUItem())
+			customer.shoppingCart.add(i);
 			
 	}
 
@@ -613,10 +615,6 @@ public class StationControl
 	}
 
 	@Override
-	public void pluHasBeenUpdated(String pluCode) {
-	}
-
-	@Override
 	public void barcodeScanned(BarcodeScanner barcodeScanner, Barcode barcode) {
 		if (membershipInput) {
 			mc.checkMembership(Integer.parseInt(barcode.toString()));
@@ -629,9 +627,39 @@ public class StationControl
 	}
 				
 	@Override
-	public void SubmittedPLUCode(PriceLookUpCode pluCode) {
-		this.blockStation();
-		this.ic.addItemByPLU(pluCode);
+	public void pluCodeEntered(PLUCodeControl ppc, String pluCode) {
+		try {
+			PriceLookUpCode code = new PriceLookUpCode(pluCode);
+			System.out.println(pluCode);
+			Product product = findProduct(code);
+
+			checkInventory(product);
+
+			// Add the barcode to the ArrayList within itemControl
+			boolean check = this.ic.addItemByPLU(code);
+			// Not sure if this is supposed to be called 
+			// this.updateExpectedCheckoutWeight(weightOfItemCodeEntered);
+			// this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemCodeEntered);
+			// Call method within SystemControl that handles the rest of the item scanning
+			// procedure
+			if(check) {
+				// Trigger the GUI to display "place the scanned item in the Bagging Area"
+				this.blockStation();
+			}
+		} catch(NullPointerSimulationException e) {
+			System.err.println("PLU code does not exist in the database");
+		}
+		
+
+		
+		
+		
+	}
+
+	//needed it here cause of interface but shouldnt do anything in here???
+	@Override
+	public void pluErrorMessageUpdated(PLUCodeControl pcc, String errorMessage) {
+
 	}
 
 	private void checkInventory(Product product) {
@@ -750,6 +778,12 @@ public class StationControl
 
 	public PLUCodeControl getPLUCodeControl() {
 		return pcc;
+	}
+
+	@Override
+	public void pluHasBeenUpdated(PLUCodeControl pcc, String pluCode) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
