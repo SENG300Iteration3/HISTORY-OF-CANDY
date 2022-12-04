@@ -31,8 +31,8 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	private AttendantControl ac;
 	private boolean cusAddedBags = false;
 	GUI_JButton approveAddedBagsButton;
-//	GUI_JButton addInkToPrinterButton;
-//	GUI_JButton addPaperToPrinterButton;
+	GUI_JButton addInkToPrinterButton;
+	GUI_JButton addPaperToPrinterButton;
 	GUI_JButton approveNoBagging;
 	GUI_JButton startUpButton;
 	GUI_JLabel weightDisplayLabel, weightDescrepancyMssg, inkLabel, paperLabel, adjustCoinLabel, adjustBanknoteLabel;
