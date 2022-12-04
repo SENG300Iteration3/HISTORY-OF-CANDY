@@ -26,7 +26,7 @@ public class AttendantActionsPanel extends JPanel
 	private AttendantControl ac;
 	private BagsControl bc;
 	private ReceiptControl rc;
-	JButton inkButton, paperButton, bagDispenserButton;
+	JButton inkButton, paperButton, bagDispenserButton, coinButton, banknoteButton;
 	GridBagConstraints buttonGrid = new GridBagConstraints();
 
 	public AttendantActionsPanel(StationControl sc) {
@@ -42,18 +42,12 @@ public class AttendantActionsPanel extends JPanel
 		
 		rc = sc.getReceiptControl();
 		rc.addListenerReceipt(this);
-		
-		inkButton =  new JButton("Refill Ink Dispenser");
-//		inkButton.setActionCommand("refill ink");
-//		inkButton.addActionListener(ac);
-		
-		paperButton = new JButton("Refill Paper Dispenser");
-//		paperButton.setActionCommand("refill paper");
-//		paperButton.addActionListener(ac);
-		
-		bagDispenserButton = new JButton("Refill Bag Dispenser");
-//		bagDispenserButton.setActionCommand("refill bag dispenser");
-//		bagDispenserButton.addActionListener(ac);
+
+		inkButton = initializeButton("Refill Ink Dispenser", "refill ink");
+		paperButton = initializeButton("Refill Paper Dispenser", "refill paper");
+		bagDispenserButton = initializeButton("Refill Bag Dispenser", "refill bags");
+		coinButton = initializeButton("Refill Coin Dispenser", "refill coins");
+		banknoteButton = initializeButton("Refill Banknote Dispenser", "refill banknotes");
 		
 		this.setLayout(new GridBagLayout());
 
@@ -65,19 +59,30 @@ public class AttendantActionsPanel extends JPanel
 		this.add(paperButton, buttonGrid);
 		
 		buttonGrid.gridx = 2;
-		this.add(bagDispenserButton, buttonGrid);
+		this.add(coinButton, buttonGrid);
 
+		buttonGrid.gridx = 3;
+		this.add(banknoteButton, buttonGrid);
+		
+		buttonGrid.gridx = 4;
+		this.add(bagDispenserButton, buttonGrid);
+		
 //		Can add messages here
 //		buttonGrid.gridy = 1;
 //		buttonGrid.gridx = 3;
 //		this.add(Label);
 //		
-
-		inkButton.setEnabled(false);
-		paperButton.setEnabled(false);
-		bagDispenserButton.setEnabled(false);
 	}
-
+	private JButton initializeButton(String msg, String command) {
+		JButton button =  new JButton(msg);
+		button.setActionCommand(command);
+		button.addActionListener(ac);
+		button.setEnabled(false);
+		
+		return button;
+	}
+	
+	
 	@Override
 	public void awaitingItemToBeSelected(ItemsControl ic) {
 	}
