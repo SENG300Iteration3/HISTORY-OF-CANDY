@@ -5,7 +5,7 @@ import com.diy.software.controllers.PLUCodeControl;
 
 public interface PLUCodeControlListener {
 	
-	void pluHasBeenUpdated(PLUCodeControl ppc, String pluCode);
+	void pluHasBeenUpdated(String pluCode);
 
-	void pluCodeEntered(PriceLookUpCode pluCode);
+	void SubmittedPLUCode(PriceLookUpCode pluCode);
 }

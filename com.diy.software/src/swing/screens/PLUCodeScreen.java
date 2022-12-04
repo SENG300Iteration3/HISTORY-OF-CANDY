@@ -1,5 +1,6 @@
 package swing.screens;
 
+import com.diy.hardware.PriceLookUpCode;
 import com.diy.software.controllers.PLUCodeControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.PLUCodeControlListener;
@@ -112,7 +113,7 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 	}
 
 	@Override
-	public void pluHasBeenUpdated(PLUCodeControl ppc, String pluCode) {
+	public void pluHasBeenUpdated(String pluCode) {
 		this.pluCode.setText(pluCode);
 	}
 
@@ -135,7 +136,7 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 	}
 
 	@Override
-	public void pluCodeEntered(PLUCodeControl ppc, String pluCode) {
+	public void SubmittedPLUCode(PriceLookUpCode pluCode) {
 		this.pluCode.setText("");
 		
 	}

@@ -54,7 +54,7 @@ public class StationControl
 	private double expectedCheckoutWeight = 0.0;
 	private double bagWeight = 0.0;
 	private double weightOfLastItemAddedToBaggingArea = 0.0;
-	private double weightOfScannerTray = 0.0;
+	private double prevWeightOfScannerTray = 0.0;
 		
 	public Customer customer;
 	public DoItYourselfStation station; // make private after being done testing
@@ -77,7 +77,7 @@ public class StationControl
 
 	private boolean isLocked = false;
 	public String memberName;
-	public double weightOfItemScanned;
+	public double weightOfLastItem;
 	public double weightOfItemCodeEntered;
 	private boolean membershipInput = false;
 	private int bagInStock;
@@ -136,14 +136,6 @@ public class StationControl
 		pcc = new PLUCodeControl(this);
 	}
 
-	public double getWeightOfScannerTray() {
-		return weightOfScannerTray;
-	}
-	
-	public void setWeightOfScannerTray(double weight) {
-		weightOfScannerTray = weight;
-	}
-	
 	/**
 	 * Constructor for injecting fake data
 	 */
@@ -213,6 +205,13 @@ public class StationControl
 
 	public CashControl getCashControl() {
 		return cc;
+	}
+	
+	public double getWeightOfScannerTray() {
+		return prevWeightOfScannerTray;
+	}
+	public void setWeightOfScannerTray(double weight){
+		prevWeightOfScannerTray = weight;
 	}
 	
 	private void loadBags() {
@@ -595,12 +594,11 @@ public class StationControl
 				this.blockStation();
 				System.err.println("System has been blocked!");
 			}
-		}else {
-			addPlucodedNewItem();
 		}
 		
 	}
 
+	
 	@Override
 	public void overload(ElectronicScale scale) {
 		userMessage = "Weight on scale has been overloaded, weight limit is: " + station.baggingArea.getWeightLimit();
@@ -615,7 +613,7 @@ public class StationControl
 	}
 
 	@Override
-	public void pluHasBeenUpdated(PLUCodeControl ppc, String pluCode) {
+	public void pluHasBeenUpdated(String pluCode) {
 	}
 
 	@Override
@@ -627,79 +625,14 @@ public class StationControl
 			}
 			membershipInput = false;
 			wc.membershipCardInputCanceled();
-		} else {
-			this.blockStation();
-			// Trigger the GUI to display "place the item in the Bagging Area"
-		}
+		} 
 	}
-	
-	public void addBarcodedNewItem(Barcode barcode) {
-
-		weightOfItemScanned = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
-		// Add the barcode to the ArrayList within itemControl
-		this.ic.addScannedItemToCheckoutList(barcode);
-		// Set the expected weight in SystemControl
-		this.updateExpectedCheckoutWeight(weightOfItemScanned);
-		this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
-	}
-	
-	public void addPlucodedNewItem() {
-		weightOfItemScanned = ic.getCurrentItem().getWeight();
-		// Add the barcode to the ArrayList within itemControl
-		this.ic.addItemByPLU();
-		// Set the expected weight in SystemControl
-		this.updateExpectedCheckoutWeight(weightOfItemScanned);
-		this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
-	}
-	
+				
 	@Override
-	public void pluCodeEntered(PriceLookUpCode pluCode) {
-		try {
-
-			Product product = findProduct(pluCode);
-
-			checkInventory(product);
-
-			// Add the barcode to the ArrayList within itemControl
-			boolean check = this.ic.addItemByPLU();
-			// Not sure if this is supposed to be called 
-			// this.updateExpectedCheckoutWeight(weightOfItemCodeEntered);
-			// this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemCodeEntered);
-			// Call method within SystemControl that handles the rest of the item scanning
-			// procedure
-			if(check) {
-				// Trigger the GUI to display "place the scanned item in the Bagging Area"
-				this.blockStation();
-			}
-		} catch(NullPointerSimulationException e) {
-			System.err.println(e.getMessage());
-		}
-		
+	public void SubmittedPLUCode(PriceLookUpCode pluCode) {
+		this.blockStation();
+		this.ic.addItemByPLU(pluCode);
 	}
-	
-//	@Override
-//	public void pluCodeEntered(PriceLookUpCode pluCode) {
-//		try {
-//
-//			Product product = findProduct(pluCode);
-//
-//			checkInventory(product);
-//
-//			// Add the barcode to the ArrayList within itemControl
-//			boolean check = this.ic.addItemByPLU();
-//			// Not sure if this is supposed to be called 
-//			// this.updateExpectedCheckoutWeight(weightOfItemCodeEntered);
-//			// this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemCodeEntered);
-//			// Call method within SystemControl that handles the rest of the item scanning
-//			// procedure
-//			if(check) {
-//				// Trigger the GUI to display "place the scanned item in the Bagging Area"
-//				this.blockStation();
-//			}
-//		} catch(NullPointerSimulationException e) {
-//			System.err.println(e.getMessage());
-//		}
-//	}
 
 	private void checkInventory(Product product) {
 		if(ProductDatabases.INVENTORY.containsKey(product) && ProductDatabases.INVENTORY.get(product) >= 1) {
@@ -735,16 +668,16 @@ public class StationControl
 	public void addReusableBag(ReusableBag lastDispensedReusableBag) {
 		// ADD: update inventory
 
-		weightOfItemScanned = lastDispensedReusableBag.getWeight();
+		weightOfLastItem = lastDispensedReusableBag.getWeight();
 		
 		// Set the expected weight in SystemControl
-		this.updateExpectedCheckoutWeight(weightOfItemScanned);
-		this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemScanned);
+		this.updateExpectedCheckoutWeight(weightOfLastItem);
+		this.updateWeightOfLastItemAddedToBaggingArea(weightOfLastItem);
 	}
 	
 	public void ItemApprovedToNotBag() {
-		this.updateExpectedCheckoutWeight(-weightOfItemScanned);
-		this.updateWeightOfLastItemAddedToBaggingArea(-weightOfItemScanned);
+		this.updateExpectedCheckoutWeight(-weightOfLastItem);
+		this.updateWeightOfLastItemAddedToBaggingArea(-weightOfLastItem);
 		this.unblockStation();
 	}
 

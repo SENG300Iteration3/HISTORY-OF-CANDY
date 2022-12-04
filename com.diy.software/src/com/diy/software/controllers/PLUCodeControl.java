@@ -30,33 +30,31 @@ public class PLUCodeControl implements ActionListener {
 		listeners.remove(l);
 	}
 	
-	public void exitPLUCode() {
-		pluCode = "";		//need to do?
-		sc.goBackOnUI();
-	}
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String c = e.getActionCommand();
 		if (c.startsWith("PLU_INPUT_BUTTON: ")) {
 			pluCode += c.split(" ")[1];
+			
+			// Updates input on GUI
 			for (PLUCodeControlListener l: listeners)
-				l.pluHasBeenUpdated(this, pluCode);
+				l.pluHasBeenUpdated(pluCode);
 		} else {
 			switch (c) {
 			case "cancel":
-				exitPLUCode();
+				pluCode = "";		
+				sc.goBackOnUI();
 				break;
 			case "correct":
-				if (pluCode.length() > 0) pluCode = pluCode.substring(0, pluCode.length() - 1);
+				pluCode = "";
 				for (PLUCodeControlListener l: listeners)
-					l.pluHasBeenUpdated(this, pluCode);
+					l.pluHasBeenUpdated(pluCode);
 				break;
 			case "submit":
 				try {
 					PriceLookUpCode code = new PriceLookUpCode(pluCode);
 					for (PLUCodeControlListener l: listeners)
-						l.pluCodeEntered(code);
+						l.SubmittedPLUCode(code);
 					pluCode = "";
 					break;
 				} catch(InvalidArgumentSimulationException exc) {

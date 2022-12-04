@@ -37,9 +37,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	private ArrayList<ItemsControlListener> listeners;
 	public ArrayList<Tuple<BarcodedProduct, Integer>> tempList = new ArrayList<>();
 	private ArrayList<Tuple<String, Double>> checkoutList = new ArrayList<>();
-	private ArrayList<ReusableBag> bags = new ArrayList<ReusableBag>();			// stores reusable bag item with no barcode
+	private ArrayList<ReusableBag> bags = new ArrayList<ReusableBag>(); // stores reusable bag item with no barcode
 	private double checkoutListTotal = 0.0;
 	private Item currentItem;
+	private double weightofScannerTray = 0.0;
 
 	private boolean scanSuccess = true, weighSuccess = true, inCatalog = false;
 
@@ -102,13 +103,13 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	}
 
 	public void addReusableBags(ReusableBag aBag) {
-		bags.add(aBag);		// add to reusable bags doesnt really need it for now
-		
+		bags.add(aBag); // add to reusable bags doesnt really need it for now
+
 		double reusableBagPrice = sc.fakeData.getReusableBagPrice();
-		this.updateCheckoutTotal(reusableBagPrice);	// update total balance
+		this.updateCheckoutTotal(reusableBagPrice); // update total balance
 		this.addItemToCheckoutList(new Tuple<String, Double>("Reusable bag", reusableBagPrice));
 	}
-	
+
 	public double getCheckoutTotal() {
 		return checkoutListTotal;
 	}
@@ -133,13 +134,13 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	 */
 	public void pickupNextItem() {
 		try {
-			// TODO: Find another way to do this 
+			// TODO: Find another way to do this
 			this.currentItem = sc.customer.shoppingCart.get(sc.customer.shoppingCart.size() - 1);
 			sc.customer.selectNextItem();
-			if(currentItem instanceof PLUCodedItem) {
+			if (currentItem instanceof PLUCodedItem) {
 				for (ItemsControlListener l : listeners)
 					l.itemWasSelected(this);
-			}else{
+			} else {
 				for (ItemsControlListener l : listeners)
 					l.itemWasSelected(this);
 			}
@@ -166,7 +167,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			// currentItem is not null
 		}
 	}
-	
+
 	// TODO: scanItem now differtiates between using handheldScanner and mainScanner
 	// ALSO: note that a new weight area called scanningArea exists now to grab
 	// weight of items during general scanning phase
@@ -185,8 +186,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	}
 
 	public void placeItemOnBaggingArea() {
-		if(currentItem instanceof BarcodedItem) {
-			scaleExpectedWeight = sc.weightOfItemScanned;
+		if (currentItem instanceof BarcodedItem) {
+			scaleExpectedWeight = sc.weightOfLastItem;
 			weighSuccess = false;
 			baggingAreaTimerEnd = System.currentTimeMillis();
 			// placing an item could potentially fail so allow for retries
@@ -214,7 +215,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				// if weighSuccess is still false after listeners have been called, we can show
 				// and alert showing a failed weigh-in if time permits.
 			}
-		}else {
+		} else {
 			sc.customer.placeItemInBaggingArea();
 			System.out.println("expected: " + sc.getExpectedWeight());
 			try {
@@ -224,7 +225,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				e.printStackTrace();
 			}
 		}
-		
+
 	}
 
 	/**
@@ -272,17 +273,15 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 	private PriceLookUpCode searchPLUCodedProductDatabase(String strProductName) {
 		PriceLookUpCode result = null;
-		
+
 		for (Entry<PriceLookUpCode, PLUCodedProduct> entry : ProductDatabases.PLU_PRODUCT_DATABASE.entrySet()) {
 			if (entry.getValue().getDescription().compareTo(strProductName) == 0) {
-				
+
 				result = entry.getKey();
 			}
 		}
 		return result;
 	}
-	
-
 
 	private void addItemByBrowsing(String strProductName) {
 		Barcode barcodeIdentifier = null;
@@ -303,7 +302,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			pluItemSelected();
 			isItemSelected = true;
 		}
-		
+
 		// FIXME: prompt place on scanning area instead
 		if (isItemSelected) {
 			sc.goBackOnUI();
@@ -316,43 +315,45 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		for (ItemsControlListener l : listeners)
 			l.awaitingItemToBePlacedInScanningArea(this);
 	}
-	
-	public boolean addItemByPLU() {
-		try {
-			baggingAreaTimerStart = System.currentTimeMillis();
-			PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(currentProduct);
 
-			if(product != null) {
-				// lol this is broken 
-				double weight = sc.station.scanningArea.getCurrentWeight();
-				
-				double itemWeight = weight - sc.getWeightOfScannerTray();
-				sc.setWeightOfScannerTray(weight);
-				System.out.println("Weight of item: "+ itemWeight);
-				// price per kg
-				double price = (double)product.getPrice() * itemWeight/1000;
-				this.addItemToCheckoutList(new Tuple<String,Double>(product.getDescription(), price));
-				this.updateCheckoutTotal(price);
-				
-				for (ItemsControlListener l : listeners)
-					l.awaitingItemToBePlacedInBaggingArea(this);
-				return true;
-				
-			} else {
-				System.err.println("PLU Code does not correspond to a product in the database!");
-				return false;
-			}
-		} catch(InvalidArgumentSimulationException | OverloadException e) {
-			System.err.println(e.getMessage());
-			return false;
+	@SuppressWarnings("unused")
+	public void addItemByPLU(PriceLookUpCode pluCode) {
+		baggingAreaTimerStart = System.currentTimeMillis();
+		PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode);
+		double itemWeight,price;
+		
+		System.out.println(product.getDescription());
+
+		if (product != null) {
+			itemWeight = weightofScannerTray - sc.getWeightOfScannerTray();
+			
+			
+			sc.setWeightOfScannerTray(weightofScannerTray);
+			
+//			sc.weightOfLastItem = itemWeight;
+			sc.updateExpectedCheckoutWeight(itemWeight);
+			
+			sc.updateWeightOfLastItemAddedToBaggingArea(itemWeight);
+			
+			System.out.println("Weight of item: " + itemWeight);
+			// price per kg
+			price = (double) product.getPrice() * itemWeight / 1000;
+			this.addItemToCheckoutList(new Tuple<String, Double>(product.getDescription(), price));
+			this.updateCheckoutTotal(price);
+
+			for (ItemsControlListener l : listeners)
+				l.awaitingItemToBePlacedInBaggingArea(this);
+
+		} else {
+			System.err.println("PLU Code does not correspond to a product in the database!");
 		}
+
 	}
 
 	public boolean getIsPLU() {
 		return isPLU;
 	}
 
-	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String c = e.getActionCommand();
@@ -404,7 +405,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				case "weigh":
 					weighItem();
 					break;
-			default:
+				default:
 					break;
 				}
 			} catch (Exception ex) {
@@ -433,37 +434,45 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	public void barcodeScanned(BarcodeScanner barcodeScanner, Barcode barcode) {
 		if (!sc.isMembershipInput()) {
 			scanSuccess = true;
-			
+			sc.blockStation();
+
 			// Verify product and inventory in the product database
 			Product product = findProduct(barcode);
 			checkInventory(product);
+
 			System.out.println("scanned item");
-			// Check if product price is per unit or weight
-			sc.addBarcodedNewItem(barcode);
-			scanSuccess = true;
+
+			sc.weightOfLastItem = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
+
+			// Add the barcode to the ArrayList within itemControl
+			this.addScannedItemToCheckoutList(barcode);
+			// Set the expected weight in SystemControl
+			sc.updateExpectedCheckoutWeight(sc.weightOfLastItem);
+			sc.updateWeightOfLastItemAddedToBaggingArea(sc.weightOfLastItem);
+
 			for (ItemsControlListener l : listeners)
 				l.awaitingItemToBePlacedInBaggingArea(this);
 		}
 	}
-	
+
 	private void checkInventory(Product product) {
-		if(ProductDatabases.INVENTORY.containsKey(product) && ProductDatabases.INVENTORY.get(product) >= 1) {
-			ProductDatabases.INVENTORY.put(product, ProductDatabases.INVENTORY.get(product)-1); //updates INVENTORY with new total
-		}else {
+		if (ProductDatabases.INVENTORY.containsKey(product) && ProductDatabases.INVENTORY.get(product) >= 1) {
+			ProductDatabases.INVENTORY.put(product, ProductDatabases.INVENTORY.get(product) - 1); // updates INVENTORY
+																									// with new total
+		} else {
 			// TODO: inform customer and attendant
 			System.out.print("Out of stock");
 		}
 	}
 
 	private BarcodedProduct findProduct(Barcode Barcode) throws NullPointerSimulationException {
-    	if(ProductDatabases.BARCODED_PRODUCT_DATABASE.containsKey(Barcode)) {
-            return ProductDatabases.BARCODED_PRODUCT_DATABASE.get(Barcode);        
-        }
-    	else {
-    		// TODO: Inform customer station
-    		System.out.println("Cannot find the product. Please try again or ask for assistant!");
-    		throw new NullPointerSimulationException();
-    	}
+		if (ProductDatabases.BARCODED_PRODUCT_DATABASE.containsKey(Barcode)) {
+			return ProductDatabases.BARCODED_PRODUCT_DATABASE.get(Barcode);
+		} else {
+			// TODO: Inform customer station
+			System.out.println("Cannot find the product. Please try again or ask for assistant!");
+			throw new NullPointerSimulationException();
+		}
 	}
 
 	/**
@@ -474,7 +483,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	 */
 	@Override
 	public void weightChanged(ElectronicScale scale, double weightInGrams) {
-		if(scale == sc.station.baggingArea) {
+		if (scale == sc.station.baggingArea) {
 			weighSuccess = true;
 			for (ItemsControlListener l : listeners)
 				l.awaitingItemToBeSelected(this);
@@ -501,6 +510,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				for (ItemsControlListener l : listeners)
 					l.awaitingItemToBeSelected(this);
 			}
+		} else {
+			weightofScannerTray = weightInGrams;		
 		}
 	}
 
@@ -515,7 +526,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		userMessage = "Excessive weight removed, continue scanning";
 		sc.unblockStation();
 	}
-	
+
 	public Item getCurrentItem() {
 		return currentItem;
 	}
