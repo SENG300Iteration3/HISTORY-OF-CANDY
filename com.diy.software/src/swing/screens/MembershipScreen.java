@@ -204,14 +204,14 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 	}
 	
 	public JButton getCorrectButton() {
-		return cancelButton;
+		return correctButton;
 	}
 	
 	public JButton getSubmitButton() {
-		return cancelButton;
+		return submitButton;
 	}
 	
 	public JButton getScanSwipeButton() {
-		return cancelButton;
+		return scanSwipeButton;
 	}
 }
