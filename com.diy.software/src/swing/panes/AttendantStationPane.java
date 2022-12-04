@@ -29,6 +29,7 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	GUI_JButton addInkToPrinterButton;
 	GUI_JButton addPaperToPrinterButton;
 	GUI_JButton approveNoBagging;
+	GUI_JButton logoutButton;
 	GUI_JLabel weightDisplayLabel, weightDescrepancyMssg;
 
 	private static String HeaderText = "Attendant Screen";
@@ -64,7 +65,12 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		approveNoBagging.setActionCommand("approve no bag");
 		approveNoBagging.addActionListener(ac);
 		approveNoBagging.setPreferredSize(new Dimension(width, height));
-
+		
+		logoutButton = createPinPadButton("Logout");
+		logoutButton.setActionCommand("logout");
+		logoutButton.addActionListener(ac);
+		logoutButton.setPreferredSize(new Dimension(width, height));
+		
 		weightDescrepancyMssg = initalizeLabel();
 		weightDisplayLabel = initalizeLabel();
 		
@@ -72,7 +78,9 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		addLayer(addInkToPrinterButton,0);
 		addLayer(addPaperToPrinterButton,0);
 		addLayer(approveNoBagging,0);
+		addLayer(logoutButton, 0);
 		addLayer(weightDescrepancyMssg,0);
+		
 		
 		addInkToPrinterButton.setEnabled(false);
 		addPaperToPrinterButton.setEnabled(false);

@@ -17,6 +17,7 @@ import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.AttendantControlListener;
 
 import swing.screens.AttendantLoginScreen;
+import swing.styling.GUI_Constants;
 import swing.styling.GUI_JFrame;
 import swing.styling.Screen;
 
@@ -30,9 +31,11 @@ public class AttendantPane implements AttendantControlListener {
 
 	private JFrame frame;
 	
+	private PaneControl pc;
+	
 	public AttendantPane(PaneControl pc, JFrame frame) {
 		this.frame = frame;
-		
+		this.pc = pc;
 		this.loginScreen = new AttendantLoginScreen(pc.getStationControls());
 		this.tabbedPane = new JTabbedPane();
 		int i = 1;
@@ -47,7 +50,6 @@ public class AttendantPane implements AttendantControlListener {
 		this.frame.getContentPane().add(currentComponent, BorderLayout.CENTER);
 		
 		changeComponents(loginScreen.getRootPanel());
-		
 	}
 	
 	private void changeComponents(Component newComponent) {
@@ -106,7 +108,8 @@ public class AttendantPane implements AttendantControlListener {
 		
 			loginScreen.loginFail();
 		}else{
-			//logout
+			loginScreen = new AttendantLoginScreen(pc.getStationControls());
+			changeComponents(loginScreen.getRootPanel());
 		}
 		
 	}

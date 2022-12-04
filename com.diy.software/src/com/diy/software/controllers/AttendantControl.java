@@ -119,6 +119,13 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		sc.getItemsControl().placeBulkyItemInCart();
 	}
 	
+	public void logoutOfStation() {
+		for (AttendantControlListener l : listeners) {
+			l.loggedIn(false);
+			
+		}
+	}
+	
 	/*
 	 * Updates banknotes in station to be used for change and notifies cash controller
 	 * 
@@ -226,6 +233,8 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 				case "prevent_use":
 					attendantNotifications = ("Preventing use on station for maintenance");
 					preventStationUse();
+				case "logout":
+					logoutOfStation();
 				default:
 					break;
 			}
