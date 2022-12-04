@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.awt.event.ActionEvent;
 import java.util.Currency;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -148,10 +149,11 @@ public class CashControlTest {
 	@Test
 	public void testInvalidBanknoteDetected() {
 		ic.updateCheckoutTotal(100.0);
-		bns.cashInserted = false;
+		bns.cashRejected = false;
 		while(!bns.cashRejected) {
 			cs.enablePayments();
-			
+			ActionEvent e = new ActionEvent(this, 0, "d 100");
+			cs.actionPerformed(e);
 			ic.updateCheckoutTotal(100.0);
 		}
 		assertTrue(bns.cashRejected);
@@ -160,10 +162,11 @@ public class CashControlTest {
 	@Test
 	public void testInvalidCoinDetected() {
 		ic.updateCheckoutTotal(1.0);
-		bns.cashInserted = false;
+		bns.cashRejected = false;
 		while(!bns.cashRejected) {
 			cs.enablePayments();
-			
+			ActionEvent e = new ActionEvent(this, 0, "c 100");
+			cs.actionPerformed(e);
 			ic.updateCheckoutTotal(1.0);
 		}
 		assertTrue(bns.cashRejected);
@@ -174,6 +177,8 @@ public class CashControlTest {
 		fillNotes(sc.station);
 		ic.updateCheckoutTotal(1000.0);
 		cs.enablePayments();
+		ActionEvent e = new ActionEvent(this, 0, "d 100");
+		cs.actionPerformed(e);
 		assertFalse(bns.noteinsertionEnabled);
 	}
 	
@@ -195,46 +200,46 @@ public class CashControlTest {
 		assertTrue(bns.coininsertionEnabled);
 	}
 	
-	/*
-	@Test
-	public void testBanknotesLoaded() {
-		fail("Not yet implemented");
-	}
-	
-	@Test
-	public void testBanknotesUnloaded() {
-		fail("Not yet implemented");
-	}
-*/
 	@Test
 	public void testCoinsFull() {
 		fillCoins(sc.station);
 		ic.updateCheckoutTotal(1000.0);
 		cs.enablePayments();
+		ActionEvent e = new ActionEvent(this, 0, "c 100");
+		cs.actionPerformed(e);
 		assertFalse(bns.coininsertionEnabled);
 	}
-/*
+	
 	@Test
-	public void testCoinsLoaded() {
-		fail("Not yet implemented");
+	public void badCoin() {
+		ic.updateCheckoutTotal(1000.0);
+		cs.enablePayments();
+		ActionEvent e = new ActionEvent(this, 0, "c -1");
+		cs.actionPerformed(e);
+		assertTrue(ic.getCheckoutTotal() == 1000.0);
 	}
-	*?
-/*
+	
 	@Test
-	public void testCoinsUnloaded() {
-		fail("Not yet implemented");
+	public void returnChange() {
+		ic.updateCheckoutTotal(22.22);
+		cs.enablePayments();
+		ActionEvent e = new ActionEvent(this, 0, "d 100");
+		cs.actionPerformed(e);
+		System.out.println(bns.lastReturnedCash);
+		System.out.println(77.78);
+		assertTrue(Math.abs(bns.lastReturnedCash-77.78) < 0.01);
 	}
-
+	
 	@Test
-	public void testIsPaymentEnough() {
-		fail("Not yet implemented");
+	public void returnChange2() {
+		ic.updateCheckoutTotal(1.00);
+		cs.enablePayments();
+		ActionEvent e = new ActionEvent(this, 0, "c 200");
+		cs.actionPerformed(e);
+		System.out.println(bns.lastReturnedCash);
+		System.out.println(1.00);
+		assertTrue(Math.abs(bns.lastReturnedCash-1.00) < 0.01);
 	}
-
-	@Test
-	public void testCalculateChange() {
-		// not used 
-		fail("Not yet implemented");
-	}*/
 
 	@Test
 	public void testActionPerformed() {
@@ -275,6 +280,7 @@ public class CashControlTest {
 		public boolean changeReturned = false;
 		public boolean paymentFailed = false;
 		public boolean cashRejected = false;
+		public double lastReturnedCash = 0.0;
 
 		@Override
 		public void cashInserted(CashControl cc) {
@@ -309,7 +315,21 @@ public class CashControlTest {
 		@Override
 		public void changeReturned(CashControl cc) {
 			changeReturned = true;
-			
+			List<Coin> c = sc.station.coinTray.collectCoins();
+			Banknote b = null; 
+			if(sc.station.banknoteInput.hasDanglingBanknotes()) {
+				b = sc.station.banknoteInput.removeDanglingBanknote();
+			}
+			double returnedCash = 0;
+			for(Coin i : c) {
+				returnedCash += ((double)i.getValue())/100.0;
+				cashRejected = true;
+			}
+			if(b != null) {
+				returnedCash += b.getValue();
+				cashRejected = true;
+			}
+			lastReturnedCash = returnedCash;
 		}
 
 		@Override
@@ -320,13 +340,21 @@ public class CashControlTest {
 
 		@Override
 		public void checkCashRejected(CashControl cc) {
+			List<Coin> c = sc.station.coinTray.collectCoins();
+			Banknote b = null; 
 			if(sc.station.banknoteInput.hasDanglingBanknotes()) {
+				b = sc.station.banknoteInput.removeDanglingBanknote();
+			}
+			double returnedCash = 0;
+			for(Coin i : c) {
+				returnedCash += ((double)i.getValue())/100.0;
 				cashRejected = true;
 			}
-			for(Coin c : sc.station.coinTray.collectCoins()) {
+			if(b != null) {
+				returnedCash += b.getValue();
 				cashRejected = true;
-				break;
 			}
+			lastReturnedCash = returnedCash;
 		}
 	}
 }
