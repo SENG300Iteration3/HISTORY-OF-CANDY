@@ -667,43 +667,43 @@ public class ItemsControlTest {
 		@Override
 		public void lowInk(AttendantControl ac, String message) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void lowPaper(AttendantControl ac, String message) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void outOfInk(AttendantControl ac, String message) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void outOfPaper(AttendantControl ac, String message) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void attendantPermitStationUse(AttendantControl ac) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void coinIsLowState(CoinStorageUnit unit, int amount) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void loggedIn(boolean isLoggedIn) {
 			// TODO Auto-generated method stub
-			
+
 		}
 	}
 }
