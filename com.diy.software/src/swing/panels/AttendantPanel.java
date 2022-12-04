@@ -8,10 +8,16 @@ import javax.swing.JPanel;
 
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.BagsControl;
+import com.diy.software.controllers.ReceiptControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
+import com.unitedbankingservices.coin.CoinStorageUnit;
 
+/**
+ * This class isn't linked to anything. Should it still be kept?
+ *
+ */
 public class AttendantPanel extends JPanel implements AttendantControlListener, BagsControlListener{
 
 	private static final long serialVersionUID = 1L;
@@ -150,6 +156,31 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 		addPaperToPrinterButton.setEnabled(false);	
 		approveNoBagButton.setEnabled(false);
 		weightDescrepancyMssg.setText("");
+	}
+
+	@Override
+	public void lowInk(AttendantControl ac, String message) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void lowPaper(AttendantControl ac, String message) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void outOfInk(AttendantControl ac, String message) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void outOfPaper(AttendantControl ac, String message) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void coinIsLowState(CoinStorageUnit unit, int amount) {
+		// TODO Auto-generated method stub
 	}
 
 	@Override
