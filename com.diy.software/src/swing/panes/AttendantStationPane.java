@@ -35,6 +35,7 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 //	GUI_JButton addPaperToPrinterButton;
 	GUI_JButton approveNoBagging;
 	GUI_JButton startUpButton;
+	GUI_JButton removeItemButton;
 	GUI_JLabel weightDisplayLabel, weightDescrepancyMssg, inkLabel, paperLabel, adjustCoinLabel, adjustBanknoteLabel;
 	GUI_JButton printReceiptButton;
 
@@ -77,6 +78,11 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		startUpButton.addActionListener(ac);
 		startUpButton.setPreferredSize(new Dimension(width, height));
 		
+		removeItemButton = makeButton("Remove item");
+		removeItemButton.setActionCommand("remove");
+		removeItemButton.addActionListener(ac);
+		removeItemButton.setPreferredSize(new Dimension(width, height));
+		
 		weightDescrepancyMssg = initalizeLabel("weightDiscrepancyMsg");
 		weightDisplayLabel = initalizeLabel("weightDisplayLabel");
 		inkLabel = initalizeLabel("Ink status");
@@ -108,7 +114,7 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		
 		
 		GUI_JPanel buttonsPanel	= new GUI_JPanel();
-		buttonsPanel.setLayout(new GridLayout(3, 1));
+		buttonsPanel.setLayout(new GridLayout(4, 1));
 		buttonScrollPane.getViewport().add(buttonsPanel);
 		
 		buttonsPanel.add(approveAddedBagsButton);
@@ -116,6 +122,7 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 //		buttonsPanel.add(addPaperToPrinterButton);
 		buttonsPanel.add(approveNoBagging);
 		buttonsPanel.add(startUpButton);
+		buttonsPanel.add(removeItemButton);
 		
 		
 		this.addLayer(buttonScrollPane, 50);
