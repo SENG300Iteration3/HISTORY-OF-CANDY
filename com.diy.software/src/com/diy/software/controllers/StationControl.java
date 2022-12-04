@@ -659,6 +659,12 @@ public class StationControl
 		
 	}
 
+	//needed it here cause of interface but shouldnt do anything in here???
+	@Override
+	public void pluErrorMessageUpdated(PLUCodeControl pcc, String errorMessage) {
+
+	}
+
 	private void checkInventory(Product product) {
 		if(ProductDatabases.INVENTORY.containsKey(product) && ProductDatabases.INVENTORY.get(product) >= 1) {
 			ProductDatabases.INVENTORY.put(product, ProductDatabases.INVENTORY.get(product)-1); //updates INVENTORY with new total

@@ -61,6 +61,8 @@ public class PLUCodeControl implements ActionListener {
 					break;
 				} catch(InvalidArgumentSimulationException exc) {
 					System.err.println(exc.getMessage());
+					for (PLUCodeControlListener l: listeners)
+						l.pluErrorMessageUpdated(this, exc.getMessage());
 					break;
 				}
 			default:
