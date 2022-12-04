@@ -2,20 +2,29 @@ package com.diy.software.test.logic;
 
 import com.diy.software.util.Tuple;
 import com.diy.software.controllers.ItemsControl;
+import com.diy.software.controllers.MembershipControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.controllers.WalletControl;
 import com.diy.software.fakedata.FakeDataInitializer;
+import com.diy.software.listeners.MembershipControlListener;
 import com.diy.software.listeners.WalletControlListener;
 import com.jimmyselectronics.necchi.Barcode;
+import com.jimmyselectronics.necchi.BarcodeScanner;
 import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.necchi.Numeral;
 import com.jimmyselectronics.opeechee.Card;
+import com.jimmyselectronics.opeechee.Card.CardData;
+import com.jimmyselectronics.opeechee.Card.CardInsertData;
+import com.jimmyselectronics.opeechee.Card.CardSwipeData;
+import com.jimmyselectronics.opeechee.CardReader;
 
 import ca.powerutility.PowerGrid;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.junit.*;
@@ -26,6 +35,7 @@ public class TestSystemControl {
 	private FakeDataInitializer fdi;
 	private StubSystem stub;
 	private WalletStub wStub;
+	private MembershipStub mStub;
 	Barcode[] barcodes;
 	BarcodedItem[] items;
 	private ItemsControl ic;
@@ -36,6 +46,8 @@ public class TestSystemControl {
 		
 		fdi = new FakeDataInitializer();
 		fdi.addProductAndBarcodeData();
+		fdi.addCardData();
+		fdi.addFakeMembers();
 		barcodes = fdi.getBarcodes();
 		items = fdi.getItems();
 		
@@ -43,13 +55,16 @@ public class TestSystemControl {
 		
 		PowerGrid.engageUninterruptiblePowerSource();
 		
-		systemControl = new StationControl();
+		systemControl = new StationControl(fdi);
 		stub = new StubSystem();
 		systemControl.register(stub);
 		ic = systemControl.getItemsControl();
 		
 		wStub = new WalletStub();
 		systemControl.getWalletControl().addListener(wStub);
+		
+		mStub = new MembershipStub();
+		systemControl.getMembershipControl().addListener(mStub);
 	}
 	
 	
@@ -169,14 +184,35 @@ public class TestSystemControl {
 	}*/
 	
 	@Test
-	public void testCardDataReadMembership() {
-		//TODO
-		//systemControl.cardDataRead(, null);
+	public void testCardDataReadMembership() throws IOException {
+		CardReader cardReader = systemControl.getStation().cardReader;
+		CardSwipeData cardSwipeData;
+		do{
+			cardSwipeData = (CardSwipeData) cardReader.swipe(membershipCard);
+		}
+		while(cardSwipeData == null);
+		
+		systemControl.cardDataRead(cardReader, cardSwipeData);
+		assertEquals("Welcome! Itadori", mStub.memberName);
 	}
 	
 	@Test
 	public void testBarcodeScannedMembership() {
-		//TODO
+		systemControl.startMembershipCardInput();
+		BarcodeScanner scanner = systemControl.getStation().mainScanner;
+		
+		String number = membershipCard.number;
+		Numeral[] code = new Numeral [number.length()];
+		
+		// Converting string number into Numeral array
+		for (int i = 0; i < number.length(); i++) {
+			Numeral digit = Numeral.valueOf(toByteDigit(number.charAt(i)));
+			code[i] = digit;
+		}
+		Barcode barcode = new Barcode(code);
+		
+		systemControl.barcodeScanned(scanner, barcode);
+		assertEquals("Welcome! Itadori", mStub.memberName);
 	}
 	
 	@Test
@@ -210,6 +246,23 @@ public class TestSystemControl {
 			while(!systemControl.station.handheldScanner.scan(item)) {}
 			systemControl.station.baggingArea.add(item);
 			
+		}
+	}
+	
+	private byte toByteDigit(char c) {
+		byte b;
+		switch (c) {
+			case '0':	return b = 0;
+			case '1':	return b = 1;
+			case '2':	return b = 2;
+			case '3':	return b = 3;
+			case '4':	return b = 4;
+			case '5':	return b = 5;
+			case '6':	return b = 6;
+			case '7':	return b = 7;
+			case '8':	return b = 8;
+			case '9':	return b = 9;
+			default:	return b = -1;
 		}
 	}
 	
@@ -271,6 +324,37 @@ public class TestSystemControl {
 		@Override
 		public void membershipCardInputCanceled(WalletControl walletControl) {
 			membershipCardInputEnabled = false;
+			
+		}
+	}
+	
+	public class MembershipStub implements MembershipControlListener{
+
+		public String memberName;
+		public String memberNumber;
+		public boolean scanSwipeSelected = false;
+		public boolean membershipInput = true;
+
+		@Override
+		public void welcomeMember(MembershipControl mc, String memberName) {
+			this.memberName = memberName;
+		}
+
+		@Override
+		public void memberFieldHasBeenUpdated(MembershipControl mc, String memberNumber) {
+			this.memberNumber = memberNumber;
+			
+		}
+
+		@Override
+		public void scanSwipeSelected(MembershipControl mc) {
+			scanSwipeSelected = true;
+			
+		}
+
+		@Override
+		public void disableMembershipInput(MembershipControl mc) {
+			membershipInput = false;
 			
 		}
 		

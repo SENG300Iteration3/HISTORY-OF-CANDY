@@ -201,6 +201,10 @@ public class StationControl
 		return cc;
 	}
 	
+	public DoItYourselfStation getStation() {
+		return station;
+	}
+	
 	private void loadBags() {
 		try {
 			for(int i = 0; i < bagInStock; i++) {
