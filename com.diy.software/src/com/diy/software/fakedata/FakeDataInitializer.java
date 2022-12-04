@@ -26,9 +26,10 @@ public class FakeDataInitializer {
 	private BarcodedItem item1, item2, item3, item4;
 	private BarcodedProduct bp1, bp2, bp3, bp4;
 	
-	private PriceLookUpCode code1, code2, code3, code4, reusableBagCode;
+	private PriceLookUpCode code1, code2, code3, code4;
 	private PLUCodedProduct pp1, pp2, pp3, pp4, reusableBagProduct;
 	private PLUCodedItem pitem1, pitem2, pitem3, pitem4, reusableBagItem;
+	private static PriceLookUpCode reusableBagCode = null;
 	
 	private Card card1, card2, card3, card4, card5;
 	private CardIssuer fakebank;
@@ -74,8 +75,8 @@ public class FakeDataInitializer {
 		pp4 = new PLUCodedProduct(code4, "Oranges", 7);
 
 		reusableBagCode = new PriceLookUpCode("0000");
-		reusableBagItem = new PLUCodedItem(code1, (new ReusableBag()).getWeight());  // );
-		reusableBagProduct = new PLUCodedProduct(code1, "Reusable bag", 2);
+		reusableBagItem = new PLUCodedItem(reusableBagCode, (new ReusableBag()).getWeight());  // );
+		reusableBagProduct = new PLUCodedProduct(reusableBagCode, "Reusable bag", 2);
 
 		ProductDatabases.PLU_PRODUCT_DATABASE.put(code1, pp1);
 		ProductDatabases.PLU_PRODUCT_DATABASE.put(code2, pp2);
@@ -90,6 +91,10 @@ public class FakeDataInitializer {
 		ProductDatabases.INVENTORY.put(reusableBagProduct, 10);
 		
 
+	}
+
+	public static PriceLookUpCode getReusableBagCode() {
+		return reusableBagCode;
 	}
 	
 	/**

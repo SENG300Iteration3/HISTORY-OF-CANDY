@@ -15,6 +15,7 @@ import com.diy.hardware.PLUCodedItem;
 import com.diy.hardware.PLUCodedProduct;
 import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.external.ProductDatabases;
+import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.ItemsControlListener;
 import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.AbstractDevice;
@@ -174,6 +175,23 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 	public boolean addItemByPLU(PriceLookUpCode code) {
 		try {
+
+			PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(code);
+			double price;
+
+			// TODO: Not sure if you want this!!
+			// Checks if the PLU code for a reusable bag was entered!!
+			// Does this before everything because a reusable bag should be entered without weighing it, and at any time!
+			if(code.hashCode() == FakeDataInitializer.getReusableBagCode().hashCode()) {
+				product = ProductDatabases.PLU_PRODUCT_DATABASE.get(code);
+
+				this.addItemToCheckoutList(new Tuple<String, Double>(product.getDescription(), (double)product.getPrice()));
+				this.updateCheckoutTotal(product.getPrice());
+
+				System.out.println("Added a reusable bag to checkoutlist!!");
+				return true;
+			}
+
 			if(!isPLU) {
 				System.err.println("The currently selected item has no PLU code! Or there is no item selected!");
 				return false;
@@ -184,17 +202,12 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				return false;
 			}
 
+			product = ProductDatabases.PLU_PRODUCT_DATABASE.get(code);
+
 			baggingAreaTimerStart = System.currentTimeMillis();
 
-			PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(code);
-			double price;
-		
 			System.out.println(product.getDescription());
 
-			if(product == null) {
-				return false;
-			}
-			
 			double weight = weightofScannerTray - sc.getWeightOfScannerTray();
 			System.out.println(weight + " Scale weight");
 
@@ -295,7 +308,12 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	 * Weighs the item before entering the plu code.
 	 */
 	public void weighItem() {
-		sc.station.scanningArea.add(currentItem);
+		if(isPLU) {
+			System.out.println("Weighing item!!");
+			sc.station.scanningArea.add(currentItem);
+		} else {
+			System.err.println("No need to weigh a barcoded item!!");
+		}
 	}
 
 	/**

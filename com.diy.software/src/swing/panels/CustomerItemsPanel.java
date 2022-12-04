@@ -124,7 +124,7 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(true);
 		deselectCurrentItemButton.setEnabled(true);
 		placeItemInBaggingAreaButton.setEnabled(false);
-		itemWeight.setEnabled(false);
+		itemWeight.setEnabled(true);
 	}
 	
 //	@Override
