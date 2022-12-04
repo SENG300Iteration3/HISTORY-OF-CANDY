@@ -23,7 +23,7 @@ public class AttendantActionsPanel extends JPanel
 
 	private static final long serialVersionUID = 1L;
 	private ItemsControl ic;
-	private AttendantControl ac;
+	private AttendantControl ac; 
 	private BagsControl bc;
 	private ReceiptControl rc;
 	JButton inkButton, paperButton, bagDispenserButton, coinButton, banknoteButton;
@@ -234,7 +234,7 @@ public class AttendantActionsPanel extends JPanel
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 	@Override
 	public void coinIsLowState(CoinStorageUnit unit, int amount) {
 		// TODO Auto-generated method stub

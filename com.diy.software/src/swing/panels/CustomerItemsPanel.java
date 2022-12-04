@@ -17,6 +17,7 @@ import com.diy.software.listeners.BagsControlListener;
 import com.diy.software.listeners.ItemsControlListener;
 import com.unitedbankingservices.coin.CoinStorageUnit;
 import com.diy.software.listeners.ReceiptControlListener;
+import com.unitedbankingservices.coin.CoinStorageUnit;
 
 public class CustomerItemsPanel extends JPanel
 		implements ItemsControlListener, AttendantControlListener, BagsControlListener, ReceiptControlListener {

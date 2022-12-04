@@ -232,7 +232,6 @@ public class CustomerBagsPanel extends JPanel
 	@Override
 	public void attendantPermitStationUse(AttendantControl ac) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
