@@ -264,14 +264,14 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 		try {
 			if (c.startsWith("d")) {
 				Banknote banknote = new Banknote(Currency.getInstance("CAD"), Long.parseLong(c.split(" ")[1]));
-				if (sc.station.banknoteInput.isActivated()) {
+				if (!sc.station.banknoteInput.isDisabled()) {
 					sc.station.banknoteInput.receive(banknote);
 				} else {
 					System.out.println("Banknote storage unit is full");
 				}
 			}else if (c.startsWith("c")) {
 				Coin coin = new Coin(Currency.getInstance("CAD"), Long.parseLong(c.split(" ")[1]));
-				if (sc.station.coinSlot.isActivated()) {
+				if (!sc.station.coinSlot.isDisabled()) {
 					sc.station.coinSlot.receive(coin);
 				} else {
 					System.out.println("Coin storage unit is full");
