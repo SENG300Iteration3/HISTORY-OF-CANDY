@@ -17,21 +17,20 @@ import swing.screens.AttendantLoginScreen;
 
 public class AttendantPane implements AttendantControlListener {
 
-	private Component currentComponent;
+	//It doesn't matter if these components are public
+	//because they can be accessed by getting the components inside the AttendantLoginScreen
+	public Component currentComponent;
+	public AttendantLoginScreen loginScreen;
+	public JTabbedPane tabbedPane;
+	public JFrame frame;
 	
-	private AttendantLoginScreen loginScreen;
-
-	private JTabbedPane tabbedPane;
-
-	private JFrame frame;
-	
-	public AttendantPane(PaneControl pc, JFrame frame) {
+	public AttendantPane(ArrayList<StationControl> stationControls, JFrame frame) {
 		this.frame = frame;
 		
-		this.loginScreen = new AttendantLoginScreen(pc.getStationControls());
+		this.loginScreen = new AttendantLoginScreen(stationControls);
 		this.tabbedPane = new JTabbedPane();
 		int i = 1;
-		for (StationControl sc : pc.getStationControls()) {
+		for (StationControl sc : stationControls) {
 			sc.getAttendantControl().addListener(this);
 			JPanel tempPanel = new JPanel();
 			tempPanel.add(( new AttendantStationPane(sc)).getRootPanel());

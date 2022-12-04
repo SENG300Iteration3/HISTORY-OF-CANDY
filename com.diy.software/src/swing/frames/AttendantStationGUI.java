@@ -22,7 +22,7 @@ public class AttendantStationGUI  implements PaneControlListener {
     frame.setVisible(true);
     frame.setLocation(0, 0);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    new AttendantPane(pc, frame);
+    new AttendantPane(pc.getStationControls(), frame);
   }
 
 @Override

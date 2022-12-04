@@ -2,6 +2,7 @@ package swing.screens;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -25,25 +26,28 @@ import swing.styling.Screen;
 
 public class AttendantLoginScreen extends Screen implements ActionListener {
 	
-	private AttendantControl ac;
-	GUI_JButton loginButton;
-	private JTextField loginInfo;
-	private JLabel loginTitle;
-	private JLabel loginFail;
+	//It doesn't matter if these components are public
+	//because they can be accessed by getting the components inside the AttendantLoginScreen
+	public AttendantControl ac;
+	public GUI_JButton loginButton;
+	public JTextField loginInfo;
+	public JLabel loginTitle;
+	public JLabel loginFail;
+	public GUI_JPanel centerPanel;
+	
 	private int width = 450;
 	private int height = 50;
 	private int overallMargin = 10;
-	GUI_JPanel centerPanel;
 	
 	private static String HeaderText = "Attendant Login Screen".toUpperCase();
 	
-	public AttendantLoginScreen(ArrayList<StationControl> arrayList) {
+	public AttendantLoginScreen(ArrayList<StationControl> stationControls) {
 		super(null, HeaderText);
 		
 		super.rootPanel.setOpaque(true);
 		super.rootPanel.setBackground(GUI_Color_Palette.WHITE);
 		
-		ac = arrayList.get(0).getAttendantControl();
+		ac = stationControls.get(0).getAttendantControl();
 		
 		centerPanel = new GUI_JPanel();
 		centerPanel.setBackground(GUI_Color_Palette.DARK_BLUE);
