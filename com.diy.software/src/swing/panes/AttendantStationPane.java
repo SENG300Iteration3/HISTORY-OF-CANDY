@@ -31,8 +31,8 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	private AttendantControl ac;
 	private boolean cusAddedBags = false;
 	GUI_JButton approveAddedBagsButton;
-	GUI_JButton addInkToPrinterButton;
-	GUI_JButton addPaperToPrinterButton;
+//	GUI_JButton addInkToPrinterButton;
+//	GUI_JButton addPaperToPrinterButton;
 	GUI_JButton approveNoBagging;
 	GUI_JButton startUpButton;
 	GUI_JLabel weightDisplayLabel, weightDescrepancyMssg, inkLabel, paperLabel, adjustCoinLabel, adjustBanknoteLabel;
@@ -56,17 +56,17 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		approveAddedBagsButton.setActionCommand("approve added bags");
 		approveAddedBagsButton.addActionListener(ac);
 		approveAddedBagsButton.setPreferredSize(new Dimension(width, height));
-
-		addInkToPrinterButton = makeButton("Add ink");
-		addInkToPrinterButton.setActionCommand("addInk");
-		addInkToPrinterButton.addActionListener(ac);
-		addInkToPrinterButton.setPreferredSize(new Dimension(width, height));
-		
-		addPaperToPrinterButton = makeButton("Add paper");
-		addPaperToPrinterButton.setActionCommand("addPaper");
-		addPaperToPrinterButton.addActionListener(ac);
-		addPaperToPrinterButton.setPreferredSize(new Dimension(width, height));
-		
+//
+//		addInkToPrinterButton = makeButton("Add ink");
+//		addInkToPrinterButton.setActionCommand("addInk");
+//		addInkToPrinterButton.addActionListener(ac);
+//		addInkToPrinterButton.setPreferredSize(new Dimension(width, height));
+//		
+//		addPaperToPrinterButton = makeButton("Add paper");
+//		addPaperToPrinterButton.setActionCommand("addPaper");
+//		addPaperToPrinterButton.addActionListener(ac);
+//		addPaperToPrinterButton.setPreferredSize(new Dimension(width, height));
+//		
 		approveNoBagging = makeButton("Approve no bagging");
 		approveNoBagging.setActionCommand("approve no bag");
 		approveNoBagging.addActionListener(ac);
@@ -84,7 +84,7 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		adjustCoinLabel = initalizeLabel("Adjust coin");
 		adjustBanknoteLabel = initalizeLabel("Adjust Banknote");
 		
-		
+		// Notification Panel for JLabels that contain notification messages from system
 		GUI_JPanel notificationPanel = new GUI_JPanel();
 		notificationPanel.setLayout(new GridLayout(2, 3));
 		
@@ -108,12 +108,12 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		
 		
 		GUI_JPanel buttonsPanel	= new GUI_JPanel();
-		buttonsPanel.setLayout(new GridLayout(5, 1));
+		buttonsPanel.setLayout(new GridLayout(3, 1));
 		buttonScrollPane.getViewport().add(buttonsPanel);
 		
 		buttonsPanel.add(approveAddedBagsButton);
-		buttonsPanel.add(addInkToPrinterButton);
-		buttonsPanel.add(addPaperToPrinterButton);
+//		buttonsPanel.add(addInkToPrinterButton);
+//		buttonsPanel.add(addPaperToPrinterButton);
 		buttonsPanel.add(approveNoBagging);
 		buttonsPanel.add(startUpButton);
 		
@@ -127,8 +127,8 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		
 		this.addLayer(printReceiptButton, 0);
 		
-		addInkToPrinterButton.setEnabled(false);
-		addPaperToPrinterButton.setEnabled(false);
+//		addInkToPrinterButton.setEnabled(false);
+//		addPaperToPrinterButton.setEnabled(false);
 		approveNoBagging.setEnabled(false);
 		approveAddedBagsButton.setEnabled(cusAddedBags);
 		startUpButton.setEnabled(true);
@@ -199,24 +199,24 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	@Override
 	public void addPaperState() {
 		approveAddedBagsButton.setEnabled(false);
-		addInkToPrinterButton.setEnabled(false);
-		addPaperToPrinterButton.setEnabled(true);
+//		addInkToPrinterButton.setEnabled(false);
+//		addPaperToPrinterButton.setEnabled(true);
 		
 	}
 
 	@Override
 	public void addInkState() {
 		approveAddedBagsButton.setEnabled(false);
-		addInkToPrinterButton.setEnabled(true);
-		addPaperToPrinterButton.setEnabled(false);
+//		addInkToPrinterButton.setEnabled(true);
+//		addPaperToPrinterButton.setEnabled(false);
 		
 	}
 
 	@Override
 	public void printerNotLowState() {
 		approveAddedBagsButton.setEnabled(false);
-		addInkToPrinterButton.setEnabled(false);
-		addPaperToPrinterButton.setEnabled(false);
+//		addInkToPrinterButton.setEnabled(false);
+//		addPaperToPrinterButton.setEnabled(false);
 		inkLabel.setText("Ink status");
 		paperLabel.setText("Paper status");
 	}
@@ -230,16 +230,16 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	@Override
 	public void noBagRequest() {
 		approveAddedBagsButton.setEnabled(false);
-		addInkToPrinterButton.setEnabled(false);
-		addPaperToPrinterButton.setEnabled(false);	
+//		addInkToPrinterButton.setEnabled(false);
+//		addPaperToPrinterButton.setEnabled(false);	
 		approveNoBagging.setEnabled(true);
 	}
 
 	@Override
 	public void initialState() {
 		approveAddedBagsButton.setEnabled(false);
-		addInkToPrinterButton.setEnabled(false);
-		addPaperToPrinterButton.setEnabled(false);	
+//		addInkToPrinterButton.setEnabled(false);
+//		addPaperToPrinterButton.setEnabled(false);	
 		approveNoBagging.setEnabled(false);
 		weightDescrepancyMssg.setText("");
 	}
