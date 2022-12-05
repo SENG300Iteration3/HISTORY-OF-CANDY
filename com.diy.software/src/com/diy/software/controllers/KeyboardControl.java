@@ -10,7 +10,7 @@ public class KeyboardControl {
 	protected String text = "";
 	protected boolean capsLockOn = false; // assumes caps lock is initially off
 	protected boolean shiftPressed = false;
-	private int pointer = 0;
+	protected int pointer = 0;
 
 	public void addListener(KeyboardControlListener l) {
 		listeners.add(l);
@@ -20,67 +20,57 @@ public class KeyboardControl {
 		listeners.remove(l);
 	}
 	
-	public void keyPressed(String key) {
+	public void pressKey(String key) {
 		keyAction(key);
 		for (KeyboardControlListener l : listeners)
-			l.keyboardInputRecieved(this, this.text, key);
+			l.keyboardInputRecieved(this, this.text, key, this.pointer);
 	}
 
-	public void keyReleased(String key) {
+	public void releaseKey(String key) {
 		for (KeyboardControlListener l : listeners)
 			l.awaitingKeyboardInput(this);
 	}
 	
+	public void inputComplete() {
+		for (KeyboardControlListener l : listeners)
+			l.keyboardInputCompleted(this, this.text);
+	}
+	
+	public void movePointer(int delta) {
+		this.pointer = MathUtils.clamp(pointer + delta, 0, text.length());
+	}
+	
 	// Supports functionality for letters, numbers, symbols, backspace, delete, L/R
 	// arrows, L/R shift and enter
-	// @return modified key
-	private void keyAction(String key) {
+	protected void keyAction(String key) {
 		if (key.length() == 1) {
-			addTextAtPointer(getLetterCase(key)); // Alphanumeric key
+			addText(getLetterCase(key)); // Alphanumeric key
 		} else if (key.equals("CapsLock")) {
 			capsLockOn = !capsLockOn;
 		} else if (key.startsWith("Shift")) {
 			shiftPressed = !shiftPressed;
 		} else if (key.equals("Spacebar")) {
-			addTextAtPointer(" ");
+			addText(" ");
+		} else if (key.equals("Tab")) {
+			addText("	");
 		} else if (isNumOrSymbol(key)) {
-			addTextAtPointer(getNumberOrSymbol(key));
-		} else if (key.startsWith("Right")) {
-			movePointer(1);
+			addText(getNumberOrSymbol(key));
+		} else if (key.equals("Enter")) {
+			inputComplete();
 		} else if (key.startsWith("Left")) {
 			movePointer(-1);
-		} else if (key.equals("Backspace")) {
-			removeCharAtPointer(true);
-		} else if (key.equals("Delete")) {
-			removeCharAtPointer(false);
+		} else if (key.startsWith("Right")) {
+			movePointer(1);
 		}
 	}
 	
-	private void addTextAtPointer(String newText) {
-		StringBuilder sb = new StringBuilder(text);
-		sb.insert(pointer, newText);
-		pointer++;
-		this.text = sb.toString();
+	private void addText(String newText) {
+		this.text += newText;
+		movePointer(1);
 	}
 
 	private String getLetterCase(String key) {
 		return capsLockOn || shiftPressed ? key.toUpperCase() : key.toLowerCase();
-	}
-	
-	// Delta is how many spaces the pointer will be moved
-	private void movePointer(int delta) {
-		// Update the pointer by moving it delta spaces to the left or right depending on sign
-		// Value of pointer is safely clamped between a min of 0 and a max of queryLength
-		pointer = MathUtils.clamp(pointer + delta, 0, text.length());
-	}
-	
-	private void removeCharAtPointer(boolean updatePointer) {
-		StringBuilder sb = new StringBuilder(text);
-		
-		sb.deleteCharAt(pointer);
-		if (updatePointer && pointer != 0) pointer--;
-		
-		this.text = sb.toString();
 	}
 	
 	// Identifies whether or not a key is 0-9 or one of !@#$%^&*()

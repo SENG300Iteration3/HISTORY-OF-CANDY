@@ -129,7 +129,7 @@ public class TextLookupControl implements KeyboardControlListener{
 	}
 
 	@Override
-	public void keyboardInputRecieved(KeyboardControl kc, String text, String key) {
+	public void keyboardInputRecieved(KeyboardControl kc, String text, String key, int pointerPosition) {
 		
 	}
 
@@ -138,5 +138,4 @@ public class TextLookupControl implements KeyboardControlListener{
 		findProduct(text);
 		System.out.println(results);
 	}
-	
 }

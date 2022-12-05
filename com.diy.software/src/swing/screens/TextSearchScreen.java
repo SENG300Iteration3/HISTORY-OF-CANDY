@@ -275,7 +275,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 	}
 
 	@Override
-	public void keyboardInputRecieved(KeyboardControl kc, String query, String key) {
+	public void keyboardInputRecieved(KeyboardControl kc, String query, String key, int pointerPosition) {
 		// TODO Auto-generated method stub
 		
 	}

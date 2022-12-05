@@ -16,7 +16,6 @@ import com.diy.software.controllers.KeyboardControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.controllers.VirtualKeyboardControl;
 import com.diy.software.listeners.KeyboardControlListener;
-import com.diy.software.util.MathUtils;
 import com.jimmyselectronics.nightingale.Keyboard;
 
 import swing.styling.GUI_Color_Palette;
@@ -111,25 +110,14 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 		ks.openInNewJFrame();
 	}
 
-	private void moveCaret(int delta) {
-		queryField.requestFocus();
-		int newPos = MathUtils.clamp(queryField.getCaretPosition() + delta, 0, queryField.getText().length());
-		queryField.setCaretPosition(newPos);
-	}
-
 	@Override
-	public void keyboardInputRecieved(KeyboardControl kc, String text, String key) {
+	public void keyboardInputRecieved(KeyboardControl kc, String text, String key, int pointerPosition) {
 		JButton keyBtn = keyBtnMap.get(key);
-
+		
 		// Update the text visual to reflect KeyController
 		queryField.setText(text);
 
-		if (key.length() == 1) {
-		} else if (key.startsWith("Right")) {
-			moveCaret(1);
-		} else if (key.startsWith("Left")) {
-			moveCaret(-1);
-		} else if (key.equals("Backspace")) {
+		if (key.equals("Backspace")) {
 
 		} else if (key.equals("Delete")) {
 
@@ -138,16 +126,20 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 		} else if (key.startsWith("Shift")) {
 			togglePressed(keyBtn);
 		}
+		
+		queryField.requestFocus();
+	    queryField.setCaretPosition(pointerPosition);
+	    System.out.println(queryField.getCaretPosition());
 	}
 
 	@Override
 	public void awaitingKeyboardInput(KeyboardControl kc) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void keyboardInputCompleted(KeyboardControl kc, String text) {
-		
+
 	}
 }

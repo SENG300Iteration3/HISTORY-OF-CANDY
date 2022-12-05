@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import com.diy.software.listeners.KeyboardControlListener;
+import com.diy.software.util.MathUtils;
 
 public class VirtualKeyboardControl extends KeyboardControl implements ActionListener {
 	private StationControl sc;
@@ -20,10 +21,7 @@ public class VirtualKeyboardControl extends KeyboardControl implements ActionLis
 		String c = e.getActionCommand();
 		if (c.startsWith(KEY_PRESSED)) {
 			String key = c.substring(KEY_PRESSED.length());
-			System.out.println(c);
-			this.keyPressed(key);
-		} else {
-			
+			this.pressKey(key);
 		}
 	}
 }
