@@ -353,8 +353,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 					
 					break;
 				case "addBag": 
-					//TODO:
-					
+					sc.loadBags();
 					break;
 				case "request no bag":
 					attendantNotifications = ("customer requests no bagging");

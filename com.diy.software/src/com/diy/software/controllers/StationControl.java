@@ -231,12 +231,15 @@ public class StationControl
 		return station;
 	}
 	
-	private void loadBags() {
+	public void loadBags() {
 		try {
-			for(int i = 0; i < station.reusableBagDispenser.getCapacity(); i++) {
+			// loads full capacity
+			int limit = station.reusableBagDispenser.getCapacity() - bagInStock;
+			for(int i = 0; i < limit; i++) {
 				ReusableBag aBag = new ReusableBag();
 				station.reusableBagDispenser.load(aBag);
 			}
+			System.out.println("Loaded " + limit + " bags!");		// notify in console
 
 		}catch(OverloadException e) {}
 	}
