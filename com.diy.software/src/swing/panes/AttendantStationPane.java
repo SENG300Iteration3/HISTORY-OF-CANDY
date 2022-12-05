@@ -203,7 +203,7 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		weightDescrepancyMssg.setText("");
 	}
 
-	/* Customer has signaled they want to remove an item. They are blocked
+	/* ItemsControl has signaled that the customer wants to remove an item. 
 	 * and now the Attendant can use the Approve Item Removal button.
 	 */
 	@Override

@@ -114,7 +114,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			index--; // decrement index so it matches actual array index!
 			Barcode barcode = this.checkoutList.get(index);
 			// getting the actual object that the customer had in his shopping cart and was subsequently added to the baggingArea
-			BarcodedItem item = this.sc.items.get(barcode);
+			BarcodedItem item = (BarcodedItem) this.sc.items.get(barcode);
 			double price = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getPrice();
 			double weight = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
 			// TODO update inventory to increase "stock" since the item wasn't sold

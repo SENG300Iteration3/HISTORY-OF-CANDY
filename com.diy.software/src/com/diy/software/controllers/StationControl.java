@@ -62,7 +62,7 @@ public class StationControl
 	public ArrayList<StationControlListener> listeners = new ArrayList<>();
 	
 	// Need to track item objects associated with this particular instance
-	public Map<Barcode, BarcodedItem> items = new HashMap<>();
+	public Map<Barcode, Item> items = new HashMap<>();
 
 	/******** Control Classes ********/
 	private ItemsControl ic;
