@@ -245,24 +245,6 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 	}
 
 	@Override
-	public void awaitingKeyboardInput(KeyboardControl kc) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void keyboardInputRecieved(KeyboardControl kc, String key) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void keyboardInputCompleted(KeyboardControl kc, String query) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void searchItemWasSelected(TextLookupControl tlc) {
 		// TODO Auto-generated method stub
 		
@@ -290,5 +272,16 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 	public void checkoutHasBeenUpdated(TextLookupControl tlc) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void keyboardInputRecieved(KeyboardControl kc, String query, String key) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void awaitingKeyboardInput(KeyboardControl kc) {
+		// TODO Auto-generated method stub
 	}
 }

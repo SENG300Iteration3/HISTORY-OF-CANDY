@@ -6,8 +6,6 @@ public interface KeyboardControlListener {
 	
 	public void awaitingKeyboardInput(KeyboardControl kc);
 	
-	public void keyboardInputRecieved(KeyboardControl kc, String key);
-	
-	public void keyboardInputCompleted(KeyboardControl kc, String query);
-	
+	// Gives the text entered so far along with the the most recent key pressed
+	public void keyboardInputRecieved(KeyboardControl kc, String text, String key);
 }
