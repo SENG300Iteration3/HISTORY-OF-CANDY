@@ -178,11 +178,6 @@ public class CustomerBagsPanel extends JPanel
 	}
 
 	@Override
-	public void loggedIn(boolean isLoggedIn) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
 	public void lowInk(AttendantControl ac, String message) {
 		// TODO Auto-generated method stub
 		
