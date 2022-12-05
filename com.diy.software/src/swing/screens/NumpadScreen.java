@@ -6,21 +6,20 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JTextField;
 
 import com.diy.software.controllers.NumpadControl;
 import com.diy.software.controllers.StationControl;
-
+import com.diy.software.enums.NumpadUseArea;
 import com.diy.software.listeners.NumpadControlListener;
 import swing.styling.*;
 
 public class NumpadScreen extends Screen implements NumpadControlListener {
-
-    private ActionListener controller;
+    private NumpadControl nc;
 
     private GridBagConstraints gridConstraint = new GridBagConstraints();
 
@@ -34,28 +33,24 @@ public class NumpadScreen extends Screen implements NumpadControlListener {
     JLabel message;
     String messageLabelText;
 
-    JButton numbers;
+    JTextField numbers;
 
-    public NumpadScreen(StationControl sc, String headerText, ActionListener controller, String messageLabelText, String numbersLabelText) {
+    public NumpadScreen(StationControl sc, String headerText, String messageLabelText, String numbersLabelText, NumpadUseArea nua) {
         super(sc, headerText);
+        this.nc = sc.getNumpadControl();
+        this.nc.addListener(this);
+        this.nc.setUseArea(nua);
 
-        //TODO: pass in listeners? -> did i break it by passing in an ActionListener? -> have interface that implements ActionListener and add a addListener() method?
-        //pinPadController = sc.getPinPadControl();
-        //pinPadController.addListener(this);
-
-
-
-        this.controller = controller;
         this.messageLabelText = messageLabelText;
-        //HAVE THIS LIKE THIS OR COPY messageLabelText?
-        this.numbers.setText(numbersLabelText.toUpperCase());
-
+        
         numpadPanel = new GUI_JPanel();
         numpadPanel.setLayout(new GridBagLayout());
         numpadPanel.setBackground(GUI_Color_Palette.DARK_BLUE);
-
+        
         initalizeMessageLabel();
         initalizeTextField();
+        
+        this.numbers.setText(numbersLabelText.toUpperCase());
 
         gridConstraint.gridy = 1;
         gridConstraint.ipadx = 100;
@@ -64,8 +59,7 @@ public class NumpadScreen extends Screen implements NumpadControlListener {
         for (int i = 0; i < 10; i++) {
             JButton currButton = createNumpadButton("" + (i + 1) % 10);
             currButton.setActionCommand("INPUT_BUTTON: " + (i + 1) % 10);
-            //TODO: change controller class to generic (this.?)
-            currButton.addActionListener(this.controller);
+            currButton.addActionListener(this.nc);
             numpadButtons[i] = currButton;
             gridConstraint.gridx = i % 3;
             gridConstraint.gridy = (i / 3) + 2;
@@ -79,20 +73,17 @@ public class NumpadScreen extends Screen implements NumpadControlListener {
 
         gridConstraint.gridx = 0;
         cancelButton.setActionCommand("cancel");
-        //TODO: change controller (this.?)
-        cancelButton.addActionListener(this.controller);
+        cancelButton.addActionListener(this.nc);
         numpadPanel.add(cancelButton, gridConstraint);
 
         gridConstraint.gridx = 1;
         correctButton.setActionCommand("correct");
-        //TODO: change controller (this.?)
-        correctButton.addActionListener(this.controller);
+        correctButton.addActionListener(this.nc);
         numpadPanel.add(correctButton, gridConstraint);
 
         gridConstraint.gridx = 2;
         submitButton.setActionCommand("submit");
-        //TODO: change controller (this.?)
-        submitButton.addActionListener(this.controller);
+        submitButton.addActionListener(this.nc);
         numpadPanel.add(submitButton, gridConstraint);
 
         addLayer(numpadPanel, 0);
@@ -102,6 +93,7 @@ public class NumpadScreen extends Screen implements NumpadControlListener {
         message = new GUI_JLabel(messageLabelText.toUpperCase());
         message.setFont(GUI_Fonts.FRANKLIN_BOLD);
         message.setHorizontalAlignment(JLabel.CENTER);
+        message.setBorder(BorderFactory.createLineBorder(GUI_Color_Palette.DARK_BLUE, 10));
 
         int width = 405;
         int height = 50;
@@ -117,8 +109,7 @@ public class NumpadScreen extends Screen implements NumpadControlListener {
     }
 
     private void initalizeTextField() {
-        //TODO: look at above comment in constructor
-        numbers = new JButton();
+        numbers = new JTextField();
         numbers.setFont(GUI_Fonts.FRANKLIN_BOLD);
         numbers.setHorizontalAlignment(JLabel.CENTER);
         numbers.setBorder(BorderFactory.createLineBorder(GUI_Color_Palette.DARK_BLUE, 10));
@@ -138,8 +129,7 @@ public class NumpadScreen extends Screen implements NumpadControlListener {
 
     @Override
     public void numberHasBeenUpdated(NumpadControl npc, String number) {
-
-
+        numbers.setText(number);
     }
 
     private GUI_JButton createNumpadButton(String text) {
@@ -160,7 +150,20 @@ public class NumpadScreen extends Screen implements NumpadControlListener {
         return pinPadButton;
     }
 
-    //TODO: give the interfaces default implementations of the methods to prevent needing funky shit with controllers, or just have it in controller (idk if good to have buttons n shit in the interface)
-        //maybe make a more structured listener group? -> just one with one more method (some generic fieldHasBeenUpdated()) -> probably pointless
+    @Override
+    public void numpadCancelled(NumpadControl npc, String number) {
+        
+    }
 
+    @Override
+    public void numpadCorrected(NumpadControl npc, String number) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void numpadSubmitted(NumpadControl npc, String number) {
+        // TODO Auto-generated method stub
+        
+    }
 }

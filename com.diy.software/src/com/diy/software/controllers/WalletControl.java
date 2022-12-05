@@ -5,8 +5,9 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.MissingResourceException;
 
+import com.diy.software.enums.NumpadUseArea;
 import com.diy.software.fakedata.GiftcardDatabase;
-import com.diy.software.listeners.MembershipControlListener;
+import com.diy.software.listeners.NumpadControlListener;
 import com.diy.software.listeners.WalletControlListener;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
@@ -16,13 +17,11 @@ import com.jimmyselectronics.necchi.Numeral;
 import com.jimmyselectronics.opeechee.Card;
 import com.jimmyselectronics.opeechee.Card.CardData;
 
-import swing.screens.OkayPromptScreen;
-
 import com.jimmyselectronics.opeechee.CardReader;
 import com.jimmyselectronics.opeechee.CardReaderListener;
 
 
-public class WalletControl implements ActionListener, CardReaderListener {
+public class WalletControl implements ActionListener, CardReaderListener, NumpadControlListener {
 	private StationControl sc;
 	private ArrayList<WalletControlListener> listeners;
 	private String selectedCardKind;
@@ -31,6 +30,7 @@ public class WalletControl implements ActionListener, CardReaderListener {
 
 	public WalletControl(StationControl sc) {
 		this.sc = sc;
+		this.sc.getNumpadControl().addListener(this);
 		this.sc.station.cardReader.register(this);
 		this.listeners = new ArrayList<>();
 	}
@@ -237,7 +237,7 @@ public class WalletControl implements ActionListener, CardReaderListener {
 	public void cardRemoved(CardReader reader) {
 		for (WalletControlListener l : listeners)
 			l.cardWithPinRemoved(this);
-		sc.getPinPadControl().exitPinPad();
+		sc.getNumpadControl().exitNumPad();
 	}
 
 	@Override
@@ -277,5 +277,27 @@ public class WalletControl implements ActionListener, CardReaderListener {
 			l.membershipCardInputCanceled(this);
 		}
 		
+	}
+
+	@Override
+	public void numberHasBeenUpdated(NumpadControl npc, String number) {
+		// does nothing
+	}
+
+	@Override
+	public void numpadCancelled(NumpadControl npc, String number) {
+		if (npc.getUseArea() == NumpadUseArea.CreditOrDebit) {
+			enablePayments();
+		}
+	}
+
+	@Override
+	public void numpadCorrected(NumpadControl npc, String number) {
+		// does nothing
+	}
+
+	@Override
+	public void numpadSubmitted(NumpadControl npc, String number) {
+		insertCard(number);
 	}
 }

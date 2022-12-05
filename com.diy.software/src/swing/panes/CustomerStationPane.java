@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 
 import com.diy.software.controllers.PaymentControl;
 import com.diy.software.controllers.StationControl;
+import com.diy.software.enums.NumpadUseArea;
 import com.diy.software.enums.PaymentType;
 import com.diy.software.listeners.PaymentControlListener;
 import com.diy.software.listeners.StationControlListener;
@@ -18,9 +19,9 @@ import swing.screens.AddOwnBagsPromptScreen;
 import swing.screens.BlockedPromptScreen;
 import swing.screens.MembershipScreen;
 import swing.screens.NotEnoughBagsScreen;
+import swing.screens.NumpadScreen;
 import swing.screens.OkayPromptScreen;
 import swing.screens.PaymentScreen;
-import swing.screens.PinPadScreen;
 import swing.screens.PresentCardScreen;
 import swing.screens.PresentMembershipCardScreen;
 import swing.screens.PurchaseBagScreen;
@@ -36,7 +37,7 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	/******** Panels ********/
 	private AddItemsScreen addItemsScreen;
 	private PaymentScreen paymentScreen;
-	private PinPadScreen pinPadScren;
+	private NumpadScreen numpadScreen;
 	private PresentCardScreen presentCardScreen;
 	private PresentGiftCardOrCashScreen presentCashScreen;
 	private BlockedPromptScreen blockedPromptScreen;
@@ -55,7 +56,6 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 		/******** Initialize all Panels ********/
 		this.panelStack = new ArrayList<>();
 		this.addItemsScreen = new AddItemsScreen(sc);
-		this.pinPadScren = new PinPadScreen(sc);
 		this.paymentScreen = new PaymentScreen(sc);
 		this.membershipSceen = new MembershipScreen(sc);
 		this.purchaseBagScreen = new PurchaseBagScreen(sc);
@@ -171,7 +171,8 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 
 	@Override
 	public void initiatePinInput(StationControl systemControl, String kind) {
-		addScreenToStack(pinPadScren);
+		numpadScreen = new NumpadScreen(systemControl, "PIN PAD", "Enter your PIN", "PIN", NumpadUseArea.CreditOrDebit);
+		addScreenToStack(numpadScreen);
 	}
 
 	@Override

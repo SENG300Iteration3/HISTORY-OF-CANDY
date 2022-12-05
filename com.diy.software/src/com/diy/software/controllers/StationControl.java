@@ -70,7 +70,6 @@ public class StationControl
 	private MembershipControl mc;
 	private BagDispenserControl bdc;
 	private CashControl cc;
-	private PinPadControl ppc;
 	private PaymentControl pc;
 	private	ReceiptControl rc;
 	private NumpadControl nc;
@@ -104,6 +103,7 @@ public class StationControl
 		cc = new CashControl(this);
 		bdc = new BagDispenserControl(this);
 		ac = new AttendantControl(this);
+		nc = new NumpadControl(this);
 		
 		station.printer.register(this);
 		station.mainScanner.register(this);
@@ -137,7 +137,6 @@ public class StationControl
 			
 		}
 		wc = new WalletControl(this);
-		ppc = new PinPadControl(this);
 		pc = new PaymentControl(this);
 	}
 	
@@ -204,15 +203,11 @@ public class StationControl
 	public BagDispenserControl getBagDispenserControl() {
 		return bdc;
 	}
+
 	public ReceiptControl getReceiptControl() {
 		return rc;
 	}
-	
-	
-	public PinPadControl getPinPadControl() {
-		return ppc;
-	}
-	
+
 	public PaymentControl getPaymentControl() {
 		return pc;
 	};
