@@ -10,10 +10,12 @@ import com.diy.hardware.PLUCodedProduct;
 import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.external.CardIssuer;
 import com.diy.hardware.external.ProductDatabases;
+import com.diy.software.controllers.AttendantControl;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.necchi.Numeral;
 import com.jimmyselectronics.opeechee.Card;
+import com.unitedbankingservices.coin.CoinStorageUnit;
 
 public class FakeDataInitializer {
 	
@@ -26,7 +28,9 @@ public class FakeDataInitializer {
 	
 	private Card card1, card2, card3, card4, card5;
 	private CardIssuer fakebank;
+	private CoinStorageUnit fakeCoinStorageUnit;
 	private final Double AMOUNT_AVAILABLE = 1000.0;
+	private final int COIN_STORAGE_CAPACITY = 50;
 	Calendar expire_date = Calendar.getInstance();
 	
 	public void addProductAndBarcodeData () {
@@ -82,6 +86,13 @@ public class FakeDataInitializer {
 		MembershipDatabase.membershipMap.put(1237, "Zenitsu");
 	}
 	
+	public void addFakeAttendantLogin() {
+		AttendantControl.logins.add("password");
+		AttendantControl.logins.add("wordpass");
+		AttendantControl.logins.add("Password1");
+		AttendantControl.logins.add("12345");
+	}
+	
 	public void addCardData() {
 		
 		fakebank = new CardIssuer("RBC", 14);
@@ -98,6 +109,10 @@ public class FakeDataInitializer {
 		
 		card5 = new Card(GiftcardDatabase.CompanyGiftCard, "00001234", "Jimmy James", null, null, false, false);
 		GiftcardDatabase.giftcardMap.put("00001234", 50.00);
+	}
+	
+	public void setCoinStorageCapacity() {
+		fakeCoinStorageUnit = new CoinStorageUnit(COIN_STORAGE_CAPACITY);
 	}
 	
 	public Barcode[] getBarcodes() {
@@ -126,5 +141,9 @@ public class FakeDataInitializer {
 
 	public HashMap<Integer, String> getMembershipMap() {
 		return MembershipDatabase.membershipMap;
+	}
+	
+	public CoinStorageUnit getFakeUnit() {
+		return fakeCoinStorageUnit;
 	}
 }

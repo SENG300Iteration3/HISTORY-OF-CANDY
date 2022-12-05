@@ -8,6 +8,7 @@ import com.diy.software.controllers.StationControl;
 import com.diy.software.fakedata.FakeDataInitializer;
 
 import ca.powerutility.PowerGrid;
+import swing.frames.AttendantActionsGUI;
 import swing.frames.AttendantStationGUI;
 import swing.frames.CustomerActionsGUI;
 import swing.frames.CustomerStationGUI;
@@ -27,10 +28,12 @@ public class SENG300DoItYourselfStation {
     for (int i = 0; i < totalNumberOfStations; i++) {
       stationControls.add(new StationControl(new FakeDataInitializer()));
     }
-    PaneControl pc = new PaneControl(stationControls);
-    new AttendantStationGUI(pc);
-    new CustomerStationGUI(pc);
-    new CustomerActionsGUI(pc);
+    PaneControl Attendantpc = new PaneControl(stationControls);
+    PaneControl Customerpc = new PaneControl(stationControls);
+    new AttendantStationGUI(Attendantpc);
+    new CustomerStationGUI(Customerpc);
+    new CustomerActionsGUI(Customerpc);
+    new AttendantActionsGUI(Attendantpc);
   }
 
   public static void configureDoItYourselfStation() {
