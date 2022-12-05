@@ -56,7 +56,7 @@ public class AttendantLoginScreen extends Screen implements ActionListener, Keyb
 		ac = stationControls.get(0).getAttendantControl();
 		pkc = (PhysicalKeyboardControl) ac.getKeyboardControl();
 		pkc.addListener(this);
-		kic = new KeyboardInputControl(ac);
+		kic = new KeyboardInputControl(ac.station.keyboard);
 		
 		centerPanel = new GUI_JPanel();
 		centerPanel.setBackground(GUI_Color_Palette.DARK_BLUE);

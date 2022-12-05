@@ -52,7 +52,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 		station.plugIn();
 		station.turnOn();
 		
-		kc = new PhysicalKeyboardControl(this);
+		kc = new PhysicalKeyboardControl(this.station.keyboard);
 		tlc = new TextLookupControl(this, this.sc);
 	}
 

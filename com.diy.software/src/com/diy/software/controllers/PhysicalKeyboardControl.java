@@ -10,9 +10,9 @@ import com.jimmyselectronics.nightingale.KeyboardListener;
 
 public class PhysicalKeyboardControl extends KeyboardControl implements KeyboardListener {
 
-	public PhysicalKeyboardControl(AttendantControl ac) {
+	public PhysicalKeyboardControl(Keyboard keyboard) {
 		super();
-		ac.station.keyboard.register(this);
+		keyboard.register(this);
 	}
 	
 
@@ -53,7 +53,7 @@ public class PhysicalKeyboardControl extends KeyboardControl implements Keyboard
 	@Override
 	public void keyReleased(Keyboard keyboard, String label) {
 		
-		if (label.equals("Shift (Left)")) {
+		if (label.equals("Shift (Left)") || label.equals("Shift (Right)")) {
 			keyAction(label);
 		}
 		

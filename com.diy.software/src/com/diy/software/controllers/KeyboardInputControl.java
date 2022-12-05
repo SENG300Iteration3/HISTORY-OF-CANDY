@@ -33,8 +33,8 @@ public class KeyboardInputControl  implements KeyListener{
 	    put("Right", "Right Arrow"); 
 	}};
 	
-	public KeyboardInputControl(AttendantControl ac) {
-		this.keyboard = ac.station.keyboard;
+	public KeyboardInputControl(Keyboard keyboard) {
+		this.keyboard = keyboard;
 	}
 
 	@Override
