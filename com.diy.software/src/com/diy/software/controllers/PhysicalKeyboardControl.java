@@ -37,12 +37,10 @@ public class PhysicalKeyboardControl extends KeyboardControl implements Keyboard
 	@Override
 	public void keyPressed(Keyboard keyboard, String label) {
 		// TODO Auto-generated method stub
-		//System.out.println(label);
 	}
 
 	@Override
 	public void keyReleased(Keyboard keyboard, String label) {
 		// TODO Auto-generated method stub
-		//System.out.println(label);
 	}
 }
