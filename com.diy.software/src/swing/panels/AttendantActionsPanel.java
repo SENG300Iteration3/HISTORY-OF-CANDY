@@ -74,7 +74,7 @@ public class AttendantActionsPanel extends JPanel
 //		buttonGrid.gridx = 3;
 //		this.add(Label);
 //		
-
+		initialState();
 		// inkButton.setEnabled(false);
 		// paperButton.setEnabled(false);
 		// bagDispenserButton.setEnabled(false);
@@ -142,8 +142,8 @@ public class AttendantActionsPanel extends JPanel
 	}
 
 	@Override
-	public void addPaperState() {
-		if(stationBlocked) paperButton.setEnabled(true);
+	public void addTooMuchPaperState() {
+		paperButton.setEnabled(false);
 	}
 	
 	public void itemsHaveBeenUpdated(ItemsControl ic) {
@@ -152,9 +152,8 @@ public class AttendantActionsPanel extends JPanel
 	}
 
 	@Override
-	public void addInkState() {
-		// TODO Auto-generated method stub
-		if (stationBlocked) inkButton.setEnabled(true);
+	public void addTooMuchInkState() {
+		inkButton.setEnabled(false);
 	}
 
 	@Override
@@ -197,30 +196,30 @@ public class AttendantActionsPanel extends JPanel
 	@Override
 	public void initialState() {
 		// TODO Auto-generated method stub
-		inkButton.setEnabled(false);
-		paperButton.setEnabled(false);
+		inkButton.setEnabled(true);
+		paperButton.setEnabled(true);
 		bagDispenserButton.setEnabled(false);
 		
 	}
 
 	@Override
 	public void lowInk(AttendantControl ac, String message) {
-		// TODO Auto-generated method stub
+		inkButton.setEnabled(true);
 	}
 
 	@Override
 	public void lowPaper(AttendantControl ac, String message) {
-		// TODO Auto-generated method stub
+		paperButton.setEnabled(true);
 	}
 
 	@Override
 	public void outOfInk(AttendantControl ac, String message) {
-		// TODO Auto-generated method stub
+		inkButton.setEnabled(true);
 	}
 
 	@Override
 	public void outOfPaper(AttendantControl ac, String message) {
-		// TODO Auto-generated method stub
+		paperButton.setEnabled(true);
 	}
 
 	@Override

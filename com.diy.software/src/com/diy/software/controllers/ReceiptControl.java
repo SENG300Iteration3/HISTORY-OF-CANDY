@@ -60,6 +60,7 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	public void addListenerAttendant(AttendantControlListener la) {
 		listenersAttendant.add(la);
 	}
+	
 	// Resets the data to its initial state. 
 	//TODO delete for later if not needed for GUI
 	public void resetState() {

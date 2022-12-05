@@ -211,14 +211,14 @@ public class CustomerItemsPanel extends JPanel
 	}
 
 	@Override
-	public void addPaperState() {}
+	public void addTooMuchPaperState() {}
 	public void itemsHaveBeenUpdated(ItemsControl ic) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void addInkState() {
+	public void addTooMuchInkState() {
 		// TODO Auto-generated method stub
 		
 	}

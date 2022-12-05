@@ -456,13 +456,13 @@ public class TestAttendantControl {
 		public boolean getPreventUse() { return attendantUse; }
 
 		@Override
-		public void addPaperState() {
+		public void addTooMuchPaperState() {
 			addPaper = true;
 			
 		}
 
 		@Override
-		public void addInkState() {
+		public void addTooMuchInkState() {
 			addInk = true;
 			
 		}

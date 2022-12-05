@@ -12,6 +12,7 @@ import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.abagnale.IReceiptPrinter;
 import com.jimmyselectronics.abagnale.ReceiptPrinterListener;
+import com.jimmyselectronics.abagnale.ReceiptPrinterND;
 import com.unitedbankingservices.TooMuchCashException;
 import com.unitedbankingservices.coin.Coin;
 import com.unitedbankingservices.coin.CoinStorageUnit;
@@ -92,6 +93,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 
 	/**
 	 * allow attendant to add paper to receipt printer
+	 * If too much paper is added, simulate fixing by adding the max amount of paper allowed - 100
 	 * @param paperUnit amount of paper to add
 	 * 
 	 * precondition: printer is low on paper or out of paper
@@ -104,8 +106,12 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 			sc.station.printer.addPaper(paperUnit);
 			sc.getReceiptControl().currentPaperCount += paperUnit;
 		} catch (OverloadException e) {
-			for (AttendantControlListener l : listeners)
+			for (AttendantControlListener l : listeners) {
 				l.signalWeightDescrepancy("Added too much paper!");
+				l.addTooMuchPaperState();
+			}
+			if(sc.getReceiptControl().currentPaperCount < 100) 
+				addPaper(ReceiptPrinterND.MAXIMUM_PAPER - 100);
 		}
 		for (AttendantControlListener l : listeners)
 			l.printerNotLowPaperState();
@@ -113,6 +119,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 
 	/**
 	 * allow attendant to add ink to receipt printer
+	 * If too much ink is added, simulate fixing by adding the max amount of ink allowed - 100
 	 * @param inkUnit amount of ink to add
 	 * 
 	 * precondition: printer is low on ink or out of ink
@@ -124,8 +131,13 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 			sc.station.printer.addInk(inkUnit);
 			sc.getReceiptControl().currentInkCount += inkUnit;
 		} catch (OverloadException e) {
-			for (AttendantControlListener l : listeners)
+			for (AttendantControlListener l : listeners) {
 				l.signalWeightDescrepancy("Added too much ink!");
+				l.addTooMuchInkState();
+			}	
+			if(sc.getReceiptControl().currentInkCount < 100)
+				addInk(ReceiptPrinterND.MAXIMUM_INK - 100);
+			
 		}
 		for (AttendantControlListener l : listeners)
 			l.printerNotLowInkState();

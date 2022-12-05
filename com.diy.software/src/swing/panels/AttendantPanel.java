@@ -115,14 +115,14 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 	}
 	
 	@Override
-	public void addPaperState() {
+	public void addTooMuchPaperState() {
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(false);
 		addPaperToPrinterButton.setEnabled(true);
 	}
 
 	@Override
-	public void addInkState() {
+	public void addTooMuchInkState() {
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(true);
 		addPaperToPrinterButton.setEnabled(false);	

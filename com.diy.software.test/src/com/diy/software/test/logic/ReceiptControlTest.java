@@ -335,6 +335,15 @@ public class ReceiptControlTest {
     	
     }
     
+    /*
+     *  Test to make a completed receipt removal is called
+     */
+    @Test
+    public void testremovedCompleteReceipt(){
+    	
+    }
+    
+    
     
     
     
@@ -483,13 +492,13 @@ public class ReceiptControlTest {
 		}
 
 		@Override
-		public void addInkState() {
+		public void addTooMuchInkState() {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void addPaperState() {
+		public void addTooMuchPaperState() {
 			// TODO Auto-generated method stub
 			
 		}
