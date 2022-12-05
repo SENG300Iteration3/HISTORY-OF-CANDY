@@ -3,7 +3,6 @@ package com.diy.software.controllers;
 import java.util.ArrayList;
 import java.util.Currency;
 
-import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.DoItYourselfStation;
 import com.diy.hardware.Product;
@@ -12,6 +11,7 @@ import com.diy.hardware.external.ProductDatabases;
 import com.diy.simulation.Customer;
 import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.StationControlListener;
+import com.diy.software.util.Tuple;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.EmptyException;
@@ -73,6 +73,7 @@ public class StationControl
 
 	private PinPadControl ppc;
 	private PaymentControl pc;
+	private VirtualKeyboardControl vkc;
 
 	/**
 	 * Constructor for the SystemControl class. Instantiates an object of type
@@ -115,6 +116,7 @@ public class StationControl
 		wc = new WalletControl(this);
 		ppc = new PinPadControl(this);
 		pc = new PaymentControl(this);
+		vkc = new VirtualKeyboardControl(this);
 	}
 
 	/**
@@ -180,6 +182,10 @@ public class StationControl
 
 	public CashControl getCashControl() {
 		return cc;
+	}
+	
+	public VirtualKeyboardControl getKeyboardControl() {
+		return vkc;
 	}
 	
 	private void fillStation() {
