@@ -235,12 +235,13 @@ public class StationControl
 		try {
 			// loads full capacity
 			int limit = station.reusableBagDispenser.getCapacity() - bagInStock;
-			for(int i = 0; i < limit; i++) {
-				ReusableBag aBag = new ReusableBag();
-				station.reusableBagDispenser.load(aBag);
-			}
-			System.out.println("Loaded " + limit + " bags!");		// notify in console
-
+			if(limit > 0) {
+				for(int i = 0; i < limit; i++) {
+					ReusableBag aBag = new ReusableBag();
+					station.reusableBagDispenser.load(aBag);
+				}
+				System.out.println("Loaded " + limit + " bags!");		// notify in console
+			}else System.out.println("Bag Dispenser is full. No bag loaded!");	
 		}catch(OverloadException e) {}
 	}
 	
