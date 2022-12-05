@@ -29,10 +29,10 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 	private StationControl sc;
 	private ArrayList<AttendantControlListener> listeners;
 	private Currency currency;
-	String attendantNotifications;
-	
 	private KeyboardControl kc;
 	private TextLookupControl tlc;
+	
+	String attendantNotifications;
 
 	public AttendantControl(StationControl sc) {
 		this.sc = sc;

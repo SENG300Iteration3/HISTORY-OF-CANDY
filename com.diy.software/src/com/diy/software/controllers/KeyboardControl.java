@@ -3,7 +3,6 @@ package com.diy.software.controllers;
 import java.util.ArrayList;
 
 import com.diy.software.listeners.KeyboardControlListener;
-import com.diy.software.listeners.PinPadControlListener;
 
 public class KeyboardControl {
 	protected ArrayList<KeyboardControlListener> listeners;
@@ -12,7 +11,6 @@ public class KeyboardControl {
 	protected boolean shiftPressed;
 	private int pointer;
 	protected String query;
-	protected String lastKey;
 	
 	public KeyboardControl() {
 		this.listeners = new ArrayList<>();
@@ -29,16 +27,6 @@ public class KeyboardControl {
 
 	public void removeListener(KeyboardControlListener l) {
 		listeners.remove(l);
-	}
-	
-	protected void awaitingInput() {
-	    for (KeyboardControlListener l : listeners) 
-	      l.awaitingKeyboardInput(this);
-	  }
-	
-	protected void recievedInput() {
-		for (KeyboardControlListener l : listeners)
-			l.keyboardInputRecieved(this, this.lastKey);
 	}
 	
 	protected void completedInput() {
@@ -68,6 +56,7 @@ public class KeyboardControl {
 		}
 		if (label.equals("Backspace") || label.equals("Delete")) {
 			removeChar(label);
+			return;
 		}
 		if (label.equals("Enter")) {
 			for (String c : chars) {
@@ -77,7 +66,6 @@ public class KeyboardControl {
 			return;
 		}
 		addToString(label);
-		lastKey = label;
 	}
 	
 	protected void movePointer(String label) {
@@ -89,7 +77,7 @@ public class KeyboardControl {
 		}
 		if (label.equals("Left Arrow")) {
 			if (pointer != 0) {
-					pointer --;
+					pointer--;
 			}
 		}
 	}
@@ -112,9 +100,9 @@ public class KeyboardControl {
 	protected void addToString(String label) {
 		if (label.length() == 1) {						// identifies letter key labels
 			char c = label.charAt(0);
-			chars.add(pointer, getLetterCase(c));
+			chars.add(++pointer, getLetterCase(c));
 		}
-		if (label.equals("Spacebar"));{
+		if (label.equals("Spacebar")) {
 			chars.add(pointer, " ");
 		}
 		char[] ch = label.toCharArray();
@@ -153,7 +141,7 @@ public class KeyboardControl {
 		// TODO: Fix event error
 		//isCapsLockOn(key);
 		//isShiftPressed(key);
-		//keyAction(key);
+		keyAction(key);
 		for (KeyboardControlListener l : listeners)
 			l.keyboardInputRecieved(this, key);
 	}

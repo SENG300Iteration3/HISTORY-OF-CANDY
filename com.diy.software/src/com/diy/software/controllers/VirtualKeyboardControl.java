@@ -18,8 +18,6 @@ public class VirtualKeyboardControl extends KeyboardControl implements ActionLis
 		String c = e.getActionCommand();
 		if (c.startsWith("KEY_PRESS: ")) {
 			String key = c.split(" ")[1];
-			this.query += key;
-			this.lastKey = key;
 			this.keyPressed(key);
 		} else {
 			
