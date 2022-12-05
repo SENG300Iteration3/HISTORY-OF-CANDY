@@ -352,12 +352,17 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	}
 
 	private void addItemByBrowsing(String strProductName) {
-		PriceLookUpCode PLUCodeIdentifier = null;
-
-		PLUCodeIdentifier = searchPLUCodedProductDatabase(strProductName);
-		if (PLUCodeIdentifier != null) {
-			currentProductCode = PLUCodeIdentifier;
-			pluItemSelected();
+		if(!isPLU) {
+			System.err.println("The currently selected item has no PLU code! Or there is no item selected!");
+			currentProductCode = null;
+			inCatalog = false;
+			sc.goBackOnUI();
+		}else {
+			PriceLookUpCode PLUCodeIdentifier = searchPLUCodedProductDatabase(strProductName);
+			if (PLUCodeIdentifier != null) {
+				currentProductCode = PLUCodeIdentifier;
+				pluItemSelected();
+			}
 		}
 	}
 
@@ -369,8 +374,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			
 			if(!isPLU) {
 				System.err.println("The currently selected item has no PLU code! Or there is no item selected!");
-				currentProductCode = null;
-				sc.goBackOnUI();
+				currentProductCode = null;				sc.goBackOnUI();;
 			} else if(expectedPLU.hashCode() != currentProductCode.hashCode()) {
 				System.err.println("You entered the wrong PLU code for the item!");
 				System.err.printf("The expected PLU code is %s\n", expectedPLU);
