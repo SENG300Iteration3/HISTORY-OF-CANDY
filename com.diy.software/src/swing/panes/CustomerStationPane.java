@@ -1,7 +1,6 @@
 package swing.panes;
 
-
-import  com.diy.hardware.DoItYourselfStation;
+import com.diy.hardware.DoItYourselfStation;
 
 import java.util.ArrayList;
 
@@ -15,14 +14,17 @@ import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.opeechee.Card.CardData;
 
 import swing.screens.AddItemsScreen;
+import swing.screens.AddOwnBagsPromptScreen;
 import swing.screens.BlockedPromptScreen;
 import swing.screens.MembershipScreen;
+import swing.screens.NotEnoughBagsScreen;
 import swing.screens.OkayPromptScreen;
 import swing.screens.PaymentScreen;
 import swing.screens.PinPadScreen;
 import swing.screens.PresentCardScreen;
-import swing.screens.PresentCashScreen;
 import swing.screens.PresentMembershipCardScreen;
+import swing.screens.PurchaseBagScreen;
+import swing.screens.PresentGiftCardOrCashScreen;
 import swing.styling.Screen;
 
 public class CustomerStationPane implements StationControlListener, PaymentControlListener {
@@ -36,26 +38,27 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	private PaymentScreen paymentScreen;
 	private PinPadScreen pinPadScren;
 	private PresentCardScreen presentCardScreen;
-	private PresentCashScreen presentCashScreen;
+	private PresentGiftCardOrCashScreen presentCashScreen;
 	private BlockedPromptScreen blockedPromptScreen;
 	private OkayPromptScreen okayPromptScreen;
 	private MembershipScreen membershipSceen;
+	private PurchaseBagScreen purchaseBagScreen;
 	private PresentMembershipCardScreen presentMembershipCardScreen;
 
 	public CustomerStationPane(StationControl sc) {
 		this.sc = sc;
 
-		
 		/******** Register StationGUI in all listeners ********/
 		this.sc.register(this);
 		this.sc.getPaymentControl().addListener(this);
-		
+
 		/******** Initialize all Panels ********/
 		this.panelStack = new ArrayList<>();
 		this.addItemsScreen = new AddItemsScreen(sc);
 		this.pinPadScren = new PinPadScreen(sc);
 		this.paymentScreen = new PaymentScreen(sc);
 		this.membershipSceen = new MembershipScreen(sc);
+		this.purchaseBagScreen = new PurchaseBagScreen(sc);
 		this.currentPanel = new JPanel();
 		this.rooPanel = new JPanel();
 		this.rooPanel.add(currentPanel);
@@ -69,8 +72,8 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	}
 
 	public static void configureDiItYourselfStationAR() {
-		DoItYourselfStation.configureBanknoteDenominations(new int [] {100, 50, 20, 10, 5, 1});
-    DoItYourselfStation.configureCoinDenominations(new long [] {200, 100, 25, 10, 5, 1});
+		DoItYourselfStation.configureBanknoteDenominations(new int[] { 100, 50, 20, 10, 5, 1 });
+		DoItYourselfStation.configureCoinDenominations(new long[] { 200, 100, 25, 10, 5, 1 });
 	}
 
 	private void addScreenToStack(Screen newScreen) {
@@ -110,6 +113,23 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 			blockedPromptScreen = new BlockedPromptScreen(systemControl,
 					"Item has been scanned. Please add it to the bagging area");
 			addScreenToStack(blockedPromptScreen);
+		} else {
+			triggerPanelBack(systemControl);
+		}
+	}
+	
+	@Override
+	public void systemControlLocked(StationControl systemControl, boolean isLocked, String reason) {
+		if (isLocked) {
+			if (reason == "use own bags") {
+				AddOwnBagsPromptScreen screen = new AddOwnBagsPromptScreen(systemControl, 
+						"Please Place Your Bags In the Bagging Area");
+				addScreenToStack(screen);
+				
+			} else {
+				blockedPromptScreen = new BlockedPromptScreen(systemControl, reason);
+				addScreenToStack(blockedPromptScreen);
+			}
 		} else {
 			triggerPanelBack(systemControl);
 		}
@@ -157,8 +177,12 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	@Override
 	public void paymentMethodSelected(PaymentControl pc, PaymentType type) {
 		switch (type) {
+			case GiftCard:
+				presentCashScreen = new PresentGiftCardOrCashScreen(sc, true);
+				addScreenToStack(presentCashScreen);
+				break;
 			case Cash:
-				presentCashScreen = new PresentCashScreen(sc);
+				presentCashScreen = new PresentGiftCardOrCashScreen(sc, false);
 				addScreenToStack(presentCashScreen);
 				break;
 			case Credit:
@@ -193,4 +217,25 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	public void triggerMembershipWorkflow(StationControl systemControl) {
 		addScreenToStack(membershipSceen);
 	}
+
+	@Override
+	public void triggerPurchaseBagsWorkflow(StationControl systemControl) {
+		addScreenToStack(purchaseBagScreen);
+	}
+
+	@Override
+	public void noBagsInStock(StationControl systemControl) {
+		okayPromptScreen = new OkayPromptScreen(systemControl, "No Bags In Stock. Please Ask Attendant For Assistance.", false);
+		addPanel(okayPromptScreen.getRootPanel());
+		
+	}
+
+	@Override
+	public void notEnoughBagsInStock(StationControl systemControl, int numBag) {
+		NotEnoughBagsScreen screen = new NotEnoughBagsScreen(systemControl, numBag);
+		addPanel(screen.getRootPanel());
+		
+	}
+
+	
 }

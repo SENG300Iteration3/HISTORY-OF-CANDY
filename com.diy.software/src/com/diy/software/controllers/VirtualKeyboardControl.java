@@ -20,8 +20,7 @@ public class VirtualKeyboardControl extends KeyboardControl implements ActionLis
 			String key = c.split(" ")[1];
 			this.query += key;
 			this.lastKey = key;
-			for (KeyboardControlListener l: listeners)
-				l.keyboardInputRecieved(null, this.lastKey);
+			this.keyPressed(key);
 		} else {
 			
 		}

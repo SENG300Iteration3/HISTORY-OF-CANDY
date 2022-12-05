@@ -8,8 +8,8 @@ import com.diy.software.listeners.PinPadControlListener;
 public class KeyboardControl {
 	protected ArrayList<KeyboardControlListener> listeners;
 	private ArrayList<String> chars;
-	private boolean capsLockOn;
-	private boolean shiftPressed;
+	protected boolean capsLockOn;
+	protected boolean shiftPressed;
 	private int pointer;
 	protected String query;
 	protected String lastKey;
@@ -150,9 +150,10 @@ public class KeyboardControl {
 	}
 	
 	public void keyPressed(String key) {
-		isCapsLockOn(key);
-		isShiftPressed(key);
-		keyAction(key);
+		// TODO: Fix event error
+		//isCapsLockOn(key);
+		//isShiftPressed(key);
+		//keyAction(key);
 		for (KeyboardControlListener l : listeners)
 			l.keyboardInputRecieved(this, key);
 	}

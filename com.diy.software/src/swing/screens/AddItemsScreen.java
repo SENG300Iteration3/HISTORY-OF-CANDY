@@ -18,12 +18,20 @@ import swing.styling.GUI_JLabel;
 import swing.styling.GUI_JPanel;
 import swing.styling.Screen;
 
+import com.diy.software.controllers.BagDispenserControl;
+import com.diy.software.controllers.BagsControl;
 import com.diy.software.controllers.ItemsControl;
 import com.diy.software.controllers.StationControl;
+import com.diy.software.listeners.BagDispenserControlListener;
+import com.diy.software.listeners.BagsControlListener;
 import com.diy.software.listeners.ItemsControlListener;
+import com.diy.software.listeners.StationControlListener;
 
-public class AddItemsScreen extends Screen implements ItemsControlListener {
+public class AddItemsScreen extends Screen implements ItemsControlListener, BagsControlListener, BagDispenserControlListener {
+	private StationControl systemControl;
 	private ItemsControl itemsControl;
+	private BagsControl bc;
+	private BagDispenserControl bdc;
 
 	protected GUI_JLabel subtotalLabel;
 	protected GUI_JPanel scannedPanel;
@@ -34,15 +42,26 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 	protected GUI_JButton addOwnBagsBtn;
 	protected GUI_JButton removeItemBtn;
 
-	protected GUI_JButton purchaseOwnBagsBtn;
+	protected GUI_JButton purchaseBagsBtn;
 	protected GUI_JButton addItemByPLUBtn;
 	protected GUI_JButton searchCatalogueBtn;
+	
+	private AddOwnBagsPromptScreen ownBagsPromptScreen;
 
 
 	public AddItemsScreen(StationControl systemControl) {
 		super(systemControl, "Self Checkout");
+		
+		this.systemControl = systemControl;
+		
 		this.itemsControl = systemControl.getItemsControl();
 		this.itemsControl.addListener(this);
+		
+		bc = systemControl.getBagsControl();
+		bc.addListener(this);
+		
+		bdc = systemControl.getBagDispenserControl();
+		bdc.addListener(this);
 
 
 		//Create a main panel that will be split into 2
@@ -129,10 +148,14 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 
 		JPanel firstButtonPanel = new JPanel(new GridLayout());
 		this.addOwnBagsBtn = makeButton("Add Own Bags", firstButtonPanel);
+		addOwnBagsBtn.setActionCommand("add bags");
+		addOwnBagsBtn.addActionListener(bc);
 		rightSidebuttonPanel.add(firstButtonPanel);
 
 		JPanel secondButtonPanel = new JPanel(new GridLayout());
-		this.purchaseOwnBagsBtn = makeButton("Purchase Bag", secondButtonPanel);
+		this.purchaseBagsBtn = makeButton("Purchase Bag", secondButtonPanel);
+		purchaseBagsBtn.setActionCommand("purchase bags");
+		purchaseBagsBtn.addActionListener(bdc);
 		rightSidebuttonPanel.add(secondButtonPanel);
 
 		JPanel thirdButtonPanel = new JPanel(new GridLayout());
@@ -273,8 +296,30 @@ public class AddItemsScreen extends Screen implements ItemsControlListener {
 
 	@Override
 	public void awaitingItemToBeRemoved(ItemsControl itemsControl, String updateMessage) {
-		// TODO Auto-generated method stub
 
 	}
 
+	@Override
+	public void awaitingCustomerToFinishPlacingBagsInBaggingArea(BagsControl bc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void awaitingAttendantToVerifyBagsPlacedInBaggingArea(BagsControl bc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void readyToAcceptNewBagsInBaggingArea(BagsControl bc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void numberFieldHasBeenUpdated(BagDispenserControl bdp, String memberNumber) {
+		// TODO Auto-generated method stub
+		
+	}
 }

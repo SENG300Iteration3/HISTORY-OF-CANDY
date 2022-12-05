@@ -30,7 +30,7 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 	public static final int NUM_ROWS = END_OF_ROW.length;
 	
 	private JPanel keyboardContainer;
-	private GUI_JLabel outputText;
+	private GUI_JLabel queryLabel;
 	
 	public KeyboardScreen(StationControl sc) {
 		super(sc);
@@ -62,13 +62,13 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 	}
 	
 	public void createOutputLabel() {
-		this.outputText = new GUI_JLabel();
-		outputText.setBackground(Color.WHITE);
-		outputText.setOpaque(true);
-		outputText.setForeground(Color.BLACK);
-		outputText.setFont(GUI_Fonts.FRANKLIN_BOLD);
-		outputText.setPreferredSize(new Dimension(GUI_Constants.SCREEN_WIDTH - 100, 30));
-		this.rootPanel.add(outputText, BorderLayout.NORTH);
+		this.queryLabel = new GUI_JLabel();
+		queryLabel.setBackground(Color.WHITE);
+		queryLabel.setOpaque(true);
+		queryLabel.setForeground(Color.BLACK);
+		queryLabel.setFont(GUI_Fonts.FRANKLIN_BOLD);
+		queryLabel.setPreferredSize(new Dimension(GUI_Constants.SCREEN_WIDTH - 100, 30));
+		this.rootPanel.add(queryLabel, BorderLayout.NORTH);
 	}
 	
 	public JPanel addKeyRow(int row, int col) {
@@ -88,62 +88,7 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 		keyBtn.setMargin(new Insets(0, 0, 0, 0));
 		keyBtn.setActionCommand("KEY_PRESS: " + key);
 		keyBtn.addActionListener(keyboardController);
-		
-		// Alphanumeric key
-		// TODO: remove code below, this is for testing purposes
-		if (key.length() == 1) {
-			keyBtn.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					//String next = capsLockOn ? key.toUpperCase() : key.toLowerCase();
-					//outputText.setText(outputText.getText() + next);
-				}
-			});
-		} else {
-			switch (key) {
-				case "Backspace":
-					keyBtn.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							outputText.setText(StringOps.removeLastChar(outputText.getText()));
-						}
-					});
-					break;
-				case "Delete":
-					keyBtn.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							outputText.setText("");
-						}
-					});
-					break;
-				case "Spacebar":
-					keyBtn.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							outputText.setText(outputText.getText() + " ");
-						}
-					});
-					break;
-				case "CapsLock":
-					keyBtn.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-//							if (capsLockOn) {
-//								capsLockOn = false;
-//								keyBtn.setBackground(GUI_Color_Palette.DARK_BROWN);
-//							} else {
-//								capsLockOn = true;
-//								keyBtn.setBackground(Color.GREEN);
-//							}
-						}
-					});
-					break;
-				default:
-					break;
-			}
-		}
-		
+
 		return keyBtn;
 	}
 	
@@ -162,8 +107,7 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 	
 	@Override
 	public void keyboardInputRecieved(KeyboardControl kc, String key) {
-		// TODO Auto-generated method stub
-		
+		queryLabel.setText(queryLabel.getText() + key);
 	}
 
 	@Override
