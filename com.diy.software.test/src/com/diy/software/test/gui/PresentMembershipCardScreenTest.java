@@ -14,9 +14,9 @@ import swing.screens.PresentMembershipCardScreen;
 
 public class PresentMembershipCardScreenTest {
 	
-	public PresentMembershipCardScreen screen;
-	public StationControl sc;
-	public StationControlListenerStub sStub;
+	PresentMembershipCardScreen screen;
+	StationControl sc;
+	StationControlListenerStub sStub;
 
 	@Before
 	public void setUp() throws Exception {

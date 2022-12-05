@@ -41,13 +41,13 @@ public class AddOwnBagsPromptScreenTest {
 	@Test
 	public void testAwaitingCustomerToFinishPlacingBagsInBaggingArea() {
 		screen.awaitingCustomerToFinishPlacingBagsInBaggingArea(bc);
-		assertTrue("This method doesn't do anything", true);
+		// This method does nothing
 	}
 	
 	@Test
 	public void testReadyToAcceptNewBagsInBaggingArea() {
 		screen.readyToAcceptNewBagsInBaggingArea(bc);
-		assertTrue("This method doesn't do anything", true);
+		// This method does nothing
 	}
 
 }
