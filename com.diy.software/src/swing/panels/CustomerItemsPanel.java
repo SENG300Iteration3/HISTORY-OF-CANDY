@@ -10,20 +10,25 @@ import javax.swing.JPanel;
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.BagsControl;
 import com.diy.software.controllers.ItemsControl;
+import com.diy.software.controllers.ReceiptControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
 import com.diy.software.listeners.ItemsControlListener;
+import com.unitedbankingservices.coin.CoinStorageUnit;
+import com.diy.software.listeners.ReceiptControlListener;
+import com.unitedbankingservices.coin.CoinStorageUnit;
 
 public class CustomerItemsPanel extends JPanel
-		implements ItemsControlListener, AttendantControlListener, BagsControlListener {
+		implements ItemsControlListener, AttendantControlListener, BagsControlListener, ReceiptControlListener {
 
 	private static final long serialVersionUID = 1L;
 	private ItemsControl ic;
 	private AttendantControl ac;
 	private BagsControl bc;
+	private ReceiptControl rc;
 	private boolean itemsAvailable;
-	JButton selectNextItemButton, mainScannerButton, handheldScannerButton, deselectCurrentItemButton, placeItemInBaggingAreaButton, placeItemInScanningAreaButton, itemWeight;
+	JButton selectNextItemButton, mainScannerButton, handheldScannerButton, deselectCurrentItemButton, placeItemInBaggingAreaButton, placeItemInScanningAreaButton, itemWeight, takeReceiptButton;
 	GridBagConstraints buttonGrid = new GridBagConstraints();
 	JLabel weightDescrepancyMessage;
 
@@ -37,6 +42,9 @@ public class CustomerItemsPanel extends JPanel
 
 		bc = sc.getBagsControl();
 		bc.addListener(this);
+		
+		rc = sc.getReceiptControl();
+		rc.addListenerReceipt(this);
 		
 		weightDescrepancyMessage = new JLabel();
 		
@@ -65,6 +73,10 @@ public class CustomerItemsPanel extends JPanel
 		itemWeight.addActionListener(ic);
 
 		
+		takeReceiptButton = new JButton("Take Receipt");
+		takeReceiptButton.setActionCommand("takeReceipt");
+		takeReceiptButton.addActionListener(rc);
+		
 
 //		removeItemInBaggingAreaButton.setActionCommand("removeFromScale");
 //		removeItemInBaggingAreaButton.addActionListener(ic);
@@ -90,8 +102,11 @@ public class CustomerItemsPanel extends JPanel
 		buttonGrid.gridx = 5;
 		this.add(itemWeight, buttonGrid);
 
-		buttonGrid.gridy = 1;
 		buttonGrid.gridx = 6;
+		this.add(takeReceiptButton, buttonGrid);
+		
+		buttonGrid.gridy = 1;
+		buttonGrid.gridx = 7;
 		this.add(weightDescrepancyMessage);
 		
 
@@ -104,6 +119,7 @@ public class CustomerItemsPanel extends JPanel
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
 		itemWeight.setEnabled(false);
+		takeReceiptButton.setEnabled(false);
 	}
 
 	@Override
@@ -236,6 +252,8 @@ public class CustomerItemsPanel extends JPanel
 
 	@Override
 	public void printerNotLowState() {}
+	
+	// FIXME: Should this have @Override below it?
 	public void productSubtotalUpdated(ItemsControl ic) {
 		// TODO Auto-generated method stub
 
@@ -255,6 +273,68 @@ public class CustomerItemsPanel extends JPanel
 	public void initialState() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void lowInk(AttendantControl ac, String message) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void lowPaper(AttendantControl ac, String message) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void outOfInk(AttendantControl ac, String message) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void outOfPaper(AttendantControl ac, String message) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void outOfInkOrPaper(ReceiptControl rc, String message) {
+	}
+
+	@Override
+	public void setCheckedoutItems(ReceiptControl rc, String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setTotalCost(ReceiptControl rc, String totalCost) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setDateandTime(ReceiptControl rc, String dateTime) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setThankyouMessage(ReceiptControl rc, String dateTime) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void setTakeReceiptState(ReceiptControl rc) {
+		takeReceiptButton.setEnabled(true);
+	}
+
+	@Override
+	public void setNoReceiptState(ReceiptControl rc) {
+		takeReceiptButton.setEnabled(false);
+	}
+
+	@Override
+	public void coinIsLowState(CoinStorageUnit unit, int amount) {
+		// TODO Auto-generated method stub
 	}
 
 	@Override
