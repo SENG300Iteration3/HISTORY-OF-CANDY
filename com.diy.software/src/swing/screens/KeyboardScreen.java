@@ -3,9 +3,7 @@ package swing.screens;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -22,7 +20,6 @@ import com.diy.software.controllers.KeyboardControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.controllers.VirtualKeyboardControl;
 import com.diy.software.listeners.KeyboardControlListener;
-import com.jimmyselectronics.nightingale.Keyboard;
 
 import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Constants;
@@ -100,7 +97,6 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 		int curRow = 0;
 		int curCol = 0;
 		JPanel curKeyRow = KEY_ROWS[curRow];
-		int keyWidth = 0;
 
 		for (String key : MOD_WIN_QWERTY_LABELS) {
 			gc.gridx = curCol;
@@ -175,6 +171,11 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 		} else {
 			keyBtn.setBackground(GUI_Color_Palette.DARK_BROWN);
 		}
+	}
+	
+	// Returns the typed text
+	public String getOutputText() {
+		return this.outputField.getText();
 	}
 
 	/* temp: for testing purposes */

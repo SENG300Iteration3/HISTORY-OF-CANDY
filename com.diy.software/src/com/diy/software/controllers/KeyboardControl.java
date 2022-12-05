@@ -23,17 +23,6 @@ public class KeyboardControl {
 		listeners.remove(l);
 	}
 	
-	public void pressKey(String key) {
-		keyAction(key);
-		for (KeyboardControlListener l : listeners)
-			l.keyboardInputRecieved(this, this.text, key, this.pointer);
-	}
-
-	public void releaseKey(String key) {
-		for (KeyboardControlListener l : listeners)
-			l.awaitingKeyboardInput(this);
-	}
-	
 	public void inputComplete() {
 		for (KeyboardControlListener l : listeners)
 			l.keyboardInputCompleted(this, this.text);

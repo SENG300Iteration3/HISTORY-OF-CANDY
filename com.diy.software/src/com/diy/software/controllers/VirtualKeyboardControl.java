@@ -16,6 +16,17 @@ public class VirtualKeyboardControl extends KeyboardControl implements ActionLis
 		this.sc = sc;
 	}
 	
+	public void pressKey(String key) {
+		keyAction(key);
+		for (KeyboardControlListener l : listeners)
+			l.keyboardInputRecieved(this, this.text, key, this.pointer);
+	}
+
+	public void releaseKey(String key) {
+		for (KeyboardControlListener l : listeners)
+			l.awaitingKeyboardInput(this);
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String c = e.getActionCommand();
