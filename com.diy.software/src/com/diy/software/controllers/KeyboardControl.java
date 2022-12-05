@@ -102,8 +102,10 @@ public class KeyboardControl {
 	
 	// Identifies whether or not a key is 0-9 or one of !@#$%^&*()
 	private boolean isNumberOrSymbol(String key) {
+		if (key.length() != 3) return false; // Prevent function keys from registering
+		
 		int ascii = (int) key.toCharArray()[0];
-		return ascii >= 41 && ascii <= 100; // identifies number/symbol key labels
+		return ascii >= 39 && ascii <= 100; // identifies number/symbol key labels
 	}
 
 	// Gets symbol or number from label (there is a space in between, so the char index is 0 or 2)
