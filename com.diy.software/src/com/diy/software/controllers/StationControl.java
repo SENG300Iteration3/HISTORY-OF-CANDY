@@ -660,6 +660,7 @@ public class StationControl
 	public void ItemApprovedToNotBag() {
 		this.updateExpectedCheckoutWeight(-weightOfLastItem);
 		this.updateWeightOfLastItemAddedToBaggingArea(-weightOfLastItem);
+		ic.placeBulkyItemInCart();
 		this.unblockStation();
 	}
 
