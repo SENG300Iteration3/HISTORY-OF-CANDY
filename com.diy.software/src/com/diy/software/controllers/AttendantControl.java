@@ -146,7 +146,11 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		sc.ItemApprovedToNotBag();
 		for (AttendantControlListener l : listeners)
 			l.initialState();
-		sc.getItemsControl().placeBulkyItemInCart();
+	}
+	
+	public void itemBagged() {
+		for (AttendantControlListener l : listeners)
+			l.itemBagged();
 	}
 	
 	/*
@@ -467,6 +471,5 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	public void noBagRequest() {
 		for (AttendantControlListener l : listeners)
 			l.noBagRequest();
-
 	}
 }
