@@ -103,13 +103,7 @@ public class KeyboardControl {
 	}
 
 	protected String getNumberOrSymbol(char[] ch) {
-		char[] label;
-		if (!shiftPressed) {
-			label = new char[] { ch[0] }; // gets number from label
-		} else {
-			label = new char[] { ch[2] }; // gets symbol from label
-		}
-		return label.toString();
+		return String.valueOf(shiftPressed ? ch[2] : ch[0]); // gets symbol or number from label
 	}
 
 	public void keyPressed(String key) {
