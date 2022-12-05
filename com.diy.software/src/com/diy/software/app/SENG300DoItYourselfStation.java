@@ -36,11 +36,12 @@ public class SENG300DoItYourselfStation {
     for (int i = 0; i < totalNumberOfStations; i++) {
       stationControls.add(new StationControl(new FakeDataInitializer()));
     }
-    PaneControl pc = new PaneControl(stationControls);
-    new AttendantStationGUI(pc);
-    new CustomerStationGUI(pc);
-    new CustomerActionsGUI(pc);
-    new AttendantActionsGUI(pc);
+    PaneControl Attendantpc = new PaneControl(stationControls);
+    PaneControl Customerpc = new PaneControl(stationControls);
+    new AttendantStationGUI(Attendantpc);
+    new CustomerStationGUI(Customerpc);
+    new CustomerActionsGUI(Customerpc);
+    new AttendantActionsGUI(Attendantpc);
   }
 
   public static void configureDoItYourselfStation() {

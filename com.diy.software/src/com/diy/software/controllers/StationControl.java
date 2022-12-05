@@ -156,6 +156,7 @@ public class StationControl
 		this.fakeData.addProductAndBarcodeData();
 		this.fakeData.addPLUCodedProduct();
 		this.fakeData.addFakeMembers();
+		this.fakeData.addFakeAttendantLogin();
 
 		// for (Card c: this.fakeData.getCards()) customer.wallet.cards.add(c);
 		// for (Item i: this.fakeData.getItems()) customer.shoppingCart.add(i);
@@ -231,8 +232,12 @@ public class StationControl
 	public double getWeightOfScannerTray() {
 		return prevWeightOfScannerTray;
 	}
-	public void setWeightOfScannerTray(double weight){
+	public void setWeightOfScannerTray(double weight) {
 		prevWeightOfScannerTray = weight;
+	}
+
+	public DoItYourselfStation getStation() {
+		return station;
 	}
 	
 	private void loadBags() {
