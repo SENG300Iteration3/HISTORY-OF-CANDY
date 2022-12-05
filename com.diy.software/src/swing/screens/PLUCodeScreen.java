@@ -22,13 +22,8 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 
 	private static String HeaderText = "PLU Code";
 
-	String errorText;
-
-	JLabel message;
-	JLabel errorMessage;
+	JLabel message = new JLabel("");
 	GUI_JLabel pluCode;
-
-	private GUI_JPanel centerPanel;
 
 	public PLUCodeScreen(StationControl sc) {
 		super(sc, HeaderText);
@@ -40,6 +35,7 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 		pluCodePanel.setBackground(GUI_Color_Palette.DARK_BLUE);
 
 		initializePanels();
+		initializeTextField();
 
 		gridConstraint.gridy = 1;
 		gridConstraint.ipadx = 100;
@@ -75,7 +71,7 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 		submitButton.addActionListener(pluCodeController);
 		pluCodePanel.add(submitButton, gridConstraint);
 
-		//addLayer(pluCodePanel, 0);
+		addLayer(pluCodePanel, 0);
 	}
 
 	private void initializePanels() {
@@ -83,29 +79,37 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 		message.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		message.setHorizontalAlignment(JLabel.CENTER);
 
-		errorMessage = new GUI_JLabel(errorText);
-		errorMessage.setFont(GUI_Fonts.FRANKLIN_BOLD);
-		errorMessage.setHorizontalAlignment(JLabel.CENTER);
+		int width = 405;
+		int height = 50;
+
+		GUI_JPanel centerPanel = new GUI_JPanel();
+		centerPanel.setBackground(GUI_Color_Palette.DARK_BLUE);
+		centerPanel.setPreferredSize(new Dimension(width, height));
+		centerPanel.setLayout(new GridLayout(1, 0));
+
+		centerPanel.add(message);
+		centerPanel.add(pluCode);
+		addLayer(centerPanel, 0);
+
+	}
+
+	private void initializeTextField() {
 
 		pluCode = new GUI_JLabel("PLU code".toUpperCase());
 		pluCode.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		pluCode.setHorizontalAlignment(JLabel.CENTER);
 		pluCode.setBorder(BorderFactory.createLineBorder(GUI_Color_Palette.DARK_BLUE, 10));
 
-		int width = 405;				//potentially change for error message size
-		int height = 150;				//TODO: FIND NICE HEIGHT
+		int width = 405;
+		int height = 70;
 
-		centerPanel = new GUI_JPanel();
+		GUI_JPanel centerPanel = new GUI_JPanel();
 		centerPanel.setBackground(GUI_Color_Palette.DARK_BLUE);
 		centerPanel.setPreferredSize(new Dimension(width, height));
-		centerPanel.setLayout(new GridLayout(3, 0));
+		centerPanel.setLayout(new GridLayout(1, 0));
 
-		centerPanel.add(errorMessage);
-		centerPanel.add(message);
 		centerPanel.add(pluCode);
 		addLayer(centerPanel, 0);
-
-		addLayer(pluCodePanel, 0);
 
 	}
 
@@ -135,10 +139,7 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 
 	@Override
 	public void pluErrorMessageUpdated(PLUCodeControl ppc, String errorText) {
-		this.errorText = errorText;
-		//initializePanels();			//in order to call this, i need to clear the components on the screen (addLayer() breaks it)
-		//centerPanel.revalidate();
-		//centerPanel.repaint();
+		message.setText(errorText);
 	}
 
 	@Override
