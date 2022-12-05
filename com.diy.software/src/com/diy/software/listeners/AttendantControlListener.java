@@ -21,7 +21,12 @@ public interface AttendantControlListener {
 	/**
 	 * changes GUI state to match printer with not low ink and not low paper
 	 */
-	public void printerNotLowState();
+	public void printerNotLowInkState();
+	
+	/**
+	 * changes GUI state to match printer with not low ink and not low paper
+	 */
+	public void printerNotLowPaperState();
 	
 	/**
 	 * used to notify out of ink state

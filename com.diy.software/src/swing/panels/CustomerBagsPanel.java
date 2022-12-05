@@ -155,7 +155,13 @@ public class CustomerBagsPanel extends JPanel
 	}
 
 	@Override
-	public void printerNotLowState() {
+	public void printerNotLowInkState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void printerNotLowPaperState() {
 		// TODO Auto-generated method stub
 		
 	}
@@ -210,5 +216,5 @@ public class CustomerBagsPanel extends JPanel
 		
 	}
 
-
+	
 }

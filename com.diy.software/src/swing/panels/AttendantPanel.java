@@ -126,12 +126,19 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 		addInkToPrinterButton.setEnabled(true);
 		addPaperToPrinterButton.setEnabled(false);	
 	}
-
+	
 	@Override
-	public void printerNotLowState() {
+	public void printerNotLowInkState() {
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(false);
-		addPaperToPrinterButton.setEnabled(false);	
+		addPaperToPrinterButton.setEnabled(false);
+		
+	}
+
+	@Override
+	public void printerNotLowPaperState() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -176,4 +183,6 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 	public void outOfPaper(AttendantControl ac, String message) {
 		// TODO Auto-generated method stub
 	}
+
+
 }

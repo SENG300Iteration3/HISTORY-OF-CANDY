@@ -23,6 +23,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	private StationControl sc;
 	private ArrayList<AttendantControlListener> listeners;
 	private Currency currency;
+	private int MAXIMUM_INK = 0;
 	String attendantNotifications;
 
 	public AttendantControl(StationControl sc) {
@@ -76,41 +77,43 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 
 	/**
 	 * allow attendant to add paper to receipt printer
-	 * adds 500 units of paper
+	 * @param paperUnit amount of paper to add
 	 * 
 	 * precondition: printer is low on paper or out of paper
 	 * 
 	 * @throws OverloadException too much paper added, printer cant handle it
 	 */
-	public void addPaper() {
+	public void addPaper(int paperUnit) {
 		
 		try {
-			sc.station.printer.addPaper(500);
+			sc.station.printer.addPaper(paperUnit);
+			sc.getReceiptControl().currentPaperCount += paperUnit;
 		} catch (OverloadException e) {
 			for (AttendantControlListener l : listeners)
 				l.signalWeightDescrepancy("Added too much paper!");
 		}
 		for (AttendantControlListener l : listeners)
-			l.printerNotLowState();
+			l.printerNotLowPaperState();
 	}
 
 	/**
 	 * allow attendant to add ink to receipt printer
-	 * adds 208000 characters worth of ink
+	 * @param inkUnit amount of ink to add
 	 * 
 	 * precondition: printer is low on ink or out of ink
 	 * 
 	 * @throws OverloadException if more ink than the printer can handle is added
 	 */
-	public void addInk(){
+	public void addInk(int inkUnit){
 		try {
-			sc.station.printer.addInk(208000);
+			sc.station.printer.addInk(inkUnit);
+			sc.getReceiptControl().currentInkCount += inkUnit;
 		} catch (OverloadException e) {
 			for (AttendantControlListener l : listeners)
 				l.signalWeightDescrepancy("Added too much ink!");
 		}
 		for (AttendantControlListener l : listeners)
-			l.printerNotLowState();
+			l.printerNotLowInkState();
 	}
 
 	/**
@@ -224,11 +227,16 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 					break;
 				case "addInk":
 					attendantNotifications = ("stations printer needs more ink!");
-					addInk();
+					// Listener wont react if I type 208000 as a parameter 
+					int inkUnit = 208000;
+					addInk(inkUnit);
+					System.out.print("added ink");
 					break;
 				case "addPaper":
 					attendantNotifications = ("stations printer needs more paper!");
-					addPaper();
+					// Listener wont react if I type 500 as a parameter 
+					int paperUnit = 500;
+					addPaper(paperUnit);
 					break;
 				case "request no bag":
 					attendantNotifications = ("customer requests no bagging");
@@ -240,11 +248,11 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 				case "printReceipt":
 					//attendantNotifications = ("approved no bagging request");
 					System.out.println("AC print receipt");
-					sc.getReceiptControl().printItems();
-					sc.getReceiptControl().printTotalCost();
-					sc.getReceiptControl().printMembership();
-					sc.getReceiptControl().printDateTime();
-					sc.getReceiptControl().printThankyouMsg();		
+//					sc.getReceiptControl().printItems();
+//					sc.getReceiptControl().printTotalCost();
+//					sc.getReceiptControl().printMembership();
+//					sc.getReceiptControl().printDateTime();
+//					sc.getReceiptControl().printThankyouMsg();		
 					break;
 				case "approve no bag":
 					approveNoBagRequest();
@@ -295,17 +303,15 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	@Override
 	public void outOfPaper(IReceiptPrinter printer) {
 		for (AttendantControlListener l : listeners) {
-			l.addPaperState();
+			//l.addPaperState();
 			l.outOfPaper(this, "Out of Paper!");
 		}
-		
-
 	}
 
 	@Override
 	public void outOfInk(IReceiptPrinter printer) {
 		for (AttendantControlListener l : listeners) {
-			l.addInkState();
+			//l.addInkState();
 			l.outOfInk(this, "Out of ink!");
 		}
 
@@ -315,7 +321,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	public void lowInk(IReceiptPrinter printer) {
 		System.out.println("AC low ink");
 		for (AttendantControlListener l : listeners) {
-			l.addInkState();
+			//l.addInkState();
 			l.lowInk(this, "Low on ink!");
 		}
 	}
@@ -324,7 +330,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	public void lowPaper(IReceiptPrinter printer) {
 		System.out.println("AC low paper");
 		for (AttendantControlListener l : listeners) {
-			l.addPaperState();
+			//l.addPaperState();
 			l.lowPaper(this, "Low on paper!");
 		}
 
@@ -332,14 +338,12 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 
 	@Override
 	public void paperAdded(IReceiptPrinter printer) {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void inkAdded(IReceiptPrinter printer) {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	public void noBagRequest() {

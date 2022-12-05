@@ -133,8 +133,8 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		
 		this.addLayer(printReceiptButton, 0);
 		
-		addInkToPrinterButton.setEnabled(false);
-		addPaperToPrinterButton.setEnabled(false);
+		addInkToPrinterButton.setEnabled(true);
+		addPaperToPrinterButton.setEnabled(true);
 		approveNoBagging.setEnabled(false);
 		approveAddedBagsButton.setEnabled(cusAddedBags);
 		startUpButton.setEnabled(true);
@@ -206,26 +206,34 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	@Override
 	public void addPaperState() {
 		approveAddedBagsButton.setEnabled(false);
-		addInkToPrinterButton.setEnabled(false);
-		addPaperToPrinterButton.setEnabled(true);
+		//addInkToPrinterButton.setEnabled(false);
+		//addPaperToPrinterButton.setEnabled(true);
 		
 	}
 
 	@Override
 	public void addInkState() {
 		approveAddedBagsButton.setEnabled(false);
-		addInkToPrinterButton.setEnabled(true);
-		addPaperToPrinterButton.setEnabled(false);
+		//addInkToPrinterButton.setEnabled(true);
+		//addPaperToPrinterButton.setEnabled(false);
 		
 	}
 
 	@Override
-	public void printerNotLowState() {
+	public void printerNotLowInkState() {
 		approveAddedBagsButton.setEnabled(false);
-		addInkToPrinterButton.setEnabled(false);
-		addPaperToPrinterButton.setEnabled(false);
-		inkLabel.setText("Ink status");
-		paperLabel.setText("Paper status");
+		//addInkToPrinterButton.setEnabled(false);
+		//addPaperToPrinterButton.setEnabled(false);
+		inkLabel.setText("Ink good");
+		//paperLabel.setText("Paper status");
+		printReceiptButton.setEnabled(true);
+	}
+	
+	@Override
+	public void printerNotLowPaperState() {
+		paperLabel.setText("Paper good");
+		printReceiptButton.setEnabled(true);
+		
 	}
 
 	@Override
@@ -249,6 +257,7 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		addPaperToPrinterButton.setEnabled(false);	
 		approveNoBagging.setEnabled(false);
 		weightDescrepancyMssg.setText("");
+		
 	}
 	
 	public static void main(String args[]) {
@@ -262,6 +271,7 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	public void lowInk(AttendantControl ac, String message) {
 		inkLabel.setText(message);
 		inkLabel.setBackground(GUI_Color_Palette.RED_BROWN);
+		//printReceiptButton.setEnabled(false);
 	}
 
 
@@ -269,13 +279,15 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	public void lowPaper(AttendantControl ac, String message) {
 		paperLabel.setText(message);
 		paperLabel.setBackground(GUI_Color_Palette.RED_BROWN);
+		//printReceiptButton.setEnabled(false);
 	}
 
 
 	@Override
 	public void outOfInk(AttendantControl ac, String message) {
 		inkLabel.setText(message);
-		inkLabel.setBackground(GUI_Color_Palette.RED_BROWN);	
+		inkLabel.setBackground(GUI_Color_Palette.RED_BROWN);
+		printReceiptButton.setEnabled(false);
 	}
 
 
@@ -283,5 +295,6 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 	public void outOfPaper(AttendantControl ac, String message) {
 		paperLabel.setText(message);
 		paperLabel.setBackground(GUI_Color_Palette.RED_BROWN);
+		printReceiptButton.setEnabled(false);
 	}
 }

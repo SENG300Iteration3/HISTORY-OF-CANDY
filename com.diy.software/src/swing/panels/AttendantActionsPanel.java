@@ -141,7 +141,14 @@ public class AttendantActionsPanel extends JPanel
 	}
 
 	@Override
-	public void printerNotLowState() {
+	public void printerNotLowInkState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void printerNotLowPaperState() {
+		// TODO Auto-generated method stub
 		
 	}
 	
@@ -225,4 +232,16 @@ public class AttendantActionsPanel extends JPanel
 	@Override
 	public void setNoReceiptState(ReceiptControl rc) {
 	}
+
+	@Override
+	public void setIncompleteReceiptState(ReceiptControl rc) {
+
+	}
+
+	@Override
+	public void setNoIncompleteReceiptState(ReceiptControl rc) {
+		
+	}
+
+
 }

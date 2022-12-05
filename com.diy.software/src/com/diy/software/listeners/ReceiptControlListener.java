@@ -39,5 +39,16 @@ public interface ReceiptControlListener {
 	 */
 	public void setNoReceiptState(ReceiptControl rc);
 	
+	/**
+	 * simulate customer action of taking a incomplete receipt because the printer ran out of ink or paper so the printer can
+	 * print a complete receipt
+	 */
+	public void setIncompleteReceiptState(ReceiptControl rc);
+	
+	/**
+	 * incomplete receipt has been taken, turn the customer actions button off
+	 */
+	public void setNoIncompleteReceiptState(ReceiptControl rc);
+	
 	
 }
