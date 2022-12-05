@@ -21,6 +21,4 @@ public interface ItemsControlListener {
 	public void itemsHaveBeenUpdated(ItemsControl ic);
 	
 	public void productSubtotalUpdated(ItemsControl ic);
-
-	public void itemWasWeighed(ItemsControl ic);
 }

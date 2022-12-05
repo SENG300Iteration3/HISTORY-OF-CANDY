@@ -335,10 +335,4 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public void itemWasWeighed(ItemsControl ic) {
-		// TODO Auto-generated method stub
-		
-	}
 }

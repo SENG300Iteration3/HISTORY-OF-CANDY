@@ -172,10 +172,4 @@ public class CatalogPanel extends JPanel implements ItemsControlListener {
 		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public void itemWasWeighed(ItemsControl ic) {
-		// TODO Auto-generated method stub
-		
-	}
 }
