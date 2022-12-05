@@ -73,12 +73,12 @@ public class KeyboardControl {
 	
 	private void removeCharInPlace() {
 		if (pointer < text.length()) {
-			// Deleting the char moves the pointer back by 1
-			removeCharAtPointer();
 			if (pointer > 0) {
 				// Move the pointer forwards again
 				movePointer(1);
 			}
+			// Deleting the char moves the pointer back by 1
+			removeCharAtPointer();
 		}
 	}
 	
