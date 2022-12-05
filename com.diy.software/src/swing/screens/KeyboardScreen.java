@@ -39,6 +39,7 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 			"N", "M", ", <", ". >", "/ ?", "Shift (Right)", "PgUp", "Up Arrow", "PgDn", /* Row 6 */ "Ctrl (Left)", "Fn", "Alt (Left)",
 			"Spacebar", "Alt (Right)", "Windows", "Ctrl (Right)", "Left Arrow", "Down Arrow",
 			"Right Arrow" };
+	
 	private static final String[] END_OF_ROW = new String[] {"Delete", "Backspace", "\\ |", "Enter", "PgDn", "Right Arrow"};
 	private static final int NUM_ROWS = END_OF_ROW.length;
 	private static final JPanel[] KEY_ROWS = new JPanel[NUM_ROWS];
