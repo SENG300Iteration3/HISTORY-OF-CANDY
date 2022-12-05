@@ -26,10 +26,10 @@ public class KeyboardControl {
 			l.keyboardInputRecieved(this, this.text, key);
 	}
 
-//	public void keyReleased(String key) {
-//		for (KeyboardControlListener l : listeners)
-//			l.awaitingKeyboardInput(this);
-//	}
+	public void keyReleased(String key) {
+		for (KeyboardControlListener l : listeners)
+			l.awaitingKeyboardInput(this);
+	}
 	
 	// Supports functionality for letters, numbers, symbols, backspace, delete, L/R
 	// arrows, L/R shift and enter
