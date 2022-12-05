@@ -54,6 +54,8 @@ public class AddOwnBagsPromptScreen extends Screen implements BagsControlListene
 		
 	}
 
-
+	public GUI_JButton getDoneAddingBagsButton() {
+		return doneAddingBags;
+	}
 
 }
