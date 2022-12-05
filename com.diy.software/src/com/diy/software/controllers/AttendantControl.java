@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Objects;
 
 import com.diy.software.listeners.AttendantControlListener;
 import com.jimmyselectronics.AbstractDevice;
@@ -29,10 +31,20 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	private CoinStorageUnit unit;
 	private Currency currency;
 	String attendantNotifications;
+	
+	
+	public static final ArrayList<String> logins = new ArrayList<String>();
+	
+	public void login(String password) {
+		for (AttendantControlListener l : listeners) {
+			l.loggedIn(logins.contains(password));
+		}
+	}
 
 	public AttendantControl(StationControl sc) {
 		this.sc = sc;
 		this.listeners = new ArrayList<>();
+		
 	}
 
 	public void addListener(AttendantControlListener l) {

@@ -24,7 +24,7 @@ import com.jimmyselectronics.abagnale.IReceiptPrinter;
 import com.jimmyselectronics.abagnale.ReceiptPrinterListener;
 
 import ca.ucalgary.seng300.simulation.InvalidArgumentSimulationException;
-import swing.panes.AttendantStationPane;
+import swing.screens.AttendantStationScreen;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
