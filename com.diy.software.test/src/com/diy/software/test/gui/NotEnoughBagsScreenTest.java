@@ -13,6 +13,7 @@ import com.diy.software.listeners.BagDispenserControlListener;
 import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.opeechee.Card.CardData;
 
+import ca.powerutility.PowerGrid;
 import swing.screens.NotEnoughBagsScreen;
 
 public class NotEnoughBagsScreenTest {
@@ -24,6 +25,7 @@ public class NotEnoughBagsScreenTest {
 
 	@Before
 	public void setUp() throws Exception {
+		PowerGrid.engageUninterruptiblePowerSource();
 		fdi =  new FakeDataInitializer();
 		sStub = new StationControlListenerStub();
 		sc = new StationControl(fdi);

@@ -10,6 +10,7 @@ import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.opeechee.Card.CardData;
 
+import ca.powerutility.PowerGrid;
 import swing.screens.PresentMembershipCardScreen;
 
 public class PresentMembershipCardScreenTest {
@@ -20,6 +21,7 @@ public class PresentMembershipCardScreenTest {
 
 	@Before
 	public void setUp() throws Exception {
+		PowerGrid.engageUninterruptiblePowerSource();
 		
 		sc = new StationControl();
 		screen = new PresentMembershipCardScreen(sc);
