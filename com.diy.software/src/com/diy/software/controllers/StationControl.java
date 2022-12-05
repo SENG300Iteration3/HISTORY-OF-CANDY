@@ -695,7 +695,6 @@ public class StationControl
 	@Override
 	public void outOfPaper(IReceiptPrinter printer) {
 		isOutOfPaper = true;
-		System.out.println("SC out of paper");
 		rc.outOfPaper(printer);
 		blockStation("Printer is out of ink or paper please wait for attendant");
 		rc.outOfPaper(printer);
@@ -704,7 +703,6 @@ public class StationControl
 	@Override
 	public void outOfInk(IReceiptPrinter printer) {
 		isOutOfInk = true;
-		 System.out.println("SC out of ink");	
 		 rc.outOfInk(printer);
 		 blockStation("Printer is out of ink or paper please wait for attendant");
 		// have the same functionality as low ink for now
@@ -713,13 +711,11 @@ public class StationControl
 	
 	@Override
 	public void lowInk(IReceiptPrinter printer) {
-		System.out.println("SC low ink");
 		rc.lowInk(printer);
 	}
 
 	@Override
 	public void lowPaper(IReceiptPrinter printer) {
-		System.out.println("SC low paper");
 		rc.lowPaper(printer);
 	}
 

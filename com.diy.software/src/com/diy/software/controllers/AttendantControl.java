@@ -457,7 +457,6 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 
 	@Override
 	public void lowInk(IReceiptPrinter printer) {
-		System.out.println("AC low ink");
 		for (AttendantControlListener l : listeners) {
 			//l.addInkState();
 			l.lowInk(this, "Low on ink!");
@@ -466,7 +465,6 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 
 	@Override
 	public void lowPaper(IReceiptPrinter printer) {
-		System.out.println("AC low paper");
 		for (AttendantControlListener l : listeners) {
 			//l.addPaperState();
 			l.lowPaper(this, "Low on paper!");

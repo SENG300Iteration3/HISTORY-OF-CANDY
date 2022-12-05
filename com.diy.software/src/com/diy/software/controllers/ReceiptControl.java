@@ -43,6 +43,7 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	private int retreivedMemNum;
 	public int currentPaperCount = 0;
 	public int currentInkCount = 0;
+	public StringBuilder finalReceiptToShowOnScreen = new StringBuilder(); 
 	
 	public boolean outOfInk = false;
 	public boolean outOfPaper = false;
@@ -73,7 +74,7 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	 */
 	public void printItems() {
 		for(Tuple<String, Double> item : sc.getItemsControl().getCheckoutList()) {
-			System.out.println(item.x + " , $" + item.y);
+//			System.out.println(item.x + " , $" + item.y);
 			printReceipt(item.x + " , $" + item.y + "\n");
 		}
 		//System.out.println("test print receipt");
@@ -87,7 +88,7 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 		for(Tuple<String, Double> item : sc.getItemsControl().getCheckoutList()) {
 			total += item.y;
 		}
-		System.out.println("Total: $" + total);
+//		System.out.println("Total: $" + total);
 		printReceipt("Total: $" + total + "\n");
 	}
 	
@@ -103,7 +104,7 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 			//System.out.println("No member found");
 			//printReceipt("No member found");
 		}else {
-			System.out.println("Membership number: " + retreivedMemNum);
+//			System.out.println("Membership number: " + retreivedMemNum);
 			printReceipt("Membership number: " + retreivedMemNum + "\n");
 		}
 		
@@ -115,7 +116,7 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	public void printDateTime() {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");  
 	    Date receiptPrintDate = new Date();  
-	    System.out.println(formatter.format(receiptPrintDate));
+//	    System.out.println(formatter.format(receiptPrintDate));
 	    printReceipt(formatter.format(receiptPrintDate) + "\n");
 	}
 	
@@ -154,6 +155,7 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 		checkLowInkNPaper();
 		for (char receiptChar : receipt.toCharArray()) {	
 				sc.station.printer.print(receiptChar);
+				finalReceiptToShowOnScreen.append(receiptChar);
 				for (ReceiptControlListener l : listenersReceipt) {
 					l.setTakeReceiptState(this);
 				}
@@ -165,6 +167,7 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 				l.setNoReceiptState(this);
 				l.setIncompleteReceiptState(this);
 			}
+			finalReceiptToShowOnScreen.setLength(0);
 		} catch (OverloadException e) {
 			
 		}
@@ -206,6 +209,7 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 				printMembership();
 				printDateTime();
 				printThankyouMsg();
+				System.out.print(finalReceiptToShowOnScreen);
 				break;
 			case "takeReceipt":
 				sc.station.printer.cutPaper();
@@ -253,20 +257,17 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	@Override
 	public void outOfPaper(IReceiptPrinter printer) {
 		outOfPaper = true;
-		System.out.println("out of paper");
 		sc.getAttendantControl().outOfPaper(printer);
 	}
 
 	@Override
 	public void outOfInk(IReceiptPrinter printer) {
 		outOfInk = true;
-		System.out.println("out of ink");
 		sc.getAttendantControl().outOfInk(printer);
 	}
 
 	@Override
 	public void lowInk(IReceiptPrinter printer) {
-		System.out.println("RC low ink");
 		if(outOfInk) {
 			this.outOfInk(printer);
 		}else {
@@ -276,7 +277,6 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 
 	@Override
 	public void lowPaper(IReceiptPrinter printer) {
-		System.out.println("RC low paper");
 		if(outOfPaper) {
 			this.outOfPaper(printer);
 		}else {
