@@ -11,12 +11,14 @@ import javax.swing.SwingConstants;
 import com.diy.software.controllers.StationControl;
 
 import swing.styling.GUI_Fonts;
+import swing.styling.GUI_JButton;
 import swing.styling.GUI_JLabel;
 import swing.styling.Screen;
 
 public class OkayPromptScreen extends Screen {
 	private JLabel promptLabel;
 	private JButton okayButton;
+	GUI_JButton printReceiptButton;
 
 	public OkayPromptScreen(final StationControl systemControl, String prompt, final boolean navigateToInitialScreen) {
 		super(systemControl);
@@ -26,7 +28,12 @@ public class OkayPromptScreen extends Screen {
 		promptLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		promptLabel.setPreferredSize(new Dimension(this.width - 200, 100));
 		this.addLayer(promptLabel, 0);
-
+		
+		this.printReceiptButton = makeCentralButton("PRINT RECEIPT", this.width - 200, 100);
+		printReceiptButton.setActionCommand("printReceipt");
+		printReceiptButton.addActionListener(systemControl.getReceiptControl());
+		this.addLayer(printReceiptButton, 1);
+		
 		this.okayButton = makeCentralButton("OKAY", this.width - 200, 100);
 		okayButton.addActionListener(new ActionListener() {
 			@Override
@@ -38,6 +45,6 @@ public class OkayPromptScreen extends Screen {
 				}
 			}
 		});
-		this.addLayer(okayButton, 100);
+		this.addLayer(okayButton, 0);
 	}
 }
