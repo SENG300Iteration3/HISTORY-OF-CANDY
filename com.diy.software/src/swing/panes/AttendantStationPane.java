@@ -307,40 +307,6 @@ public class AttendantStationPane extends Screen implements AttendantControlList
 		paperLabel.setBackground(GUI_Color_Palette.RED_BROWN);
 		printReceiptButton.setEnabled(false);
 	}
-	
-	public static void main(String args[]) {
-		StationControl sc = new StationControl();
-		AttendantStationPane ap = new AttendantStationPane(sc);
-		ap.openInNewJFrame();
-	}
-
-
-	@Override
-	public void lowInk(AttendantControl ac, String message) {
-		inkLabel.setText(message);
-		inkLabel.setBackground(GUI_Color_Palette.RED_BROWN);
-	}
-
-
-	@Override
-	public void lowPaper(AttendantControl ac, String message) {
-		paperLabel.setText(message);
-		paperLabel.setBackground(GUI_Color_Palette.RED_BROWN);
-	}
-
-
-	@Override
-	public void outOfInk(AttendantControl ac, String message) {
-		inkLabel.setText(message);
-		inkLabel.setBackground(GUI_Color_Palette.RED_BROWN);	
-	}
-
-
-	@Override
-	public void outOfPaper(AttendantControl ac, String message) {
-		paperLabel.setText(message);
-		paperLabel.setBackground(GUI_Color_Palette.RED_BROWN);
-	}
 
 
 	@Override

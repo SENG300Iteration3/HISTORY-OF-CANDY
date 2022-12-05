@@ -79,8 +79,6 @@ public class StationControl
 	public double weightOfItemScanned;
 	private boolean membershipInput = false;
 	private int bagInStock;
-	private PinPadControl ppc;
-	private PaymentControl pc;
 
 	
 	// used for receipt listeners

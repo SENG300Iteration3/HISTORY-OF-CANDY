@@ -79,8 +79,7 @@ public class AttendantActionsPanel extends JPanel
 		// paperButton.setEnabled(false);
 		// bagDispenserButton.setEnabled(false);
 	}
-
-	}
+	
 	private JButton initializeButton(String msg, String command) {
 		JButton button =  new JButton(msg);
 		button.setActionCommand(command);
@@ -167,17 +166,18 @@ public class AttendantActionsPanel extends JPanel
 	public void printerNotLowPaperState() {
 		// TODO Auto-generated method stub
 	}
-
-	@Override
-	public void printerNotLowState() {
-		// FIXME: This is called when ink is refilled and paper is refilled, may need to be split up.
-		// In future, buttons should be disabled when the system is not blocked (permit station use) + this.
-		// Also thinking that this should be called when the paper and ink is completely full.
-		// Technically if an ink dispenser goes from 10% to 70% full it would be out of a low state, but you should still have option to add more ink to station.
-		inkButton.setEnabled(false);
-		paperButton.setEnabled(false);
-	}
 	
+	// replaced
+//	@Override
+//	public void printerNotLowState() {
+//		// FIXME: This is called when ink is refilled and paper is refilled, may need to be split up.
+//		// In future, buttons should be disabled when the system is not blocked (permit station use) + this.
+//		// Also thinking that this should be called when the paper and ink is completely full.
+//		// Technically if an ink dispenser goes from 10% to 70% full it would be out of a low state, but you should still have option to add more ink to station.
+//		inkButton.setEnabled(false);
+//		paperButton.setEnabled(false);
+//	}
+//	
 	@Override
 	public void productSubtotalUpdated(ItemsControl ic) {
 		// TODO Auto-generated method stub
