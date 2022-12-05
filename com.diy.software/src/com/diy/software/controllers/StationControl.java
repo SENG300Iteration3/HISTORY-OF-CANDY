@@ -127,7 +127,6 @@ public class StationControl
 		 */
 		station.reusableBagDispenser.plugIn();
 		station.reusableBagDispenser.turnOn();
-		bagInStock = station.reusableBagDispenser.getCapacity();
 		loadBags();
 
 		/*
@@ -234,7 +233,7 @@ public class StationControl
 	
 	private void loadBags() {
 		try {
-			for(int i = 0; i < bagInStock; i++) {
+			for(int i = 0; i < station.reusableBagDispenser.getCapacity(); i++) {
 				ReusableBag aBag = new ReusableBag();
 				station.reusableBagDispenser.load(aBag);
 			}
@@ -647,12 +646,9 @@ public class StationControl
 		} 
 	}
 				
-	public void addReusableBag(ReusableBag lastDispensedReusableBag) {
-		// ADD: update inventory
-
-		weightOfLastItem = lastDispensedReusableBag.getWeight();
-		
+	public void addReusableBag(ReusableBag lastDispensedReusableBag) {		
 		// Set the expected weight in SystemControl
+		weightOfLastItem = lastDispensedReusableBag.getWeight();
 		this.updateExpectedCheckoutWeight(weightOfLastItem);
 		this.updateWeightOfLastItemAddedToBaggingArea(weightOfLastItem);
 	}
@@ -758,8 +754,7 @@ public class StationControl
 
 	@Override
 	public void bagDispensed(ReusableBagDispenser dispenser) {
-		// TODO Auto-generated method stub
-		
+		bagInStock--;
 	}
 
 	@Override
@@ -770,8 +765,7 @@ public class StationControl
 
 	@Override
 	public void bagsLoaded(ReusableBagDispenser dispenser, int count) {
-		// TODO Auto-generated method stub
-		
+		bagInStock++;
 	}
 
 }
