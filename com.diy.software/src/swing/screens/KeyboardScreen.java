@@ -118,11 +118,7 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 		queryField.requestFocus(); // Required before setting caret
 	    queryField.setCaretPosition(pointerPosition); // Update cursor position
 
-		if (key.equals("Backspace")) {
-
-		} else if (key.equals("Delete")) {
-
-		} else if (key.equals("CapsLock")) {
+		if (key.equals("CapsLock")) {
 			toggleKeyColor(keyBtn);
 		} else if (key.startsWith("Shift")) {
 			toggleKeyColor(keyBtn);

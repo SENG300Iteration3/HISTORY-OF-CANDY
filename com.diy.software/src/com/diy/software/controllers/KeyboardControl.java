@@ -40,33 +40,59 @@ public class KeyboardControl {
 	// arrows, L/R shift and enter
 	protected void keyAction(String key) {
 		if (key.length() == 1) {
-			addText(getLetterCase(key)); // Alphanumeric key
+			addTextAtPointer(getLetterCase(key)); // Alphanumeric key
+		} else if (key.equals("Enter")) {
+			inputComplete();
 		} else if (key.equals("CapsLock")) {
 			capsLockOn = !capsLockOn;
 		} else if (key.startsWith("Shift")) {
 			shiftPressed = !shiftPressed;
 		} else if (key.equals("Spacebar")) {
-			addText(" ");
+			addTextAtPointer(" ");
 		} else if (key.equals("Tab")) {
-			addText("	");
+			addTextAtPointer("	");
 		} else if (isNumberOrSymbol(key)) {
-			addText(getNumberOrSymbol(key));
-		} else if (key.equals("Enter")) {
-			inputComplete();
+			addTextAtPointer(getNumberOrSymbol(key));
 		} else if (key.startsWith("Left")) {
 			movePointer(-1);
 		} else if (key.startsWith("Right")) {
 			movePointer(1);
+		} else if (key.startsWith("Backspace")) {
+			if (pointer > 0)
+				removeCharAtPointer();
+		} else if (key.startsWith("Delete")) {
+			removeCharInPlace();
 		}
 	}
 	
-	private void addText(String newText) {
-		this.text += newText;
+	private void addTextAtPointer(String newText) {
+		StringBuilder sb = new StringBuilder(this.text);
+		this.text = sb.insert(pointer, newText).toString();
 		movePointer(newText.length()); // Move pointer the appropriate number of spaces forward
 	}
 	
-	private void movePointer(int delta) {
+	private void removeCharInPlace() {
+		if (pointer < text.length()) {
+			// Deleting the char moves the pointer back by 1
+			removeCharAtPointer();
+			if (pointer > 0) {
+				// Move the pointer forwards again
+				movePointer(1);
+			}
+		}
+	}
+	
+	private void removeCharAtPointer() {
+		// Move the pointer back by 1, delete the char, then update the text
+		this.text = new StringBuilder(this.text).deleteCharAt(movePointer(-1)).toString();
+	}
+	
+	//@return new value of pointer
+	private int movePointer(int delta) {
+		// Make sure pointer doesn't fall out of range
 		this.pointer = MathUtils.clamp(pointer + delta, 0, text.length());
+		
+		return this.pointer;
 	}
 
 	private String getLetterCase(String key) {
