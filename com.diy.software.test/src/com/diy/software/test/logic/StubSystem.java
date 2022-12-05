@@ -10,6 +10,7 @@ public class StubSystem implements StationControlListener{
 	boolean paymentStatus = false;
 	boolean triggerPaymentWorkflow = false;
 	public String paymentType;
+	boolean membershipCardInput = false;
 	
 
 	@Override
@@ -68,6 +69,48 @@ public class StubSystem implements StationControlListener{
 
 	@Override
 	public void triggerMembershipWorkflow(StationControl systemControl) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void systemControlLocked(StationControl systemControl, boolean isLocked, String reason) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void startMembershipCardInput(StationControl systemControl) {
+		membershipCardInput = true;
+		
+	}
+
+	@Override
+	public void membershipCardInputFinished(StationControl systemControl) {
+		membershipCardInput = false;
+		
+	}
+
+	@Override
+	public void membershipCardInputCanceled(StationControl systemControl, String reason) {
+		membershipCardInput = false;
+		
+	}
+
+	@Override
+	public void triggerPurchaseBagsWorkflow(StationControl systemControl) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void noBagsInStock(StationControl systemControl) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void notEnoughBagsInStock(StationControl systemControl, int numBag) {
 		// TODO Auto-generated method stub
 		
 	}

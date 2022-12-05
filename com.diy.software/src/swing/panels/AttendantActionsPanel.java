@@ -16,16 +16,19 @@ import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
 import com.diy.software.listeners.ItemsControlListener;
 import com.diy.software.listeners.ReceiptControlListener;
+import com.unitedbankingservices.coin.CoinStorageUnit;
 
 public class AttendantActionsPanel extends JPanel
 		implements ItemsControlListener, AttendantControlListener, BagsControlListener, ReceiptControlListener {
 
 	private static final long serialVersionUID = 1L;
 	private ItemsControl ic;
-	private AttendantControl ac;
+	private AttendantControl ac; 
 	private BagsControl bc;
 	private ReceiptControl rc;
-	JButton inkButton, paperButton, bagDispenserButton;
+	private boolean stationBlocked = true; // FIXME: Testing now. Should be false to start
+	
+	JButton inkButton, paperButton, bagDispenserButton, coinButton, banknoteButton;
 	GridBagConstraints buttonGrid = new GridBagConstraints();
 
 	public AttendantActionsPanel(StationControl sc) {
@@ -41,18 +44,12 @@ public class AttendantActionsPanel extends JPanel
 		
 		rc = sc.getReceiptControl();
 		rc.addListenerReceipt(this);
-		
-		inkButton =  new JButton("Refill Ink Dispenser");
-//		inkButton.setActionCommand("refill ink");
-//		inkButton.addActionListener(ac);
-		
-		paperButton = new JButton("Refill Paper Dispenser");
-//		paperButton.setActionCommand("refill paper");
-//		paperButton.addActionListener(ac);
-		
-		bagDispenserButton = new JButton("Refill Bag Dispenser");
-//		bagDispenserButton.setActionCommand("refill bag dispenser");
-//		bagDispenserButton.addActionListener(ac);
+
+		inkButton = initializeButton("Refill Ink Dispenser", "addInk");
+		paperButton = initializeButton("Refill Paper Dispenser", "addPaper");
+		coinButton = initializeButton("Refill Coin Dispenser", "addCoin");
+		banknoteButton = initializeButton("Refill Banknote Dispenser", "addBanknote");
+		bagDispenserButton = initializeButton("Refill Bag Dispenser", "addBag");
 		
 		this.setLayout(new GridBagLayout());
 
@@ -64,19 +61,36 @@ public class AttendantActionsPanel extends JPanel
 		this.add(paperButton, buttonGrid);
 		
 		buttonGrid.gridx = 2;
-		this.add(bagDispenserButton, buttonGrid);
+		this.add(coinButton, buttonGrid);
 
+		buttonGrid.gridx = 3;
+		this.add(banknoteButton, buttonGrid);
+		
+		buttonGrid.gridx = 4;
+		this.add(bagDispenserButton, buttonGrid);
+		
 //		Can add messages here
 //		buttonGrid.gridy = 1;
 //		buttonGrid.gridx = 3;
 //		this.add(Label);
 //		
 
-		inkButton.setEnabled(false);
-		paperButton.setEnabled(false);
-		bagDispenserButton.setEnabled(false);
+		// inkButton.setEnabled(false);
+		// paperButton.setEnabled(false);
+		// bagDispenserButton.setEnabled(false);
 	}
 
+	}
+	private JButton initializeButton(String msg, String command) {
+		JButton button =  new JButton(msg);
+		button.setActionCommand(command);
+		button.addActionListener(ac);
+		button.setEnabled(false);
+		
+		return button;
+	}
+	
+	
 	@Override
 	public void awaitingItemToBeSelected(ItemsControl ic) {
 	}
@@ -114,6 +128,7 @@ public class AttendantActionsPanel extends JPanel
 	@Override
 	public void attendantPreventUse(AttendantControl ac) {
 		// TODO Auto-generated method stub
+		stationBlocked = true;
 	}
 
 	@Override
@@ -128,7 +143,10 @@ public class AttendantActionsPanel extends JPanel
 	}
 
 	@Override
-	public void addPaperState() {}
+	public void addPaperState() {
+		if(stationBlocked) paperButton.setEnabled(true);
+	}
+	
 	public void itemsHaveBeenUpdated(ItemsControl ic) {
 		// TODO Auto-generated method stub
 
@@ -137,19 +155,27 @@ public class AttendantActionsPanel extends JPanel
 	@Override
 	public void addInkState() {
 		// TODO Auto-generated method stub
-		
+		if (stationBlocked) inkButton.setEnabled(true);
 	}
 
 	@Override
 	public void printerNotLowInkState() {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void printerNotLowPaperState() {
 		// TODO Auto-generated method stub
-		
+	}
+
+	@Override
+	public void printerNotLowState() {
+		// FIXME: This is called when ink is refilled and paper is refilled, may need to be split up.
+		// In future, buttons should be disabled when the system is not blocked (permit station use) + this.
+		// Also thinking that this should be called when the paper and ink is completely full.
+		// Technically if an ink dispenser goes from 10% to 70% full it would be out of a low state, but you should still have option to add more ink to station.
+		inkButton.setEnabled(false);
+		paperButton.setEnabled(false);
 	}
 	
 	@Override
@@ -244,4 +270,13 @@ public class AttendantActionsPanel extends JPanel
 	}
 
 
+	public void attendantPermitStationUse(AttendantControl ac) {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public void coinIsLowState(CoinStorageUnit unit, int amount) {
+		// TODO Auto-generated method stub
+		
+	}
 }

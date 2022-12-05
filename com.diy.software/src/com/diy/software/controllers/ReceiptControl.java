@@ -12,7 +12,6 @@
 package com.diy.software.controllers;
 
 import com.diy.hardware.BarcodedProduct;
-import com.diy.simulation.Customer;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.MembershipControlListener;
 import com.diy.software.listeners.ReceiptControlListener;
@@ -66,6 +65,7 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	public void resetState() {
 		retreivedMemNum = -1; // can't use null, gonnause this.
 	}
+	
 	
 	/**
 	 * Finds what the contents of the receipt should be based on checked out items

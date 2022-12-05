@@ -72,7 +72,7 @@ public class MembershipControl implements ActionListener {
 						l.memberFieldHasBeenUpdated(this, memberNumber);
 					break;
 				case "submit":
-					if (memberNumber != null && !memberNumber.isEmpty()) {
+					if (!memberNumber.isEmpty()) {
 						int memNum = Integer.parseInt(memberNumber);
 						checkMembership(memNum);
 					}

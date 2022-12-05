@@ -13,8 +13,12 @@ import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.abagnale.IReceiptPrinter;
 import com.jimmyselectronics.abagnale.ReceiptPrinterListener;
 import com.unitedbankingservices.TooMuchCashException;
+import com.unitedbankingservices.coin.Coin;
+import com.unitedbankingservices.coin.CoinStorageUnit;
 import com.unitedbankingservices.banknote.Banknote;
 import com.unitedbankingservices.banknote.BanknoteStorageUnit;
+import com.unitedbankingservices.coin.Coin;
+import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import ca.ucalgary.seng300.simulation.SimulationException;
 
@@ -22,6 +26,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 
 	private StationControl sc;
 	private ArrayList<AttendantControlListener> listeners;
+	private CoinStorageUnit unit;
 	private Currency currency;
 	private int MAXIMUM_INK = 0;
 	String attendantNotifications;
@@ -38,11 +43,21 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	public void removeListener(AttendantControlListener l) {
 		listeners.remove(l);
 	}
+	
+	
+	// allow attendant to enable customer station use after it has been suspended
+	public void permitStationUse() {
+		sc.unblockStation();
+		for (AttendantControlListener l : listeners) {
+			l.attendantPermitStationUse(this);
+		}
+	}
 
 	public void startUpStation() {
 		sc.startUp();
 	}
 	
+	// TODO shutDown and Reset can be deleted if not used
 	public void shutDownStation() {
 		sc.shutDown();
 	}	
@@ -210,6 +225,101 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		sc.getCashControl().banknotesLoaded(unit);
 		sc.getCashControl().enablePayments();
 	}
+	
+	/**
+	 * fills up the coin slot and then signal cash controller that everything is okay
+	 *
+	 *@param unit
+	 *		the unit that needs to be filled up
+	 *@param AMOUNT
+	 *		the amount of coins to fill up
+	 * @throws TooMuchCashException 
+	 * @throws SimulationException 
+
+	 */
+	public void adjustCoinsForChange(CoinStorageUnit unit, int AMOUNT) throws SimulationException, TooMuchCashException  {
+		
+		this.unit = unit;
+		//take system out of service
+		
+		sc.getCashControl().disablePayments();
+		
+		Coin nickelToAdd = new Coin(5);
+		Coin dimeToAdd = new Coin(10);
+		Coin quaterToAdd = new Coin(25);
+		Coin loonieToAdd = new Coin(100);
+		Coin toonieToAdd = new Coin(200);
+		
+		
+		List<Coin> unloadedCoins = unit.unload();
+		
+		int nCounter = countCoin(5,unloadedCoins);
+		int dCounter = countCoin(10,unloadedCoins);
+		int qCounter = countCoin(25,unloadedCoins);
+		int lCounter = countCoin(100,unloadedCoins);
+		int tCounter = countCoin(200,unloadedCoins);
+		
+		int nAmount = AMOUNT - nCounter;
+		int dAmount = AMOUNT - dCounter;
+		int qAmount = AMOUNT - qCounter;
+		int lAmount = AMOUNT - lCounter;
+		int tAmount = AMOUNT - tCounter;
+		
+		addCoin(nAmount,nickelToAdd);
+		addCoin(dAmount,dimeToAdd);
+		addCoin(qAmount,quaterToAdd);
+		addCoin(lAmount,loonieToAdd);
+		addCoin(tAmount,toonieToAdd);
+		
+		
+		//notify cash controller that the unit has been filled
+		sc.getCashControl().coinsLoaded(unit);
+		
+		//re enable system
+		sc.getCashControl().enablePayments();
+		
+		for (AttendantControlListener l : listeners)
+			l.initialState();
+	}
+	
+	/**
+	 * counts how many coins of this type is
+	 * @param value
+	 * 		the value of the coin to count
+	 * 
+	 * @param coins
+	 * 		the list to count the coin from
+	 * 
+	 * @return
+	 * 		returns the amount of coins counted
+	 */
+	public int countCoin(long value, List<Coin> coins) {
+		int count = 0;
+		for(Coin c : coins) {
+			if(c.getValue() == value) {
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	/**
+	 * add the specified amount of coins to a list to add to dispenser
+	 * 
+	 * @param amount
+	 * 		amount of coin to add
+	 * 
+	 * @param coin 
+	 * 		the coin type to add
+	 * @throws TooMuchCashException 
+	 * @throws SimulationException 
+	 */
+	public void addCoin(int amount,Coin coin) throws SimulationException, TooMuchCashException{
+		for(int i = 0; i < amount; i++) {
+			unit.load(coin);
+		}
+	}
+	
 
 	/**
 	 * based on the button clicked, the switch controls the GUI to react to user
@@ -227,16 +337,28 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 					break;
 				case "addInk":
 					attendantNotifications = ("stations printer needs more ink!");
-					// Listener wont react if I type 208000 as a parameter 
+					// Listener wont react if we type 208000 as a parameter 
 					int inkUnit = 208000;
 					addInk(inkUnit);
 					System.out.print("added ink");
 					break;
 				case "addPaper":
 					attendantNotifications = ("stations printer needs more paper!");
-					// Listener wont react if I type 500 as a parameter 
+					// Listener wont react if we type 500 as a parameter 
 					int paperUnit = 500;
 					addPaper(paperUnit);
+					break;
+				case "addCoin": 
+					//TODO:
+					
+					break;
+				case "addBanknote": 
+					//TODO:
+					
+					break;
+				case "addBag": 
+					//TODO:
+					
 					break;
 				case "request no bag":
 					attendantNotifications = ("customer requests no bagging");
@@ -256,6 +378,10 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 					break;
 				case "approve no bag":
 					approveNoBagRequest();
+					break;
+				case "permit_use":
+					attendantNotifications = ("Permitting use on station");
+					permitStationUse();
 					break;
 				case "prevent_use":
 					attendantNotifications = ("Preventing use on station for maintenance");

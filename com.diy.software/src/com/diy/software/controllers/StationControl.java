@@ -70,6 +70,8 @@ public class StationControl
 	private MembershipControl mc;
 	private BagDispenserControl bdc;
 	private CashControl cc;
+	private PinPadControl ppc;
+	private PaymentControl pc;
 	private	ReceiptControl rc;
 
 	private boolean isLocked = false;
@@ -222,6 +224,10 @@ public class StationControl
 
 	public CashControl getCashControl() {
 		return cc;
+	}
+	
+	public DoItYourselfStation getStation() {
+		return station;
 	}
 	
 	private void loadBags() {
@@ -716,12 +722,7 @@ public class StationControl
 	@Override
 	public void lowPaper(IReceiptPrinter printer) {
 		System.out.println("SC low paper");
-		if(isOutOfInk) {
-			rc.lowPaper(printer);
-			//rc.addBoth(printer);
-		}else {
-			rc.lowPaper(printer);
-		}
+		rc.lowPaper(printer);
 	}
 
 	@Override
@@ -730,7 +731,7 @@ public class StationControl
 		// unblock station when enough paper is added, checks if theres enough ink
 		if(!isOutOfInk) {
 			unblockStation();
-			System.out.println("station unblocked paper added");
+			// System.out.println("station unblocked paper added");
 		}
 	}
 
@@ -740,7 +741,7 @@ public class StationControl
 		// unblock station when enough ink is added, checks if theres enough paper
 		if(!isOutOfPaper) {
 			unblockStation();
-			System.out.println("station unblocked ink added");
+			// System.out.println("station unblocked ink added");
 		}
 	}
 
