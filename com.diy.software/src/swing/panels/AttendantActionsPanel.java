@@ -251,7 +251,7 @@ public class AttendantActionsPanel extends JPanel
 	}
 
 	@Override
-	public void awaitingItemToBePlacedInScanningArea(ItemsControl itemsControl) {
+	public void awaitingItemToBePlacedInScanningArea(StationControl sc) {
 	}
 
 	@Override

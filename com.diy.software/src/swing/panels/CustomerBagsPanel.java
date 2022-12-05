@@ -219,7 +219,7 @@ public class CustomerBagsPanel extends JPanel
 	}
 
 	@Override
-	public void awaitingItemToBePlacedInScanningArea(ItemsControl itemsControl) {
+	public void awaitingItemToBePlacedInScanningArea(StationControl sc) {
 	}
 
 	@Override

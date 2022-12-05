@@ -186,7 +186,7 @@ public class CustomerItemsPanel extends JPanel
 	}
 
 	@Override
-	public void awaitingItemToBePlacedInScanningArea(ItemsControl itemsControl) {
+	public void awaitingItemToBePlacedInScanningArea(StationControl sc) {
 		selectNextItemButton.setEnabled(false);
 		mainScannerButton.setEnabled(false);
 		handheldScannerButton.setEnabled(false);

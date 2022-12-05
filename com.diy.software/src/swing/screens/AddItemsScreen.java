@@ -190,6 +190,8 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		this.catalogBtn.setActionCommand("catalog");
 		this.catalogBtn.addActionListener(itemsControl);
 
+		addItemByPLUBtn.setEnabled(false);
+		catalogBtn.setEnabled(false);
 	}
 
 	public void invalidateAllScannedItems() {
@@ -250,14 +252,14 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 
 	@Override
 	public void awaitingItemToBeSelected(ItemsControl ic) {
-		// TODO Auto-generated method stub
-
+		addItemByPLUBtn.setEnabled(false);
+		catalogBtn.setEnabled(false);
 	}
 
 	@Override
 	public void itemWasSelected(ItemsControl ic) {
-		// TODO Auto-generated method stub
-
+		addItemByPLUBtn.setEnabled(true);
+		catalogBtn.setEnabled(true);
 	}
 
 	@Override
@@ -331,7 +333,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 	}
 
 	@Override
-	public void awaitingItemToBePlacedInScanningArea(ItemsControl itemsControl) {
+	public void awaitingItemToBePlacedInScanningArea(StationControl sc) {
 		// TODO Auto-generated method stub
 		
 	}
