@@ -70,27 +70,21 @@ public class KeyboardControl {
 		int queryLength = chars.size();
 		if (updatePointer) {
 			if (pointer != 0) {
-				pointer--;
-				chars.remove(pointer);
+				chars.remove(--pointer);
 			}
 		} else if (pointer < queryLength) {
 			chars.remove(pointer);
 		}
 	}
 
-	protected void addToString(String label) {
-		if (label.length() == 1) { // identifies letter key labels
-			char c = label.charAt(0);
+	protected void addToString(String key) {
+		if (key.length() == 1) { // identifies letter key labels
+			char c = key.charAt(0);
 			chars.add(++pointer, getLetterCase(c));
-		} else if (label.equals("Spacebar")) {
-			chars.add(pointer, " ");
-			return;
-		}
-		char[] ch = label.toCharArray();
-		int ascii = (int) ch[0];
-		if (ascii >= 48 && ascii <= 57) { // identifies number/symbol key labels
-			chars.add(pointer, getNumberOrSymbol(ch));
-			return;
+		} else if (key.equals("Spacebar")) {
+			chars.add(++pointer, " ");
+		} else if (isNumOrSymbol(key)) {
+			chars.add(++pointer, getNumberOrSymbol(key));
 		}
 	}
 
@@ -101,9 +95,14 @@ public class KeyboardControl {
 		}
 		return letter;
 	}
+	
+	private boolean isNumOrSymbol(String key) {
+		int ascii = (int) key.toCharArray()[0];
+		return ascii >= 48 && ascii <= 57; // identifies number/symbol key labels
+	}
 
-	protected String getNumberOrSymbol(char[] ch) {
-		return String.valueOf(shiftPressed ? ch[2] : ch[0]); // gets symbol or number from label
+	protected String getNumberOrSymbol(String key) {
+		return String.valueOf(key.charAt(!shiftPressed ? 0 : 2)); // gets symbol or number from label
 	}
 
 	public void keyPressed(String key) {
