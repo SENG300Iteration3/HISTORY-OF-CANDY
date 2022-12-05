@@ -6,6 +6,8 @@ import com.diy.software.listeners.KeyboardControlListener;
 import com.diy.software.util.MathUtils;
 
 public class KeyboardControl {
+	private static final String SYMBOLS = "~!@#$%^&*()_+{}|:\"<>?";
+	
 	protected ArrayList<KeyboardControlListener> listeners = new ArrayList<>();
 	protected String text = "";
 	protected boolean capsLockOn = false; // assumes caps lock is initially off
@@ -54,8 +56,6 @@ public class KeyboardControl {
 			addTextAtPointer(" ");
 		} else if (key.equals("Tab")) {
 			addTextAtPointer("	");
-		} else if (isNumberOrSymbol(key)) {
-			addTextAtPointer(getNumberOrSymbol(key));
 		} else if (key.startsWith("Left")) {
 			movePointer(-1);
 		} else if (key.startsWith("Right")) {
@@ -65,6 +65,8 @@ public class KeyboardControl {
 				removeCharAtPointer();
 		} else if (key.startsWith("Delete")) {
 			removeCharInPlace();
+		} else if (isNumberOrSymbol(key)) {
+			addTextAtPointer(getNumberOrSymbol(key));
 		}
 	}
 	
@@ -100,12 +102,8 @@ public class KeyboardControl {
 		return capsLockOn || isShiftPressed() ? key.toUpperCase() : key.toLowerCase();
 	}
 	
-	// Identifies whether or not a key is 0-9 or one of !@#$%^&*()
 	private boolean isNumberOrSymbol(String key) {
-		if (key.length() != 3) return false; // Prevent function keys from registering
-		
-		int ascii = (int) key.toCharArray()[0];
-		return ascii >= 39 && ascii <= 100; // identifies number/symbol key labels
+		return key.length() == 3 && SYMBOLS.contains(key.substring(2, 3)); // Identifies number/symbol key labels
 	}
 
 	// Gets symbol or number from label (there is a space in between, so the char index is 0 or 2)
