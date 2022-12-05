@@ -166,6 +166,7 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 	}
 
 	private void toggleKeyColor(JButton keyBtn) {
+		// Swap background colors
 		if (keyBtn.getBackground() == GUI_Color_Palette.DARK_BROWN) {
 			keyBtn.setBackground(GUI_Color_Palette.DARKER_BROWN);
 		} else {
@@ -202,7 +203,6 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 
 	@Override
 	public void awaitingKeyboardInput(KeyboardControl kc) {
-		// TODO Auto-generated method stub
 
 	}
 
