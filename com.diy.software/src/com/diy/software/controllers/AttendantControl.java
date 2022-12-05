@@ -59,6 +59,10 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 	public KeyboardControl getKeyboardControl() {
 		return kc;
 	}
+	
+	public TextLookupControl getTextLookupControl() {
+		return tlc;
+	}
 
 	public void approveBagsAdded() {
 		sc.unblockStation();
