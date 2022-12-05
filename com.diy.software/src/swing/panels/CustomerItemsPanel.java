@@ -142,6 +142,16 @@ public class CustomerItemsPanel extends JPanel
 		placeItemInBaggingAreaButton.setEnabled(false);
 		itemWeight.setEnabled(true);
 	}
+
+	@Override
+	public void itemWasWeighed(ItemsControl ic) {
+		selectNextItemButton.setEnabled(false);
+		mainScannerButton.setEnabled(false);
+		handheldScannerButton.setEnabled(false);
+		deselectCurrentItemButton.setEnabled(true);
+		placeItemInBaggingAreaButton.setEnabled(false);
+		itemWeight.setEnabled(false);
+	}
 	
 //	@Override
 //	public void plucodedItemWasSelected(ItemsControl ic) {
@@ -347,4 +357,6 @@ public class CustomerItemsPanel extends JPanel
 		// TODO Auto-generated method stub
 		
 	}
+
+	
 }

@@ -228,5 +228,11 @@ public class CustomerBagsPanel extends JPanel
 		
 	}
 
+	@Override
+	public void itemWasWeighed(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

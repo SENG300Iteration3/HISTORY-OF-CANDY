@@ -163,6 +163,12 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	public void putUnscannedItemBack() {
 		try {
 			sc.customer.deselectCurrentItem();
+
+			// if there was a plu item on the scanner tray then remove it
+			if(weightofScannerTray != 0) {
+				sc.station.scanningArea.remove(currentItem);
+			}
+
 			for (ItemsControlListener l : listeners) {
 				l.itemsAreAvailableInCart(this);
 				l.awaitingItemToBeSelected(this);
@@ -313,6 +319,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		if(isPLU) {
 			System.out.println("Weighing item!!");
 			sc.station.scanningArea.add(currentItem);
+
+			for (ItemsControlListener l : listeners)
+					l.itemWasWeighed(this);
+
 		} else {
 			System.err.println("No need to weigh a barcoded item!!");
 		}

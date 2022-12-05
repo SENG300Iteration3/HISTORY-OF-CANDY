@@ -259,4 +259,9 @@ public class AttendantActionsPanel extends JPanel
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+	public void itemWasWeighed(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
+	}
 }
