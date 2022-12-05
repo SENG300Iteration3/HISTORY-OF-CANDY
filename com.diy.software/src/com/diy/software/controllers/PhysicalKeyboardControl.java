@@ -1,6 +1,5 @@
 package com.diy.software.controllers;
 
-import com.diy.software.listeners.KeyboardControlListener;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.nightingale.Keyboard;
@@ -36,14 +35,13 @@ public class PhysicalKeyboardControl extends KeyboardControl implements Keyboard
 	}
 
 	@Override
-	public void keyPressed(Keyboard keyboard, String label) {
+	public void keyPressed(Keyboard keyboard, String key) {
 		// TODO Auto-generated method stub
-		
+		this.keyAction(key);
 	}
 
 	@Override
-	public void keyReleased(Keyboard keyboard, String label) {
+	public void keyReleased(Keyboard keyboard, String key) {
 		// TODO Auto-generated method stub
-		super.keyPressed(label);
 	}
 }
