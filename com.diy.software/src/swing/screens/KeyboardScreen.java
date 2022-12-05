@@ -95,7 +95,7 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 		return keyBtn;
 	}
 
-	private void togglePressed(JButton keyBtn) {
+	private void toggleKeyColor(JButton keyBtn) {
 		if (keyBtn.getBackground() == GUI_Color_Palette.DARK_BROWN) {
 			keyBtn.setBackground(GUI_Color_Palette.DARKER_BROWN);
 		} else {
@@ -114,22 +114,19 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 	public void keyboardInputRecieved(KeyboardControl kc, String text, String key, int pointerPosition) {
 		JButton keyBtn = keyBtnMap.get(key);
 		
-		// Update the text visual to reflect KeyController
-		queryField.setText(text);
+		queryField.setText(text); // Update the text visual to reflect KeyController
+		queryField.requestFocus(); // Required before setting caret
+	    queryField.setCaretPosition(pointerPosition); // Update cursor position
 
 		if (key.equals("Backspace")) {
 
 		} else if (key.equals("Delete")) {
 
 		} else if (key.equals("CapsLock")) {
-			togglePressed(keyBtn);
+			toggleKeyColor(keyBtn);
 		} else if (key.startsWith("Shift")) {
-			togglePressed(keyBtn);
+			toggleKeyColor(keyBtn);
 		}
-		
-		queryField.requestFocus();
-	    queryField.setCaretPosition(pointerPosition);
-	    System.out.println(queryField.getCaretPosition());
 	}
 
 	@Override

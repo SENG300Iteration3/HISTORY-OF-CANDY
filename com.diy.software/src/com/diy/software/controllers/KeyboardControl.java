@@ -36,10 +36,6 @@ public class KeyboardControl {
 			l.keyboardInputCompleted(this, this.text);
 	}
 	
-	public void movePointer(int delta) {
-		this.pointer = MathUtils.clamp(pointer + delta, 0, text.length());
-	}
-	
 	// Supports functionality for letters, numbers, symbols, backspace, delete, L/R
 	// arrows, L/R shift and enter
 	protected void keyAction(String key) {
@@ -53,7 +49,7 @@ public class KeyboardControl {
 			addText(" ");
 		} else if (key.equals("Tab")) {
 			addText("	");
-		} else if (isNumOrSymbol(key)) {
+		} else if (isNumberOrSymbol(key)) {
 			addText(getNumberOrSymbol(key));
 		} else if (key.equals("Enter")) {
 			inputComplete();
@@ -66,7 +62,11 @@ public class KeyboardControl {
 	
 	private void addText(String newText) {
 		this.text += newText;
-		movePointer(1);
+		movePointer(newText.length()); // Move pointer the appropriate number of spaces forward
+	}
+	
+	private void movePointer(int delta) {
+		this.pointer = MathUtils.clamp(pointer + delta, 0, text.length());
 	}
 
 	private String getLetterCase(String key) {
@@ -74,12 +74,12 @@ public class KeyboardControl {
 	}
 	
 	// Identifies whether or not a key is 0-9 or one of !@#$%^&*()
-	private boolean isNumOrSymbol(String key) {
+	private boolean isNumberOrSymbol(String key) {
 		int ascii = (int) key.toCharArray()[0];
 		return ascii >= 48 && ascii <= 57; // identifies number/symbol key labels
 	}
 
-	// Gets symbol or number from label (there is a space in between)
+	// Gets symbol or number from label (there is a space in between, so the char index is 0 or 2)
 	private String getNumberOrSymbol(String key) {
 		return String.valueOf(key.charAt(!shiftPressed ? 0 : 2));
 	}
