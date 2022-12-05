@@ -19,7 +19,7 @@ public class PLUCodeControl implements ActionListener {
 		this.sc = sc;
 		this.ic = sc.getItemsControl();
 		this.listeners = new ArrayList<>();
-		this.addListener(sc);
+		this.addListener(ic);
 	}
 	
 	public void addListener(PLUCodeControlListener l) {
@@ -51,7 +51,6 @@ public class PLUCodeControl implements ActionListener {
 					l.pluHasBeenUpdated(this, pluCode);
 				break;
 			case "submit":
-				sc.goBackOnUI();
 				try {
 					for (PLUCodeControlListener l: listeners)
 						l.pluCodeEntered(this, pluCode);
