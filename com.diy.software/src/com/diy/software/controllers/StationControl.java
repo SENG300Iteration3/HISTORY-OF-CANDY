@@ -73,6 +73,7 @@ public class StationControl
 	private PinPadControl ppc;
 	private PaymentControl pc;
 	private VirtualKeyboardControl vkc;
+	private	ReceiptControl rc;
 
 	private boolean isLocked = false;
 	public String memberName;
@@ -80,6 +81,11 @@ public class StationControl
 	private boolean membershipInput = false;
 	private int bagInStock;
 
+
+	
+	// used for receipt listeners
+	boolean isOutOfPaper = false;
+	boolean isOutOfInk = false;
 	/**
 	 * Constructor for the SystemControl class. Instantiates an object of type
 	 * DoItYourselfStation as well as a set of listeners which are registered to the
@@ -103,9 +109,10 @@ public class StationControl
 		station.baggingArea.register(this);
 		station.cardReader.register(this);
 		station.reusableBagDispenser.register(this);
+		rc = new ReceiptControl(this);
 		
-		station.plugIn();
-		station.turnOn();
+
+		startUp();
 		
 		fillStation();
 		
@@ -122,7 +129,7 @@ public class StationControl
 		 * to simulate low paper and low ink
 		 */
 		try {
-			station.printer.addInk(500);
+			station.printer.addInk(100);
 			station.printer.addPaper(1);
 		} catch (OverloadException e1) {
 
@@ -143,6 +150,7 @@ public class StationControl
 		this.fakeData.addProductAndBarcodeData();
 		this.fakeData.addPLUCodedProduct();
 		this.fakeData.addFakeMembers();
+		this.fakeData.addFakeAttendantLogin();
 
 		// for (Card c: this.fakeData.getCards()) customer.wallet.cards.add(c);
 		// for (Item i: this.fakeData.getItems()) customer.shoppingCart.add(i);
@@ -167,6 +175,11 @@ public class StationControl
 		listeners.remove(l);
 	}
 
+	public void startUp() {
+		station.plugIn();
+		station.turnOn();
+	}
+	
 	public ItemsControl getItemsControl() {
 		return ic;
 	}
@@ -190,6 +203,10 @@ public class StationControl
 	public BagDispenserControl getBagDispenserControl() {
 		return bdc;
 	}
+	public ReceiptControl getReceiptControl() {
+		return rc;
+	}
+
 
 	public PinPadControl getPinPadControl() {
 		return ppc;
@@ -205,6 +222,10 @@ public class StationControl
 
 	public VirtualKeyboardControl getKeyboardControl() {
 		return vkc;
+	}
+	
+	public DoItYourselfStation getStation() {
+		return station;
 	}
 	
 	private void loadBags() {
@@ -538,6 +559,8 @@ public class StationControl
 	}
 
 	/**
+	 * TODO
+	 * Delete later, moved to receipt controller
 	 * simulates printing the receipt to the customer based on what they purchased
 	 * 
 	 * @param receipt the customer receipt as a string
@@ -547,6 +570,7 @@ public class StationControl
 		for (char receiptChar : receipt.toCharArray()) {
 			try {
 				station.printer.print(receiptChar);
+				//System.out.println(receiptChar);
 			} catch (EmptyException e) {
 
 			} catch (OverloadException e) {
@@ -667,39 +691,54 @@ public class StationControl
 		return bagInStock;
 	}
 
+	
 	@Override
 	public void outOfPaper(IReceiptPrinter printer) {
-
+		isOutOfPaper = true;
+		System.out.println("SC out of paper");
+		rc.outOfPaper(printer);
+		blockStation();
+		rc.outOfPaper(printer);
 	}
 
 	@Override
 	public void outOfInk(IReceiptPrinter printer) {
-		// System.out.println("out of ink");
+		isOutOfInk = true;
+		 System.out.println("SC out of ink");	
+		 rc.outOfInk(printer);
+		 blockStation();
 		// have the same functionality as low ink for now
-		// ac.lowInk(printer);
+		 rc.outOfInk(printer);
 	}
 
 	@Override
 	public void lowInk(IReceiptPrinter printer) {
-		// System.out.println("low ink");
-		ac.lowInk(printer);
+		System.out.println("SC low ink");
+		rc.lowInk(printer);
 	}
 
 	@Override
 	public void lowPaper(IReceiptPrinter printer) {
-		ac.lowPaper(printer);
+		System.out.println("SC low paper");
+		rc.lowPaper(printer);
 	}
 
 	@Override
 	public void paperAdded(IReceiptPrinter printer) {
-		// TODO Auto-generated method stub
-
+		isOutOfPaper = false;
+		// unblock station when enough paper is added, checks if theres enough ink
+		if(!isOutOfInk) {
+			unblockStation();
+		}
 	}
 
 	@Override
 	public void inkAdded(IReceiptPrinter printer) {
-		// TODO Auto-generated method stub
-
+		isOutOfInk = false;
+		// unblock station when enough ink is added, checks if theres enough paper
+		if(!isOutOfPaper) {
+			unblockStation();
+		}
 	}
 
 	@Override
