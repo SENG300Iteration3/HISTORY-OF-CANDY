@@ -596,6 +596,8 @@ public class StationControl
 				this.blockStation();
 				System.err.println("System has been blocked!");
 			}
+		} else {
+			
 		}
 		
 	}
