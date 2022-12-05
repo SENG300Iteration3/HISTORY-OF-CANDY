@@ -194,4 +194,24 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 		submitButton.setEnabled(false);
 		
 	}
+	
+	public JButton[] getNumberPadButtons() {
+		return numberPadButtons;
+	}
+	
+	public JButton getCancelButton() {
+		return cancelButton;
+	}
+	
+	public JButton getCorrectButton() {
+		return correctButton;
+	}
+	
+	public JButton getSubmitButton() {
+		return submitButton;
+	}
+	
+	public JButton getScanSwipeButton() {
+		return scanSwipeButton;
+	}
 }
