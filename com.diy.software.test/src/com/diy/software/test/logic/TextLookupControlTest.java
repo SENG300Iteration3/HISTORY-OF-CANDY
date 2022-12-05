@@ -12,6 +12,7 @@ import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.TextLookupControlListener;
 import com.jimmyselectronics.necchi.BarcodedItem;
+import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import ca.powerutility.PowerGrid;
 
@@ -154,13 +155,55 @@ public class TextLookupControlTest {
 		}
 
 		@Override
-		public void noBaggingRequestState() {
+		public void initialState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void lowInk(AttendantControl ac, String message) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void lowPaper(AttendantControl ac, String message) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void outOfInk(AttendantControl ac, String message) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void outOfPaper(AttendantControl ac, String message) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void noBagRequest() {
 			noBaggingRequested = true;
 			
 		}
 
 		@Override
-		public void initialState() {
+		public void attendantPermitStationUse(AttendantControl ac) {
+			attendantBlocked = false;
+			
+		}
+
+		@Override
+		public void coinIsLowState(CoinStorageUnit unit, int amount) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void loggedIn(boolean isLoggedIn) {
 			// TODO Auto-generated method stub
 			
 		}

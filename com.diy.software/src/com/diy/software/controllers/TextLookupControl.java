@@ -97,7 +97,7 @@ public class TextLookupControl implements KeyboardControlListener{
 		}
 		sc.getItemsControl().addItemToCheckoutList(new Tuple<String,Double>(productDescription, productCost));
 	}
-	
+
 	public void placeProductInBaggingArea() {
 		ac.preventStationUse();
 		sc.updateWeightOfLastItemAddedToBaggingArea(productWeight);
@@ -139,7 +139,6 @@ public class TextLookupControl implements KeyboardControlListener{
 
 	@Override
 	public void keyboardInputRecieved(KeyboardControl kc, String text, String key, int pointerPosition) {
-		// TODO Auto-generated method stub
 		
 	}
 
