@@ -120,7 +120,7 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 				curKeyRow.add(makeKeyButton(key, key, 145), gc);
 			} else if (key.startsWith("Tab")) {
 				curKeyRow.add(makeKeyButton(key, key, 130), gc);
-			} else if (key.startsWith("\\")) {
+			} else if (key.startsWith("\\")) { //Need to use escape sequence char
 				curKeyRow.add(makeKeyButton("\\", key, 250), gc);
 			} else if (key.startsWith("Left")) {
 				curKeyRow.add(makeKeyButton("Left", key, 60), gc);
@@ -199,11 +199,6 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 			// Change button color to indicate whether it is pressed or not
 			toggleKeyColor(keyBtn);
 		}
-	}
-
-	@Override
-	public void awaitingKeyboardInput(KeyboardControl kc) {
-
 	}
 
 	@Override

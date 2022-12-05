@@ -23,6 +23,7 @@ public class KeyboardControl {
 		listeners.remove(l);
 	}
 	
+	// Fires when enter key is pressed
 	public void inputComplete() {
 		for (KeyboardControlListener l : listeners)
 			l.keyboardInputCompleted(this, this.text);

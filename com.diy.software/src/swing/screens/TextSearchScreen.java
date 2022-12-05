@@ -281,11 +281,6 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 	}
 
 	@Override
-	public void awaitingKeyboardInput(KeyboardControl kc) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
 	public void keyboardInputCompleted(KeyboardControl kc, String text) {
 		// TODO Auto-generated method stub
 	}
