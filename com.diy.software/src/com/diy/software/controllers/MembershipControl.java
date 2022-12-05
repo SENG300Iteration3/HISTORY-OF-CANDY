@@ -11,7 +11,8 @@ public class MembershipControl implements ActionListener {
 	private StationControl sc;
 	private ArrayList<MembershipControlListener> listeners;
 	private String memberNumber = "";
-	public String memberName;
+	public String memberName = "";
+	private int validMembershipNumber = -1;
 
 	public MembershipControl(StationControl sc) {
 		this.sc = sc;
@@ -40,6 +41,10 @@ public class MembershipControl implements ActionListener {
 			for (MembershipControlListener l : listeners)
 				l.welcomeMember(this, notFound);
 		}
+	}
+	
+	public int getValidMembershipNumber() {
+		return validMembershipNumber;
 	}
 
 	public void addListener(MembershipControlListener l) {

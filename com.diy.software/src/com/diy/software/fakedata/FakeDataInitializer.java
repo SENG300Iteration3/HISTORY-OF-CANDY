@@ -19,6 +19,7 @@ import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.necchi.Numeral;
 import com.jimmyselectronics.opeechee.Card;
 import com.jimmyselectronics.svenden.ReusableBag;
+import com.unitedbankingservices.coin.CoinStorageUnit;
 
 public class FakeDataInitializer {
 	
@@ -33,7 +34,9 @@ public class FakeDataInitializer {
 	
 	private Card card1, card2, card3, card4, card5;
 	private CardIssuer fakebank;
+	private CoinStorageUnit fakeCoinStorageUnit;
 	private final Double AMOUNT_AVAILABLE = 1000.0;
+	private final int COIN_STORAGE_CAPACITY = 50;
 	Calendar expire_date = Calendar.getInstance();
 	
 	public void addProductAndBarcodeData () {
@@ -126,6 +129,10 @@ public class FakeDataInitializer {
 		GiftcardDatabase.giftcardMap.put("00001234", 50.00);
 	}
 	
+	public void setCoinStorageCapacity() {
+		fakeCoinStorageUnit = new CoinStorageUnit(COIN_STORAGE_CAPACITY);
+	}
+	
 	public Barcode[] getBarcodes() {
 		return new Barcode[] {barcode1, barcode2, barcode3, barcode4};
 	}
@@ -157,5 +164,9 @@ public class FakeDataInitializer {
 
 	public HashMap<Integer, String> getMembershipMap() {
 		return MembershipDatabase.membershipMap;
+	}
+	
+	public CoinStorageUnit getFakeUnit() {
+		return fakeCoinStorageUnit;
 	}
 }
