@@ -40,17 +40,4 @@ public class AddOwnBagsPromptScreenTest {
 		screen.getDoneAddingBagsButton().doClick();
 		assertFalse(screen.getDoneAddingBagsButton().isVisible());
 	}
-	
-	@Test
-	public void testAwaitingCustomerToFinishPlacingBagsInBaggingArea() {
-		screen.awaitingCustomerToFinishPlacingBagsInBaggingArea(bc);
-		// This method does nothing
-	}
-	
-	@Test
-	public void testReadyToAcceptNewBagsInBaggingArea() {
-		screen.readyToAcceptNewBagsInBaggingArea(bc);
-		// This method does nothing
-	}
-
 }
