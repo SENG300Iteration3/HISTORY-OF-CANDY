@@ -18,8 +18,10 @@ import com.diy.software.listeners.CashControlListener;
 import com.unitedbankingservices.DisabledException;
 import com.unitedbankingservices.TooMuchCashException;
 import com.unitedbankingservices.banknote.Banknote;
+import com.unitedbankingservices.banknote.BanknoteDispenserMR;
 import com.unitedbankingservices.banknote.BanknoteValidatorObserver;
 import com.unitedbankingservices.coin.Coin;
+import com.unitedbankingservices.coin.CoinDispenserAR;
 
 import ca.powerutility.PowerGrid;
 
@@ -225,8 +227,6 @@ public class CashControlTest {
 		cs.enablePayments();
 		ActionEvent e = new ActionEvent(this, 0, "d 100");
 		cs.actionPerformed(e);
-		System.out.println(bns.lastReturnedCash);
-		System.out.println(77.78);
 		assertTrue(Math.abs(bns.lastReturnedCash-77.78) < 0.01);
 	}
 	
@@ -236,9 +236,22 @@ public class CashControlTest {
 		cs.enablePayments();
 		ActionEvent e = new ActionEvent(this, 0, "c 200");
 		cs.actionPerformed(e);
-		System.out.println(bns.lastReturnedCash);
-		System.out.println(1.00);
 		assertTrue(Math.abs(bns.lastReturnedCash-1.00) < 0.01);
+	}
+	
+	@Test
+	public void returnChange3() {
+		ic.updateCheckoutTotal(4.96);
+		cs.enablePayments();
+		ActionEvent e = new ActionEvent(this, 0, "d 10");
+		for(CoinDispenserAR i : sc.station.coinDispensers.values()) {
+			i.disable();
+		}
+		for(BanknoteDispenserMR i : sc.station.banknoteDispensers.values()) {
+			i.disable();
+		}
+		cs.actionPerformed(e);
+		assertTrue(Math.abs(bns.lastReturnedCash-5.00) < 0.01);
 	}
 
 	@Test
@@ -316,18 +329,18 @@ public class CashControlTest {
 		public void changeReturned(CashControl cc) {
 			changeReturned = true;
 			List<Coin> c = sc.station.coinTray.collectCoins();
-			Banknote b = null; 
-			if(sc.station.banknoteInput.hasDanglingBanknotes()) {
-				b = sc.station.banknoteInput.removeDanglingBanknote();
+			List<Banknote> b = null; 
+			if(sc.station.banknoteOutput.hasDanglingBanknotes()) {
+				b = sc.station.banknoteOutput.removeDanglingBanknotes();
 			}
 			double returnedCash = 0;
 			for(Coin i : c) {
 				returnedCash += ((double)i.getValue())/100.0;
-				cashRejected = true;
 			}
 			if(b != null) {
-				returnedCash += b.getValue();
-				cashRejected = true;
+				for(Banknote i : b) {
+					returnedCash += i.getValue();
+				}
 			}
 			lastReturnedCash = returnedCash;
 		}
@@ -354,7 +367,9 @@ public class CashControlTest {
 				returnedCash += b.getValue();
 				cashRejected = true;
 			}
-			lastReturnedCash = returnedCash;
+			if(returnedCash != 0.0) {
+				lastReturnedCash = returnedCash;
+			}
 		}
 	}
 }
