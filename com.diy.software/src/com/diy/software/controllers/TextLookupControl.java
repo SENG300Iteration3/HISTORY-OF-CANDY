@@ -37,6 +37,7 @@ public class TextLookupControl implements KeyboardControlListener{
 	
 	// Can hold either Barcoded or PLUcoded product types without losing their different properties
 	private ArrayList<CodedProduct> results;
+	private int selectionIndex;
 	
 	// Product info for selected result
 	private double productWeight;
@@ -74,7 +75,14 @@ public class TextLookupControl implements KeyboardControlListener{
 		//TODO: if nothing matches, display error and clear search to try again
 	}
 	
-	public void addProduct(int selectionIndex) {
+	public void getSelection(int selectionIndex) {
+		this.selectionIndex = selectionIndex;
+		for (TextLookupControlListener l : listeners) {
+			l.resultWasChosen(this);
+		}
+	}
+	
+	public void addProduct() {
 		if (results.get(selectionIndex).getBarcodedProduct() == null) {
 			PLUCodedProduct productToAdd = results.get(selectionIndex).getPLUCodedProduct();
 			productWeight = generateProductWeight();
@@ -91,11 +99,11 @@ public class TextLookupControl implements KeyboardControlListener{
 	}
 	
 	public void placeProductInBaggingArea() {
-		sc.blockStation();
+		ac.preventStationUse();
 		sc.updateWeightOfLastItemAddedToBaggingArea(productWeight);
 		sc.updateExpectedCheckoutWeight(productWeight);
 		for (TextLookupControlListener l : listeners) {
-			l.awaitsBaggingOfItem(this);
+			l.itemHasBeenBagged(this);
 		}
 	}
 	
@@ -116,6 +124,13 @@ public class TextLookupControl implements KeyboardControlListener{
 		return price;
 	}
 	
+	private void clearSearch() {
+		results = new ArrayList<>();
+		for (TextLookupControlListener l : listeners) {
+			l.searchHasBeenCleared(this);
+		}
+	}
+	
 	private void updateGUI() {
 		for (TextLookupControlListener l: listeners) {
 			l.checkoutHasBeenUpdated(this);
@@ -124,12 +139,17 @@ public class TextLookupControl implements KeyboardControlListener{
 
 	@Override
 	public void keyboardInputRecieved(KeyboardControl kc, String text, String key, int pointerPosition) {
+		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void keyboardInputCompleted(KeyboardControl kc, String text) {
-		findProduct(text);
+	public void keyboardInputCompleted(KeyboardControl kc, String query) {
+		for (TextLookupControlListener l: listeners) {
+			l.searchQueryWasEntered(this);
+		}
+		findProduct(query);
 		System.out.println(results);
 	}
+	
 }

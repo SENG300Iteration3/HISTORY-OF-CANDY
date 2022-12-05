@@ -72,7 +72,11 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 	
 	public KeyboardControl getKeyboardControl() {
 		return kc;
-  }
+	}
+	
+	public TextLookupControl getTextLookupControl() {
+		return tlc;
+	}
 	
 	// allow attendant to enable customer station use after it has been suspended
 	public void permitStationUse() {

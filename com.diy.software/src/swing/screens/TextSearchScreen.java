@@ -244,11 +244,6 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 		testGui.openInNewJFrame();
 	}
 
-	@Override
-	public void searchItemWasSelected(TextLookupControl tlc) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public void searchQueryWasEntered(TextLookupControl tlc) {
@@ -263,7 +258,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 	}
 
 	@Override
-	public void awaitsBaggingOfItem(TextLookupControl tlc) {
+	public void itemHasBeenBagged(TextLookupControl tlc) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -283,5 +278,11 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 	@Override
 	public void keyboardInputCompleted(KeyboardControl kc, String text) {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void searchHasBeenCleared(TextLookupControl tlc) {
+		// TODO Auto-generated method stub
+		
 	}
 }
