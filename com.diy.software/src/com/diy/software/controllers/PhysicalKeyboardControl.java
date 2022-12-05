@@ -1,46 +1,79 @@
 package com.diy.software.controllers;
 
-import com.jimmyselectronics.AbstractDevice;
-import com.jimmyselectronics.AbstractDeviceListener;
-import com.jimmyselectronics.nightingale.Keyboard;
-import com.jimmyselectronics.nightingale.KeyboardListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.HashMap;
 
-public class PhysicalKeyboardControl extends KeyboardControl implements KeyboardListener {
-	private AttendantControl ac;
+import com.diy.software.listeners.KeyboardControlListener;
+import com.jimmyselectronics.nightingale.Keyboard;
+
+
+public class PhysicalKeyboardControl extends KeyboardControl implements KeyListener {
+	private Keyboard keyboard;
+	private static String[] digitLabels = {"0 )", "1 !", "2 @", "3 #", "4 $", "5 %", "6 ^", "7 &", "8 *", "9 ("};
+	
+	private static HashMap<String, String> specialLabels  = new HashMap<String, String>() {
+		private static final long serialVersionUID = 1L;
+
+	{
+	    put("Shift", "Shift (Left)");
+	    put("Caps Lock", "CapsLock");
+	    put("`", "` ~"); 
+	    put("-", "- _");
+	    put("=", "= +");
+	    put("[", "[ {");
+	    put("]", "] }");
+	    put("\\", "\\ |");
+	    put(";", "; :");
+	    put("'", "' \"");
+	    put(",", ", <");
+	    put(".", ". >"); 
+	    put("/", "/ ?"); 
+	    put("Space", "Spacebar"); 
+	    put("Left", "Left Arrow");
+	    put("Right", "Right Arrow"); 
+	}};
 	
 	public PhysicalKeyboardControl(AttendantControl ac) {
 		super();
-		this.ac = ac;
-		this.ac.station.keyboard.register(this);
-	}
-	
-	@Override
-	public void enabled(AbstractDevice<? extends AbstractDeviceListener> device) {
-		// TODO Auto-generated method stub
+		this.keyboard = ac.station.keyboard;
 	}
 
 	@Override
-	public void disabled(AbstractDevice<? extends AbstractDeviceListener> device) {
-		// TODO Auto-generated method stub
+	public void keyTyped(KeyEvent e) {
 	}
 
 	@Override
-	public void turnedOn(AbstractDevice<? extends AbstractDeviceListener> device) {
-		// TODO Auto-generated method stub
+	public void keyPressed(KeyEvent e) {
+				
+		String k = getKey(e);
+			
+		if (k != null) {
+			keyAction(k);
+			for (KeyboardControlListener l : listeners)
+				l.keyboardInputRecieved(this, this.text, k, this.pointer);
+		}
 	}
 
 	@Override
-	public void turnedOff(AbstractDevice<? extends AbstractDeviceListener> device) {
-		// TODO Auto-generated method stub
+	public void keyReleased(KeyEvent e) {
+		if (KeyEvent.getKeyText(e.getKeyCode()).equals("Shift")) {
+			keyAction(specialLabels.get("Shift"));
+		}
 	}
-
-	@Override
-	public void keyPressed(Keyboard keyboard, String label) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void keyReleased(Keyboard keyboard, String label) {
-		// TODO Auto-generated method stub
+		
+	private String getKey(KeyEvent e) {
+		String k;
+			
+		String keyText = KeyEvent.getKeyText(e.getKeyCode());
+		if (keyboard.keys().containsKey(keyText)){
+			k = keyText;
+		} else if (Character.isDigit(keyText.charAt(0))) {
+			k = digitLabels[Integer.parseInt(keyText)];
+		}else {
+			k = specialLabels.get(keyText);
+		}
+			
+		return k;	
 	}
 }
