@@ -38,11 +38,11 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	private boolean removedWrongBaggedItem;
 	private double scaleExpectedWeight;
 	private double scaleReceivedWeight;
-	
 
 	public ItemsControl(StationControl sc) {
 		this.sc = sc;
 		sc.station.handheldScanner.register(this);
+		sc.station.mainScanner.register(this);
 		sc.station.baggingArea.register(this);
 		this.listeners = new ArrayList<>();
 	}
@@ -135,10 +135,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 	// TODO: scanItem now differtiates between using handheldScanner and mainScanner
 	// ALSO: note that a new weight area called scanningArea exists now to grab weight of items during general scanning phase
-	public void scanCurrentItem() {
+	public void scanCurrentItem(boolean useHandheld) {
 		baggingAreaTimerStart = System.currentTimeMillis();
 		scanSuccess = false;
-		sc.customer.scanItem(true);
+		sc.customer.scanItem(useHandheld);
 		if (!scanSuccess) {
 			// if scanSuccess is still false after listeners have been called, we can show
 			// an alert showing a failed scan if time permits.
@@ -216,9 +216,13 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				System.out.println("Customer picks up next item");
 				pickupNextItem();	
 				break;
-			case "scan":
-				System.out.println("Customer scans next item");
-				scanCurrentItem();
+			case "main scan":
+				System.out.println("Customer uses main scanner to scan next item");
+				scanCurrentItem(false);
+				break;
+			case "handheld scan":
+				System.out.println("Customer uses handheld scanner to scan next item");
+				scanCurrentItem(true);
 				break;
 			case "put back":
 				System.out.println("Customer put back current item");
@@ -256,11 +260,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	}
 
 	@Override
-	public void turnedOn(AbstractDevice<? extends AbstractDeviceListener> device) {}
+	public void turnedOn(AbstractDevice<? extends AbstractDeviceListener> device) {	}
 
 	@Override
-	public void turnedOff(AbstractDevice<? extends AbstractDeviceListener> device) {
-	}
+	public void turnedOff(AbstractDevice<? extends AbstractDeviceListener> device) {}
 
 	@Override
 	public void barcodeScanned(BarcodeScanner barcodeScanner, Barcode barcode) {

@@ -1,13 +1,12 @@
 package com.diy.software.controllers;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Random;
 
 import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.PLUCodedProduct;
 import com.diy.hardware.external.ProductDatabases;
+import com.diy.software.listeners.KeyboardControlListener;
 import com.diy.software.listeners.TextLookupControlListener;
 import com.diy.software.util.CodedProduct;
 import com.diy.software.util.Tuple;
@@ -28,11 +27,11 @@ import com.diy.software.util.Tuple;
  * 9. GUI is updated on customers station after "Add Item" is selected
  * 
  * Functionality TODO's:
- * 1. Add TextLookupControl object to attendant and finish functionality there
- * 2. Connect to keyboard through listeners
+ * 1. Connect to keyboard through listeners
  */
 
-public class TextLookupControl implements ActionListener{
+public class TextLookupControl implements KeyboardControlListener{
+	private AttendantControl ac;
 	private StationControl sc;
 	private ArrayList<TextLookupControlListener> listeners;
 	
@@ -44,7 +43,8 @@ public class TextLookupControl implements ActionListener{
 	private double productCost;
 	private String productDescription;
 	
-	public TextLookupControl(StationControl sc) {
+	public TextLookupControl(AttendantControl ac, StationControl sc) {
+		this.ac = ac;
 		this.sc = sc;
 		this.listeners = new ArrayList<>();
 		this.results = new ArrayList<>();
@@ -123,9 +123,21 @@ public class TextLookupControl implements ActionListener{
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void awaitingKeyboardInput(KeyboardControl kc) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void keyboardInputRecieved(KeyboardControl kc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyboardInputCompleted(KeyboardControl kc, String query) {
+		findProduct(query);
+		System.out.println(results);
 	}
 	
 }
