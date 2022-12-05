@@ -118,6 +118,7 @@ public class AttendantLoginScreen extends Screen implements ActionListener, Keyb
 		loginInfo.setBorder(BorderFactory.createLineBorder(GUI_Color_Palette.DARK_BLUE, 10));
 		
 		loginInfo.setEditable(false);
+		loginInfo.getCaret().setVisible(true);
 		loginInfo.setFocusable(true);
 		loginInfo.addKeyListener(pkc);
 
