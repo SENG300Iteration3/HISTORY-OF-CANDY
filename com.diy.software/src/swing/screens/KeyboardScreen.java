@@ -137,14 +137,17 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 			togglePressed(keyBtn);
 		} else if (key.startsWith("Shift")) {
 			togglePressed(keyBtn);
-		} else if (key.equals("Enter")) {
-
 		}
 	}
 
 	@Override
 	public void awaitingKeyboardInput(KeyboardControl kc) {
 		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyboardInputCompleted(KeyboardControl kc, String text) {
 		
 	}
 }

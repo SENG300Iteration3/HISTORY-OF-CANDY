@@ -121,11 +121,22 @@ public class TextLookupControl implements KeyboardControlListener{
 			l.checkoutHasBeenUpdated(this);
 		}
 	}
+	
+	@Override
+	public void awaitingKeyboardInput(KeyboardControl kc) {
+		// TODO Auto-generated method stub
+
+	}
 
 	@Override
 	public void keyboardInputRecieved(KeyboardControl kc, String text, String key) {
-		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void keyboardInputCompleted(KeyboardControl kc, String text) {
+		findProduct(text);
+		System.out.println(results);
 	}
 	
 }
