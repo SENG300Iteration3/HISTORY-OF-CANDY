@@ -51,7 +51,7 @@ import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
  *
  */
 public class StationControl
-		implements BarcodeScannerListener, ElectronicScaleListener, CardReaderListener, ReceiptPrinterListener, PLUCodeControlListener, ReusableBagDispenserListener {
+		implements BarcodeScannerListener, ElectronicScaleListener, CardReaderListener, ReceiptPrinterListener, ReusableBagDispenserListener {
 	public FakeDataInitializer fakeData;
 	private double expectedCheckoutWeight = 0.0;
 	private double bagWeight = 0.0;
@@ -152,11 +152,6 @@ public class StationControl
 	public StationControl(FakeDataInitializer fakeData) {
 		this();
 		this.fakeData = fakeData;
-		this.fakeData.addCardData();
-		this.fakeData.addProductAndBarcodeData();
-		this.fakeData.addPLUCodedProduct();
-		this.fakeData.addFakeMembers();
-		this.fakeData.addFakeAttendantLogin();
 
 		// for (Card c: this.fakeData.getCards()) customer.wallet.cards.add(c);
 		// for (Item i: this.fakeData.getItems()) customer.shoppingCart.add(i);
@@ -164,10 +159,7 @@ public class StationControl
 		for (Card c : this.fakeData.getCards())
 			customer.wallet.cards.add(c);
 		for (Item i : this.fakeData.getItems())
-			customer.shoppingCart.add(i);
-		for (Item i : this.fakeData.getPLUItem())
-			customer.shoppingCart.add(i);
-			
+			customer.shoppingCart.add(i);		
 	}
 
 	/**
@@ -655,73 +647,6 @@ public class StationControl
 		} 
 	}
 				
-	@Override
-	public void pluCodeEntered(PLUCodeControl ppc, String pluCode) {
-		try {
-			PriceLookUpCode code = new PriceLookUpCode(pluCode);
-			System.out.println(pluCode);
-			Product product = findProduct(code);
-
-			checkInventory(product);
-
-			// Add the barcode to the ArrayList within itemControl
-			boolean check = this.ic.addItemByPLU(code);
-			// Not sure if this is supposed to be called 
-			// this.updateExpectedCheckoutWeight(weightOfItemCodeEntered);
-			// this.updateWeightOfLastItemAddedToBaggingArea(weightOfItemCodeEntered);
-			// Call method within SystemControl that handles the rest of the item scanning
-			// procedure
-			if(check) {
-				// Trigger the GUI to display "place the scanned item in the Bagging Area"
-				this.blockStation();
-			}
-		} catch(NullPointerSimulationException e) {
-			System.err.println("PLU code does not exist in the database");
-		}
-		
-
-		
-		
-		
-	}
-
-	//needed it here cause of interface but shouldnt do anything in here???
-	@Override
-	public void pluErrorMessageUpdated(PLUCodeControl pcc, String errorMessage) {
-
-	}
-
-	private void checkInventory(Product product) {
-		if(ProductDatabases.INVENTORY.containsKey(product) && ProductDatabases.INVENTORY.get(product) >= 1) {
-			ProductDatabases.INVENTORY.put(product, ProductDatabases.INVENTORY.get(product)-1); //updates INVENTORY with new total
-		}else {
-			// TODO: inform customer and attendant
-			System.out.print("Out of stock");
-		}
-	}
-	
-	private BarcodedProduct findProduct(Barcode Barcode) throws NullPointerSimulationException {
-    	if(ProductDatabases.BARCODED_PRODUCT_DATABASE.containsKey(Barcode)) {
-            return ProductDatabases.BARCODED_PRODUCT_DATABASE.get(Barcode);        
-        }
-    	else {
-    		// TODO: Inform customer station
-    		System.out.println("Cannot find the product. Please try again or ask for assistant!");
-    		throw new NullPointerSimulationException();
-    	}
-    }
-
-	private PLUCodedProduct findProduct(PriceLookUpCode code) throws NullPointerSimulationException {
-		if(ProductDatabases.PLU_PRODUCT_DATABASE.containsKey(code)) {
-					return ProductDatabases.PLU_PRODUCT_DATABASE.get(code);        
-			}
-		else {
-			// TODO: Inform customer station
-			System.out.println("Cannot find the product. Please try again or ask for assistant!");
-			throw new NullPointerSimulationException();
-		}
-	}
-	
 	public void addReusableBag(ReusableBag lastDispensedReusableBag) {
 		// ADD: update inventory
 
@@ -824,11 +749,11 @@ public class StationControl
 		return pcc;
 	}
 
-	@Override
-	public void pluHasBeenUpdated(PLUCodeControl pcc, String pluCode) {
-		// TODO Auto-generated method stub
-		
-	}
+//	@Override
+//	public void pluHasBeenUpdated(PLUCodeControl pcc, String pluCode) {
+//		// TODO Auto-generated method stub
+//		
+//	}
 
 	@Override
 	public void bagDispensed(ReusableBagDispenser dispenser) {
