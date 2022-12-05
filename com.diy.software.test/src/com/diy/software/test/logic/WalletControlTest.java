@@ -9,12 +9,19 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.diy.software.controllers.MembershipControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.controllers.WalletControl;
 import com.diy.software.fakedata.FakeDataInitializer;
+import com.diy.software.listeners.MembershipControlListener;
 import com.diy.software.listeners.WalletControlListener;
+import com.diy.software.test.logic.MembershipControlTest.MembershipControlListenerStub;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
+import com.jimmyselectronics.necchi.Barcode;
+import com.jimmyselectronics.necchi.BarcodeScanner;
+import com.jimmyselectronics.necchi.BarcodeScannerListener;
+import com.jimmyselectronics.necchi.IllegalDigitException;
 import com.jimmyselectronics.opeechee.Card;
 import com.jimmyselectronics.opeechee.Card.CardData;
 import com.jimmyselectronics.opeechee.CardReader;
@@ -29,7 +36,10 @@ public class WalletControlTest {
 	Card card1;
 	Card card2;
 	Card card3;
+	Card card4;
 	WalletStub wStub;
+	MembershipStub mcStub;
+	ScannerStub sStub;
 
 	@Before
 	public void setUp() throws Exception {
@@ -41,12 +51,18 @@ public class WalletControlTest {
 		wc = new WalletControl(sc); 
 		readStub = new ReaderStub();
 		
+		mcStub = new MembershipStub();
+		sc.getMembershipControl().addListener(mcStub);
+		
+		sStub = new ScannerStub();
+		
 		sc.station.cardReader.deregisterAll();
 		sc.station.cardReader.register(readStub);
 		Card[] cards = sc.fakeData.getCards();
 		card1 = cards[0];
 		card2 = cards[1];
 		card3 = cards[2];
+		card4 = cards[3];
 		sc.customer.wallet.cards.clear();
 		sc.customer.wallet.cards.add(card1);
 		wStub = new WalletStub();
@@ -55,6 +71,12 @@ public class WalletControlTest {
 		sc.station.cardReader.plugIn();
 		sc.station.cardReader.turnOn();
 		sc.station.cardReader.enable();
+		
+		sc.station.mainScanner.register(sStub);
+		sc.station.mainScanner.plugIn();
+		sc.station.mainScanner.turnOn();
+		sc.station.mainScanner.enable();
+		
 		
 	}
 	
@@ -125,6 +147,18 @@ public class WalletControlTest {
 		wc.selectCard("VISA");
 		assertTrue(sc.customer.wallet.cards.contains(card1));
 		assertFalse(sc.customer.wallet.cards.contains(card2));
+		
+	}
+	
+	@Test
+	public void testSelectCardMembership() {
+		sc.customer.wallet.cards.add(card4);
+		wc.addListener(wStub);
+		
+		assertTrue(sc.customer.wallet.cards.contains(card4));
+		wc.selectCard("MEMBERSHIP");
+		assertFalse(sc.customer.wallet.cards.contains(card4));
+		assertTrue(wStub.membershipCardSelected);
 		
 	}
 	
@@ -414,6 +448,73 @@ public class WalletControlTest {
 	}
 	
 	@Test
+	public void testActionPerformedMembership() {
+		wc.addListener(wStub);
+		sc.customer.wallet.cards.add(card4);
+		ActionEvent e = new ActionEvent(this, 0, "m");
+		wc.actionPerformed(e);
+		
+		assertTrue(wStub.membershipCardSelected);
+	}
+	
+	@Test
+	public void testActionPerformedScanSuccessful() {
+		wc.addListener(wStub);
+		sc.customer.wallet.cards.add(card4);
+		ActionEvent e = new ActionEvent(this, 0, "m");
+		wc.actionPerformed(e);
+		
+		sc.startMembershipCardInput();
+		
+		ActionEvent e2 = new ActionEvent(this, 0, "scan");
+		while (!sStub.barcodeScanned) {
+			wc.actionPerformed(e2);
+		}
+		
+		assertEquals("Welcome! Itadori", mcStub.memberName);
+		assertFalse(mcStub.membershipInput);
+	}
+	
+	@Test
+	public void testActionPerformedScanUnsuccessful() {
+		wc.addListener(wStub);
+		sc.customer.wallet.cards.add(card4);
+		ActionEvent e = new ActionEvent(this, 0, "m");
+		wc.actionPerformed(e);
+		
+		sc.startMembershipCardInput();
+		
+		ActionEvent e2 = new ActionEvent(this, 0, "scan");
+		do {
+			mcStub.memberName = null;
+			mcStub.membershipInput = true;
+			sStub.barcodeScanned = false;
+			wc.actionPerformed(e2);
+		}
+		while (sStub.barcodeScanned);
+		
+		assertNull(mcStub.memberName);
+		assertTrue(mcStub.membershipInput);
+	}
+	
+	@Test
+	public void testActionPerformedScanInvalidNumber() {
+		wc.addListener(wStub);
+		sc.customer.wallet.cards.add(new Card("MEMBERSHIP", "1234567890a", "Name", "000", "0000", false, true));
+		ActionEvent e = new ActionEvent(this, 0, "m");
+		wc.actionPerformed(e);
+		
+		sc.startMembershipCardInput();
+		
+		ActionEvent e2 = new ActionEvent(this, 0, "scan");
+		wc.actionPerformed(e2);
+		
+		assertNull(mcStub.memberName);
+		assertTrue(mcStub.membershipInput);
+	}
+	
+	
+	@Test
 	public void testCardInserted() {
 		wc.addListener(wStub);
 		
@@ -430,6 +531,24 @@ public class WalletControlTest {
 		wc.cardRemoved(sc.station.cardReader);
 		assertFalse(wStub.inserted);
 	}
+	
+	@Test
+	public void testMembershipCardInputEnabled() {
+		wc.addListener(wStub);
+		wc.membershipCardInputEnabled();
+		
+		assertTrue(wStub.membershipCardInputEnabled);
+	}
+	
+	@Test
+	public void testMembershipCardInputCanceled() {
+		wc.addListener(wStub);
+		wc.membershipCardInputCanceled();
+		
+		assertFalse(wStub.membershipCardInputEnabled);
+	}
+	
+
 	
 	@After
 	public void teardown() {
@@ -504,11 +623,51 @@ public class WalletControlTest {
 		}
 	}
 	
+	public class ScannerStub implements BarcodeScannerListener{
+		
+		public boolean enabled = false;
+		public boolean turnedOn = false;
+		public boolean barcodeScanned = false;
+
+		@Override
+		public void enabled(AbstractDevice<? extends AbstractDeviceListener> device) {
+			enabled = true;
+			
+		}
+
+		@Override
+		public void disabled(AbstractDevice<? extends AbstractDeviceListener> device) {
+			enabled = false;
+			
+		}
+
+		@Override
+		public void turnedOn(AbstractDevice<? extends AbstractDeviceListener> device) {
+			turnedOn = true;
+			
+		}
+
+		@Override
+		public void turnedOff(AbstractDevice<? extends AbstractDeviceListener> device) {
+			turnedOn = false;
+			
+		}
+
+		@Override
+		public void barcodeScanned(BarcodeScanner barcodeScanner, Barcode barcode) {
+			barcodeScanned = true;
+			
+		}
+		
+	}
+	
 	public class WalletStub implements WalletControlListener{
 
 		public boolean cardHasBeenSelected = false;
 		public boolean paymentsEnabled = false;
 		public boolean inserted = false;
+		public boolean membershipCardSelected = false;
+		public boolean membershipCardInputEnabled = false;
 
 		@Override
 		public void cardHasBeenSelected(WalletControl wc) {
@@ -542,6 +701,56 @@ public class WalletControlTest {
 		@Override
 		public void cardWithPinRemoved(WalletControl wc) {
 			inserted = false;
+			
+		}
+
+		@Override
+		public void membershipCardHasBeenSelected(WalletControl wc) {
+			membershipCardSelected = true;
+			
+		}
+
+		@Override
+		public void membershipCardInputEnabled(WalletControl wc) {
+			membershipCardInputEnabled = true;
+			
+		}
+
+		@Override
+		public void membershipCardInputCanceled(WalletControl walletControl) {
+			membershipCardInputEnabled = false;
+			
+		}
+		
+	}
+	
+	public class MembershipStub implements MembershipControlListener{
+
+		public String memberName;
+		public String memberNumber;
+		public boolean scanSwipeSelected = false;
+		public boolean membershipInput = true;
+
+		@Override
+		public void welcomeMember(MembershipControl mc, String memberName) {
+			this.memberName = memberName;
+		}
+
+		@Override
+		public void memberFieldHasBeenUpdated(MembershipControl mc, String memberNumber) {
+			this.memberNumber = memberNumber;
+			
+		}
+
+		@Override
+		public void scanSwipeSelected(MembershipControl mc) {
+			scanSwipeSelected = true;
+			
+		}
+
+		@Override
+		public void disableMembershipInput(MembershipControl mc) {
+			membershipInput = false;
 			
 		}
 		
