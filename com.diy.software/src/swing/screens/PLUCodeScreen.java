@@ -25,6 +25,7 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 	String errorText;
 
 	JLabel message;
+	JLabel errorMessage;
 	GUI_JLabel pluCode;
 
 	private GUI_JPanel centerPanel;
@@ -82,6 +83,10 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 		message.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		message.setHorizontalAlignment(JLabel.CENTER);
 
+		errorMessage = new GUI_JLabel(errorText);
+		errorMessage.setFont(GUI_Fonts.FRANKLIN_BOLD);
+		errorMessage.setHorizontalAlignment(JLabel.CENTER);
+
 		pluCode = new GUI_JLabel("PLU code".toUpperCase());
 		pluCode.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		pluCode.setHorizontalAlignment(JLabel.CENTER);
@@ -93,8 +98,9 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 		centerPanel = new GUI_JPanel();
 		centerPanel.setBackground(GUI_Color_Palette.DARK_BLUE);
 		centerPanel.setPreferredSize(new Dimension(width, height));
-		centerPanel.setLayout(new GridLayout(2, 0));
+		centerPanel.setLayout(new GridLayout(3, 0));
 
+		centerPanel.add(errorMessage);
 		centerPanel.add(message);
 		centerPanel.add(pluCode);
 		addLayer(centerPanel, 0);
@@ -127,7 +133,6 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 		
 	}
 
-	//idk if needed
 	@Override
 	public void pluErrorMessageUpdated(PLUCodeControl ppc, String errorText) {
 		this.errorText = errorText;
