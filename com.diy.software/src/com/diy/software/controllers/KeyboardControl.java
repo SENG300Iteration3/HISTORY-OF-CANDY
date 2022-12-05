@@ -3,6 +3,7 @@ package com.diy.software.controllers;
 import java.util.ArrayList;
 
 import com.diy.software.listeners.KeyboardControlListener;
+import com.diy.software.util.MathUtils;
 
 public class KeyboardControl {
 	protected ArrayList<KeyboardControlListener> listeners;
@@ -11,16 +12,16 @@ public class KeyboardControl {
 	protected boolean shiftPressed;
 	private int pointer;
 	protected String query;
-	
+
 	public KeyboardControl() {
 		this.listeners = new ArrayList<>();
 		chars = new ArrayList<String>();
-		capsLockOn = false; 				// assumes caps lock is initially off
+		capsLockOn = false; // assumes caps lock is initially off
 		shiftPressed = false;
 		pointer = -1;
 		query = "";
 	}
-	
+
 	public void addListener(KeyboardControlListener l) {
 		listeners.add(l);
 	}
@@ -28,119 +29,112 @@ public class KeyboardControl {
 	public void removeListener(KeyboardControlListener l) {
 		listeners.remove(l);
 	}
-	
+
 	protected void completedInput() {
 		for (KeyboardControlListener l : listeners)
 			l.keyboardInputCompleted(this, this.query);
 	}
-	
+
 	protected boolean isShiftPressed(String label) {
 		if (label.equals("Shift (Right)") || label.equals("Shift (Left)")) {
-			shiftPressed = !shiftPressed; //Toggle shift
+			shiftPressed = !shiftPressed; // Toggle shift
 		}
 		return shiftPressed;
 	}
-	
+
 	protected boolean isCapsLockOn(String label) {
-		if (label.equals("CapsLock")){
-			capsLockOn = !capsLockOn; //Toggle capsLock
+		if (label.equals("CapsLock")) {
+			capsLockOn = !capsLockOn; // Toggle capsLock
 		}
 		return capsLockOn;
 	}
-	
-	// Supports functionality for letters, numbers, symbols, backspace, delete, L/R arrows, and enter
-	protected void keyAction(String label) {
-		if (label.equals("Right Arrow") || label.equals("Left Arrow")) {
-			movePointer(label);
+
+	// Supports functionality for letters, numbers, symbols, backspace, delete, L/R
+	// arrows, and enter
+	protected void keyAction(String key) {
+		switch (key) {
+		case "Right Arrow":
+			movePointer(1);
 			return;
-		}
-		if (label.equals("Backspace") || label.equals("Delete")) {
-			removeChar(label);
+		case "Left Arrow":
+			movePointer(-1);
 			return;
-		}
-		if (label.equals("Enter")) {
+		case "Backspace":
+			removeChar(key, true);
+			return;
+		case "Delete":
+			removeChar(key, false);
+			return;
+		case "Enter":
 			for (String c : chars) {
 				query += c;
 			}
 			completedInput();
 			return;
 		}
-		addToString(label);
+		addToString(key);
 	}
-	
-	protected void movePointer(String label) {
+
+	protected void movePointer(int delta) {
 		int queryLength = chars.size();
-		if (label.equals("Right Arrow")) {
-			if (pointer < (queryLength)) {
-					pointer++;
-			}
-		}
-		if (label.equals("Left Arrow")) {
-			if (pointer != 0) {
-					pointer--;
-			}
-		}
+		// Update the pointer by moving it delta delta spaces to the left or right depending on sign
+		// Value of pointer is safely clamped between a min of 0 and a max of queryLength
+		pointer = MathUtils.clamp(pointer + delta, 0, queryLength);
 	}
-	
-	protected void removeChar(String label) {
+
+	protected void removeChar(String label, boolean updatePointer) {
 		int queryLength = chars.size();
-		if (label.equals("Delete")) {
-			if (pointer < queryLength) {
-					chars.remove(pointer);
-			}
-		}
-		if (label.equals("Backspace")) {
+		if (updatePointer) {
 			if (pointer != 0) {
-					chars.remove(pointer-1);
-					pointer --;
+				pointer--;
+				chars.remove(pointer);
 			}
+		} else if (pointer < queryLength) {
+			chars.remove(pointer);
 		}
 	}
-	
+
 	protected void addToString(String label) {
-		if (label.length() == 1) {						// identifies letter key labels
+		if (label.length() == 1) { // identifies letter key labels
 			char c = label.charAt(0);
 			chars.add(++pointer, getLetterCase(c));
-		}
-		if (label.equals("Spacebar")) {
+		} else if (label.equals("Spacebar")) {
 			chars.add(pointer, " ");
+			return;
 		}
 		char[] ch = label.toCharArray();
 		int ascii = (int) ch[0];
-		if (ascii >= 48 && ascii <= 57) {				// identifies number/symbol key labels
+		if (ascii >= 48 && ascii <= 57) { // identifies number/symbol key labels
 			chars.add(pointer, getNumberOrSymbol(ch));
 			return;
 		}
 	}
-	
+
 	protected String getLetterCase(char c) {
-		char[] ch = {c};
+		char[] ch = { c };
 		String letter = ch.toString();
-		if ((capsLockOn == true && shiftPressed == false) || 
-				(capsLockOn == false && shiftPressed == true)) {
+		if ((capsLockOn == true && shiftPressed == false) || (capsLockOn == false && shiftPressed == true)) {
 			return letter;
-		}
-		else {
+		} else {
 			letter.toLowerCase();
 			return letter;
 		}
 	}
-	
+
 	protected String getNumberOrSymbol(char[] ch) {
 		char[] label;
 		if (shiftPressed == false) {
-			label = new char[] {ch[0]};				// gets number from label
-		}
-		else {
-			label = new char[] {ch[2]};				// gets symbol from label
+			label = new char[] { ch[0] }; // gets number from label
+		} else {
+			label = new char[] { ch[2] }; // gets symbol from label
 		}
 		return label.toString();
 	}
-	
+
 	public void keyPressed(String key) {
 		// TODO: Fix event error
-		//isCapsLockOn(key);
-		//isShiftPressed(key);
+		// isCapsLockOn(key);
+		// isShiftPressed(key);
 		keyAction(key);
 		for (KeyboardControlListener l : listeners)
 			l.keyboardInputRecieved(this, key);
