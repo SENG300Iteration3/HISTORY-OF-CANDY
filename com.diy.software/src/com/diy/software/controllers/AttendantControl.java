@@ -29,6 +29,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	public AttendantControl(StationControl sc) {
 		this.sc = sc;
 		this.listeners = new ArrayList<>();
+		this.currency = Currency.getInstance("CAD");
 	}
 
 	public void addListener(AttendantControlListener l) {
@@ -125,13 +126,15 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 				l.banknotesInStorageLowState();
 			loadBanknotesToStorage(this.sc.station.banknoteStorage);
 		} else {
-			//Maybe remove or change?
-			System.out.println("Storage does not need to be loaded for now.");
+			//Change so message is on gui instead??
+			System.out.println("Banknote storage does not need to be loaded for now.");
 		}
 	}
 	
 	/*
 	 * Refills banknote storage if it is low
+	 * 
+	 * FIXME: Counter for each banknote not working (null banknote)
 	 * 
 	 * @param unit
 	 * 			The storage unit where the banknotes will be loaded

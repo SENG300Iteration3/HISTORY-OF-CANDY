@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.event.ActionEvent;
+import java.util.Currency;
 
 import org.junit.After;
 import org.junit.Before;
@@ -20,6 +21,7 @@ import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.abagnale.ReceiptPrinterND;
 import com.jimmyselectronics.opeechee.Card.CardData;
 import com.unitedbankingservices.TooMuchCashException;
+import com.unitedbankingservices.banknote.Banknote;
 
 import ca.powerutility.PowerGrid;
 import ca.ucalgary.seng300.simulation.InvalidArgumentSimulationException;
@@ -33,6 +35,7 @@ public class TestAttendantControl {
     SystemControlListenerStub scl;
     ReceiptPrinterND rp;
     ItemsControl ic;
+    Currency currency;
 
 
     @Before
@@ -52,6 +55,8 @@ public class TestAttendantControl {
     	rp.turnOff();
     	rp.turnOn();
     	rp.enable();
+    	
+    	this.currency = Currency.getInstance("CAD");
     }
 
     @Test 
@@ -169,10 +174,30 @@ public class TestAttendantControl {
     }
     
     // Capacity of storage is 1000 in DoItYourselfStation
+    // FIXME: Counter for checking each banknote not working properly
     @Test
-    public void testAdjustBanknoteForChange() throws SimulationException, TooMuchCashException {
-//    	sc.station.banknoteStorage.getCapacity();
-//    	ac.adjustBanknotesForChange();
+    public void testAdjustBanknoteForChangeEmptyStorage() throws SimulationException, TooMuchCashException {
+    	ac.addListener(als);
+    	assertFalse(als.banknoteLowState);
+    	ac.adjustBanknotesForChange();
+    	assertTrue(sc.station.banknoteStorage.getBanknoteCount() >= 900);
+    	assertTrue(als.banknoteLowState);
+    }
+    
+    // TODO: Add assertion for actual method
+    @Test
+    public void testAdjustBanknoteForChangeFullStorage() throws SimulationException, TooMuchCashException {
+    	ac.addListener(als);
+    	assertFalse(als.banknoteLowState);
+    	for (int i = 0; i < 100; i++) {
+    		sc.station.banknoteStorage.load(new Banknote(currency, 5));
+    		sc.station.banknoteStorage.load(new Banknote(currency, 10));
+    		sc.station.banknoteStorage.load(new Banknote(currency, 20));
+    		sc.station.banknoteStorage.load(new Banknote(currency, 50));
+    		sc.station.banknoteStorage.load(new Banknote(currency, 100));
+    	}
+    	assertTrue(sc.station.banknoteStorage.getBanknoteCount() == 500);
+    	ac.adjustBanknotesForChange();
     }
     
     @Test
