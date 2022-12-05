@@ -42,31 +42,43 @@ public class FakeDataInitializer {
 	Calendar expire_date = Calendar.getInstance();
 	
 	public void addProductAndBarcodeData () {
+		/**
+		 * BarcodedProducts & BarcodedItems in customer shopping cart starts here
+		 */
 		barcode1 = new Barcode(new Numeral[] { Numeral.one, Numeral.two, Numeral.three, Numeral.four }); 
+		barcode2 = new Barcode(new Numeral[] { Numeral.zero, Numeral.four, Numeral.two, Numeral.zero });
+		
 		item1 = new BarcodedItem(barcode1, 450); 
-		barcode2 = new Barcode(new Numeral[] { Numeral.zero, Numeral.four, Numeral.two, Numeral.zero }); 
 		item2 = new BarcodedItem(barcode2, 420); 
-		barcode3 = new Barcode(new Numeral[] { Numeral.four, Numeral.three, Numeral.two, Numeral.one }); 
-		item3 = new BarcodedItem(barcode3, 350); 
-		barcode4 = new Barcode(new Numeral[] { Numeral.one, Numeral.two, Numeral.one, Numeral.two }); 
-		item4 = new BarcodedItem(barcode4, 550); 	
-		
 		bp1 = new BarcodedProduct(barcode1, "Can of Beans", 2, 450);
-		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode1, bp1);
 		bp2 = new BarcodedProduct(barcode2, "Bag of Doritos", 5, 420);
-		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode2, bp2);
-		bp3 = new BarcodedProduct(barcode3, "Rib Eye Steak", 17, 350);
-		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode3, bp3);
-		bp4 = new BarcodedProduct(barcode4, "Cauliflower", 6, 550);
-		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode4, bp4);
 		
+		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode1, bp1);
+		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode2, bp2);
 		ProductDatabases.INVENTORY.put(bp1, 10);
 		ProductDatabases.INVENTORY.put(bp2, 10);
+		
+		/**
+		 * Other BarcodedProducts & BarcodedItems
+		 */
+		barcode3 = new Barcode(new Numeral[] { Numeral.four, Numeral.three, Numeral.two, Numeral.one }); 
+		barcode4 = new Barcode(new Numeral[] { Numeral.one, Numeral.two, Numeral.one, Numeral.two }); 
+		
+		item3 = new BarcodedItem(barcode3, 350); 
+		item4 = new BarcodedItem(barcode4, 550); 	
+		bp3 = new BarcodedProduct(barcode3, "Rib Eye Steak", 17, 350);
+		bp4 = new BarcodedProduct(barcode4, "Cauliflower", 6, 550);
+		
+		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode3, bp3);
+		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode4, bp4);
 		ProductDatabases.INVENTORY.put(bp3, 10);
 		ProductDatabases.INVENTORY.put(bp4, 10);
 	}
 	
 	public void addPLUCodedProduct() {
+		/**
+		 * Some products in the databases
+		 */
 		PriceLookUpCode plu1 = new PriceLookUpCode("2718");
 		PriceLookUpCode plu2 = new PriceLookUpCode("31415");
 		PriceLookUpCode plu3 = new PriceLookUpCode("9806");
@@ -88,16 +100,23 @@ public class FakeDataInitializer {
 		ProductDatabases.INVENTORY.put(pcp4, 10);
 		
 		/**
-		 * PLUCodedItem in cart starts here
+		 * Creates PLUCodedItems that are not in shopping cart
 		 */
 		code1 = new PriceLookUpCode("1234");
-		pitem1 = new PLUCodedItem(code1, 200);
-		pp1 = new PLUCodedProduct(code1, "Green Apples", 8);
-		
 		code2 = new PriceLookUpCode("9876");
-		pitem2 = new PLUCodedItem(code2, 300);
+		pp1 = new PLUCodedProduct(code1, "Green Apples", 8);
 		pp2 = new PLUCodedProduct(code2, "Broccoli", 5);
-
+		pitem1 = new PLUCodedItem(code1, 200);
+		pitem2 = new PLUCodedItem(code2, 300);
+		
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(code1, pp1);
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(code2, pp2);
+		ProductDatabases.INVENTORY.put(pp1, 10);
+		ProductDatabases.INVENTORY.put(pp2, 10);
+		
+		/**
+		 * PLUCodedItem in customer shopping cart starts here
+		 */
 		code3 = new PriceLookUpCode("11111");
 		pitem3 = new PLUCodedItem(code3, 300);
 		pp3 = new PLUCodedProduct(code3, "Tomatoes", 4);
@@ -106,13 +125,10 @@ public class FakeDataInitializer {
 		pitem4 = new PLUCodedItem(code4, 200);
 		pp4 = new PLUCodedProduct(code4, "Oranges", 7);
 
-		ProductDatabases.PLU_PRODUCT_DATABASE.put(code1, pp1);
-		ProductDatabases.PLU_PRODUCT_DATABASE.put(code2, pp2);
+
 		ProductDatabases.PLU_PRODUCT_DATABASE.put(code3, pp3);
 		ProductDatabases.PLU_PRODUCT_DATABASE.put(code4, pp4);
-		
-		ProductDatabases.INVENTORY.put(pp1, 10);
-		ProductDatabases.INVENTORY.put(pp2, 10);
+	
 		ProductDatabases.INVENTORY.put(pp3, 10);
 		ProductDatabases.INVENTORY.put(pp4, 10);
 	}
@@ -165,15 +181,23 @@ public class FakeDataInitializer {
 		return new Barcode[] {barcode1, barcode2, barcode3, barcode4};
 	}
 
+	/**
+	 * Get certain items for shopping cart
+	 * This method does not return all items in the database
+	 * @return a list of items that will be in customer shopping cart
+	 */
 	public Item[] getItems() {
-		return new Item[] {item1, item2, pitem3, pitem4};		//smaller list for testing
-//		return new Item[] {item1, item2, item3, item4, pitem1, pitem2, pitem3, pitem4};
+		return new Item[] {item1, item2, pitem3, pitem4};
 	}
 	
 	public PriceLookUpCode[] getPLUCode() {
 		return new PriceLookUpCode[] {code1, code2, code3, code4, reusableBagCode};
 	}
 
+	/**
+	 * Get all PLUCodedItems including PLUCodedItems in customer shopping cart
+	 * @return
+	 */
 	public PLUCodedItem[] getPLUItem() {
 		return new PLUCodedItem[] {pitem1, pitem2, pitem3, pitem4};
 	}
