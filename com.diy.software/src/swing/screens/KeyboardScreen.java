@@ -127,10 +127,6 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 			
 		} else if (key.equals("Delete")) {
 			
-		} else if (key.equals("CapsLock")) {
-			
-		} else if (key.startsWith("Shift")) {
-			
 		} else if (key.equals("Enter")) {
 			
 		}
