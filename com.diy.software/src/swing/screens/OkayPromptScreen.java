@@ -42,4 +42,8 @@ public class OkayPromptScreen extends Screen {
 			this.addLayer(okayButton, 100);
 		}
 	}
+	
+	public JButton getOkayButton() {
+		return okayButton;
+	}
 }

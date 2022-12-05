@@ -14,6 +14,7 @@ import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.ItemsControlListener;
 import com.unitedbankingservices.coin.CoinStorageUnit;
 
+import ca.powerutility.PowerGrid;
 import swing.screens.BlockedPromptScreen;
 
 public class BlockedPromptScreenTest {
@@ -26,6 +27,8 @@ public class BlockedPromptScreenTest {
 	
 	@Before
 	public void setUp() throws Exception {
+		PowerGrid.engageUninterruptiblePowerSource();
+		
 		fdi = new FakeDataInitializer();
 		sc = new StationControl(fdi);
 		screen = new BlockedPromptScreen(sc, "message");
