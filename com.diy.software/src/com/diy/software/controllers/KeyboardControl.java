@@ -3,14 +3,16 @@ package com.diy.software.controllers;
 import java.util.ArrayList;
 
 import com.diy.software.listeners.KeyboardControlListener;
+import com.diy.software.listeners.PinPadControlListener;
 
 public class KeyboardControl {
 	protected ArrayList<KeyboardControlListener> listeners;
 	private ArrayList<String> chars;
-	private String query;
 	private boolean capsLockOn;
 	private boolean shiftPressed;
 	private int pointer;
+	protected String query;
+	protected String lastKey;
 	
 	public KeyboardControl() {
 		this.listeners = new ArrayList<>();
@@ -30,18 +32,18 @@ public class KeyboardControl {
 	}
 	
 	protected void awaitingInput() {
-	    for (KeyboardControlListener listener : listeners) 
-	      listener.awaitingKeyboardInput(this);
+	    for (KeyboardControlListener l : listeners) 
+	      l.awaitingKeyboardInput(this);
 	  }
 	
 	protected void recievedInput() {
-		for (KeyboardControlListener listener : listeners)
-			listener.keyboardInputRecieved(this);
+		for (KeyboardControlListener l : listeners)
+			l.keyboardInputRecieved(this, this.lastKey);
 	}
 	
 	protected void completedInput() {
-		for (KeyboardControlListener listener : listeners)
-			listener.keyboardInputCompleted(this, this.query);
+		for (KeyboardControlListener l : listeners)
+			l.keyboardInputCompleted(this, this.query);
 	}
 	
 	protected boolean isShiftPressed(String label) {
@@ -75,6 +77,7 @@ public class KeyboardControl {
 			return;
 		}
 		addToString(label);
+		lastKey = label;
 	}
 	
 	protected void movePointer(String label) {
@@ -146,13 +149,19 @@ public class KeyboardControl {
 		return label.toString();
 	}
 	
-	public void keyPressed(String label) {
-		this.isCapsLockOn(label);
-		this.isShiftPressed(label);
-		this.keyAction(label);
+	public void keyPressed(String key) {
+		isCapsLockOn(key);
+		isShiftPressed(key);
+		keyAction(key);
+		for (KeyboardControlListener l : listeners)
+			l.keyboardInputRecieved(this, key);
 	}
 
-	public void keyReleased(String label) {
-		this.isShiftPressed(label);
+	public void keyReleased(String key) {
+		isCapsLockOn(key);
+		isShiftPressed(key);
+		keyAction(key);
+		for (KeyboardControlListener l : listeners)
+			l.awaitingKeyboardInput(this);
 	}
 }

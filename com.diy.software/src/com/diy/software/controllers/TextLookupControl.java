@@ -129,15 +129,15 @@ public class TextLookupControl implements KeyboardControlListener{
 	}
 
 	@Override
-	public void keyboardInputRecieved(KeyboardControl kc) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void keyboardInputCompleted(KeyboardControl kc, String query) {
 		findProduct(query);
 		System.out.println(results);
+	}
+
+	@Override
+	public void keyboardInputRecieved(KeyboardControl kc, String key) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

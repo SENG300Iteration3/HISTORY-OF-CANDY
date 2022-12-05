@@ -37,15 +37,13 @@ public class PhysicalKeyboardControl extends KeyboardControl implements Keyboard
 
 	@Override
 	public void keyPressed(Keyboard keyboard, String label) {
-		super.keyPressed(label);
-		for (KeyboardControlListener l : listeners)
-			l.keyboardInputRecieved(this);
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public void keyReleased(Keyboard keyboard, String label) {
-		super.keyReleased(label);
-		for (KeyboardControlListener l : listeners)
-			l.awaitingKeyboardInput(this);
+		// TODO Auto-generated method stub
+		super.keyPressed(label);
 	}
 }

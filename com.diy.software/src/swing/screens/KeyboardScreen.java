@@ -31,8 +31,6 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 	
 	private JPanel keyboardContainer;
 	private GUI_JLabel outputText;
-	private GUI_JButton cancelBtn;
-	private GUI_JButton doneBtn;
 	
 	public KeyboardScreen(StationControl sc) {
 		super(sc);
@@ -44,11 +42,6 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 		this.rootPanel.add(keyboardContainer, BorderLayout.SOUTH);
 		
 		createOutputLabel();
-		
-		this.doneBtn = makeCentralButton("DONE", 300, 60);
-		this.addLayer(doneBtn, 0);
-		this.cancelBtn = makeCentralButton("CANCEL", 300, 60);
-		this.addLayer(cancelBtn, 10);
 		
 		int curRow = 0;
 		int curCol = 0;
@@ -104,7 +97,6 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 				public void actionPerformed(ActionEvent e) {
 					//String next = capsLockOn ? key.toUpperCase() : key.toLowerCase();
 					//outputText.setText(outputText.getText() + next);
-					System.out.println("pressed gui");
 				}
 			});
 		} else {
@@ -167,9 +159,9 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 	@Override
-	public void keyboardInputRecieved(KeyboardControl kc) {
+	public void keyboardInputRecieved(KeyboardControl kc, String key) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -177,6 +169,5 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 	@Override
 	public void keyboardInputCompleted(KeyboardControl kc, String query) {
 		// TODO Auto-generated method stub
-		
 	}
 }
