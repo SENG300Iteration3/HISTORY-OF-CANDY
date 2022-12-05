@@ -99,7 +99,7 @@ public class KeyboardControl {
 	// Gets symbol or number from label (there is a space in between, so the char index is 0 or 2)
 	private String getNumberOrSymbol(String key) {
 		// If shift is pressed, return the corresponding symbol instead of the number
-		return String.valueOf(key.charAt(!isShiftPressed() ? 0 : 2));
+		return String.valueOf(key.charAt(!(capsLockOn ||isShiftPressed()) ? 0 : 2));
 	}
 	
 	private boolean isShiftPressed() {
