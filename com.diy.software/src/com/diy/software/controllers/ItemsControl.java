@@ -352,29 +352,12 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	}
 
 	private void addItemByBrowsing(String strProductName) {
-		Barcode barcodeIdentifier = null;
 		PriceLookUpCode PLUCodeIdentifier = null;
-
-		boolean isItemSelected = false;
-
-		barcodeIdentifier = searchBarcodedProductDatabase(strProductName);
-		if (barcodeIdentifier != null) {
-			addScannedItemToCheckoutList(barcodeIdentifier);
-			isItemSelected = true;
-		}
 
 		PLUCodeIdentifier = searchPLUCodedProductDatabase(strProductName);
 		if (PLUCodeIdentifier != null) {
 			currentProductCode = PLUCodeIdentifier;
 			pluItemSelected();
-//			isItemSelected = true;
-		}
-
-		// FIXME: prompt place on scanning area instead
-		if (isItemSelected) {
-			sc.goBackOnUI();
-
-			inCatalog = false;
 		}
 	}
 
@@ -397,7 +380,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				// Signal scanning area to wait for item to be placed on
 				for (ItemsControlListener l : listeners)
 					l.awaitingItemToBePlacedInScanningArea(sc);
-//				sc.goBackOnUI();
 			}
 			
 		}catch(NullPointerSimulationException e) {
