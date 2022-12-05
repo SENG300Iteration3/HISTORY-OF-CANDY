@@ -9,6 +9,7 @@ import org.junit.Test;
 import com.diy.software.controllers.BagsControl;
 import com.diy.software.controllers.StationControl;
 
+import ca.powerutility.PowerGrid;
 import swing.screens.AddOwnBagsPromptScreen;
 
 public class AddOwnBagsPromptScreenTest {
@@ -19,6 +20,8 @@ public class AddOwnBagsPromptScreenTest {
 
 	@Before
 	public void setUp() throws Exception {
+		PowerGrid.engageUninterruptiblePowerSource();
+		
 		sc = new StationControl();
 		bc = sc.getBagsControl();
 		
