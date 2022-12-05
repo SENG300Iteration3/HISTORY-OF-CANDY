@@ -219,5 +219,11 @@ public class CustomerBagsPanel extends JPanel
 		
 	}
 
+	@Override
+	public void awaitingItemToBePlacedInScanningArea(ItemsControl itemsControl) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

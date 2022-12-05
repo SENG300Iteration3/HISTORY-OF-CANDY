@@ -31,6 +31,7 @@ import com.jimmyselectronics.opeechee.Card.CardData;
 import com.jimmyselectronics.opeechee.CardReader;
 import com.jimmyselectronics.opeechee.CardReaderListener;
 import com.jimmyselectronics.svenden.ReusableBag;
+import com.jimmyselectronics.svenden.ReusableBagDispenser;
 import com.jimmyselectronics.svenden.ReusableBagDispenserListener;
 import com.jimmyselectronics.virgilio.ElectronicScale;
 import com.jimmyselectronics.virgilio.ElectronicScaleListener;
@@ -820,6 +821,24 @@ public class StationControl
 
 	@Override
 	public void pluHasBeenUpdated(PLUCodeControl pcc, String pluCode) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void bagDispensed(ReusableBagDispenser dispenser) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void outOfBags(ReusableBagDispenser dispenser) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void bagsLoaded(ReusableBagDispenser dispenser, int count) {
 		// TODO Auto-generated method stub
 		
 	}

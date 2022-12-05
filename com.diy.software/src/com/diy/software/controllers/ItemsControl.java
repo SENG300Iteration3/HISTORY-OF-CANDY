@@ -208,6 +208,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 			System.out.println(product.getDescription());
 
+			pluItemSelected();
+
 			double weight = weightofScannerTray - sc.getWeightOfScannerTray();
 			System.out.println(weight + " Scale weight");
 

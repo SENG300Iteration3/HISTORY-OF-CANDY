@@ -249,4 +249,9 @@ public class AttendantActionsPanel extends JPanel
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+	public void awaitingItemToBePlacedInScanningArea(ItemsControl itemsControl) {
+		// TODO Auto-generated method stub
+		
+	}
 }
