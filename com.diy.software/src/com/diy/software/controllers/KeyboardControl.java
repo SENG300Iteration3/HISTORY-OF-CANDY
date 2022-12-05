@@ -9,7 +9,8 @@ public class KeyboardControl {
 	protected ArrayList<KeyboardControlListener> listeners = new ArrayList<>();
 	protected String text = "";
 	protected boolean capsLockOn = false; // assumes caps lock is initially off
-	protected boolean shiftPressed = false;
+	protected boolean leftShiftPressed = false;
+	protected boolean rightShiftPressed = false;
 	protected int pointer = 0;
 
 	public void addListener(KeyboardControlListener l) {
@@ -45,8 +46,10 @@ public class KeyboardControl {
 			inputComplete();
 		} else if (key.equals("CapsLock")) {
 			capsLockOn = !capsLockOn;
-		} else if (key.startsWith("Shift")) {
-			shiftPressed = !shiftPressed;
+		} else if (key.equals("Shift (Left)")) {
+			leftShiftPressed = !leftShiftPressed;
+		} else if (key.equals("Shift (Right)")) {
+			rightShiftPressed = !rightShiftPressed;
 		} else if (key.equals("Spacebar")) {
 			addTextAtPointer(" ");
 		} else if (key.equals("Tab")) {
@@ -74,11 +77,9 @@ public class KeyboardControl {
 	private void removeCharInPlace() {
 		if (pointer < text.length()) {
 			if (pointer > 0) {
-				// Move the pointer forwards again
-				movePointer(1);
+				movePointer(1); // Move the pointer forwards by 1
 			}
-			// Deleting the char moves the pointer back by 1
-			removeCharAtPointer();
+			removeCharAtPointer(); // Deleting the char moves the pointer back by 1 again
 		}
 	}
 	
@@ -96,17 +97,22 @@ public class KeyboardControl {
 	}
 
 	private String getLetterCase(String key) {
-		return capsLockOn || shiftPressed ? key.toUpperCase() : key.toLowerCase();
+		return capsLockOn || isShiftPressed() ? key.toUpperCase() : key.toLowerCase();
 	}
 	
 	// Identifies whether or not a key is 0-9 or one of !@#$%^&*()
 	private boolean isNumberOrSymbol(String key) {
 		int ascii = (int) key.toCharArray()[0];
-		return ascii >= 48 && ascii <= 57; // identifies number/symbol key labels
+		return ascii >= 41 && ascii <= 100; // identifies number/symbol key labels
 	}
 
 	// Gets symbol or number from label (there is a space in between, so the char index is 0 or 2)
 	private String getNumberOrSymbol(String key) {
-		return String.valueOf(key.charAt(!shiftPressed ? 0 : 2));
+		// If shift is pressed, return the corresponding symbol instead of the number
+		return String.valueOf(key.charAt(!isShiftPressed() ? 0 : 2));
+	}
+	
+	private boolean isShiftPressed() {
+		return rightShiftPressed || leftShiftPressed;
 	}
 }

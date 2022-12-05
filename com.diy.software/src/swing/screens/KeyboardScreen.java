@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +34,8 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 	private VirtualKeyboardControl keyboardController;
 	private Map<String, JButton> keyBtnMap = new HashMap<>();
 	private JPanel keyboardContainer;
-	private JTextField queryField;
+	private JTextField outputField;
+	private JButton cancelBtn;
 
 	public KeyboardScreen(StationControl sc) {
 		super(sc);
@@ -42,8 +45,17 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 		this.keyboardContainer = new JPanel(new GridLayout(0, 1, 0, 0));
 		this.keyboardContainer.setOpaque(false);
 		this.rootPanel.add(keyboardContainer, BorderLayout.SOUTH);
+		
+		this.cancelBtn = this.makeCentralButton("CANCEL", 300, 70);
+		cancelBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				systemControl.goBackOnUI();
+			}
+		});
+		this.addLayer(cancelBtn, 0);
 
-		createOutputLabel();
+		createOutputField();
 
 		int curRow = 0;
 		int curCol = 0;
@@ -60,19 +72,19 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 		}
 	}
 
-	public void createOutputLabel() {
-		this.queryField = new JTextField();
-		queryField.setEditable(false);
-		queryField.getCaret().setVisible(true); // making it non-editable also disables the caret...
-		queryField.setBackground(Color.WHITE);
-		queryField.setOpaque(true);
-		queryField.setForeground(Color.BLACK);
-		queryField.setFont(GUI_Fonts.FRANKLIN_BOLD);
-		queryField.setPreferredSize(new Dimension(GUI_Constants.SCREEN_WIDTH - 100, 30));
-		this.rootPanel.add(queryField, BorderLayout.NORTH);
+	private void createOutputField() {
+		this.outputField = new JTextField();
+		outputField.setEditable(false);
+		outputField.getCaret().setVisible(true); // making it non-editable also disables the caret...
+		outputField.setBackground(Color.WHITE);
+		outputField.setOpaque(true);
+		outputField.setForeground(Color.BLACK);
+		outputField.setFont(GUI_Fonts.FRANKLIN_BOLD);
+		outputField.setPreferredSize(new Dimension(GUI_Constants.SCREEN_WIDTH - 100, 30));
+		this.rootPanel.add(outputField, BorderLayout.NORTH);
 	}
 
-	public JPanel makeKeyRow(int row, int col) {
+	private JPanel makeKeyRow(int row, int col) {
 		JPanel rowContainer = new JPanel(new GridLayout(1, 0, 0, 0));
 
 		rowContainer.setOpaque(false);
@@ -81,7 +93,7 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 		return rowContainer;
 	}
 
-	public GUI_JButton makeKeyButton(final String key) {
+	private GUI_JButton makeKeyButton(final String key) {
 		final GUI_JButton keyBtn = new GUI_JButton();
 		keyBtn.setText(key.replace(" Arrow", "").replace("FnLock ", ""));
 		keyBtn.setFont(GUI_Fonts.SMALL_BOLD);
@@ -112,15 +124,14 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 
 	@Override
 	public void keyboardInputRecieved(KeyboardControl kc, String text, String key, int pointerPosition) {
+		// Get button that corresponds with the key that was pressed
 		JButton keyBtn = keyBtnMap.get(key);
 		
-		queryField.setText(text); // Update the text visual to reflect KeyController
-		queryField.requestFocus(); // Required before setting caret
-	    queryField.setCaretPosition(pointerPosition); // Update cursor position
+		outputField.setText(text); // Update the text visual to reflect KeyController
+		outputField.requestFocus(); // Required before setting caret
+	    outputField.setCaretPosition(pointerPosition); // Update cursor position
 
-		if (key.equals("CapsLock")) {
-			toggleKeyColor(keyBtn);
-		} else if (key.startsWith("Shift")) {
+		if (key.equals("CapsLock") || key.startsWith("Shift")) {
 			toggleKeyColor(keyBtn);
 		}
 	}
