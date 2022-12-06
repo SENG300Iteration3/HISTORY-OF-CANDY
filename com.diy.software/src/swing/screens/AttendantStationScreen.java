@@ -163,7 +163,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		
 		buttonPanel.setPanelBorder(10, 10, 10, 10); 
 		buttonPanel.setBackground(GUI_Color_Palette.DARK_BLUE);
-		this.addLayer(buttonPanel, 150);
+		this.addLayer(buttonPanel, 50);
 		this.addLayer(removeItemPanel, 10);
 		this.addLayer(logoutButton, 10);
 		

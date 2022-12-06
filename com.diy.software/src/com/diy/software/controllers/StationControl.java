@@ -5,7 +5,6 @@ import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.DoItYourselfStation;
 import com.diy.hardware.PLUCodedItem;
@@ -19,6 +18,7 @@ import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.PLUCodeControlListener;
 import com.diy.software.fakedata.GiftcardDatabase;
 import com.diy.software.listeners.StationControlListener;
+import com.diy.software.util.Tuple;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.EmptyException;
@@ -84,6 +84,7 @@ public class StationControl
 	private CashControl cc;
 	private PinPadControl ppc;
 	private PaymentControl pc;
+	private VirtualKeyboardControl vkc;
 	private	ReceiptControl rc;
 
 	private boolean isLocked = false;
@@ -151,6 +152,7 @@ public class StationControl
 		ppc = new PinPadControl(this);
 		pc = new PaymentControl(this);
 		pcc = new PLUCodeControl(this);
+		vkc = new VirtualKeyboardControl(this);
 	}
 
 	/**
@@ -236,6 +238,10 @@ public class StationControl
 
 	public CashControl getCashControl() {
 		return cc;
+	}
+
+	public VirtualKeyboardControl getKeyboardControl() {
+		return vkc;
 	}
 	
 	public double getWeightOfScannerTray() {

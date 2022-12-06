@@ -146,6 +146,10 @@ public class FakeDataInitializer {
 		ProductDatabases.INVENTORY.put(pp1, 10);
 		ProductDatabases.INVENTORY.put(pp2, 10);
 		
+//		plu1 = new PLUCodedProduct(code1, "Banana", 1);
+//		plu2 = new PLUCodedProduct(code2, "Romania Tomato", 2);
+//		reusableBagProduct = new PLUCodedProduct(reusableBagCode, "Reusable Bag", 2);
+		
 		/**
 		 * PLUCodedItem in customer shopping cart starts here
 		 */

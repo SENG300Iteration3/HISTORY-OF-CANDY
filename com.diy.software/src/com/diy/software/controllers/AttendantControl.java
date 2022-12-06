@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.HashMap;
 import java.util.Objects;
+import com.diy.hardware.AttendantStation;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.MembershipControlListener;
 import com.jimmyselectronics.AbstractDevice;
@@ -15,6 +16,10 @@ import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.abagnale.IReceiptPrinter;
 import com.jimmyselectronics.abagnale.ReceiptPrinterListener;
+import com.jimmyselectronics.nightingale.Key;
+import com.jimmyselectronics.nightingale.KeyListener;
+import com.jimmyselectronics.nightingale.Keyboard;
+import com.jimmyselectronics.nightingale.KeyboardListener;
 import com.unitedbankingservices.TooMuchCashException;
 import com.unitedbankingservices.coin.Coin;
 import com.unitedbankingservices.coin.CoinStorageUnit;
@@ -25,17 +30,34 @@ import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import ca.ucalgary.seng300.simulation.SimulationException;
 
-public class AttendantControl implements ActionListener, ReceiptPrinterListener {
+public class AttendantControl implements ActionListener, ReceiptPrinterListener, KeyboardListener, KeyListener {
 
+	public AttendantStation station;
 	private StationControl sc;
 	private ItemsControl ic;
 	private ArrayList<AttendantControlListener> listeners;
 	private CoinStorageUnit unit;
 	private Currency currency;
-	String attendantNotifications;
+	private KeyboardControl kc;
+	private TextLookupControl tlc;
+	private String attendantNotifications;
 	
 	public static final ArrayList<String> logins = new ArrayList<String>();
-	
+
+	public AttendantControl(StationControl sc) {
+		this.sc = sc;
+		this.station = new AttendantStation();
+		this.listeners = new ArrayList<>();
+		
+		station.keyboard.register(this);
+		
+		station.plugIn();
+		station.turnOn();
+		
+		kc = new PhysicalKeyboardControl(this);
+		tlc = new TextLookupControl(this, this.sc);
+	}
+
 	public void login(String password) {
 		for (AttendantControlListener l : listeners) {
 			l.loggedIn(logins.contains(password));
@@ -48,20 +70,20 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		}
 	}
 
-
-	public AttendantControl(StationControl sc) {
-		this.sc = sc;
-		this.ic = sc.getItemsControl();
-		this.listeners = new ArrayList<>();
-		
-	}
-
 	public void addListener(AttendantControlListener l) {
 		listeners.add(l);
 	}
 
 	public void removeListener(AttendantControlListener l) {
 		listeners.remove(l);
+	}
+	
+	public KeyboardControl getKeyboardControl() {
+		return kc;
+	}
+	
+	public TextLookupControl getTextLookupControl() {
+		return tlc;
 	}
 	
 	// allow attendant to enable customer station use after it has been suspended
@@ -534,5 +556,29 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	public void noBagRequest() {
 		for (AttendantControlListener l : listeners)
 			l.noBagRequest();
+	}
+
+	@Override
+	public void pressed(Key k) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void released(Key k) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyPressed(Keyboard keyboard, String label) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyReleased(Keyboard keyboard, String label) {
+		// TODO Auto-generated method stub
+		
 	}
 }
