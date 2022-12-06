@@ -27,7 +27,6 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 
 	private StationControl sc;
 	private ArrayList<AttendantControlListener> listeners;
-	private CoinStorageUnit unit;
 	private Currency currency;
 	String attendantNotifications;
 	
@@ -308,24 +307,33 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	public void adjustCoinsForChange(int AMOUNT) throws SimulationException, TooMuchCashException  {
 		
 		
-		CoinStorageUnit unit = sc.station.coinStorage;
-	
 		
-		Coin nickelToAdd = new Coin(currency, BigDecimal.valueOf(0.05));
-		Coin dimeToAdd = new Coin(currency,BigDecimal.valueOf(0.1));
-		Coin quaterToAdd = new Coin(currency,BigDecimal.valueOf(0.25));
-		Coin loonieToAdd = new Coin(currency,BigDecimal.valueOf(1.0));
-		Coin toonieToAdd = new Coin(currency,BigDecimal.valueOf(2.0));
+		CoinStorageUnit unit = sc.station.coinStorage;
+		
+		if(AMOUNT > unit.getCapacity()) {
+			throw new TooMuchCashException();
+		}
+		//take system out of service//
+		
+		AMOUNT /= 5;
+		
+		sc.getCashControl().disablePayments();
+		
+		Coin tCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(2.0));
+		Coin lCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(1.0));
+		Coin qCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(0.25));
+		Coin dCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(0.1));
+		Coin nCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(0.05));
 		
 		
 		List<Coin> unloadedCoins = unit.unload();
 		sc.getCashControl().coinsUnloaded(unit);
 		
-		int nCounter = countCoin(nickelToAdd,unloadedCoins);
-		int dCounter = countCoin(dimeToAdd,unloadedCoins);
-		int qCounter = countCoin(quaterToAdd,unloadedCoins);
-		int lCounter = countCoin(loonieToAdd,unloadedCoins);
-		int tCounter = countCoin(toonieToAdd,unloadedCoins);
+		int nCounter = countCoin(nCoin,unloadedCoins);
+		int dCounter = countCoin(dCoin,unloadedCoins);
+		int qCounter = countCoin(qCoin,unloadedCoins);
+		int lCounter = countCoin(lCoin,unloadedCoins);
+		int tCounter = countCoin(tCoin,unloadedCoins);
 		
 		int nAmount = AMOUNT - nCounter;
 		int dAmount = AMOUNT - dCounter;
@@ -353,10 +361,8 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		//notify cash controller that the unit has been filled
 		sc.getCashControl().coinsLoaded(unit);
 		
-		for (AttendantControlListener l : listeners)
-			l.coinsNotLowState();
 		//re enable system
-		//sc.getCashControl().enablePayments();
+		sc.getCashControl().enablePayments();
 		
 	}
 	
@@ -372,8 +378,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 * 		returns the amount of coins counted
 	 */
 	public int countCoin(Coin coinToCount, List<Coin> coins) {
-		BigDecimal value = coinToCount.getValue();
-		
+	
 		int count = 0;
 		for(Coin c : coins) {
 
@@ -385,6 +390,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		}
 		return count;
 	}
+	
 	
 
 	/**
