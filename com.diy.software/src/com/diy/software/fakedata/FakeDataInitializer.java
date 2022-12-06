@@ -36,8 +36,9 @@ public class FakeDataInitializer {
 	private CoinStorageUnit fakeCoinStorageUnit;
 	private final Double AMOUNT_AVAILABLE = 1000.0;
 	private final int COIN_STORAGE_CAPACITY = 50;
-	Calendar calendar = Calendar.getInstance();
-	private Date expire_date = calendar.getTime();
+	private Calendar calendar = Calendar.getInstance();
+	private Date today = new Date();
+	private Date expire_date = new Date(today.getTime() + (1000*60*60*24));
 	
 	public void addProductAndBarcodeData () {
 		/**
