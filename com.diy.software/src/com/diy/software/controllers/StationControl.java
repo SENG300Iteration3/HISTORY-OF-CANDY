@@ -8,6 +8,7 @@ import java.util.Map;
 import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.DoItYourselfStation;
+import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.Product;
 import com.diy.hardware.external.CardIssuer;
 import com.diy.hardware.external.ProductDatabases;
@@ -62,7 +63,8 @@ public class StationControl
 	public ArrayList<StationControlListener> listeners = new ArrayList<>();
 	
 	// Need to track item objects associated with this particular instance
-	public Map<Barcode, Item> items = new HashMap<>();
+	public Map<Barcode, Item> barcodedItems = new HashMap<>();
+	public Map<PriceLookUpCode, Item> pluCodedItems = new HashMap<>();
 
 	/******** Control Classes ********/
 	private ItemsControl ic;
@@ -139,7 +141,7 @@ public class StationControl
 			customer.wallet.cards.add(c);
 		for (BarcodedItem i : this.fakeData.getItems()) {
 			customer.shoppingCart.add(i);
-			this.items.put(i.getBarcode(), i);
+			this.barcodedItems.put(i.getBarcode(), i);
 		}
 	}
 

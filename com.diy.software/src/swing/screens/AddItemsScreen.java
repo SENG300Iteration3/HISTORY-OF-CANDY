@@ -10,7 +10,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import com.diy.software.util.Tuple;
+import com.jimmyselectronics.Item;
 import com.jimmyselectronics.necchi.Barcode;
+import com.jimmyselectronics.necchi.BarcodedItem;
 
 import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Fonts;
@@ -19,6 +21,8 @@ import swing.styling.GUI_JLabel;
 import swing.styling.GUI_JPanel;
 import swing.styling.Screen;
 
+import com.diy.hardware.PLUCodedItem;
+import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.external.ProductDatabases;
 import com.diy.software.controllers.BagsControl;
 import com.diy.software.controllers.ItemsControl;
@@ -28,8 +32,8 @@ import com.diy.software.listeners.ItemsControlListener;
 import com.diy.software.listeners.StationControlListener;
 
 public class AddItemsScreen extends Screen implements ItemsControlListener, BagsControlListener {
-	private StationControl systemControl;
-	private ItemsControl itemsControl;
+	private StationControl sc;
+	private ItemsControl ic;
 	private BagsControl bc;
 
 	protected GUI_JLabel subtotalLabel;
@@ -51,10 +55,10 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 	public AddItemsScreen(StationControl systemControl) {
 		super(systemControl, "Self Checkout");
 		
-		this.systemControl = systemControl;
+		this.sc = systemControl;
 		
-		this.itemsControl = systemControl.getItemsControl();
-		this.itemsControl.addListener(this);
+		this.ic = sc.getItemsControl();
+		this.ic.addListener(this);
 		
 		bc = systemControl.getBagsControl();
 		bc.addListener(this);
@@ -162,7 +166,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		this.removeItemBtn = makeButton("Remove Item", fourthButtonPanel);
 		rightSidebuttonPanel.add(fourthButtonPanel);
 		this.removeItemBtn.setActionCommand("remove item");
-		this.removeItemBtn.addActionListener(itemsControl);
+		this.removeItemBtn.addActionListener(ic);
 
 		this.addLayer(mainPanel, 0);
 
@@ -173,11 +177,11 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 
 		this.payBtn = makeButton("pay", buttonPanel);
 		this.payBtn.setActionCommand("pay");
-		this.payBtn.addActionListener(itemsControl);
+		this.payBtn.addActionListener(ic);
 
 		this.memberBtn = makeButton("enter member id", buttonPanel);
 		this.memberBtn.setActionCommand("member");
-		this.memberBtn.addActionListener(itemsControl);
+		this.memberBtn.addActionListener(ic);
 
 		this.searchCatalogueBtn = makeButton("Browse Items", buttonPanel);
 
@@ -271,13 +275,22 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 	}
 
 	@Override
-	public void itemsHaveBeenUpdated(ItemsControl itemsControl) {
-		ArrayList<Barcode> checkoutList = itemsControl.getCheckoutList();
-
+	public void itemsHaveBeenUpdated(ItemsControl ic) {
+		ArrayList<Object> checkoutList = ic.getCheckoutList();
+		String name;
+		double price;
 		this.invalidateAllScannedItems();
 		for (int i = 0; i < checkoutList.size(); i ++) {
-			double price = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(checkoutList.get(i)).getPrice();
-			String name = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(checkoutList.get(i)).getDescription();
+			if (checkoutList.get(i) instanceof Barcode) {
+				Barcode barcode = (Barcode) checkoutList.get(i);
+				price = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getPrice();
+				name = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getDescription();
+			}
+			else {
+				PriceLookUpCode pluCode = (PriceLookUpCode) checkoutList.get(i);
+				name = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getDescription();
+				price = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getPrice();
+			}		
 			this.addScannedItem(i+1 + " - " + name, price);
 		}
 	}

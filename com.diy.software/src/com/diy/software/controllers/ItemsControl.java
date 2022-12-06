@@ -9,6 +9,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
+import com.diy.hardware.PLUCodedItem;
+import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.external.ProductDatabases;
 import com.diy.software.listeners.ItemsControlListener;
 import com.jimmyselectronics.AbstractDevice;
@@ -25,7 +27,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	private StationControl sc;
 	private ArrayList<ItemsControlListener> listeners;
 	public ArrayList<Tuple<BarcodedProduct,Integer>> tempList = new ArrayList<>();
-	public ArrayList<Barcode> checkoutList = new ArrayList<>();
+	public ArrayList<Object> checkoutList = new ArrayList<>();
 	private double checkoutListTotal = 0.0;
 
 	private boolean scanSuccess = true, weighSuccess = true;
@@ -66,8 +68,13 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		listeners.remove(l);
 	}
 	
-	public void addItemToCheckoutList(Barcode barcode) {
-		checkoutList.add(barcode);
+	public void addItemToCheckoutList(Barcode barcode, PriceLookUpCode pluCode) {
+		if (barcode == null) {
+			checkoutList.add(pluCode);
+		}
+		else if (pluCode == null) {
+			checkoutList.add(barcode);
+		}
 		refreshGui();
 	}
 	
@@ -76,7 +83,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		double price;
 		if (barcodedProduct != null) {
 			price = (double) barcodedProduct.getPrice();
-			this.addItemToCheckoutList(barcode);
+			this.addItemToCheckoutList(barcode, null);
 			this.updateCheckoutTotal(price);
 		} else {
 			System.err.println("Scanned item is not in product database!");
@@ -111,17 +118,30 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			return false;
 		}
 		else {
+			double weight;
+			double price;
+			Item item;
 			index--; // decrement index so it matches actual array index!
-			Barcode barcode = this.checkoutList.get(index);
-			// getting the actual object that the customer had in his shopping cart and was subsequently added to the baggingArea
-			BarcodedItem item = (BarcodedItem) this.sc.items.get(barcode);
-			double price = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getPrice();
-			double weight = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
+			if (this.checkoutList.get(index) instanceof Barcode) {
+				Barcode barcode = (Barcode) this.checkoutList.get(index);
+				// getting the actual object that the customer had in his shopping cart and was subsequently added to the baggingArea
+				item = (BarcodedItem) this.sc.barcodedItems.get(barcode);
+				price = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getPrice();
+				weight = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
+			}
+			else {
+				PriceLookUpCode pluCode = (PriceLookUpCode ) this.checkoutList.get(index);
+				// getting the actual object that the customer had in his shopping cart and was subsequently added to the baggingArea
+				item = (PLUCodedItem) this.sc.pluCodedItems.get(pluCode);
+				weight = item.getWeight(); // When PLU coded items are made they will have to be added to pluCodedItems along with the PLU code
+				price = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getPrice();
+				
+			}
 			// TODO update inventory to increase "stock" since the item wasn't sold
 			this.sc.updateExpectedCheckoutWeight(-weight);  // decrement weight
 			this.sc.station.baggingArea.remove(item);
 			this.updateCheckoutTotal(-price);	// decrement price
-			checkoutList.remove(index); // remove the barcode from checkoutList so GUI updates accordingly
+			checkoutList.remove(index); // remove the barcode or PLUCode from checkoutList so GUI updates accordingly
 			refreshGui();
 			return true;
 		}
@@ -138,7 +158,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		return checkoutListTotal;
 	}
 	
-	public ArrayList<Barcode> getCheckoutList () {
+	public ArrayList<Object> getCheckoutList () {
 		return checkoutList;
 	}
 	

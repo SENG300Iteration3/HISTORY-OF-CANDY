@@ -56,8 +56,8 @@ public class BagsControl implements ActionListener {
 		sc.updateExpectedCheckoutWeight(abritraryWeightOfBags,false);
 		BarcodedItem purchasableBag = new BarcodedItem(purchasableBagBarcode, 50); 
 		sc.station.baggingArea.add(purchasableBag);
-		sc.items.put(purchasableBagBarcode, purchasableBag);
-		sc.getItemsControl().addItemToCheckoutList(purchasableBagBarcode);
+		sc.barcodedItems.put(purchasableBagBarcode, purchasableBag);
+		sc.getItemsControl().addItemToCheckoutList(purchasableBagBarcode, null);
 		sc.getItemsControl().updateCheckoutTotal(abritraryPriceOfBags);
 		sc.unblockStation(); // call this to update total on gui
 	}
