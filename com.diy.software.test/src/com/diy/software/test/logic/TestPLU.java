@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.diy.hardware.PLUCodedProduct;
+import com.diy.hardware.Product;
 import com.diy.hardware.external.ProductDatabases;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.fakedata.FakeDataInitializer;
@@ -38,9 +39,9 @@ public class TestPLU {
     int counter = 0;
     for(PLUCodedProduct product : ProductDatabases.PLU_PRODUCT_DATABASE.values()) {
       check.add(false);
-      Set<Barcode> barcodes = ProductDatabases.BARCODED_PRODUCT_DATABASE.keySet();
-      for(Barcode barcode : barcodes) {
-        if(barcode.hashCode() == product.getPLUCode().hashCode()) {
+      Set<Product> products = ProductDatabases.INVENTORY.keySet();
+      for(Product item : products) {
+        if(item.hashCode() == product.getPLUCode().hashCode()) {
           check.remove(counter);
           check.add(counter, true);
           System.out.println("True");

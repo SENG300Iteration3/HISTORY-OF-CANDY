@@ -37,7 +37,7 @@ public class TestBagsControl {
 		
 		fdi = new FakeDataInitializer();
 		fdi.addProductAndBarcodeData();
-		items = fdi.getItems();
+		items = (BarcodedItem[])fdi.getItems();
 		item1 = items[0];
 		item2 = items[1];
 		item3 = items[2];
@@ -120,7 +120,7 @@ public class TestBagsControl {
 		double lastExpectedWeight = sc.getExpectedWeight();
 		double lastCheckoutListTotal = ic.getCheckoutTotal();
 		
-		bc.placePurchasedBagsInBaggingArea();
+		// bc.placePurchasedBagsInBaggingArea();
 		
 		assertFalse(lastItemWeight == sc.getWeightOfLastItemAddedToBaggingArea());
 		assertFalse(lastExpectedWeight == sc.getExpectedWeight());

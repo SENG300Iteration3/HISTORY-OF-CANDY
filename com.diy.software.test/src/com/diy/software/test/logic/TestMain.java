@@ -152,7 +152,7 @@ public class TestMain {
 
 		assertTrue(ic.getCheckoutTotal() == product.getPrice());
 
-		bc.placePurchasedBagsInBaggingArea();
+		// bc.placePurchasedBagsInBaggingArea();
 		controller.bagItem(bitem);
 
 		assertTrue(ic.getCheckoutTotal() == product.getPrice() + bc.getArbitraryBagPrice());
@@ -168,7 +168,7 @@ public class TestMain {
 
 		assertTrue(controller.getExpectedWeight() == product.getExpectedWeight());
 
-		bc.placePurchasedBagsInBaggingArea();
+		// bc.placePurchasedBagsInBaggingArea();
 		controller.bagItem(bitem);
 
 		controller.updateExpectedCheckoutWeight(bc.getArbitraryBagWeight(), false);
@@ -221,10 +221,10 @@ public class TestMain {
 	public void scanWhileBlocked() {
 		BarcodeScanner scanner = controller.station.handheldScanner;
 		controller.blockStation();
-		assertFalse(scanner.scan(fakeData.getItems()[1]));
+		assertFalse(scanner.scan((BarcodedItem)fakeData.getItems()[1]));
 		controller.unblockStation();
 
-		assertTrue(scanner.scan(fakeData.getItems()[2]));
+		assertTrue(scanner.scan((BarcodedItem)fakeData.getItems()[2]));
 	}
 	
 	/**
@@ -360,7 +360,7 @@ public class TestMain {
 		list = checkoutList;
 		
 		ArrayList<Tuple<String, Double>> manualList = new ArrayList<>();
-		BarcodedProduct product = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(fakeData.getItems()[0].getBarcode());
+		BarcodedProduct product = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(((BarcodedItem)fakeData.getItems()[0]).getBarcode());
 		Tuple<String, Double> item = new Tuple<String, Double>(product.getDescription(), fakeData.getItems()[0].getWeight());
 		manualList.add(item);
 		
@@ -1039,6 +1039,18 @@ public class TestMain {
 
 		@Override
 		public void notEnoughBagsInStock(StationControl systemControl, int numBag) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerPLUCodeWorkflow(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerBrowsingCatalog(StationControl systemControl) {
 			// TODO Auto-generated method stub
 			
 		}

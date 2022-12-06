@@ -470,6 +470,18 @@ public class TestAttendantControl {
 
 		}
 
+		@Override
+		public void triggerPLUCodeWorkflow(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerBrowsingCatalog(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
+
 	}
 
 	public class AttendantListenerStub implements AttendantControlListener {
@@ -575,6 +587,12 @@ public class TestAttendantControl {
 
 		@Override
 		public void coinIsLowState(CoinStorageUnit unit, int amount) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void itemBagged() {
 			// TODO Auto-generated method stub
 			
 		}
