@@ -203,4 +203,8 @@ public class PresentGiftCardOrCashScreen extends Screen implements CashControlLi
 		}
 		  
 	  }
+	
+	public GUI_JButton getBackButton(){
+		return backButton;
+	}
 }
