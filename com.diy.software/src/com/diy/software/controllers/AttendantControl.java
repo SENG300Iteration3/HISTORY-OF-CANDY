@@ -242,11 +242,11 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		
 		sc.getCashControl().disablePayments();
 		
-		Coin nickelToAdd = new Coin(currency, BigDecimal.valueOf(0.05));
-		Coin dimeToAdd = new Coin(currency,BigDecimal.valueOf(0.1));
-		Coin quaterToAdd = new Coin(currency,BigDecimal.valueOf(0.25));
-		Coin loonieToAdd = new Coin(currency,BigDecimal.valueOf(1.0));
-		Coin toonieToAdd = new Coin(currency,BigDecimal.valueOf(2.0));
+		Coin nickelToAdd = new Coin(Currency.getInstance("CAD"), BigDecimal.valueOf(0.05));
+		Coin dimeToAdd = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(0.1));
+		Coin quaterToAdd = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(0.25));
+		Coin loonieToAdd = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(1.0));
+		Coin toonieToAdd = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(2.0));
 		
 		
 		List<Coin> unloadedCoins = unit.unload();
