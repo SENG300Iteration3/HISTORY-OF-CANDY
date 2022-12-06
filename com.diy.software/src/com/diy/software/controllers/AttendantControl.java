@@ -311,30 +311,21 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		CoinStorageUnit unit = sc.station.coinStorage;
 	
 		
-		if(AMOUNT > unit.getCapacity()) {
-			throw new TooMuchCashException();
-		}
-		//take system out of service//
-		
-		AMOUNT /= 5;
-		
-		//sc.getCashControl().disablePayments();
-		
-		Coin tCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(2.0));
-		Coin lCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(1.0));
-		Coin qCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(0.25));
-		Coin dCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(0.1));
-		Coin nCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(0.05));
+		Coin nickelToAdd = new Coin(currency, BigDecimal.valueOf(0.05));
+		Coin dimeToAdd = new Coin(currency,BigDecimal.valueOf(0.1));
+		Coin quaterToAdd = new Coin(currency,BigDecimal.valueOf(0.25));
+		Coin loonieToAdd = new Coin(currency,BigDecimal.valueOf(1.0));
+		Coin toonieToAdd = new Coin(currency,BigDecimal.valueOf(2.0));
 		
 		
 		List<Coin> unloadedCoins = unit.unload();
 		sc.getCashControl().coinsUnloaded(unit);
 		
-		int nCounter = countCoin(nCoin,unloadedCoins);
-		int dCounter = countCoin(dCoin,unloadedCoins);
-		int qCounter = countCoin(qCoin,unloadedCoins);
-		int lCounter = countCoin(lCoin,unloadedCoins);
-		int tCounter = countCoin(tCoin,unloadedCoins);
+		int nCounter = countCoin(nickelToAdd,unloadedCoins);
+		int dCounter = countCoin(dimeToAdd,unloadedCoins);
+		int qCounter = countCoin(quaterToAdd,unloadedCoins);
+		int lCounter = countCoin(loonieToAdd,unloadedCoins);
+		int tCounter = countCoin(toonieToAdd,unloadedCoins);
 		
 		int nAmount = AMOUNT - nCounter;
 		int dAmount = AMOUNT - dCounter;
@@ -381,7 +372,8 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 * 		returns the amount of coins counted
 	 */
 	public int countCoin(Coin coinToCount, List<Coin> coins) {
-	
+		BigDecimal value = coinToCount.getValue();
+		
 		int count = 0;
 		for(Coin c : coins) {
 
