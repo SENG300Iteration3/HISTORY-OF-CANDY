@@ -115,7 +115,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 * Cash controller notifies if storage is low in order to use
 	 * 
 	 * @throws SimulationException
-	 * 
+	 * 			For loading or checking null banknotes
 	 * @throws TooMuchCashException
 	 * 			Too much cash is loaded onto the storage
 	 */
@@ -134,31 +134,29 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	/*
 	 * Refills banknote storage if it is low
 	 * 
-	 * FIXME: Counter for each banknote not working (null banknote)
-	 * 
 	 * @param unit
 	 * 			The storage unit where the banknotes will be loaded
 	 * @throws SimulationException
-	 * 
+	 * 			For loading or checking null banknotes
 	 * @throws TooMuchCashException
 	 * 			Too much cash is loaded onto the storage
 	 */
 	public void loadBanknotesToStorage(BanknoteStorageUnit unit) throws SimulationException, TooMuchCashException {
 		// amount of each kind of banknote to add
-		int totalOnes = unit.getCapacity()/6;
-		int totalFives = unit.getCapacity()/6;
-		int totalTens = unit.getCapacity()/6;
-		int totalTwenties = unit.getCapacity()/6;
-		int totalFifties = unit.getCapacity()/6;
-		int totalHundreds = unit.getCapacity()/6;
+		int totalFives = unit.getCapacity()/5;
+		int totalTens = unit.getCapacity()/5;
+		int totalTwenties = unit.getCapacity()/5;
+		int totalFifties = unit.getCapacity()/5;
+		int totalHundreds = unit.getCapacity()/5;
 
 		sc.getCashControl().disablePayments();
 		List<Banknote> unloadedBanknotes = unit.unload();
 		sc.getCashControl().banknotesUnloaded(unit);	
 		
+		// Verify value of existing banknotes, decrement it associated counter, reload the banknote
 		for(Banknote banknote : unloadedBanknotes) {
-			if (banknote.getValue() == 1) {
-				totalOnes--;
+			if (banknote == null) {
+				break;
 			}
 			if (banknote.getValue() == 5) {
 				totalFives--;
@@ -175,11 +173,10 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 			if (banknote.getValue() == 100) {
 				totalHundreds--;
 			}
+			unit.load(banknote);
 		}
 		
-		for (int i = 0; i < totalOnes; i++) {
-			unit.load(new Banknote(currency, 1));
-		}
+		// Load banknotes
 		for (int i = 0; i < totalFives; i++) {
 			unit.load(new Banknote(currency, 5));
 		}
@@ -228,7 +225,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 					noBagRequest();
 					break;
 				case "adjustBanknotesForChange":
-					attendantNotifications = ("Station needs banknotes to be adjusted for change");
+					attendantNotifications = ("Checking if banknotes in storage need to be adjusted");
 					adjustBanknotesForChange();
 					break;
 				case "approve no bag":

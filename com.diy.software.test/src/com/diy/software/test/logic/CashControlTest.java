@@ -122,7 +122,7 @@ public class CashControlTest {
 	
 	@Test
 	public void testBanknotesInStorageAtThreshold() throws SimulationException, TooMuchCashException {
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 50; i++) {
 			sc.station.banknoteStorage.load(new Banknote(currency, 20));
 		}
 		assertTrue(cs.banknotesInStorageLow(sc.station.banknoteStorage));

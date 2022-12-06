@@ -1,7 +1,6 @@
 package com.diy.software.test.logic;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.awt.event.ActionEvent;
 import java.util.Currency;
@@ -173,22 +172,29 @@ public class TestAttendantControl {
     	assertTrue(als.addPaper);
     }
     
-    // Capacity of storage is 1000 in DoItYourselfStation
-    // FIXME: Counter for checking each banknote not working properly
+    /*
+     * Test adjust banknote for change when storage is empty
+     * Should fill up storage completely
+     * 
+     * Capacity of storage is 1000 in DoItYourselfStation
+     */
     @Test
     public void testAdjustBanknoteForChangeEmptyStorage() throws SimulationException, TooMuchCashException {
     	ac.addListener(als);
-    	assertFalse(als.banknoteLowState);
+    	assertFalse(als.banknoteAdjusted);
     	ac.adjustBanknotesForChange();
-    	assertTrue(sc.station.banknoteStorage.getBanknoteCount() >= 900);
-    	assertTrue(als.banknoteLowState);
+    	assertTrue(sc.station.banknoteStorage.getBanknoteCount() == 1000);
+    	assertTrue(als.banknoteAdjusted);
     }
     
-    // TODO: Add assertion for actual method
+    /*
+     * Test adjust banknote for change when storage is already full and not below a threshold
+     * Loads 500 banknotes to storage. Should not adjust for change
+     */
     @Test
     public void testAdjustBanknoteForChangeFullStorage() throws SimulationException, TooMuchCashException {
     	ac.addListener(als);
-    	assertFalse(als.banknoteLowState);
+    	assertFalse(als.banknoteAdjusted);
     	for (int i = 0; i < 100; i++) {
     		sc.station.banknoteStorage.load(new Banknote(currency, 5));
     		sc.station.banknoteStorage.load(new Banknote(currency, 10));
@@ -198,6 +204,42 @@ public class TestAttendantControl {
     	}
     	assertTrue(sc.station.banknoteStorage.getBanknoteCount() == 500);
     	ac.adjustBanknotesForChange();
+    	assertFalse(sc.getCashControl().banknotesInStorageLow(sc.station.banknoteStorage));
+    }
+    
+    /*
+     * Test adjust banknote for change when amount of banknotes is exactly at threshold
+     * Loads 100 banknotes to storage (threshold set to 1/20 of storage (i.e. 50))
+     * More banknotes should be loaded
+     */
+    @Test
+    public void testAdjustBanknoteForChangeAtThreshold() throws SimulationException, TooMuchCashException {
+    	ac.addListener(als);
+    	assertFalse(als.banknoteAdjusted);
+    	for (int i = 0; i < 10; i++) {
+    		sc.station.banknoteStorage.load(new Banknote(currency, 5));
+    		sc.station.banknoteStorage.load(new Banknote(currency, 10));
+    		sc.station.banknoteStorage.load(new Banknote(currency, 20));
+    		sc.station.banknoteStorage.load(new Banknote(currency, 50));
+    		sc.station.banknoteStorage.load(new Banknote(currency, 100));
+    	}
+    	assertTrue(sc.station.banknoteStorage.getBanknoteCount() == 50);
+    	ac.adjustBanknotesForChange();
+    	assertTrue(sc.station.banknoteStorage.getBanknoteCount() == 1000);
+    	assertTrue(als.banknoteAdjusted);
+    }
+    
+    /*
+     * Test action for adjusting banknote storage for change
+     * The storage is initially empty and should be reloaded
+     */
+    @Test
+    public void testActionPerformedAdjustBanknote() {
+    	ActionEvent e = new ActionEvent(this, 0, "adjustBanknotesForChange");
+    	ac.addListener(als);
+    	assertFalse(als.banknoteAdjusted);
+    	ac.actionPerformed(e);
+    	assertTrue(als.banknoteAdjusted);
     }
     
     @Test
@@ -473,7 +515,7 @@ public class TestAttendantControl {
     	boolean lowState = false;
     	boolean addPaper = false;
     	boolean addInk = false;
-    	boolean banknoteLowState = false;
+    	boolean banknoteAdjusted = false;
 		public boolean noBagging = false;
 		String testMsg = "";
 		boolean ini = false;
@@ -529,7 +571,7 @@ public class TestAttendantControl {
 
 		@Override
 		public void banknotesInStorageLowState() {
-			banknoteLowState = true;
+			banknoteAdjusted = true;
 		}
     }
 
