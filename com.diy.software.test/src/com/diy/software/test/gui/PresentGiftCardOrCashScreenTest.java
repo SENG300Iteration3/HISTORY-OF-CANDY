@@ -126,12 +126,6 @@ PowerGrid.engageUninterruptiblePowerSource();
 		}
 
 		@Override
-		public void cashRejected(CashControl cc) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
 		public void changeReturned(CashControl cc) {
 			// TODO Auto-generated method stub
 			
@@ -139,6 +133,12 @@ PowerGrid.engageUninterruptiblePowerSource();
 
 		@Override
 		public void paymentFailed(CashControl cc) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void checkCashRejected(CashControl cc) {
 			// TODO Auto-generated method stub
 			
 		}
