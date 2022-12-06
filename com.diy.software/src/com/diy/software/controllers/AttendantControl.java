@@ -40,6 +40,12 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 			l.loggedIn(logins.contains(password));
 		}
 	}
+	
+	public void logout() {
+		for (AttendantControlListener l : listeners) {
+			l.loggedIn(false);
+		}
+	}
 
 	public AttendantControl(StationControl sc) {
 		this.sc = sc;
@@ -71,7 +77,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	public void approveBagsAdded() {
 		sc.unblockStation();
 		for (AttendantControlListener l : listeners) {
-			l.attendantApprovedBags(this);
+			l.attendantApprovedBags(this); 
 		}
 	}
 
@@ -395,7 +401,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 					//TODO:
 					break;
 				case "logout":
-					//TODO:
+					logout();
 					break;
 				default:
 					break;
