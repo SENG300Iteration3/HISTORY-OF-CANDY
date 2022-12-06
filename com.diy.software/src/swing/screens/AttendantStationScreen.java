@@ -3,6 +3,8 @@ package swing.screens;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
@@ -29,14 +31,15 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	private StationControl sc;
 	private BagsControl bc;
 	private AttendantControl ac;
+	private static final int BUTTON_WIDTH = 310;
+	private static final int BUTTON_HEIGHT = 50;
+	private static final int LABEL_WIDTH = 200;
+	private static final int LABEL_HEIGHT = 60;
 	private boolean cusAddedBags = false;
-	GUI_JButton approveAddedBagsButton;
-//	GUI_JButton addInkToPrinterButton;
-//	GUI_JButton addPaperToPrinterButton;
-	GUI_JButton approveNoBagging;
-	GUI_JButton startUpButton;
-	GUI_JButton removeItemButton;
-	GUI_JLabel weightDisplayLabel, weightDescrepancyMssg, inkLabel, paperLabel, adjustCoinLabel, adjustBanknoteLabel;
+	GUI_JButton approveAddedBagsButton, approveNoBagging, startUpButton, shutDownButton, 
+				permitButton, preventButton, addItemButton, removeItemButton, logoutButton;
+	GUI_JLabel 	weightDisplayLabel, weightDescrepancyMssg, inkLabel, paperLabel,
+				adjustCoinLabel, adjustBanknoteLabel;
 	GUI_JButton printReceiptButton;
 
 	private static String HeaderText = "Attendant Screen";
@@ -49,50 +52,29 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 
 		ac = sc.getAttendantControl();
 		ac.addListener(this);
-
-		int width = 400;
-		int height = 50;
-
-		approveAddedBagsButton = makeButton("approvedAddedBags()");
-		approveAddedBagsButton.setActionCommand("approve added bags");
-		approveAddedBagsButton.addActionListener(ac);
-		approveAddedBagsButton.setPreferredSize(new Dimension(width, height));
-//
-//		addInkToPrinterButton = makeButton("Add ink");
-//		addInkToPrinterButton.setActionCommand("addInk");
-//		addInkToPrinterButton.addActionListener(ac);
-//		addInkToPrinterButton.setPreferredSize(new Dimension(width, height));
-//		
-//		addPaperToPrinterButton = makeButton("Add paper");
-//		addPaperToPrinterButton.setActionCommand("addPaper");
-//		addPaperToPrinterButton.addActionListener(ac);
-//		addPaperToPrinterButton.setPreferredSize(new Dimension(width, height));
-//		
-		approveNoBagging = makeButton("Approve no bagging");
-		approveNoBagging.setActionCommand("approve no bag");
-		approveNoBagging.addActionListener(ac);
-		approveNoBagging.setPreferredSize(new Dimension(width, height));
 		
-		startUpButton = makeButton("Start up station");
-		startUpButton.setActionCommand("startUp");
-		startUpButton.addActionListener(ac);
-		startUpButton.setPreferredSize(new Dimension(width, height));
+		// Initialize attendant buttons
+		approveAddedBagsButton = initializeButton("Approve Added Bags", "approve added bags", cusAddedBags);
+		approveNoBagging = initializeButton("Approve no bagging", "approve no bag", false);
+		startUpButton = initializeButton("Start up station", "startUp", true);
+		shutDownButton = initializeButton("Shut down station", "shutdown", true);
+		permitButton = initializeButton("Permit station use", "permit", false);
+		preventButton = initializeButton("Prevent station use", "prevent", true);
+		addItemButton = initializeButton("Add item", "add", true);
+		removeItemButton = initializeButton("Remove item", "remove", true);
+		logoutButton = initializeButton("Logout", "logout", true);
 		
-		removeItemButton = makeButton("Remove item");
-		removeItemButton.setActionCommand("remove");
-		removeItemButton.addActionListener(ac);
-		removeItemButton.setPreferredSize(new Dimension(width, height));
-		
-		weightDescrepancyMssg = initalizeLabel("weightDiscrepancyMsg");
-		weightDisplayLabel = initalizeLabel("weightDisplayLabel");
-		inkLabel = initalizeLabel("Ink status");
-		paperLabel = initalizeLabel("Paper status");
-		adjustCoinLabel = initalizeLabel("Adjust coin");
-		adjustBanknoteLabel = initalizeLabel("Adjust Banknote");
+		// Initialize notifications labels
+		weightDescrepancyMssg = initializeLabel("Weight Discrepancy");
+		weightDisplayLabel = initializeLabel("Weight Display");
+		inkLabel = initializeLabel("Ink status");
+		paperLabel = initializeLabel("Paper status");
+		adjustCoinLabel = initializeLabel("Adjust coin");
+		adjustBanknoteLabel = initializeLabel("Adjust Banknote");
 		
 		// Notification Panel for JLabels that contain notification messages from system
 		GUI_JPanel notificationPanel = new GUI_JPanel();
-		notificationPanel.setLayout(new GridLayout(2, 3));
+		notificationPanel.setLayout(new GridLayout(1, 6));
 		
 		notificationPanel.add(weightDescrepancyMssg);
 		notificationPanel.add(weightDisplayLabel);
@@ -101,59 +83,124 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		notificationPanel.add(adjustCoinLabel);
 		notificationPanel.add(adjustBanknoteLabel);
 		
-		this.addLayer(notificationPanel, 0);
-		
-		
-		
-		JScrollPane buttonScrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		buttonScrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(24, 0));
-		buttonScrollPane.setBackground(GUI_Color_Palette.DARK_BROWN);
-		buttonScrollPane.setPreferredSize(new Dimension(450, 200));
-		buttonScrollPane.setBorder(BorderFactory.createMatteBorder(20, 20, 20, 20, GUI_Color_Palette.DARK_BLUE));
-		
-		
-		GUI_JPanel buttonsPanel	= new GUI_JPanel();
-		buttonsPanel.setLayout(new GridLayout(4, 1));
-		buttonScrollPane.getViewport().add(buttonsPanel);
-		
-		buttonsPanel.add(approveAddedBagsButton);
-//		buttonsPanel.add(addInkToPrinterButton);
-//		buttonsPanel.add(addPaperToPrinterButton);
-		buttonsPanel.add(approveNoBagging);
-		buttonsPanel.add(startUpButton);
-		buttonsPanel.add(removeItemButton);
-		
-		
-		this.addLayer(buttonScrollPane, 50);
+		GUI_JPanel topPanel = new GUI_JPanel();
+		JLabel notificationLabel = new JLabel("Notifications");
+		topPanel.add(notificationLabel);
+		topPanel.add(notificationPanel);
 
-		this.printReceiptButton = makeCentralButton("PRINT RECEIPT", this.width - 200, 25);
+		this.addLayer(topPanel, 0);
 		
-		printReceiptButton.setActionCommand("printReceipt");
-		printReceiptButton.addActionListener(systemControl.getReceiptControl());
+		//Scroll Pane for attendant buttons. Will be at bottom of screen.
+		JScrollPane bagScrollPane = initializeScrollPane(
+				approveAddedBagsButton, approveNoBagging);
 		
-		this.addLayer(printReceiptButton, 0);
+		JScrollPane stationScrollPane = initializeScrollPane(
+				startUpButton, shutDownButton);
 		
-//		addInkToPrinterButton.setEnabled(false);
-//		addPaperToPrinterButton.setEnabled(false);
-		approveNoBagging.setEnabled(false);
-		approveAddedBagsButton.setEnabled(cusAddedBags);
-		startUpButton.setEnabled(true);
+		JScrollPane approvalScrollPane = initializeScrollPane(
+				permitButton, preventButton);
+		
+		JScrollPane itemScrollPane = initializeScrollPane(
+				addItemButton, removeItemButton);
+
+//		this.addLayer(bagScrollPane, 50);
+//		this.addLayer(stationScrollPane, 50);
+//		this.addLayer(approvalScrollPane, 50);
+//		this.addLayer(itemScrollPane, 50);
+
+		GridBagConstraints panelGrid = new GridBagConstraints();
+		GUI_JPanel buttonPanel = new GUI_JPanel();
+		buttonPanel.setLayout(new GridBagLayout());
+		
+		panelGrid.gridx = 0;
+		panelGrid.gridy = 0;
+		panelGrid.fill = GridBagConstraints.BOTH;
+		buttonPanel.add(approveAddedBagsButton, panelGrid);
+		
+		panelGrid.gridx = 1;
+		buttonPanel.add(startUpButton, panelGrid);
+		
+		panelGrid.gridx = 2;
+		buttonPanel.add(permitButton, panelGrid);
+		
+		panelGrid.gridx = 3;
+		buttonPanel.add(addItemButton, panelGrid);
+
+		panelGrid.gridy = 1;
+		panelGrid.gridx = 0;
+		buttonPanel.add(approveNoBagging, panelGrid);
+		
+		panelGrid.gridx = 1;
+		buttonPanel.add(shutDownButton, panelGrid);
+		
+		panelGrid.gridx = 2;
+		buttonPanel.add(preventButton, panelGrid);
+		
+		panelGrid.gridx = 3;
+		buttonPanel.add(removeItemButton, panelGrid);
+		
+		
+		GUI_JPanel bottomPanel = new GUI_JPanel();
+		JLabel actionsLabel = new JLabel("Actions");
+		bottomPanel.add(actionsLabel);
+		bottomPanel.add(buttonPanel);
+		bottomPanel.add(logoutButton);
+		
+		this.addLayer(bottomPanel, 0);
+		
+//		// FIXME: Used for testing. Remove before submission.
+//		this.printReceiptButton = makeCentralButton("PRINT RECEIPT", this.width - 200, 25);
+//		printReceiptButton.setActionCommand("printReceipt");
+//		printReceiptButton.addActionListener(systemControl.getReceiptControl());
+//		this.addLayer(printReceiptButton, 0);
 	}
 	
 	
-	private GUI_JLabel initalizeLabel(String labelText) {
+	private GUI_JLabel initializeLabel(String labelText) {
 
 		GUI_JLabel label = new GUI_JLabel();
 		label.setText(labelText);
 		label.setForeground(GUI_Color_Palette.WHITE);
 		label.setBackground(GUI_Color_Palette.LIGHT_BROWN);
-		label.setPreferredSize(new Dimension(300, 100));
-		label.setFont(GUI_Fonts.FRANKLIN_BOLD);
+		label.setPreferredSize(new Dimension(LABEL_WIDTH, LABEL_HEIGHT));
+		label.setFont(GUI_Fonts.ATTENDANT_LABELS);
 		label.setHorizontalAlignment(JLabel.CENTER);
 		label.setBorder(BorderFactory.createMatteBorder(20, 20, 20, 20, GUI_Color_Palette.DARK_BLUE));
 
 		return label;
+	}
+	
+	private GUI_JButton initializeButton(String buttonText, String buttonCommand, boolean enabled) {
+		
+		GUI_JButton button = new GUI_JButton();
+		
+		button = makeButton(buttonText.toUpperCase());
+		button.setActionCommand(buttonCommand);
+		button.setFont(GUI_Fonts.ATTENDANT_BUTTONS);
+		button.addActionListener(ac);
+		button.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
+		button.setEnabled(enabled);
+		
+		return button;
+	}
+	
+	private JScrollPane initializeScrollPane(GUI_JButton b1, GUI_JButton b2) {
+		JScrollPane scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(12, 0));
+		scrollPane.setBackground(GUI_Color_Palette.DARK_BROWN);
+		scrollPane.setPreferredSize(new Dimension(200, 100));
+		scrollPane.setBorder(BorderFactory.createMatteBorder(20, 20, 20, 20, GUI_Color_Palette.DARK_BLUE));
+		
+		
+		GUI_JPanel buttonsPanel	= new GUI_JPanel();
+		buttonsPanel.setLayout(new GridLayout(2, 1));
+		scrollPane.getViewport().add(buttonsPanel);
+		
+		buttonsPanel.add(b1);
+		buttonsPanel.add(b2);
+		
+		return scrollPane;
 	}
 
 	@Override
