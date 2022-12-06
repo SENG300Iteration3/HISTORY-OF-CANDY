@@ -64,9 +64,9 @@ public class FakeDataInitializer {
 		code2 = new PriceLookUpCode("1235");
 		reusableBagCode = new PriceLookUpCode("1236");
 		
-		plu1 = new PLUCodedProduct(code1, "banana", 1);
-		plu2 = new PLUCodedProduct(code2, "Romania tomamto", 2);
-		reusableBagProduct = new PLUCodedProduct(reusableBagCode, "reusable bag", 2);
+		plu1 = new PLUCodedProduct(code1, "Banana", 1);
+		plu2 = new PLUCodedProduct(code2, "Romania Tomato", 2);
+		reusableBagProduct = new PLUCodedProduct(reusableBagCode, "Reusable Bag", 2);
 		
 		ProductDatabases.PLU_PRODUCT_DATABASE.put(code1,plu1);
 		ProductDatabases.PLU_PRODUCT_DATABASE.put(code2,plu2);

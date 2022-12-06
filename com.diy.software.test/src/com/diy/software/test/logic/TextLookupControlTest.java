@@ -5,13 +5,18 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.diy.hardware.BarcodedProduct;
+import com.diy.hardware.PLUCodedProduct;
+import com.diy.hardware.PriceLookUpCode;
+import com.diy.hardware.external.ProductDatabases;
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.controllers.TextLookupControl;
 import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.TextLookupControlListener;
-import com.jimmyselectronics.necchi.BarcodedItem;
+import com.diy.software.util.CodedProduct;
+import com.jimmyselectronics.necchi.Barcode;
 import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import ca.powerutility.PowerGrid;
@@ -20,11 +25,13 @@ public class TextLookupControlTest {
 	TextLookupControl tlc;
 	StationControl sc;
 	AttendantControl ac;
-	TextLookupStub tls;
+	TextLookupStub tlStub;
+	AttendantStub attStub;
 	FakeDataInitializer fdi;
-	BarcodedItem item1;
-	BarcodedItem item2;
-	BarcodedItem[] items;
+	Barcode [] barcodes;
+	BarcodedProduct bp1, bp2;
+	PriceLookUpCode [] plucodes;
+	PLUCodedProduct plu1, plu2;
 	
 	@Before
 	public void setup() {
@@ -32,64 +39,221 @@ public class TextLookupControlTest {
 		
 		fdi = new FakeDataInitializer();
 		fdi.addProductAndBarcodeData();
-		items = fdi.getItems();
-		item1 = items[0];
-		item2 = items[1];
-		
-		// needs to add PLU coded items to fake data to test
+		fdi.addPLUCodedProduct();
+		barcodes = fdi.getBarcodes();
+		plucodes = fdi.getPLUCode();
+		bp1 = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcodes[0]);	//"Can of Beans"
+		bp2 = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcodes[1]);	//"Bag of Doritos"
+		plu1 = ProductDatabases.PLU_PRODUCT_DATABASE.get(plucodes[0]);		//"Banana"
+		plu2 = ProductDatabases.PLU_PRODUCT_DATABASE.get(plucodes[1]);		//"Romania Tomato"
 		
 		sc = new StationControl(fdi);
 		ac = new AttendantControl(sc);
 		tlc = ac.getTextLookupControl();
-		tls = new TextLookupStub();
+		tlStub = new TextLookupStub();
+		attStub = new AttendantStub();
 	}
 	
 	@Test
 	public void testAddListener() {
+		tlStub.queryEntered = false;
+		tlc.readyToSearch();
+		assertFalse(tlStub.queryEntered);
 		
+		tlc.addListener(tlStub);
+		tlStub.queryEntered = false;
+		tlc.readyToSearch();
+		assertTrue(tlStub.queryEntered);
 	}
 	
 	@Test
 	public void testRemoveListener() {
+		tlc.addListener(tlStub);
+		
+		tlStub.queryEntered = false;
+		tlc.readyToSearch();
+		assertTrue(tlStub.queryEntered);
+		
+		tlc.removeListener(tlStub);
+		
+		tlStub.queryEntered = false;
+		tlc.readyToSearch();
+		assertFalse(tlStub.queryEntered);
+	}
+	
+	@Test
+	public void testFindProductUsingValidKeyword() {
+		tlc.addListener(tlStub);
+		
+		String keyword = "Doritos";
+		tlc.findProduct(keyword);
+		assertTrue(tlStub.resultsFound);
+		assertEquals(bp2.getDescription(), tlc.getResult(0).getBarcodedProduct().getDescription());
+		assertEquals(bp2.getPrice(), tlc.getResult(0).getBarcodedProduct().getPrice());
+		assertEquals(bp2.getExpectedWeight(), tlc.getResult(0).getBarcodedProduct().getExpectedWeight(), 0);
+		
+		tlc.clearSearch();
+		
+		keyword = "banana";
+		tlc.findProduct(keyword);
+		assertTrue(tlStub.resultsFound);
+		assertEquals(plu1.getDescription(), tlc.getResult(0).getPLUCodedProduct().getDescription());
+		assertEquals(plu1.getPrice(), tlc.getResult(0).getPLUCodedProduct().getPrice());
 
 	}
 	
 	@Test
-	public void testFindProduct() {
-
+	public void testFindProductUsingInvalidKeyword() {
+		tlc.addListener(tlStub);
+		
+		String keyword = "Apple";
+		tlc.findProduct(keyword);
+		assertFalse(tlStub.resultsFound);
 	}
 	
 	@Test
-	public void testAddProduct() {
+	public void testFindProductWithKeywordInUnexpectedCaseFormat() {
+		tlc.addListener(tlStub);
+		
+		String keyword = "doRiTOS";
+		tlc.findProduct(keyword);
+		assertTrue(tlStub.resultsFound);
+		assertEquals(bp2.getDescription(), tlc.getResult(0).getBarcodedProduct().getDescription());
+		assertEquals(bp2.getPrice(), tlc.getResult(0).getBarcodedProduct().getPrice());
+		assertEquals(bp2.getExpectedWeight(), tlc.getResult(0).getBarcodedProduct().getExpectedWeight(), 0);
+		
+		tlc.clearSearch();
+		
+		keyword = "BANANA";
+		tlc.findProduct(keyword);
+		assertTrue(tlStub.resultsFound);
+		assertEquals(plu1.getDescription(), tlc.getResult(0).getPLUCodedProduct().getDescription());
+		assertEquals(plu1.getPrice(), tlc.getResult(0).getPLUCodedProduct().getPrice());
+	}
+	
+	@Test
+	public void testFindProductWithPartialKeyword() {
+		tlc.addListener(tlStub);
+		
+		String keyword = "Dor";
+		tlc.findProduct(keyword);
+		assertTrue(tlStub.resultsFound);
+		assertEquals(bp2.getDescription(), tlc.getResult(0).getBarcodedProduct().getDescription());
+		assertEquals(bp2.getPrice(), tlc.getResult(0).getBarcodedProduct().getPrice());
+		assertEquals(bp2.getExpectedWeight(), tlc.getResult(0).getBarcodedProduct().getExpectedWeight(), 0);
+		
+		tlc.clearSearch();
+		
+		keyword = "nana";
+		tlc.findProduct(keyword);
+		assertTrue(tlStub.resultsFound);
+		assertEquals(plu1.getDescription(), tlc.getResult(0).getPLUCodedProduct().getDescription());
+		assertEquals(plu1.getPrice(), tlc.getResult(0).getPLUCodedProduct().getPrice());
+	}
+	
+	@Test
+	public void testGetResultWithInvalidSelectionIndex() {
+		tlc.addListener(tlStub);
+		
+		CodedProduct result;		
+		tlc.findProduct("tomato");
+		result = tlc.getResult(-1);
+		assertEquals(null, result);
+		result = tlc.getResult(1);
+		assertEquals(null, result);
+	}
+	
+	@Test
+	public void testAddProducts() {
+		tlc.addListener(tlStub);
+		ac.addListener(attStub);
+		
+		assertFalse(attStub.attendantBlocked);
+		
+		tlc.findProduct("beans");
+		tlc.addProduct(0);
+		assertTrue(tlStub.itemAdded);
+		assertEquals(sc.getItemsControl().getCheckoutList().get(0).x, tlc.getProductDescription());
+		assertEquals(sc.getItemsControl().getCheckoutList().get(0).y, tlc.getProductCost(), 0);
+		assertEquals(sc.getItemsControl().getCheckoutTotal(), tlc.getProductCost(), 0);
+		double updatedTotal = sc.getItemsControl().getCheckoutTotal();
 
+		tlc.clearSearch();
+		
+		tlc.findProduct("tomato");
+		tlc.addProduct(0);
+		assertTrue(tlStub.itemAdded);
+		assertEquals(sc.getItemsControl().getCheckoutList().get(1).x, tlc.getProductDescription());
+		assertEquals(sc.getItemsControl().getCheckoutList().get(1).y, tlc.getProductCost(), 0);
+		assertEquals((sc.getItemsControl().getCheckoutTotal() - updatedTotal), tlc.getProductCost(), 0.0001);
+		
+		assertTrue(attStub.attendantBlocked);
 	}
 	
 	@Test
 	public void testPlaceProductInBaggingArea() {
-
+		tlc.addListener(tlStub);
+		ac.addListener(attStub);
+		
+		double lastItemWeight = sc.getWeightOfLastItemAddedToBaggingArea();
+		double lastExpectedWeight = sc.getExpectedWeight();
+		tlc.findProduct("tomato");
+		tlc.addProduct(0);
+		
+		assertTrue(attStub.attendantBlocked);
+		
+		tlc.placeProductInBaggingArea();
+		
+		assertTrue(tlStub.itemBagged);
+		assertNotEquals(lastItemWeight, sc.getWeightOfLastItemAddedToBaggingArea());
+		assertNotEquals(lastExpectedWeight, sc.getExpectedWeight());
+		assertEquals(sc.getWeightOfLastItemAddedToBaggingArea(), tlc.getProductWeight(), 0);
+		assertFalse(attStub.attendantBlocked);
 	}
 	
 	@Test
 	public void testClearSearch() {
-
+		tlc.addListener(tlStub);
+		tlc.findProduct("beans");
+		assertTrue(tlStub.resultsFound);
+		assertFalse(tlStub.searchCleared);
+		
+		tlc.clearSearch();
+		assertFalse(tlStub.resultsFound);
+		assertTrue(tlStub.searchCleared);
 	}
 	
 	@Test
-	public void testUpdateGUI() {
-
+	public void testKeyboardInputComplete() {
+		tlc.addListener(tlStub);
+		tlc.keyboardInputCompleted(ac.getKeyboardControl(), "beans");
+		assertTrue(tlStub.queryEntered);
+		assertTrue(tlStub.resultsFound);
 	}
-
 	
 	public class TextLookupStub implements TextLookupControlListener {
-		boolean readyToSearch = false;
+		boolean queryEntered = false;
+		boolean resultsFound = false;
 		boolean resultChosen = false;
+		boolean itemAdded = false;
 		boolean itemBagged = false;
-		boolean updatedCheckout = false;
 		boolean searchCleared = false;
 
 		@Override
 		public void searchQueryWasEntered(TextLookupControl tlc) {
-			readyToSearch = true;
+			queryEntered = true;
+			searchCleared = false;
+		}
+		
+		@Override
+		public void resultsWereFound(TextLookupControl tlc) {
+			resultsFound = true;
+			
+		}
+
+		@Override
+		public void noResultsWereFound(TextLookupControl tlc) {
+			resultsFound = false;
 			
 		}
 
@@ -100,28 +264,30 @@ public class TextLookupControlTest {
 		}
 
 		@Override
-		public void itemHasBeenBagged(TextLookupControl tlc) {
-			itemBagged = true;
-			
+		public void itemHasBeenAddedToCheckout(TextLookupControl tlc) {
+			itemAdded = true;
 		}
 
 		@Override
-		public void checkoutHasBeenUpdated(TextLookupControl tlc) {
-			updatedCheckout = true;
+		public void itemHasBeenBagged(TextLookupControl tlc) {
+			itemBagged = true;
 			
 		}
 		
 		@Override
 		public void searchHasBeenCleared(TextLookupControl tlc) {
 			searchCleared = true;
-			
+			queryEntered = false;
+			resultsFound = false;
+			resultChosen = false;
+			itemBagged = false;
+			itemAdded = false;
 		}
 		
 	}
 	
-	public class AttendantListenerStub implements AttendantControlListener {
+	public class AttendantStub implements AttendantControlListener {
     	boolean attendantBlocked = false;
-    	boolean noBaggingRequested = false;
     	
     	@Override
     	public void attendantApprovedBags(AttendantControl ac) {
@@ -186,7 +352,7 @@ public class TextLookupControlTest {
 
 		@Override
 		public void noBagRequest() {
-			noBaggingRequested = true;
+			// TODO Auto-generated method stub
 			
 		}
 

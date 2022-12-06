@@ -37,7 +37,7 @@ public class TextLookupControl implements KeyboardControlListener{
 	
 	// Can hold either Barcoded or PLUcoded product types without losing their different properties
 	private ArrayList<CodedProduct> results;
-	private int selectionIndex;
+	private CodedProduct selection;
 	
 	// Product info for selected result
 	private double productWeight;
@@ -59,49 +59,78 @@ public class TextLookupControl implements KeyboardControlListener{
 		listeners.remove(l);
 	}
 	
-	private void findProduct(String keyword) {
+	public void readyToSearch() {
+		for (TextLookupControlListener l: listeners) {
+			l.searchQueryWasEntered(this);
+		}
+	}
+	
+	public void findProduct(String keyword) {
 		for (BarcodedProduct product : ProductDatabases.BARCODED_PRODUCT_DATABASE.values()) {
-			if (product.getDescription().contains(keyword)){
+			//System.out.println("Product: " + product.getDescription() + "   Keyword: " + keyword);
+			if (product.getDescription().toLowerCase().contains(keyword.toLowerCase())){
 				CodedProduct match = new CodedProduct(product, null);
 			    results.add(match);
 			}
 		}
 		for (PLUCodedProduct product : ProductDatabases.PLU_PRODUCT_DATABASE.values()) {
-			if (product.getDescription().contains(keyword)){
+			if (product.getDescription().toLowerCase().contains(keyword.toLowerCase())){
 				CodedProduct match = new CodedProduct(null, product);
 			    results.add(match);
 			}
 		}
-		//TODO: if nothing matches, display error and clear search to try again
-	}
-	
-	public void getSelection(int selectionIndex) {
-		this.selectionIndex = selectionIndex;
-		for (TextLookupControlListener l : listeners) {
-			l.resultWasChosen(this);
+		if(results.size() == 0) {
+			for (TextLookupControlListener l: listeners) {
+				l.noResultsWereFound(this);
+			}
+		}
+		else {
+			for (TextLookupControlListener l: listeners) {
+				l.resultsWereFound(this);
+			}
 		}
 	}
 	
-	public void addProduct() {
-		if (results.get(selectionIndex).getBarcodedProduct() == null) {
-			PLUCodedProduct productToAdd = results.get(selectionIndex).getPLUCodedProduct();
+	public CodedProduct getResult(int selectionIndex) {
+		CodedProduct result;
+		if (selectionIndex >= results.size() || selectionIndex < 0) {
+			result = null;
+		}
+		else {
+			result = results.get(selectionIndex);
+			for (TextLookupControlListener l : listeners) {
+				l.resultWasChosen(this);
+			}
+		}
+		return result;
+	}
+	
+	public void addProduct(int selectionIndex) {
+		ac.preventStationUse();
+		selection = getResult(selectionIndex);
+		if (selection.getBarcodedProduct() == null) {
+			PLUCodedProduct productToAdd = selection.getPLUCodedProduct();
 			productWeight = generateProductWeight();
 			productCost = calculatePrice(productToAdd, productWeight);
 			productDescription = productToAdd.getDescription();
 		}
 		else {
-			BarcodedProduct productToAdd = results.get(selectionIndex).getBarcodedProduct();
+			BarcodedProduct productToAdd = selection.getBarcodedProduct();
 			productWeight = productToAdd.getExpectedWeight();
-			productCost = productToAdd.getPrice();
+			productCost = (double)productToAdd.getPrice();
 			productDescription = productToAdd.getDescription();
 		}
 		sc.getItemsControl().addItemToCheckoutList(new Tuple<String,Double>(productDescription, productCost));
+		sc.getItemsControl().updateCheckoutTotal(productCost);
+		for (TextLookupControlListener l : listeners) {
+			l.itemHasBeenAddedToCheckout(this);
+		}
 	}
 
 	public void placeProductInBaggingArea() {
-		ac.preventStationUse();
 		sc.updateWeightOfLastItemAddedToBaggingArea(productWeight);
 		sc.updateExpectedCheckoutWeight(productWeight);
+		ac.permitStationUse();
 		for (TextLookupControlListener l : listeners) {
 			l.itemHasBeenBagged(this);
 		}
@@ -116,7 +145,7 @@ public class TextLookupControl implements KeyboardControlListener{
 	}
 	
 	private double calculatePrice(PLUCodedProduct selection, double weight) {
-		double price = selection.getPrice();
+		double price = (double) selection.getPrice();
 		if (selection.isPerUnit() == false) {
 			double weightInKilos = weight/1000;
 			price *= weightInKilos;
@@ -124,17 +153,27 @@ public class TextLookupControl implements KeyboardControlListener{
 		return price;
 	}
 	
-	private void clearSearch() {
+	public void clearSearch() {
 		results = new ArrayList<>();
+		selection = null;
+		productDescription = null;
+		productCost = 0;
+		productWeight = 0;
 		for (TextLookupControlListener l : listeners) {
 			l.searchHasBeenCleared(this);
 		}
 	}
 	
-	private void updateGUI() {
-		for (TextLookupControlListener l: listeners) {
-			l.checkoutHasBeenUpdated(this);
-		}
+	public double getProductCost() {
+		return productCost;
+	}
+	
+	public double getProductWeight() {
+		return productWeight;
+	}
+	
+	public String getProductDescription() {
+		return productDescription;
 	}
 
 	@Override
@@ -144,11 +183,8 @@ public class TextLookupControl implements KeyboardControlListener{
 
 	@Override
 	public void keyboardInputCompleted(KeyboardControl kc, String query) {
-		for (TextLookupControlListener l: listeners) {
-			l.searchQueryWasEntered(this);
-		}
+		readyToSearch();
 		findProduct(query);
-		System.out.println(results);
 	}
 	
 }
