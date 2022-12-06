@@ -89,7 +89,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 *
 	 */
 	public void preventStationUse(){
-		sc.blockStation();
+		sc.blockStation("prevent");
 		for(AttendantControlListener l : listeners){
 			l.attendantPreventUse(this);
 		}

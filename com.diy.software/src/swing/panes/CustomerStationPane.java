@@ -135,7 +135,9 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 				AddOwnBagsPromptScreen screen = new AddOwnBagsPromptScreen(systemControl, 
 						"Please Place Your Bags In the Bagging Area");
 				addScreenToStack(screen);
-				
+			}else if (reason == "prevent") {
+				OkayPromptScreen screen = new OkayPromptScreen(systemControl, "Station Closed For Maintainence", true, false);
+				addScreenToStack(screen);
 			} else {
 				blockedPromptScreen = new BlockedPromptScreen(systemControl, reason);
 				addScreenToStack(blockedPromptScreen);
