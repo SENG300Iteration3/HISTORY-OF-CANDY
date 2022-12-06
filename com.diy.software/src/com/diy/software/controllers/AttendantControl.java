@@ -2,6 +2,7 @@ package com.diy.software.controllers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
@@ -245,20 +246,20 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		
 		sc.getCashControl().disablePayments();
 		
-		Coin nickelToAdd = new Coin(5);
-		Coin dimeToAdd = new Coin(10);
-		Coin quaterToAdd = new Coin(25);
-		Coin loonieToAdd = new Coin(100);
-		Coin toonieToAdd = new Coin(200);
+		Coin nickelToAdd = new Coin(currency, BigDecimal.valueOf(0.05));
+		Coin dimeToAdd = new Coin(currency,BigDecimal.valueOf(0.1));
+		Coin quaterToAdd = new Coin(currency,BigDecimal.valueOf(0.25));
+		Coin loonieToAdd = new Coin(currency,BigDecimal.valueOf(1.0));
+		Coin toonieToAdd = new Coin(currency,BigDecimal.valueOf(2.0));
 		
 		
 		List<Coin> unloadedCoins = unit.unload();
 		
-		int nCounter = countCoin(5,unloadedCoins);
-		int dCounter = countCoin(10,unloadedCoins);
-		int qCounter = countCoin(25,unloadedCoins);
-		int lCounter = countCoin(100,unloadedCoins);
-		int tCounter = countCoin(200,unloadedCoins);
+		int nCounter = countCoin(nickelToAdd,unloadedCoins);
+		int dCounter = countCoin(dimeToAdd,unloadedCoins);
+		int qCounter = countCoin(quaterToAdd,unloadedCoins);
+		int lCounter = countCoin(loonieToAdd,unloadedCoins);
+		int tCounter = countCoin(toonieToAdd,unloadedCoins);
 		
 		int nAmount = AMOUNT - nCounter;
 		int dAmount = AMOUNT - dCounter;
@@ -294,7 +295,9 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 * @return
 	 * 		returns the amount of coins counted
 	 */
-	public int countCoin(long value, List<Coin> coins) {
+	public int countCoin(Coin coinToCount, List<Coin> coins) {
+		BigDecimal value = coinToCount.getValue();
+		
 		int count = 0;
 		for(Coin c : coins) {
 			if(c.getValue() == value) {
