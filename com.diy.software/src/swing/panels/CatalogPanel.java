@@ -160,4 +160,10 @@ public class CatalogPanel extends JPanel implements ItemsControlListener {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void awaitingAttendantToApproveItemRemoval(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
+	}
 }

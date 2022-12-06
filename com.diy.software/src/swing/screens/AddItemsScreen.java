@@ -14,6 +14,7 @@ import com.diy.software.util.Tuple;
 import com.jimmyselectronics.Item;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodedItem;
+import com.jimmyselectronics.svenden.ReusableBag;
 
 import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Fonts;
@@ -35,7 +36,7 @@ import com.diy.software.listeners.StationControlListener;
 
 
 public class AddItemsScreen extends Screen implements ItemsControlListener, BagsControlListener, BagDispenserControlListener {
-	private StationControl systemControl;
+	private StationControl sc;
 	private ItemsControl itemsControl;
 	
 	private BagsControl bc;
@@ -57,18 +58,18 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 	private AddOwnBagsPromptScreen ownBagsPromptScreen;
 
 
-	public AddItemsScreen(StationControl systemControl) {
-		super(systemControl, "Self Checkout");
+	public AddItemsScreen(StationControl sc) {
+		super(sc, "Self Checkout");
 		
-		this.systemControl = systemControl;
+		this.sc = sc;
 		
-		this.itemsControl = systemControl.getItemsControl();
+		this.itemsControl = sc.getItemsControl();
 		itemsControl.addListener(this);
 		
-		bc = systemControl.getBagsControl();
+		bc = sc.getBagsControl();
 		bc.addListener(this);
 		
-		bdc = systemControl.getBagDispenserControl();
+		bdc = sc.getBagDispenserControl();
 		bdc.addListener(this);
 
 
@@ -292,6 +293,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 	@Override
 	public void itemsHaveBeenUpdated(ItemsControl ic) {
 		ArrayList<Object> checkoutList = ic.getCheckoutList();
+		ArrayList<ReusableBag> bags = ic.getBagsList();
 		String name;
 		double price;
 		this.invalidateAllScannedItems();
@@ -303,11 +305,20 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 			}
 			else {
 				PriceLookUpCode pluCode = (PriceLookUpCode) checkoutList.get(i);
+				PLUCodedItem item = (PLUCodedItem) this.sc.pluCodedItems.get(pluCode);
+				double weight = item.getWeight(); // When PLU coded items are made they will have to be added to pluCodedItems along with the PLU code
+				price = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getPrice() * weight / 1000;	
 				name = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getDescription();
-				price = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getPrice();
 			}		
 			this.addScannedItem(i+1 + " - " + name, price);
 		}
+		int index = checkoutList.size();
+		double reusableBagPrice = sc.fakeData.getReusableBagPrice();
+		for (ReusableBag bag: bags) {
+			index++;
+			this.addScannedItem(index + " - " + "Reusable Bag", reusableBagPrice);
+		}
+		
 	}
 
 	@Override

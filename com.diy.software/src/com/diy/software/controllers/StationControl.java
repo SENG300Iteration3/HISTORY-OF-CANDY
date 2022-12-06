@@ -170,10 +170,12 @@ public class StationControl
 			if (i instanceof BarcodedItem) {
 				BarcodedItem item = (BarcodedItem) i;
 				this.barcodedItems.put(item.getBarcode(), i);
+				customer.shoppingCart.add(i);	
 			}
 			else if (i instanceof PLUCodedItem) {
 				PLUCodedItem item = (PLUCodedItem) i;
 				this.pluCodedItems.put(item.getPLUCode(), i);
+				customer.shoppingCart.add(i);	
 			}
 		}
 	}

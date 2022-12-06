@@ -41,7 +41,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	private ArrayList<ItemsControlListener> listeners;
 	public ArrayList<Tuple<BarcodedProduct, Integer>> tempList = new ArrayList<>();
 	private ArrayList<Object> checkoutList = new ArrayList<>();
-	private Map<PLUCodedProduct, Double> pluProducts = new HashMap<>();
 	private ArrayList<ReusableBag> bags = new ArrayList<ReusableBag>(); // stores reusable bag item with no barcode
 	private double checkoutListTotal = 0.0;
 	private Item currentItem;
@@ -151,12 +150,11 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				weight = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
 			}
 			else {
-				PriceLookUpCode pluCode = (PriceLookUpCode ) this.checkoutList.get(index);
+				PriceLookUpCode pluCode = (PriceLookUpCode) this.checkoutList.get(index);
 				// getting the actual object that the customer had in his shopping cart and was subsequently added to the baggingArea
 				item = (PLUCodedItem) this.sc.pluCodedItems.get(pluCode);
 				weight = item.getWeight(); // When PLU coded items are made they will have to be added to pluCodedItems along with the PLU code
-				price = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getPrice();
-				
+				price = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getPrice() * weight / 1000;	
 			}
 			// TODO update inventory to increase "stock" since the item wasn't sold
 			this.sc.updateExpectedCheckoutWeight(-weight);  // decrement weight
@@ -182,10 +180,9 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 	public void addReusableBags(ReusableBag aBag) {
 		bags.add(aBag); // add to reusable bags doesnt really need it for now
-
 		double reusableBagPrice = sc.fakeData.getReusableBagPrice();
 		this.updateCheckoutTotal(reusableBagPrice); // update total balance
-		this.addItemToCheckoutList(new Tuple<String, Double>("Reusable bag", reusableBagPrice));
+		refreshGui();
 	}
 
 	public double getCheckoutTotal() {
@@ -267,6 +264,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 //			pluItemSelected();
 
 			double weight = weightofScannerTray - sc.getWeightOfScannerTray();
+			
 			System.out.println(weight + " Scale weight");
 
 			sc.setWeightOfScannerTray(weightofScannerTray);
@@ -283,7 +281,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 			// price per kg
 			price = (double) product.getPrice() * weight / 1000;
-			this.addItemToCheckoutList(new Tuple<String, Double>(product.getDescription(), price));
+			this.addItemToCheckoutList(currentProductCode);
 			this.updateCheckoutTotal(price);
 
 			System.out.println("Added item to checkout list!");
@@ -570,6 +568,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 	}
 
+	public ArrayList<ReusableBag> getBagsList() {
+		return this.bags;
+	}
+	
 	private void checkInventory(Product product) {
 		if (ProductDatabases.INVENTORY.containsKey(product) && ProductDatabases.INVENTORY.get(product) >= 1) {
 			ProductDatabases.INVENTORY.put(product, ProductDatabases.INVENTORY.get(product) - 1); // updates INVENTORY
