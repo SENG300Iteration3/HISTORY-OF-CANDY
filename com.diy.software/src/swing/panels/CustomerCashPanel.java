@@ -42,10 +42,10 @@ public class CustomerCashPanel extends JPanel implements CashControlListener {
     dollar5.setActionCommand("d 5");
     dollar1.setActionCommand("d 1");
     
-    toonie.setActionCommand("c 2.00");
-    loonie.setActionCommand("c 1.00");
+    toonie.setActionCommand("c 2.0");
+    loonie.setActionCommand("c 1.0");
     quarter.setActionCommand("c .25");
-    dime.setActionCommand("c .10");
+    dime.setActionCommand("c .1");
     nickel.setActionCommand("c .05");
     penny.setActionCommand("c .01");
 
