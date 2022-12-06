@@ -93,6 +93,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		
 		removeItemTextField = new JTextField();
 		removeItemTextField.setEditable(false);
+		removeItemTextField.setSize(new Dimension(width, height));
 		
 		removeItemButton = makeButton("Remove item");
 		removeItemButton.addActionListener(new ActionListener() {
@@ -150,7 +151,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		
 		
 		GUI_JPanel buttonsPanel	= new GUI_JPanel();
-		buttonsPanel.setLayout(new GridLayout(4, 1));
+		buttonsPanel.setLayout(new GridLayout(5, 1));
 		buttonScrollPane.getViewport().add(buttonsPanel);
 		
 		buttonsPanel.add(approveAddedBagsButton);
@@ -158,8 +159,9 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 //		buttonsPanel.add(addPaperToPrinterButton);
 		buttonsPanel.add(approveNoBagging);
 		buttonsPanel.add(startUpButton);
-		buttonsPanel.add(removeItemPanel);
-		
+		//buttonsPanel.add(removeItemPanel);
+		buttonsPanel.add(removeItemTextField);
+		buttonsPanel.add(removeItemButton);
 		
 		this.addLayer(buttonScrollPane, 50);
 

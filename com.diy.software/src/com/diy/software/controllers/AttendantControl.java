@@ -99,6 +99,8 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 * 
 	 * Precondition: The customer must have requested "remove item" from their console.
 	 * 
+	 * @param i	The item number to remove
+	 * @return	Whether the removal was successful
 	 */
 	public boolean removeItem(int i) {
 		
