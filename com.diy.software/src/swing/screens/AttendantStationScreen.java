@@ -413,6 +413,9 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	public void itemRemoved(ItemsControl itemsControl) {
 		removeItemButton.setEnabled(false);
 		removeItemTextField.setEditable(false);
+	}
 		
+	public void itemBagged() {
+		approveNoBagging.setEnabled(false);
 	}
 }

@@ -372,4 +372,10 @@ public class CustomerItemsPanel extends JPanel
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public void itemBagged() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

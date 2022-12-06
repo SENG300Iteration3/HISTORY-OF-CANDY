@@ -193,7 +193,11 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		sc.ItemApprovedToNotBag();
 		for (AttendantControlListener l : listeners)
 			l.initialState();
-		sc.getItemsControl().placeBulkyItemInCart();
+	}
+	
+	public void itemBagged() {
+		for (AttendantControlListener l : listeners)
+			l.itemBagged();
 	}
 	
 	/*
@@ -373,73 +377,66 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String c = e.getActionCommand();
-		if (c.startsWith("remove item ")) {
-			String itemNumber = "";
-			itemNumber += c.split(" ")[1];
-			removeItem(Integer.parseInt(itemNumber));
-		} else {
-			try {
-				switch (c) {
-					case "approve added bags":
-						System.out.println("Attendant approved added bags");
-						approveBagsAdded();
-						break;
-					case "addInk":
-						attendantNotifications = ("stations printer needs more ink!");
-						addInk();
-						break;
-					case "addPaper":
-						attendantNotifications = ("stations printer needs more paper!");
-						addPaper();
-						break;
-					case "addCoin": 
-						//TODO:
-						
-						break;
-					case "addBanknote": 
-						//TODO:
-						
-						break;
-					case "addBag": 
-						//TODO:
-						
-						break;
-					case "request no bag":
-						attendantNotifications = ("customer requests no bagging");
-						System.out.println("request no bag");
-						noBagRequest();
-						break;
-						// TODO
-						// temporary delete later when button is moved
-					case "printReceipt":
-						//attendantNotifications = ("approved no bagging request");
-						System.out.println("AC print receipt");
-						sc.getReceiptControl().printItems();
-						sc.getReceiptControl().printTotalCost();
-						sc.getReceiptControl().printMembership();
-						sc.getReceiptControl().printDateTime();
-						sc.getReceiptControl().printThankyouMsg();		
-						break;
-					case "approve no bag":
-						approveNoBagRequest();
-						break;
-					case "permit_use":
-						attendantNotifications = ("Permitting use on station");
-						permitStationUse();
-						break;
-					case "prevent_use":
-						attendantNotifications = ("Preventing use on station for maintenance");
-						preventStationUse();
-					case "startUp":
-						System.out.println("Station has been started up");
-						startUpStation();
-						break;
-					default:
-						break;
-				}
-			} catch (Exception ex) {
-
+		try {
+			switch (c) {
+				case "approve added bags":
+					System.out.println("Attendant approved added bags");
+					approveBagsAdded();
+					break;
+				case "addInk":
+					attendantNotifications = ("stations printer needs more ink!");
+					addInk();
+					break;
+				case "addPaper":
+					attendantNotifications = ("stations printer needs more paper!");
+					addPaper();
+					break;
+				case "addCoin": 
+					//TODO:
+					
+					break;
+				case "addBanknote": 
+					//TODO:
+					
+					break;
+				case "addBag": 
+					sc.loadBags();
+					break;
+				case "request no bag":
+					attendantNotifications = ("customer requests no bagging");
+					System.out.println("request no bag");
+					noBagRequest();
+					break;
+					// TODO
+					// temporary delete later when button is moved
+				case "printReceipt":
+					//attendantNotifications = ("approved no bagging request");
+					System.out.println("AC print receipt");
+					sc.getReceiptControl().printItems();
+					sc.getReceiptControl().printTotalCost();
+					sc.getReceiptControl().printMembership();
+					sc.getReceiptControl().printDateTime();
+					sc.getReceiptControl().printThankyouMsg();		
+					break;
+				case "approve no bag":
+					approveNoBagRequest();
+					break;
+				case "permit_use":
+					attendantNotifications = ("Permitting use on station");
+					permitStationUse();
+					break;
+				case "prevent_use":
+					attendantNotifications = ("Preventing use on station for maintenance");
+					preventStationUse();
+				case "startUp":
+					System.out.println("Station has been started up");
+					startUpStation();
+					break;
+				default:
+					break;
 			}
+		} catch (Exception ex) {
+			
 		}
 		
 	}
@@ -521,6 +518,5 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	public void noBagRequest() {
 		for (AttendantControlListener l : listeners)
 			l.noBagRequest();
-
 	}
 }

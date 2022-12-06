@@ -453,7 +453,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			
 			if(!isPLU) {
 				System.err.println("The currently selected item has no PLU code! Or there is no item selected!");
-				currentProductCode = null;				sc.goBackOnUI();;
+				currentProductCode = null;
+				sc.goBackOnUI();;
 			} else if(expectedPLU.hashCode() != currentProductCode.hashCode()) {
 				System.err.println("You entered the wrong PLU code for the item!");
 				System.err.printf("The expected PLU code is %s\n", expectedPLU);

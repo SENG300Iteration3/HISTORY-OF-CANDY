@@ -242,6 +242,10 @@ public class CustomerBagsPanel extends JPanel
 
 	@Override
 	public void itemRemoved(ItemsControl itemsControl) {
+		
+	}
+	
+	public void itemBagged() {
 		// TODO Auto-generated method stub
 		
 	}
