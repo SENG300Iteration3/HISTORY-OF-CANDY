@@ -298,7 +298,7 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 
 	@Override
 	public void awaitingItemToBeRemoved(ItemsControl itemsControl, String updateMessage) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -316,7 +316,7 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 
 	@Override
 	public void awaitingAttendantToApproveItemRemoval(ItemsControl ic) {
-		// TODO Auto-generated method stub
-		
+		okayPromptScreen = new OkayPromptScreen(sc, "Please Ask Attendant For Assistance In Removing An Item", false, false);
+		addPanel(okayPromptScreen.getRootPanel());
 	}
 }

@@ -11,10 +11,12 @@ import javax.swing.JScrollPane;
 
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.BagsControl;
+import com.diy.software.controllers.ItemsControl;
 import com.diy.software.controllers.ReceiptControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
+import com.diy.software.listeners.ItemsControlListener;
 import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import swing.styling.GUI_Color_Palette;
@@ -24,7 +26,7 @@ import swing.styling.GUI_JLabel;
 import swing.styling.GUI_JPanel;
 import swing.styling.Screen;
 
-public class AttendantStationScreen extends Screen implements AttendantControlListener, BagsControlListener {
+public class AttendantStationScreen extends Screen implements AttendantControlListener, BagsControlListener, ItemsControlListener {
 
 	private StationControl sc;
 	private BagsControl bc;
@@ -49,6 +51,8 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 
 		ac = sc.getAttendantControl();
 		ac.addListener(this);
+		
+		sc.getItemsControl().addListener(this);
 
 		int width = 400;
 		int height = 50;
@@ -82,6 +86,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		removeItemButton.setActionCommand("remove");
 		removeItemButton.addActionListener(ac);
 		removeItemButton.setPreferredSize(new Dimension(width, height));
+		removeItemButton.setEnabled(false);
 		
 		weightDescrepancyMssg = initalizeLabel("weightDiscrepancyMsg");
 		weightDisplayLabel = initalizeLabel("weightDisplayLabel");
@@ -309,5 +314,81 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	public void attendantApprovedItemRemoval(AttendantControl bc) {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+	@Override
+	public void awaitingItemToBeSelected(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void itemWasSelected(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void awaitingItemToBePlacedInBaggingArea(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void awaitingItemToBePlacedInScanningArea(StationControl sc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void noMoreItemsAvailableInCart(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void itemsAreAvailableInCart(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void awaitingItemToBeRemoved(ItemsControl itemsControl, String updateMessage) {
+		removeItemButton.setEnabled(false);
+	}
+
+
+	@Override
+	public void itemsHaveBeenUpdated(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void productSubtotalUpdated(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void awaitingAttendantToApproveItemRemoval(ItemsControl ic) {
+		removeItemButton.setEnabled(true);
+		
+	}
+
+
+	@Override
+	public void triggerAttendantRemoveItemScreen(AttendantControl ac) {
+		RemoveItemScreen screen = new RemoveItemScreen(sc, ac);
+		this.getRootPanel().getRootPane().getParent().add(screen.getRootPanel());
 	}
 }

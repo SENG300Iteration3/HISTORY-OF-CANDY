@@ -516,8 +516,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 					break;
 				case "remove item":
 					System.out.println("Requesting item removal. Please wait for Assistance!");
-					// TODO requestRemoveItem() currently doesn't work and crashes the code.
-					//requestRemoveItem();
+					requestRemoveItem();
 					break;
 				default:
 					break;

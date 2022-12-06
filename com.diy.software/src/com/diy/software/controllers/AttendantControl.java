@@ -60,7 +60,6 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		listeners.remove(l);
 	}
 	
-	
 	// allow attendant to enable customer station use after it has been suspended
 	public void permitStationUse() {
 		sc.unblockStation();
@@ -101,6 +100,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 * 
 	 */
 	public void removeItem() {
+		
 		// TODO Switch this so that the GUI uses a pinpad/numpad to enter the number
 		System.out.println("Enter the number corrseponding to the item to be removed: ");
 		int itemNumber = scanner.nextInt();
@@ -109,6 +109,13 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 			itemNumber = scanner.nextInt();
 		}
 		this.removeItemSuccesful();
+		
+		//---------------
+		
+		for (AttendantControlListener l : listeners) {
+			l.triggerAttendantRemoveItemScreen(this);
+		}
+		
 	}
 	
 	/**

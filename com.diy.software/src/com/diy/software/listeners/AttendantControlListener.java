@@ -8,7 +8,9 @@ import com.diy.software.controllers.ReceiptControl;
 public interface AttendantControlListener {
 	public void attendantApprovedBags(AttendantControl ac);
 
-	public void attendantPreventUse(AttendantControl ac);
+	public void attendantPreventUse(AttendantControl ac);;
+	
+	public void triggerAttendantRemoveItemScreen(AttendantControl ac);
 	
 	/**
 	 *	Changes GUI to allow scanning of items
