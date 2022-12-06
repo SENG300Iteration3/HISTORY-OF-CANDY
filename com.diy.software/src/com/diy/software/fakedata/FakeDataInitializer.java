@@ -2,7 +2,9 @@ package com.diy.software.fakedata;
 
 
 
+import java.time.LocalDate;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.swing.text.PlainDocument;
@@ -38,7 +40,8 @@ public class FakeDataInitializer {
 	private CoinStorageUnit fakeCoinStorageUnit;
 	private final Double AMOUNT_AVAILABLE = 1000.0;
 	private final int COIN_STORAGE_CAPACITY = 50;
-	Calendar expire_date = Calendar.getInstance();
+	Calendar calendar = Calendar.getInstance();
+	private Date expire_date = calendar.getTime();
 	
 	public void addProductAndBarcodeData () {
 		/**
@@ -153,7 +156,6 @@ public class FakeDataInitializer {
 	public void addCardData() {
 		
 		fakebank = new CardIssuer("RBC", 14);
-		expire_date.add(Calendar.YEAR, 5);
 		card1 = new Card("AMEX", "0000000000001234", "Stephen Strange", "000", "1234", false, true);
 		card2 = new Card("VISA", "0000000000004321", "Tony Stark", "111", "0987", true, true);
 		card3 = new Card("MAST", "0000000000009999", "Natasha Romanoff", "222", "1111", true, false);
