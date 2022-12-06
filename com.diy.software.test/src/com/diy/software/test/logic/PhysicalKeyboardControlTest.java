@@ -25,10 +25,6 @@ public class PhysicalKeyboardControlTest {
 		
 	}
 
-	@After
-	public void tearDown() throws Exception {
-	}
-
 	@Test
 	public void testKeyPressedOneKey() {
 		assertTrue(kcStub.label.equals(""));
