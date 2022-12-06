@@ -366,7 +366,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 	}
 
-	public void pluItemSelected() {
+	public void pluItemSelected() throws NullPointerException {
 		try {
 			// Check with product database and update inventory
 			Product product = findProduct(currentProductCode);
@@ -374,7 +374,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			
 			if(!isPLU) {
 				System.err.println("The currently selected item has no PLU code! Or there is no item selected!");
-				currentProductCode = null;				sc.goBackOnUI();;
+				currentProductCode = null;
+				sc.goBackOnUI();;
 			} else if(expectedPLU.hashCode() != currentProductCode.hashCode()) {
 				System.err.println("You entered the wrong PLU code for the item!");
 				System.err.printf("The expected PLU code is %s\n", expectedPLU);
@@ -387,8 +388,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			}
 			
 		}catch(NullPointerSimulationException e) {
-			System.err.println("PLU code does not exist in the database");
-		} 
+			//System.err.println("PLU code does not exist in the database");			REWORKED
+			//THROWING THIS KIND OF EXCEPTION TO BE DETAILED ENOUGH WHILE NOT PRINTING ANYTHING BY DEFAULT (NullPointerSimulationException)
+			throw new NullPointerException("PLU code does not exist in the database");
+		}
 	}
 
 	@Override
