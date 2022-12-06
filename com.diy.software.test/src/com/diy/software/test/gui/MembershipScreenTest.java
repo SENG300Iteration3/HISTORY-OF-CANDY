@@ -228,6 +228,18 @@ public class MembershipScreenTest {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public void triggerPLUCodeWorkflow(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerBrowsingCatalog(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 

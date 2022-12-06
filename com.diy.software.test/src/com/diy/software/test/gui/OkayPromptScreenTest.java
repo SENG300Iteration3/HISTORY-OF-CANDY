@@ -41,7 +41,7 @@ public class OkayPromptScreenTest {
 
 	@Test
 	public void testOkayButtonDoNotNavigateToInitialScreen() {
-		screen = new OkayPromptScreen(sc, "message", false);
+		screen = new OkayPromptScreen(sc, "message", false, true);
 		screen.getOkayButton().doClick();
 		assertTrue(sStub.panelBack);
 		assertFalse(sStub.initialScreen);
@@ -49,7 +49,7 @@ public class OkayPromptScreenTest {
 	
 	@Test
 	public void testOkayButtonNavigateToInitialScreen() {
-		screen = new OkayPromptScreen(sc, "message", true);
+		screen = new OkayPromptScreen(sc, "message", true, true);
 		screen.getOkayButton().doClick();
 		assertFalse(sStub.panelBack);
 		assertTrue(sStub.initialScreen);
@@ -152,6 +152,18 @@ public class OkayPromptScreenTest {
 
 		@Override
 		public void notEnoughBagsInStock(StationControl systemControl, int numBag) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerPLUCodeWorkflow(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerBrowsingCatalog(StationControl systemControl) {
 			// TODO Auto-generated method stub
 			
 		}

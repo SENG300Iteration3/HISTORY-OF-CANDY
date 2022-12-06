@@ -11,7 +11,7 @@ public class StubSystem implements StationControlListener{
 	boolean triggerPaymentWorkflow = false;
 	public String paymentType;
 	boolean membershipCardInput = false;
-	
+	public boolean triggerPanelBack = false;
 
 	@Override
 	public void systemControlLocked(StationControl systemControl, boolean isLocked) {
@@ -49,7 +49,7 @@ public class StubSystem implements StationControlListener{
 
 	@Override
 	public void triggerPanelBack(StationControl systemControl) {
-		// TODO Auto-generated method stub
+		triggerPanelBack = true;
 		
 	}
 
@@ -81,6 +81,7 @@ public class StubSystem implements StationControlListener{
 
 	@Override
 	public void startMembershipCardInput(StationControl systemControl) {
+<<<<<<< Upstream, based on origin/main
 		membershipCardInput = true;
 		
 	}
@@ -117,6 +118,20 @@ public class StubSystem implements StationControlListener{
 
 	@Override
 	public void systemControlLocked(StationControl systemControl, boolean isLocked, String reason) {
+=======
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void membershipCardInputFinished(StationControl systemControl) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void membershipCardInputCanceled(StationControl systemControl, String reason) {
+>>>>>>> 296c4ff Added tests for PaymentScreen
 		// TODO Auto-generated method stub
 		
 	}
@@ -135,6 +150,18 @@ public class StubSystem implements StationControlListener{
 
 	@Override
 	public void notEnoughBagsInStock(StationControl systemControl, int numBag) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void triggerPLUCodeWorkflow(StationControl systemControl) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void triggerBrowsingCatalog(StationControl systemControl) {
 		// TODO Auto-generated method stub
 		
 	}

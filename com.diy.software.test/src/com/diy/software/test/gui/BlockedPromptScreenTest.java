@@ -138,6 +138,18 @@ public class BlockedPromptScreenTest {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public void itemBagged() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void loggedIn(boolean isLoggedIn) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 }
