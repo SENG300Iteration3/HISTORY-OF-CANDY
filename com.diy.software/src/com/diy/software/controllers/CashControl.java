@@ -268,11 +268,6 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 				}
 			} else if (c.startsWith("c")) {
 				Coin coin = new Coin(Currency.getInstance("CAD"), new BigDecimal(c.split(" ")[1]));
-				System.out.println("Coin value: " + coin.getValue());
-				for(BigDecimal i : sc.station.coinDenominations) {
-					System.out.println("coinDenomination: " + i);
-				}
-				System.out.println(coin.getValue());
 				if (!sc.station.coinSlot.isDisabled()) {
 					sc.station.coinSlot.receive(coin);
 				} else {
