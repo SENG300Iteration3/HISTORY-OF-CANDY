@@ -134,7 +134,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	 * 		True if the index is within . False otherwise.
 	 */
 	public boolean removeItem(int index) {
-		if (index > checkoutList.size()) {
+		System.out.println(this.checkoutList.size());
+		if (index > this.checkoutList.size()) {
 			return false;
 		}
 		else {
@@ -161,11 +162,40 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			this.sc.station.baggingArea.remove(item);
 			this.updateCheckoutTotal(-price);	// decrement price
 			checkoutList.remove(index); // remove the barcode or PLUCode from checkoutList so GUI updates accordingly
+			System.out.println(this.checkoutList.size());
 			refreshGui();
 			return true;
 		}
 
 	}
+	
+	
+	public ArrayList<Tuple<String, Double>> getItemDescriptionPriceList() {
+		 ArrayList<Tuple<String, Double>> list = new ArrayList<>();
+		 double price;
+		 String description;
+		 for (int i = 0; i < this.checkoutList.size(); i ++) {
+				if (this.checkoutList.get(i) instanceof Barcode) {
+					Barcode barcode = (Barcode) this.checkoutList.get(i);
+					price = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getPrice();
+					description = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getDescription();
+				}
+				else {
+					PriceLookUpCode pluCode = (PriceLookUpCode) this.checkoutList.get(i);
+					PLUCodedItem item = (PLUCodedItem) this.sc.pluCodedItems.get(pluCode);
+					double weight = item.getWeight(); // When PLU coded items are made they will have to be added to pluCodedItems along with the PLU code
+					price = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getPrice() * weight / 1000;	
+					description = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getDescription();
+				}
+			list.add(new Tuple<String, Double>(description, price));
+		 }
+		 double reusableBagPrice = this.sc.fakeData.getReusableBagPrice();
+		 for (int i = 0; i < bags.size(); i++) {
+			 list.add(new Tuple<String, Double>("Reusable Bag", reusableBagPrice));
+		 }
+		 return list;
+	}
+	
 	
 	public ArrayList<Object> getCheckoutList() {
 		return checkoutList;
@@ -516,6 +546,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 					break;
 				case "remove item":
 					System.out.println("Requesting item removal. Please wait for Assistance!");
+					this.removeItem(2);
 					// TODO requestRemoveItem() currently doesn't work and crashes the code.
 					//requestRemoveItem();
 					break;

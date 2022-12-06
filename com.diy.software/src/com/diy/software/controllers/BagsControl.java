@@ -15,8 +15,7 @@ public class BagsControl implements ActionListener {
 	private StationControl sc;
 	private ArrayList<BagsControlListener> listeners;
 	private static final double abritraryWeightOfBags = 50;
-	private static final double abritraryPriceOfBags = 3;
-	private static final Barcode purchasableBagBarcode = new Barcode(new Numeral[] { Numeral.one, Numeral.one, Numeral.one, Numeral.nine});  
+	private static final double abritraryPriceOfBags = 3;  
 	
 	public BagsControl(StationControl sc) {
 		this.sc = sc;
