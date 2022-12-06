@@ -51,7 +51,7 @@ public class SENG300DoItYourselfStation {
     DoItYourselfStation.configureBanknoteDenominations(new int[] { 100, 50, 20, 10, 5, 1 });
     DoItYourselfStation.configureCoinDenominations(new BigDecimal[] { new BigDecimal(2.00), new BigDecimal(1.00), 
     						new BigDecimal(.25), new BigDecimal(.10), new BigDecimal(.05), new BigDecimal(.01) });
-  }
+  }//
   
 	public static void initializeInventory() {
 		fakeData = new FakeDataInitializer();
