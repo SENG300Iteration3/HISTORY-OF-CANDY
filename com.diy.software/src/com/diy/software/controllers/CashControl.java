@@ -148,7 +148,7 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 	public void validCoinDetected(CoinValidator validator, BigDecimal value) {
 		double current = sc.getItemsControl().getCheckoutTotal();
 		if (current - value.doubleValue() >= 0) { // if no change needs to be returned
-			sc.getItemsControl().updateCheckoutTotal(value.doubleValue());
+			sc.getItemsControl().updateCheckoutTotal(-1*value.doubleValue());
 			cashInserted();
 		} else {
 			sc.getItemsControl().updateCheckoutTotal(-current);
@@ -268,6 +268,11 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 				}
 			} else if (c.startsWith("c")) {
 				Coin coin = new Coin(Currency.getInstance("CAD"), new BigDecimal(c.split(" ")[1]));
+				System.out.println("Coin value: " + coin.getValue());
+				for(BigDecimal i : sc.station.coinDenominations) {
+					System.out.println("coinDenomination: " + i);
+				}
+				System.out.println(coin.getValue());
 				if (!sc.station.coinSlot.isDisabled()) {
 					sc.station.coinSlot.receive(coin);
 				} else {
