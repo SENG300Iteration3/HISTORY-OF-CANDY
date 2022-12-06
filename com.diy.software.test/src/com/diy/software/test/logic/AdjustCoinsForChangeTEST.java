@@ -2,6 +2,7 @@ package com.diy.software.test.logic;
 
 import static org.junit.Assert.assertEquals;
 
+import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class AdjustCoinsForChangeTEST {
 	CashControl cc;
 	AttendantControl ac;
 	CoinStorageUnit testUnit;
+	CoinStorageUnit emptyUnit;
 	Coin lCoin;
 	Coin tCoin;
 	Coin qCoin;
@@ -39,6 +41,7 @@ public class AdjustCoinsForChangeTEST {
 		
 	
 		testUnit = new CoinStorageUnit(50);
+		emptyUnit = new CoinStorageUnit(100);
 		
 		sc.station.plugIn();
 		sc.station.turnOn();
@@ -46,11 +49,14 @@ public class AdjustCoinsForChangeTEST {
 		testUnit.connect();
 		testUnit.activate();
 		
-		lCoin = new Coin(Currency.getInstance("CAD"),100);
-		tCoin = new Coin(Currency.getInstance("CAD"),200);
-		qCoin = new Coin(Currency.getInstance("CAD"),25);
-		dCoin = new Coin(Currency.getInstance("CAD"),10);
-		nCoin = new Coin(Currency.getInstance("CAD"),5);
+		emptyUnit.connect();
+		emptyUnit.activate();
+		
+		lCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(1.0));
+		tCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(2.0));
+		qCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(0.25));
+		dCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(0.1));
+		nCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(0.05));
 		
 		
 		for(int i = 0; i < 10; i++) {
@@ -84,11 +90,22 @@ public class AdjustCoinsForChangeTEST {
 		
 		List<Coin> unloadedCoin = testUnit.unload();
 		
-		assertEquals(10,ac.countCoin(5, unloadedCoin));
-		assertEquals(10,ac.countCoin(10, unloadedCoin));
-		assertEquals(10,ac.countCoin(25, unloadedCoin));
-		assertEquals(10,ac.countCoin(100, unloadedCoin));
-		assertEquals(10,ac.countCoin(200, unloadedCoin));
+		assertEquals(10,ac.countCoin(nCoin, unloadedCoin));
+		assertEquals(10,ac.countCoin(dCoin, unloadedCoin));
+		assertEquals(10,ac.countCoin(qCoin, unloadedCoin));
+		assertEquals(10,ac.countCoin(lCoin, unloadedCoin));
+		assertEquals(10,ac.countCoin(tCoin, unloadedCoin));
+	}
+	
+	@Test
+	/**
+	 * This test will test if adjustCoinForChange functions as expected
+	 * Fails if the the loaded unit is not filled up to the max
+	 * No exception expected
+	 */
+	public void adjustCoinForChangeSuccessTest() throws SimulationException, TooMuchCashException {
+		ac.adjustCoinsForChange(emptyUnit, 20);
+	
 	}
 	
 	
@@ -147,6 +164,42 @@ public class AdjustCoinsForChangeTEST {
 
 		@Override
 		public void coinIsLowState(CoinStorageUnit unit, int amount) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void lowInk(AttendantControl ac, String message) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void lowPaper(AttendantControl ac, String message) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void outOfInk(AttendantControl ac, String message) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void outOfPaper(AttendantControl ac, String message) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void attendantPermitStationUse(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void loggedIn(boolean isLoggedIn) {
 			// TODO Auto-generated method stub
 			
 		}
