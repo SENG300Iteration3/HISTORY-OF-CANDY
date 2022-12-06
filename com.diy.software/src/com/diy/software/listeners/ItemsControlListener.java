@@ -1,6 +1,7 @@
 package com.diy.software.listeners;
 
 import com.diy.software.controllers.ItemsControl;
+import com.diy.software.controllers.StationControl;
 
 public interface ItemsControlListener {
 	
@@ -9,6 +10,8 @@ public interface ItemsControlListener {
 	public void itemWasSelected(ItemsControl ic);
 	
 	public void awaitingItemToBePlacedInBaggingArea(ItemsControl ic);
+	
+	public void awaitingItemToBePlacedInScanningArea(StationControl sc);
 	
 	public void noMoreItemsAvailableInCart(ItemsControl ic);
 	

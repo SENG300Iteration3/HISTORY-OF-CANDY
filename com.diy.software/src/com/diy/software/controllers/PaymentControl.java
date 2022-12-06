@@ -28,6 +28,9 @@ public class PaymentControl implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String c = e.getActionCommand();
 		switch (c) {
+			case "giftcard":
+				startPaymentProcess(PaymentType.GiftCard);
+				break;
 			case "cash":
 				startPaymentProcess(PaymentType.Cash);
 				break;

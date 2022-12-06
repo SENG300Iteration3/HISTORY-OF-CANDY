@@ -246,6 +246,24 @@ public class TestPinPadControl {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public void membershipCardHasBeenSelected(WalletControl wc) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void membershipCardInputEnabled(WalletControl wc) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void membershipCardInputCanceled(WalletControl walletControl) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 	

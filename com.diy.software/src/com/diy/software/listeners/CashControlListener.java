@@ -14,7 +14,9 @@ public interface CashControlListener {
 
   void cashInserted(CashControl cc);
   
-  void cashRejected(CashControl cc);
+  void checkCashRejected(CashControl cc);
   
   void changeReturned(CashControl cc);
+  
+  void paymentFailed(CashControl cc);
 }

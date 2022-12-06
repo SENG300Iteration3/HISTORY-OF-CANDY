@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.diy.hardware.external.ProductDatabases;
+import com.diy.software.controllers.AttendantControl;
 import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.fakedata.MembershipDatabase;
 import com.jimmyselectronics.necchi.Barcode;
@@ -78,6 +79,18 @@ public class FakeDataInitializerTest {
 		assertTrue(MembershipDatabase.membershipMap.get(1235).equals("Tanjiro"));
 		assertTrue(MembershipDatabase.membershipMap.get(1236).equals("Nezuko"));
 		assertTrue(MembershipDatabase.membershipMap.get(1237).equals("Zenitsu"));
+	}
+	
+	@Test
+	public void testAddFakeAttendantLogin() {
+		AttendantControl.logins.clear();
+		assertTrue(AttendantControl.logins.isEmpty());
+		FakeDataInitializer fdi = new FakeDataInitializer();
+		fdi.addFakeAttendantLogin();
+		assertTrue(AttendantControl.logins.contains("password"));
+		assertTrue(AttendantControl.logins.contains("wordpass"));
+		assertTrue(AttendantControl.logins.contains("Password1"));
+		assertTrue(AttendantControl.logins.contains("12345"));
 	}
 
 	@Test
