@@ -317,7 +317,7 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	@Override
 	public void awaitingAttendantToApproveItemRemoval(ItemsControl ic) {
 		okayPromptScreen = new OkayPromptScreen(sc, "Please Ask Attendant For Assistance In Removing An Item", false, false);
-		addPanel(okayPromptScreen.getRootPanel());
+		addScreenToStack(okayPromptScreen);
 	}
 
 	@Override
