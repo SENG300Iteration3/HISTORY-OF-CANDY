@@ -86,6 +86,7 @@ public class FakeDataInitializer {
 		PriceLookUpCode plu3 = new PriceLookUpCode("9806");
 		PriceLookUpCode plu4 = new PriceLookUpCode("6022");
 		
+		
 		PLUCodedProduct pcp1 = new PLUCodedProduct(plu1, "Gomu Gomu Devil Fruit", 260);
 		PLUCodedProduct pcp2 = new PLUCodedProduct(plu2, "Hana Hana Devil Fruit", 250);
 		PLUCodedProduct pcp3 = new PLUCodedProduct(plu3, "Mera Mera Devil Fruit", 290);
@@ -124,6 +125,7 @@ public class FakeDataInitializer {
 		ProductDatabases.PLU_PRODUCT_DATABASE.put(code2, pp2);
 		ProductDatabases.PLU_PRODUCT_DATABASE.put(code3, pp3);
 		ProductDatabases.PLU_PRODUCT_DATABASE.put(code4, pp4);
+
 		
 		ProductDatabases.INVENTORY.put(pp1, 10);
 		ProductDatabases.INVENTORY.put(pp2, 10);

@@ -672,8 +672,7 @@ public class StationControl
 	public void addReusableBag(ReusableBag lastDispensedReusableBag) {
 		// ADD: update inventory
 
-		weightOfLastItem = lastDispensedReusableBag.getWeight();
-		
+		weightOfLastItem = lastDispensedReusableBag.getWeight();	
 		// Set the expected weight in SystemControl
 		this.updateExpectedCheckoutWeight(weightOfLastItem);
 		this.updateWeightOfLastItemAddedToBaggingArea(weightOfLastItem);

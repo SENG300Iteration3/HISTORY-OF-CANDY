@@ -134,13 +134,23 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	 * 		True if the index is within . False otherwise.
 	 */
 	public boolean removeItem(int index) {
-		System.out.println(this.checkoutList.size());
+		double weight;
+		double price;
 		if (index > this.checkoutList.size()) {
+			if (this.bags.size() > 0) {
+				weight = 5.0;
+				price = sc.fakeData.getReusableBagPrice();
+				this.sc.updateExpectedCheckoutWeight(-weight);  // decrement weight
+				this.updateCheckoutTotal(-price);	// decrement price
+				this.sc.station.baggingArea.remove(bags.get(0));
+				this.bags.remove(0);
+				refreshGui();
+				return true;
+			}
+			System.err.println("There are no items left to remove.");
 			return false;
 		}
 		else {
-			double weight;
-			double price;
 			Item item;
 			index--; // decrement index so it matches actual array index!
 			if (this.checkoutList.get(index) instanceof Barcode) {
@@ -156,13 +166,13 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				item = (PLUCodedItem) this.sc.pluCodedItems.get(pluCode);
 				weight = item.getWeight(); // When PLU coded items are made they will have to be added to pluCodedItems along with the PLU code
 				price = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getPrice() * weight / 1000;	
+				System.out.println("PLU Price in remove item = " + price);
 			}
 			// TODO update inventory to increase "stock" since the item wasn't sold
+			this.updateCheckoutTotal(-price);
 			this.sc.updateExpectedCheckoutWeight(-weight);  // decrement weight
 			this.sc.station.baggingArea.remove(item);
-			this.updateCheckoutTotal(-price);	// decrement price
 			checkoutList.remove(index); // remove the barcode or PLUCode from checkoutList so GUI updates accordingly
-			System.out.println(this.checkoutList.size());
 			refreshGui();
 			return true;
 		}
@@ -185,6 +195,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 					PLUCodedItem item = (PLUCodedItem) this.sc.pluCodedItems.get(pluCode);
 					double weight = item.getWeight(); // When PLU coded items are made they will have to be added to pluCodedItems along with the PLU code
 					price = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getPrice() * weight / 1000;	
+					System.out.println("PLU Price in TUPLE = " + price);
 					description = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getDescription();
 				}
 			list.add(new Tuple<String, Double>(description, price));
@@ -311,6 +322,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 			// price per kg
 			price = (double) product.getPrice() * weight / 1000;
+			System.out.println("PLU Price in add PLU = " + price);
 			this.addItemToCheckoutList(currentProductCode);
 			this.updateCheckoutTotal(price);
 
@@ -546,7 +558,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 					break;
 				case "remove item":
 					System.out.println("Requesting item removal. Please wait for Assistance!");
-					this.removeItem(2);
+					this.removeItem(1);
 					// TODO requestRemoveItem() currently doesn't work and crashes the code.
 					//requestRemoveItem();
 					break;
