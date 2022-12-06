@@ -10,8 +10,6 @@ public interface AttendantControlListener {
 
 	public void attendantPreventUse(AttendantControl ac);;
 	
-	public void triggerAttendantRemoveItemScreen(AttendantControl ac);
-	
 	/**
 	 *	Changes GUI to allow scanning of items
 	 */

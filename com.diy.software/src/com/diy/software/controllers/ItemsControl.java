@@ -122,6 +122,12 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 	}
 	
+	public void notifyItemRemoved() {
+		for (ItemsControlListener l : listeners){
+			l.itemRemoved(this);
+		}
+	}
+	
 	/**
 	 * The method responsible for removing an item from the system entirely.
 	 * Its cost is subtracted from the bill total, it is removed from the bagging area,
@@ -162,6 +168,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			this.updateCheckoutTotal(-price);	// decrement price
 			checkoutList.remove(index); // remove the barcode or PLUCode from checkoutList so GUI updates accordingly
 			refreshGui();
+			//sc.goToInitialScreenOnUI();
 			return true;
 		}
 

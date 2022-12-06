@@ -366,5 +366,11 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void itemRemoved(ItemsControl itemsControl) {
+		// TODO Auto-generated method stub
+		
+	}
 }
 

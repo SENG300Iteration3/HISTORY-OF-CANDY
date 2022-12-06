@@ -270,7 +270,7 @@ public class AttendantActionsPanel extends JPanel
 		
 	}
 	@Override
-	public void triggerAttendantRemoveItemScreen(AttendantControl ac) {
+	public void itemRemoved(ItemsControl itemsControl) {
 		// TODO Auto-generated method stub
 		
 	}

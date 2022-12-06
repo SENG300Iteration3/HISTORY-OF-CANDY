@@ -19,6 +19,7 @@ import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import swing.screens.AttendantLoginScreen;
 import swing.screens.AttendantStationScreen;
+import swing.screens.RemoveItemScreen;
 import swing.styling.GUI_JFrame;
 import swing.styling.Screen;
 
@@ -30,9 +31,14 @@ public class AttendantStationPane implements AttendantControlListener {
 	public AttendantLoginScreen loginScreen;
 	public JTabbedPane tabbedPane;
 	public JFrame frame;
+	private PaneControl pc;
+	private ArrayList<JPanel> panels;
 	
 	public AttendantStationPane(PaneControl pc, JFrame frame) {
 		this.frame = frame;
+		this.pc = pc;
+		
+		panels = new ArrayList<JPanel>();
 		
 		this.loginScreen = new AttendantLoginScreen(pc.getStationControls());
 		this.tabbedPane = new JTabbedPane();
@@ -43,6 +49,7 @@ public class AttendantStationPane implements AttendantControlListener {
 			tempPanel.add(( new AttendantStationScreen(sc)).getRootPanel(), BorderLayout.CENTER);
 			tabbedPane.addTab("Station " + i++, tempPanel);
 			tabbedPane.addChangeListener(pc);
+			panels.add(tempPanel);
 		}
 		 
 		this.currentComponent = new JPanel();
@@ -168,12 +175,6 @@ public class AttendantStationPane implements AttendantControlListener {
 
 	@Override
 	public void attendantApprovedItemRemoval(AttendantControl bc) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void triggerAttendantRemoveItemScreen(AttendantControl ac) {
 		// TODO Auto-generated method stub
 		
 	}

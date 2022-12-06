@@ -4,10 +4,14 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.BagsControl;
@@ -37,13 +41,15 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 //	GUI_JButton addPaperToPrinterButton;
 	GUI_JButton approveNoBagging;
 	GUI_JButton startUpButton;
+	GUI_JPanel removeItemPanel;
+	private JTextField removeItemTextField;
 	GUI_JButton removeItemButton;
 	GUI_JLabel weightDisplayLabel, weightDescrepancyMssg, inkLabel, paperLabel, adjustCoinLabel, adjustBanknoteLabel;
 	GUI_JButton printReceiptButton;
 
 	private static String HeaderText = "Attendant Screen";
 
-	public AttendantStationScreen(StationControl sc) {
+	public AttendantStationScreen(final StationControl sc) {
 		super(sc, HeaderText);
 		this.sc = sc;
 		bc = sc.getBagsControl();
@@ -82,11 +88,26 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		startUpButton.addActionListener(ac);
 		startUpButton.setPreferredSize(new Dimension(width, height));
 		
+		removeItemPanel = new GUI_JPanel();
+		removeItemPanel.setLayout(new GridLayout(2, 1));
+		
+		removeItemTextField = new JTextField();
+		removeItemTextField.setEditable(false);
+		
 		removeItemButton = makeButton("Remove item");
-		removeItemButton.setActionCommand("remove");
-		removeItemButton.addActionListener(ac);
+		removeItemButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ac.removeItem(Integer.parseInt(removeItemTextField.getText()));
+			}
+		});
+		
+//		removeItemButton.addActionListener(ac);
 		removeItemButton.setPreferredSize(new Dimension(width, height));
 		removeItemButton.setEnabled(false);
+		
+		removeItemPanel.add(removeItemTextField);
+		removeItemPanel.add(removeItemButton);
 		
 		weightDescrepancyMssg = initalizeLabel("weightDiscrepancyMsg");
 		weightDisplayLabel = initalizeLabel("weightDisplayLabel");
@@ -127,7 +148,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 //		buttonsPanel.add(addPaperToPrinterButton);
 		buttonsPanel.add(approveNoBagging);
 		buttonsPanel.add(startUpButton);
-		buttonsPanel.add(removeItemButton);
+		buttonsPanel.add(removeItemPanel);
 		
 		
 		this.addLayer(buttonScrollPane, 50);
@@ -362,6 +383,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	@Override
 	public void awaitingItemToBeRemoved(ItemsControl itemsControl, String updateMessage) {
 		removeItemButton.setEnabled(false);
+		removeItemTextField.setEditable(false);
 	}
 
 
@@ -382,13 +404,15 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	@Override
 	public void awaitingAttendantToApproveItemRemoval(ItemsControl ic) {
 		removeItemButton.setEnabled(true);
+		removeItemTextField.setEditable(true);
 		
 	}
 
 
 	@Override
-	public void triggerAttendantRemoveItemScreen(AttendantControl ac) {
-		RemoveItemScreen screen = new RemoveItemScreen(sc, ac);
-		this.getRootPanel().getRootPane().getParent().add(screen.getRootPanel());
+	public void itemRemoved(ItemsControl itemsControl) {
+		removeItemButton.setEnabled(false);
+		removeItemTextField.setEditable(false);
+		
 	}
 }

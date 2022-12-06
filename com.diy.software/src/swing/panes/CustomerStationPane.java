@@ -319,4 +319,10 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 		okayPromptScreen = new OkayPromptScreen(sc, "Please Ask Attendant For Assistance In Removing An Item", false, false);
 		addPanel(okayPromptScreen.getRootPanel());
 	}
+
+	@Override
+	public void itemRemoved(ItemsControl itemsControl) {
+		triggerPanelBack(sc);
+		
+	}
 }

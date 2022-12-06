@@ -166,4 +166,10 @@ public class CatalogPanel extends JPanel implements ItemsControlListener {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void itemRemoved(ItemsControl itemsControl) {
+		// TODO Auto-generated method stub
+		
+	}
 }

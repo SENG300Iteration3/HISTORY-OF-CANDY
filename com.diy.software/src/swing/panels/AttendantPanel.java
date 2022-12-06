@@ -197,10 +197,4 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 		// TODO Auto-generated method stub
 
 	}
-
-	@Override
-	public void triggerAttendantRemoveItemScreen(AttendantControl ac) {
-		// TODO Auto-generated method stub
-		
-	}
 }

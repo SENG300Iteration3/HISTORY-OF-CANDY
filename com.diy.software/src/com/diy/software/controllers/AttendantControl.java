@@ -9,6 +9,7 @@ import java.util.Scanner;
 import java.util.HashMap;
 import java.util.Objects;
 import com.diy.software.listeners.AttendantControlListener;
+import com.diy.software.listeners.MembershipControlListener;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.OverloadException;
@@ -99,22 +100,25 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 * Precondition: The customer must have requested "remove item" from their console.
 	 * 
 	 */
-	public void removeItem() {
+	public void removeItem(int i) {
+		
+		ic.removeItem(i);
 		
 		// TODO Switch this so that the GUI uses a pinpad/numpad to enter the number
-		System.out.println("Enter the number corrseponding to the item to be removed: ");
-		int itemNumber = scanner.nextInt();
-		while (!ic.removeItem(itemNumber)) {
-			System.out.println("Enter the number corrseponding to the item to be removed: ");
-			itemNumber = scanner.nextInt();
-		}
+//		System.out.println("Enter the number corrseponding to the item to be removed: ");
+//		int itemNumber = scanner.nextInt();
+//		while (!ic.removeItem(itemNumber)) {
+//			System.out.println("Enter the number corrseponding to the item to be removed: ");
+//			itemNumber = scanner.nextInt();
+//		}
 		this.removeItemSuccesful();
+		ic.notifyItemRemoved();
 		
 		//---------------
 		
-		for (AttendantControlListener l : listeners) {
-			l.triggerAttendantRemoveItemScreen(this);
-		}
+//		for (AttendantControlListener l : listeners) {
+//			l.triggerAttendantRemoveItemScreen(this);
+//		}
 		
 	}
 	
@@ -369,70 +373,75 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String c = e.getActionCommand();
-		try {
-			switch (c) {
-				case "approve added bags":
-					System.out.println("Attendant approved added bags");
-					approveBagsAdded();
-					break;
-				case "addInk":
-					attendantNotifications = ("stations printer needs more ink!");
-					addInk();
-					break;
-				case "addPaper":
-					attendantNotifications = ("stations printer needs more paper!");
-					addPaper();
-					break;
-				case "addCoin": 
-					//TODO:
-					
-					break;
-				case "addBanknote": 
-					//TODO:
-					
-					break;
-				case "addBag": 
-					//TODO:
-					
-					break;
-				case "request no bag":
-					attendantNotifications = ("customer requests no bagging");
-					System.out.println("request no bag");
-					noBagRequest();
-					break;
-					// TODO
-					// temporary delete later when button is moved
-				case "printReceipt":
-					//attendantNotifications = ("approved no bagging request");
-					System.out.println("AC print receipt");
-					sc.getReceiptControl().printItems();
-					sc.getReceiptControl().printTotalCost();
-					sc.getReceiptControl().printMembership();
-					sc.getReceiptControl().printDateTime();
-					sc.getReceiptControl().printThankyouMsg();		
-					break;
-				case "approve no bag":
-					approveNoBagRequest();
-					break;
-				case "permit_use":
-					attendantNotifications = ("Permitting use on station");
-					permitStationUse();
-					break;
-				case "prevent_use":
-					attendantNotifications = ("Preventing use on station for maintenance");
-					preventStationUse();
-				case "remove item":
-					removeItem();
-				case "startUp":
-					System.out.println("Station has been started up");
-					startUpStation();
-					break;
-				default:
-					break;
-			}
-		} catch (Exception ex) {
+		if (c.startsWith("remove item ")) {
+			String itemNumber = "";
+			itemNumber += c.split(" ")[1];
+			removeItem(Integer.parseInt(itemNumber));
+		} else {
+			try {
+				switch (c) {
+					case "approve added bags":
+						System.out.println("Attendant approved added bags");
+						approveBagsAdded();
+						break;
+					case "addInk":
+						attendantNotifications = ("stations printer needs more ink!");
+						addInk();
+						break;
+					case "addPaper":
+						attendantNotifications = ("stations printer needs more paper!");
+						addPaper();
+						break;
+					case "addCoin": 
+						//TODO:
+						
+						break;
+					case "addBanknote": 
+						//TODO:
+						
+						break;
+					case "addBag": 
+						//TODO:
+						
+						break;
+					case "request no bag":
+						attendantNotifications = ("customer requests no bagging");
+						System.out.println("request no bag");
+						noBagRequest();
+						break;
+						// TODO
+						// temporary delete later when button is moved
+					case "printReceipt":
+						//attendantNotifications = ("approved no bagging request");
+						System.out.println("AC print receipt");
+						sc.getReceiptControl().printItems();
+						sc.getReceiptControl().printTotalCost();
+						sc.getReceiptControl().printMembership();
+						sc.getReceiptControl().printDateTime();
+						sc.getReceiptControl().printThankyouMsg();		
+						break;
+					case "approve no bag":
+						approveNoBagRequest();
+						break;
+					case "permit_use":
+						attendantNotifications = ("Permitting use on station");
+						permitStationUse();
+						break;
+					case "prevent_use":
+						attendantNotifications = ("Preventing use on station for maintenance");
+						preventStationUse();
+					case "startUp":
+						System.out.println("Station has been started up");
+						startUpStation();
+						break;
+					default:
+						break;
+				}
+			} catch (Exception ex) {
 
+			}
 		}
+		
 	}
 
 	@Override
