@@ -56,6 +56,8 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 		
 		kc = new PhysicalKeyboardControl(this);
 		tlc = new TextLookupControl(this, this.sc);
+		
+		ic = sc.getItemsControl();
 	}
 
 	public void login(String password) {
