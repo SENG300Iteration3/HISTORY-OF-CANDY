@@ -238,7 +238,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	public void adjustCoinsForChange(CoinStorageUnit unit, int AMOUNT) throws SimulationException, TooMuchCashException  {
 		
 		this.unit = unit;
-		//take system out of service
+		//take system out of service//
 		
 		sc.getCashControl().disablePayments();
 		
