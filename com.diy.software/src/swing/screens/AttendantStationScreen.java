@@ -193,7 +193,8 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 
 	@Override
 	public void attendantPreventUse(AttendantControl ac) {
-		// TODO: implement method
+		preventButton.setEnabled(false);
+		permitButton.setEnabled(true);
 	}
 
 	@Override
@@ -313,7 +314,8 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 
 	@Override
 	public void attendantPermitStationUse(AttendantControl ac) {
-		// TODO Auto-generated method stub
+		preventButton.setEnabled(true);
+		permitButton.setEnabled(false);
 		
 	}
 
