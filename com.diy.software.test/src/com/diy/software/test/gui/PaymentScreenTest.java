@@ -13,6 +13,7 @@ import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.PaymentControlListener;
 import com.diy.software.test.logic.StubSystem;
 
+import ca.powerutility.PowerGrid;
 import swing.screens.PaymentScreen;
 
 public class PaymentScreenTest {
@@ -26,6 +27,8 @@ public class PaymentScreenTest {
 
 	@Before
 	public void setUp() throws Exception {
+		PowerGrid.engageUninterruptiblePowerSource();
+		
 		fdi = new FakeDataInitializer();
 		sc = new StationControl(fdi);
 		screen = new PaymentScreen(sc);

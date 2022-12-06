@@ -38,5 +38,9 @@ public class PresentCardScreen extends Screen {
 		});
 		this.addLayer(backButton, 100);
 	}
+	
+	public GUI_JButton getBackButton() {
+		return backButton;
+	}
 
 }
