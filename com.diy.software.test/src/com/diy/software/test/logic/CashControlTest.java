@@ -214,11 +214,11 @@ public class CashControlTest {
 			
 		}
 
-		@Override
-		public void cashRejected(CashControl cc) {
-			// TODO Auto-generated method stub
-			
-		}
+//		@Override
+//		public void cashRejected(CashControl cc) {
+//			// TODO Auto-generated method stub
+//			
+//		}
 
 		@Override
 		public void changeReturned(CashControl cc) {
@@ -228,6 +228,12 @@ public class CashControlTest {
 
 		@Override
 		public void paymentFailed(CashControl cc) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void checkCashRejected(CashControl cc) {
 			// TODO Auto-generated method stub
 			
 		}
