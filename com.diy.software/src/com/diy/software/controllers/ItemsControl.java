@@ -34,7 +34,8 @@ import com.jimmyselectronics.virgilio.ElectronicScaleListener;
 import ca.ucalgary.seng300.simulation.InvalidArgumentSimulationException;
 import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
 
-public class ItemsControl implements ActionListener, BarcodeScannerListener, ElectronicScaleListener, PLUCodeControlListener {
+public class ItemsControl
+		implements ActionListener, BarcodeScannerListener, ElectronicScaleListener, PLUCodeControlListener {
 	private StationControl sc;
 	private ArrayList<ItemsControlListener> listeners;
 	public ArrayList<Tuple<BarcodedProduct, Integer>> tempList = new ArrayList<>();
@@ -51,7 +52,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	private long baggingAreaTimerEnd;
 	private final static double PROBABILITY_OF_BAGGING_WRONG_ITEM = 0.20;
 	private final static ThreadLocalRandom random = ThreadLocalRandom.current();
-	private Item wrongBaggedItem = new Item(235) {};
+	private Item wrongBaggedItem = new Item(235) {
+	};
 	private boolean isPLU = false;
 	private PriceLookUpCode expectedPLU = null;
 	private boolean removedWrongBaggedItem;
@@ -70,6 +72,25 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 	public Item getWrongBaggedItem() {
 		return wrongBaggedItem;
+	}
+
+	public void setIsPLU(boolean proposition) {
+		isPLU = proposition;
+	}
+	
+	public void setExpectedPLU(PriceLookUpCode pcode) {
+		expectedPLU = pcode;
+	}
+
+	public void setCurrentProductCode(PriceLookUpCode pcode) {
+		currentProductCode = pcode;
+	}
+	public void setCurrentItem(Item item) {
+		currentItem = item;
+	}
+
+	public boolean getInCatalog() {
+		return inCatalog;
 	}
 
 	public void addListener(ItemsControlListener l) {
@@ -138,8 +159,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			// TODO: Find another way to do this
 			this.currentItem = sc.customer.shoppingCart.get(sc.customer.shoppingCart.size() - 1);
 			isPLU = currentItem.getClass() == PLUCodedItem.class;
-			if(isPLU) {
-				expectedPLU = ((PLUCodedItem)currentItem).getPLUCode();
+			if (isPLU) {
+				expectedPLU = ((PLUCodedItem) currentItem).getPLUCode();
 			}
 
 			sc.customer.selectNextItem();
@@ -166,7 +187,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			sc.customer.deselectCurrentItem();
 
 			// if there was a plu item on the scanner tray then remove it
-			if(weightofScannerTray != 0) {
+			if (weightofScannerTray != 0) {
 				sc.station.scanningArea.remove(currentItem);
 			}
 
@@ -198,11 +219,11 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			sc.setWeightOfScannerTray(weightofScannerTray);
 			sc.updateExpectedCheckoutWeight(weight);
 			sc.updateWeightOfLastItemAddedToBaggingArea(weight);
-			
+
 			// Maybe add this to the right of the item in the checkout list
 			System.out.println("Weight of item: " + weight);
 
-			if(weight == 0.0) {
+			if (weight == 0.0) {
 				System.err.println("Please place the item on the scale before entering the code!!");
 				return false;
 			}
@@ -220,7 +241,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				l.awaitingItemToBePlacedInBaggingArea(this);
 
 			return true;
-		} catch(InvalidArgumentSimulationException | NullPointerSimulationException e) {
+		} catch (InvalidArgumentSimulationException | NullPointerSimulationException e) {
 			System.err.println(e.toString());
 			return false;
 		}
@@ -294,7 +315,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	 * Weighs the item before entering the plu code.
 	 */
 	public void weighItem() {
-		if(isPLU) {
+		if (isPLU) {
 			System.out.println("Weighing item!!");
 			sc.station.scanningArea.add(currentItem);
 
@@ -352,16 +373,16 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	}
 
 	private void addItemByBrowsing(String strProductName) {
-		if(!isPLU) {
+		if (!isPLU) {
 			System.err.println("The currently selected item has no PLU code! Or there is no item selected!");
 			currentProductCode = null;
 			inCatalog = false;
 			sc.goBackOnUI();
-		}else {
+		} else {
 			PriceLookUpCode PLUCodeIdentifier = searchPLUCodedProductDatabase(strProductName);
 			if (PLUCodeIdentifier != null) {
 				currentProductCode = PLUCodeIdentifier;
-				pluItemSelected();
+				pluItemSelected(); // FIXME: can probably remove this line and replace with below commented
 			}
 		}
 	}
@@ -371,24 +392,26 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			// Check with product database and update inventory
 			Product product = findProduct(currentProductCode);
 			checkInventory(product);
-			
-			if(!isPLU) {
+
+			if (!isPLU) {
 				System.err.println("The currently selected item has no PLU code! Or there is no item selected!");
-				currentProductCode = null;				sc.goBackOnUI();;
-			} else if(expectedPLU.hashCode() != currentProductCode.hashCode()) {
+				currentProductCode = null;
+				sc.goBackOnUI();
+				;
+			} else if (expectedPLU.hashCode() != currentProductCode.hashCode()) {
 				System.err.println("You entered the wrong PLU code for the item!");
 				System.err.printf("The expected PLU code is %s\n", expectedPLU);
 			} else {
 				inCatalog = false;
-				
+
 				// Signal scanning area to wait for item to be placed on
 				for (ItemsControlListener l : listeners)
 					l.awaitingItemToBePlacedInScanningArea(sc);
 			}
-			
-		}catch(NullPointerSimulationException e) {
+
+		} catch (NullPointerSimulationException e) {
 			System.err.println("PLU code does not exist in the database");
-		} 
+		}
 	}
 
 	@Override
@@ -511,12 +534,11 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			throw new NullPointerSimulationException();
 		}
 	}
-	
+
 	private PLUCodedProduct findProduct(PriceLookUpCode code) throws NullPointerSimulationException {
-		if(ProductDatabases.PLU_PRODUCT_DATABASE.containsKey(code)) {
-					return ProductDatabases.PLU_PRODUCT_DATABASE.get(code);        
-			}
-		else {
+		if (ProductDatabases.PLU_PRODUCT_DATABASE.containsKey(code)) {
+			return ProductDatabases.PLU_PRODUCT_DATABASE.get(code);
+		} else {
 			// TODO: Inform customer station
 			System.out.println("Cannot find the product. Please try again or ask for assistant!");
 			throw new NullPointerSimulationException();
@@ -559,7 +581,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 					l.awaitingItemToBeSelected(this);
 			}
 		} else {
-			weightofScannerTray = weightInGrams;	
+			weightofScannerTray = weightInGrams;
 			addItemByPLU();
 		}
 	}
@@ -579,7 +601,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	public Item getCurrentItem() {
 		return currentItem;
 	}
-	
+
 	public void setCurrentProduct(PriceLookUpCode code) {
 		currentProductCode = code;
 	}
@@ -589,7 +611,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		// pass in plu input
 		PriceLookUpCode code = new PriceLookUpCode(pluCode);
 		setCurrentProduct(code);
-		
+
 		// next step: scanning area
 		pluItemSelected();
 	}
@@ -597,12 +619,12 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	@Override
 	public void pluErrorMessageUpdated(PLUCodeControl pcc, String errorMessage) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void pluHasBeenUpdated(PLUCodeControl pcc, String pluCode) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

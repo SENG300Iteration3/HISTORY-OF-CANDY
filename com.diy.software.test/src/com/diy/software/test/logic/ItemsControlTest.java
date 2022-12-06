@@ -9,6 +9,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.diy.software.util.Tuple;
+import com.diy.hardware.PLUCodedItem;
+import com.diy.hardware.PLUCodedProduct;
+import com.diy.hardware.PriceLookUpCode;
+import com.diy.hardware.external.ProductDatabases;
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.ItemsControl;
 import com.diy.software.controllers.StationControl;
@@ -23,6 +27,7 @@ import com.jimmyselectronics.necchi.Numeral;
 import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import ca.powerutility.PowerGrid;
+import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
 
 public class ItemsControlTest {
 	ItemsControl itemsControl;
@@ -32,11 +37,14 @@ public class ItemsControlTest {
 	Barcode barcode;
 	FakeDataInitializer fdi;
 	Tuple<String, Double> itemTuple;
-
+	
+	
 	@Before
 	public void setup() {
 		PowerGrid.engageUninterruptiblePowerSource();
+		
 
+		
 		fdi = new FakeDataInitializer();
 		fdi.addProductAndBarcodeData();
 		systemControl = new StationControl();
@@ -47,9 +55,7 @@ public class ItemsControlTest {
 		itemTuple = new Tuple<String, Double>("Can of Beans", (double) 2);
 		barcode = new Barcode(new Numeral[] { Numeral.one, Numeral.two, Numeral.three, Numeral.four });
 		
-		// ### I need these - Jessy
-		
-		// ### I need these - Jessy
+
 		
 		systemControl.station.handheldScanner.register(itemsControl);
 		systemControl.station.handheldScanner.plugIn();
@@ -564,13 +570,63 @@ public class ItemsControlTest {
 	}
 
 	
+	@Test(expected = NullPointerSimulationException.class)
+	public void testAddPLUCodedItemByBrowsing() {	
+		PriceLookUpCode pcode = new PriceLookUpCode("4444");
+		PLUCodedProduct pcp = new PLUCodedProduct(pcode, "Durian", 9);
+		PLUCodedItem pitem = new PLUCodedItem(pcode, 200);
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(pcode, pcp);
+		ProductDatabases.INVENTORY.put(pcp, 10);
+
+		
+		itemsControl.setCurrentItem(pitem);
+		itemsControl.setIsPLU(true);
+		itemsControl.setCurrentProductCode(pcode);
+		itemsControl.setExpectedPLU(pcode);
+		
+		// Flip Switch to Enter Catalog Browsing Code
+		ActionEvent e = new ActionEvent(this, 0, "catalog");
+		itemsControl.actionPerformed(e);
+		
+		e = new ActionEvent(this, 0, "Durian");
+		itemsControl.actionPerformed(e);
+		assertFalse(itemsControl.getInCatalog());
+	}
+	
 	@Test
-	public void testActionPerformedCatalog() {
-		stub.bagging = true;
-		stub.selected = true;
-		itemsControl.weightChanged(systemControl.station.baggingArea, 1);
-		assertFalse(stub.bagging);
-		assertFalse(stub.selected);
+	public void testAddPLUCodedItemNotInProductDatabaseByBrowsing() {		
+		itemsControl.setIsPLU(true);
+		
+		// Flip Switch to Enter Catalog Browsing Code
+		ActionEvent e = new ActionEvent(this, 0, "catalog");
+		itemsControl.actionPerformed(e);
+		
+		e = new ActionEvent(this, 0, "Strawberry");
+		itemsControl.actionPerformed(e);
+		assertTrue(itemsControl.getInCatalog());
+	}
+	
+	@Test
+	public void testAddNonPLUCodedItemItemByBrowsing() {	
+		// Flip Switch to Enter Catalog Browsing Code
+		ActionEvent e = new ActionEvent(this, 0, "catalog");
+		itemsControl.actionPerformed(e);
+		
+		e = new ActionEvent(this, 0, "Can of Beans");
+		itemsControl.actionPerformed(e);
+		assertFalse(itemsControl.getInCatalog());
+	}
+	
+	@Test
+	public void testCancelCatalog() {
+		// Flip Switch to Enter Catalog Browsing Code
+		ActionEvent e = new ActionEvent(this, 0, "catalog");
+		itemsControl.actionPerformed(e);
+		assertTrue(itemsControl.getInCatalog());
+		
+		e = new ActionEvent(this, 0, "cancel catalog");
+		itemsControl.actionPerformed(e);
+		assertFalse(itemsControl.getInCatalog());
 	}
 	
 	
