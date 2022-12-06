@@ -12,6 +12,9 @@
 package com.diy.software.controllers;
 
 import com.diy.hardware.BarcodedProduct;
+import com.diy.hardware.PLUCodedItem;
+import com.diy.hardware.PriceLookUpCode;
+import com.diy.hardware.external.ProductDatabases;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.MembershipControlListener;
 import com.diy.software.listeners.ReceiptControlListener;
@@ -22,6 +25,8 @@ import com.jimmyselectronics.EmptyException;
 import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.abagnale.IReceiptPrinter;
 import com.jimmyselectronics.abagnale.ReceiptPrinterListener;
+import com.jimmyselectronics.necchi.Barcode;
+import com.jimmyselectronics.svenden.ReusableBag;
 
 import ca.ucalgary.seng300.simulation.InvalidArgumentSimulationException;
 import swing.screens.AttendantStationScreen;
@@ -38,10 +43,10 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	private StationControl sc;
 	private ArrayList<ReceiptControlListener> listenersReceipt;
 	private ArrayList<AttendantControlListener> listenersAttendant;
-	private ArrayList<Tuple<String, Double>> checkoutList = new ArrayList<>();
+	private ArrayList<Object> checkoutList = new ArrayList<>();
 	private static final DecimalFormat formatPrice = new DecimalFormat("0.00");
 	private int retreivedMemNum;
-	
+	private double total = 0;
 	private boolean outOfPaperCheck = false;
 	private boolean outOfInkCheck = false;
 	
@@ -64,21 +69,44 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	 * Finds what the contents of the receipt should be based on checked out items
 	 */
 	public void printItems() {
-		for(Tuple<String, Double> item : sc.getItemsControl().getCheckoutList()) {
-			System.out.println(item.x + " , $" + item.y);
-			printReceipt(item.x + " , $" + item.y + "\n");
+		checkoutList = sc.getItemsControl().getCheckoutList();
+		double price;
+		String name;
+		for (int i = 0; i < checkoutList.size(); i ++) {
+			if (checkoutList.get(i) instanceof Barcode) {
+				Barcode barcode = (Barcode) checkoutList.get(i);
+				price = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getPrice();
+				name = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getDescription();
+			}
+			else {
+				PriceLookUpCode pluCode = (PriceLookUpCode) checkoutList.get(i);
+				PLUCodedItem item = (PLUCodedItem) this.sc.pluCodedItems.get(pluCode);
+				double weight = item.getWeight(); // When PLU coded items are made they will have to be added to pluCodedItems along with the PLU code
+				price = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getPrice() * weight / 1000;	
+				name = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getDescription();
+			}
+			System.out.println(name + " , $" + price);
+			printReceipt(name + " , $" + price + "\n");
+			this.total += price;
 		}
-		//System.out.println("test print receipt");
+		double reusableBagPrice = sc.fakeData.getReusableBagPrice();
+		for (int i = 0; i < sc.getItemsControl().getBagsList().size(); i++) {
+			System.out.println("Reusable Bag" + " , $" + reusableBagPrice);
+			printReceipt("Reusable Bag" + " , $" + reusableBagPrice + "\n");
+			this.total += reusableBagPrice;
+		}
 	}
+//		for(Tuple<String, Double> item : sc.getItemsControl().getCheckoutList()) {
+//			System.out.println(item.x + " , $" + item.y);
+//			printReceipt(item.x + " , $" + item.y + "\n");
+//		}
+		//System.out.println("test print receipt");
 	
 	/**
 	 * Finds the total cost of all items checked out
 	 */
 	public void printTotalCost() {
 		double total = 0.0;
-		for(Tuple<String, Double> item : sc.getItemsControl().getCheckoutList()) {
-			total += item.y;
-		}
 		System.out.println("Total: $" + total);
 		printReceipt("Total: $" + total + "\n");
 	}

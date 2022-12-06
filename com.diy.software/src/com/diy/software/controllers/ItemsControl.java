@@ -516,7 +516,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 					break;
 				case "remove item":
 					System.out.println("Requesting item removal. Please wait for Assistance!");
-					this.requestRemoveItem();
+					this.removeItem(1);
+					//this.requestRemoveItem();
 					break;
 				default:
 					break;
