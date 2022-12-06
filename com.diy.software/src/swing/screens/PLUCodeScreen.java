@@ -88,7 +88,6 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 		centerPanel.setLayout(new GridLayout(1, 0));
 
 		centerPanel.add(message);
-		centerPanel.add(pluCode);
 		addLayer(centerPanel, 0);
 
 	}
