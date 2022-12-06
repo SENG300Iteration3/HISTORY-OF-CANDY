@@ -1,6 +1,7 @@
 package swing.screens;
 
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -44,7 +45,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 
 	protected GUI_JButton purchaseBagsBtn;
 	protected GUI_JButton addItemByPLUBtn;
-	protected GUI_JButton searchCatalogueBtn;
+	protected GUI_JButton catalogBtn;
 	
 	private AddOwnBagsPromptScreen ownBagsPromptScreen;
 
@@ -181,9 +182,16 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		this.memberBtn.setActionCommand("member");
 		this.memberBtn.addActionListener(itemsControl);
 
-		this.searchCatalogueBtn = makeButton("Browse Items", buttonPanel);
 
+		this.addItemByPLUBtn.setActionCommand("enter plu");
+		this.addItemByPLUBtn.addActionListener(itemsControl);
 
+		this.catalogBtn = makeButton("Browse Items", buttonPanel);
+		this.catalogBtn.setActionCommand("catalog");
+		this.catalogBtn.addActionListener(itemsControl);
+
+		addItemByPLUBtn.setEnabled(false);
+		catalogBtn.setEnabled(false);
 	}
 
 	public void invalidateAllScannedItems() {
@@ -244,14 +252,14 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 
 	@Override
 	public void awaitingItemToBeSelected(ItemsControl ic) {
-		// TODO Auto-generated method stub
-
+		addItemByPLUBtn.setEnabled(false);
+		catalogBtn.setEnabled(false);
 	}
 
 	@Override
 	public void itemWasSelected(ItemsControl ic) {
-		// TODO Auto-generated method stub
-
+		addItemByPLUBtn.setEnabled(true);
+		catalogBtn.setEnabled(true);
 	}
 
 	@Override
@@ -291,7 +299,8 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 
 	@Override
 	public void productSubtotalUpdated(ItemsControl itemsControl) {
-		subtotalLabel.setText("Subtotal: $" + itemsControl.getCheckoutTotal());
+		DecimalFormat df = new DecimalFormat("0.00");
+		subtotalLabel.setText("Subtotal: $" + df.format(itemsControl.getCheckoutTotal()));
 	}
 
 	@Override
@@ -319,6 +328,12 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 
 	@Override
 	public void numberFieldHasBeenUpdated(BagDispenserControl bdp, String memberNumber) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void awaitingItemToBePlacedInScanningArea(StationControl sc) {
 		// TODO Auto-generated method stub
 		
 	}
