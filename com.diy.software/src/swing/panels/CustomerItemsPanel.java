@@ -140,7 +140,7 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(true);
 		deselectCurrentItemButton.setEnabled(true);
 		placeItemInBaggingAreaButton.setEnabled(false);
-		itemWeight.setEnabled(true);
+		itemWeight.setEnabled(false);
 	}
 	
 //	@Override
@@ -186,7 +186,7 @@ public class CustomerItemsPanel extends JPanel
 	}
 
 	@Override
-	public void awaitingItemToBePlacedInScanningArea(ItemsControl itemsControl) {
+	public void awaitingItemToBePlacedInScanningArea(StationControl sc) {
 		selectNextItemButton.setEnabled(false);
 		mainScannerButton.setEnabled(false);
 		handheldScannerButton.setEnabled(false);
@@ -340,6 +340,13 @@ public class CustomerItemsPanel extends JPanel
 	@Override
 	public void attendantPermitStationUse(AttendantControl ac) {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void loggedIn(boolean isLoggedIn) {
+		// TODO Auto-generated method stub
 		
 	}
+
+	
 }

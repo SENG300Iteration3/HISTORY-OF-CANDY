@@ -41,7 +41,6 @@ public class CatalogPanel extends JPanel implements ItemsControlListener {
 		ic = sc.getItemsControl();
 		ic.addListener(this);
 
-		Product product;
 		String strProductName;
 
 //		JButton button;
@@ -71,21 +70,10 @@ public class CatalogPanel extends JPanel implements ItemsControlListener {
 
         buttonsPanel.setBorder(BorderFactory.createEmptyBorder(10, 100, 50, 100));
         
-		// Iterate through Inventory to Create Buttons
-		for (Entry<Product, Integer> entry : ProductDatabases.INVENTORY.entrySet()) {
-			product = entry.getKey();
-
-			if (product instanceof BarcodedProduct) {
-				strProductName = ((BarcodedProduct) product).getDescription();
-
-				System.out.println("BarcodedProduct: " + strProductName);
-			} else {
-				// Assumes that there are only two types of Products: (1) BarcodedProduct and
-				// (2) PLUCodedProduct
-				strProductName = ((PLUCodedProduct) product).getDescription();
-
-				System.out.println("PLUCodedProduct: " + strProductName);
-			}
+		// Iterate through Database to Create Buttons
+		for (PLUCodedProduct product : ProductDatabases.PLU_PRODUCT_DATABASE.values()) {
+			// Assumes that there are only PLUCodedProduct in browsing
+			strProductName = product.getDescription();
 
 	        JPanel panel = new JPanel(new GridLayout());
             button = makeButton(strProductName, panel);
@@ -168,7 +156,7 @@ public class CatalogPanel extends JPanel implements ItemsControlListener {
 	}
 
 	@Override
-	public void awaitingItemToBePlacedInScanningArea(ItemsControl itemsControl) {
+	public void awaitingItemToBePlacedInScanningArea(StationControl sc) {
 		// TODO Auto-generated method stub
 		
 	}

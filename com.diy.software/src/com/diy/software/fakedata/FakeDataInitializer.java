@@ -14,6 +14,7 @@ import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.external.CardIssuer;
 import com.diy.hardware.external.ProductDatabases;
 import com.jimmyselectronics.Item;
+import com.diy.software.controllers.AttendantControl;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.necchi.Numeral;
@@ -28,9 +29,10 @@ public class FakeDataInitializer {
 	private BarcodedProduct bp1, bp2, bp3, bp4;
 	
 	private PriceLookUpCode code1, code2, code3, code4;
-	private PLUCodedProduct pp1, pp2, pp3, pp4, reusableBagProduct;
-	private PLUCodedItem pitem1, pitem2, pitem3, pitem4, reusableBagItem;
+	private PLUCodedProduct pp1, pp2, pp3, pp4;
+	private PLUCodedItem pitem1, pitem2, pitem3, pitem4;
 	private static PriceLookUpCode reusableBagCode = null;
+	private long reusableBagPrice = 2;
 	
 	private Card card1, card2, card3, card4, card5;
 	private CardIssuer fakebank;
@@ -57,10 +59,37 @@ public class FakeDataInitializer {
 		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode3, bp3);
 		bp4 = new BarcodedProduct(barcode4, "Cauliflower", 6, 550);
 		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode4, bp4);
-
+		
+		ProductDatabases.INVENTORY.put(bp1, 10);
+		ProductDatabases.INVENTORY.put(bp2, 10);
+		ProductDatabases.INVENTORY.put(bp3, 10);
+		ProductDatabases.INVENTORY.put(bp4, 10);
 	}
 	
 	public void addPLUCodedProduct() {
+		PriceLookUpCode plu1 = new PriceLookUpCode("2718");
+		PriceLookUpCode plu2 = new PriceLookUpCode("31415");
+		PriceLookUpCode plu3 = new PriceLookUpCode("9806");
+		PriceLookUpCode plu4 = new PriceLookUpCode("6022");
+		
+		PLUCodedProduct pcp1 = new PLUCodedProduct(plu1, "Gomu Gomu Devil Fruit", 260);
+		PLUCodedProduct pcp2 = new PLUCodedProduct(plu2, "Hana Hana Devil Fruit", 250);
+		PLUCodedProduct pcp3 = new PLUCodedProduct(plu3, "Mera Mera Devil Fruit", 290);
+		PLUCodedProduct pcp4 = new PLUCodedProduct(plu4, "Hito Hito Devil Fruit", 350);
+		
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(plu1, pcp1);
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(plu2, pcp2);
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(plu3, pcp3);
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(plu4, pcp4);
+		
+		ProductDatabases.INVENTORY.put(pcp1, 10);
+		ProductDatabases.INVENTORY.put(pcp2, 10);
+		ProductDatabases.INVENTORY.put(pcp3, 10);
+		ProductDatabases.INVENTORY.put(pcp4, 10);
+		
+		/**
+		 * PLUCodedItem in cart starts here
+		 */
 		code1 = new PriceLookUpCode("1234");
 		pitem1 = new PLUCodedItem(code1, 200);
 		pp1 = new PLUCodedProduct(code1, "Green Apples", 8);
@@ -77,23 +106,15 @@ public class FakeDataInitializer {
 		pitem4 = new PLUCodedItem(code4, 200);
 		pp4 = new PLUCodedProduct(code4, "Oranges", 7);
 
-		reusableBagCode = new PriceLookUpCode("0000");
-		reusableBagItem = new PLUCodedItem(reusableBagCode, (new ReusableBag()).getWeight());  // );
-		reusableBagProduct = new PLUCodedProduct(reusableBagCode, "Reusable bag", 2);
-
 		ProductDatabases.PLU_PRODUCT_DATABASE.put(code1, pp1);
 		ProductDatabases.PLU_PRODUCT_DATABASE.put(code2, pp2);
 		ProductDatabases.PLU_PRODUCT_DATABASE.put(code3, pp3);
 		ProductDatabases.PLU_PRODUCT_DATABASE.put(code4, pp4);
-		ProductDatabases.PLU_PRODUCT_DATABASE.put(reusableBagCode, reusableBagProduct);
 		
 		ProductDatabases.INVENTORY.put(pp1, 10);
 		ProductDatabases.INVENTORY.put(pp2, 10);
 		ProductDatabases.INVENTORY.put(pp3, 10);
 		ProductDatabases.INVENTORY.put(pp4, 10);
-		ProductDatabases.INVENTORY.put(reusableBagProduct, 10);
-		
-
 	}
 
 	public static PriceLookUpCode getReusableBagCode() {
@@ -109,6 +130,13 @@ public class FakeDataInitializer {
 		MembershipDatabase.membershipMap.put(1235, "Tanjiro");
 		MembershipDatabase.membershipMap.put(1236, "Nezuko");
 		MembershipDatabase.membershipMap.put(1237, "Zenitsu");
+	}
+	
+	public void addFakeAttendantLogin() {
+		AttendantControl.logins.add("password");
+		AttendantControl.logins.add("wordpass");
+		AttendantControl.logins.add("Password1");
+		AttendantControl.logins.add("12345");
 	}
 	
 	public void addCardData() {
@@ -151,7 +179,7 @@ public class FakeDataInitializer {
 	}
 	
 	public double getReusableBagPrice() {
-		return ProductDatabases.PLU_PRODUCT_DATABASE.get(reusableBagCode).getPrice();
+		return reusableBagPrice;
 	}
 	
 	public Card[] getCards() {
