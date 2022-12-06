@@ -100,9 +100,16 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 * Precondition: The customer must have requested "remove item" from their console.
 	 * 
 	 */
-	public void removeItem(int i) {
+	public boolean removeItem(int i) {
 		
-		ic.removeItem(i);
+		boolean success = ic.removeItem(i);
+		
+		if (success) {
+			removeItemSuccesful();
+			ic.notifyItemRemoved();
+		}
+		
+		return success;
 		
 		// TODO Switch this so that the GUI uses a pinpad/numpad to enter the number
 //		System.out.println("Enter the number corrseponding to the item to be removed: ");
@@ -110,14 +117,6 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 //		while (!ic.removeItem(itemNumber)) {
 //			System.out.println("Enter the number corrseponding to the item to be removed: ");
 //			itemNumber = scanner.nextInt();
-//		}
-		this.removeItemSuccesful();
-		ic.notifyItemRemoved();
-		
-		//---------------
-		
-//		for (AttendantControlListener l : listeners) {
-//			l.triggerAttendantRemoveItemScreen(this);
 //		}
 		
 	}

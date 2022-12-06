@@ -98,7 +98,17 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		removeItemButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ac.removeItem(Integer.parseInt(removeItemTextField.getText()));
+				boolean success = false;
+				try {
+					success = ac.removeItem(Integer.parseInt(removeItemTextField.getText()));
+					removeItemTextField.setText("");
+				} catch (NumberFormatException e1) {
+					removeItemTextField.setText("Please Enter Valid Number");
+				}
+				
+				if(!success) {
+					removeItemTextField.setText("Invalid Item Number");
+				}
 			}
 		});
 		
