@@ -31,7 +31,6 @@ public class FakeDataInitializer {
 	private PriceLookUpCode code1, code2, code3, code4;
 	private PLUCodedProduct pp1, pp2, pp3, pp4;
 	private PLUCodedItem pitem1, pitem2, pitem3, pitem4;
-	private static PriceLookUpCode reusableBagCode = null;
 	private long reusableBagPrice = 2;
 	
 	private Card card1, card2, card3, card4, card5;
@@ -132,10 +131,6 @@ public class FakeDataInitializer {
 		ProductDatabases.INVENTORY.put(pp3, 10);
 		ProductDatabases.INVENTORY.put(pp4, 10);
 	}
-
-	public static PriceLookUpCode getReusableBagCode() {
-		return reusableBagCode;
-	}
 	
 	/**
 	 * add fake membership data
@@ -191,7 +186,7 @@ public class FakeDataInitializer {
 	}
 	
 	public PriceLookUpCode[] getPLUCode() {
-		return new PriceLookUpCode[] {code1, code2, code3, code4, reusableBagCode};
+		return new PriceLookUpCode[] {code1, code2, code3, code4};
 	}
 
 	/**
