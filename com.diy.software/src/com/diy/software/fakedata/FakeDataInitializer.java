@@ -2,12 +2,9 @@ package com.diy.software.fakedata;
 
 
 
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-
-import javax.swing.text.PlainDocument;
 
 import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.PLUCodedItem;
@@ -21,7 +18,6 @@ import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.necchi.Numeral;
 import com.jimmyselectronics.opeechee.Card;
-import com.jimmyselectronics.svenden.ReusableBag;
 import com.unitedbankingservices.coin.CoinStorageUnit;
 
 public class FakeDataInitializer {
