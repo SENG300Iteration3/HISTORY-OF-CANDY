@@ -44,7 +44,7 @@ public class CustomerItemsPanel extends JPanel
 		bc.addListener(this);
 		
 		rc = sc.getReceiptControl();
-		rc.addListenerReceipt(this);
+		rc.addListener(this);
 		
 		weightDescrepancyMessage = new JLabel();
 		

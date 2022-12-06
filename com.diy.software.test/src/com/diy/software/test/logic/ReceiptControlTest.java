@@ -1,3 +1,5 @@
+//NOTE: also testing receipt related methods in attendant control
+
 package com.diy.software.test.logic;
 
 import static org.junit.Assert.assertFalse;
@@ -10,8 +12,13 @@ import org.junit.Test;
 
 import java.awt.event.ActionEvent;
 
+import com.jimmyselectronics.abagnale.IReceiptPrinter;
+import com.jimmyselectronics.abagnale.ReceiptPrinterListener;
 import com.jimmyselectronics.abagnale.ReceiptPrinterND;
 import com.jimmyselectronics.opeechee.Card.CardData;
+import com.unitedbankingservices.coin.CoinStorageUnit;
+import com.jimmyselectronics.AbstractDevice;
+import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.EmptyException;
 import com.jimmyselectronics.OverloadException;
 
@@ -38,7 +45,7 @@ public class ReceiptControlTest {
 
    
 	@Before
-	public void setup() {
+	public void setup() throws EmptyException, OverloadException {
 		PowerGrid.engageUninterruptiblePowerSource();
 		
 		sc = new StationControl();
@@ -49,12 +56,22 @@ public class ReceiptControlTest {
 		rcl = new ReceiptControlListenerStub();
 		rp = sc.station.printer;
 		rp.register(ac);
+		rp.register(acl);
+		rp.register(rc);
+		//rp.register(rcl);
 		rp.plugIn();
 		rp.turnOff();
 		rp.turnOn();
 		rp.enable();
 		
-		//TODO currently, broken should be fixed when updated with attendant control changes
+		ac.addListener(acl);
+		rc.addListener(rcl);
+		
+		/*
+		 * Clearing contents of the printer
+		 * (dependent on the ink/paper added in station control)
+		 */
+		sc.getReceiptControl().printReceipt("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
 		
 		/*
 		 * Due to limits in hardware out of ink and out of paper will only 
@@ -70,22 +87,7 @@ public class ReceiptControlTest {
 	
 	@After
 	public void teardown() {
-		//TODO add anything that could affect future states
-		//(keep in mind when writing tests)
-	}
-	
-	/*
-	 * Tests adding ink
-	 */
-	@Test
-	public void testAddInk() {
-	}
-	
-	/*
-	 * Tests adding paper
-	 */
-	@Test
-	public void testAddPaper() {
+		ac.removeListener(acl);
 	}
 	
 	/*
@@ -93,6 +95,8 @@ public class ReceiptControlTest {
 	 */
 	@Test
 	public void testOutOfInk() {
+    	sc.getReceiptControl().printReceipt("a");
+    	assertTrue(acl.outOfInk);
 	}
 	
 	/*
@@ -100,13 +104,46 @@ public class ReceiptControlTest {
 	 */
 	@Test
 	public void testOutOfPaper() {
+    	sc.getReceiptControl().printReceipt("\n");
+    	assertTrue(acl.outOfPaper);
+	}
+	
+	/*
+	 * Tests adding ink
+	 */
+	@Test
+	public void testAddInk() throws EmptyException, OverloadException {
+    	sc.getReceiptControl().printReceipt("a");
+    	assertTrue(acl.outOfInk);
+        ac.addInk(1);
+    	assertFalse(acl.outOfInk);
+	}
+	
+	/*
+	 * Tests adding paper
+	 */
+	@Test
+	public void testAddPaper() throws EmptyException, OverloadException {
+    	sc.getReceiptControl().printReceipt("\n");
+    	assertTrue(acl.outOfPaper);
+        ac.addPaper(1);
+    	assertFalse(acl.outOfPaper);
 	}
 	
 	/*
 	 * Tests low ink
 	 */
 	@Test
-	public void testsLowInk() {
+	public void testLowInk() {
+		ac.addInk(1);
+		sc.getReceiptControl().printReceipt("a");
+		updateLowInkAndPaper();
+		assertFalse(acl.outOfInk);
+		assertTrue(acl.lowInk);
+    	sc.getReceiptControl().printReceipt("a");
+    	updateLowInkAndPaper();
+    	assertTrue(acl.outOfInk);
+    	assertTrue(acl.lowInk);
 	}
 	
 	/*
@@ -114,6 +151,15 @@ public class ReceiptControlTest {
 	 */
 	@Test
 	public void testLowPaper() {
+		ac.addPaper(1);
+		sc.getReceiptControl().printReceipt("\n");
+		updateLowInkAndPaper();
+		assertFalse(acl.outOfPaper);
+		assertTrue(acl.lowPaper);
+    	sc.getReceiptControl().printReceipt("\n");
+    	updateLowInkAndPaper();
+    	assertTrue(acl.outOfPaper);
+    	assertTrue(acl.lowPaper);
 	}
 	
 	/*
@@ -122,6 +168,15 @@ public class ReceiptControlTest {
 	 */
 	@Test
 	public void testsLowInkThreshold() {
+		ac.addInk(sc.getReceiptControl().inkLowThreshold);
+		updateLowInkAndPaper();
+		assertFalse(acl.lowInk);
+		sc.getReceiptControl().printReceipt("a");
+		updateLowInkAndPaper();
+		assertFalse(acl.lowInk);
+    	sc.getReceiptControl().printReceipt("a");
+    	updateLowInkAndPaper();
+    	assertTrue(acl.lowInk);
 	}
 	
 	/*
@@ -130,41 +185,26 @@ public class ReceiptControlTest {
 	 */
 	@Test
 	public void testLowPaperThreshold() {
-	}
-	
-	/*
-	 * Tests adding ink after running out
-	 */
-	@Test
-	public void testAddInkAfterOut() {
-	}
-	
-	/*
-	 * Tests adding paper after running out
-	 */
-	@Test
-	public void testAddPaperAfterOut() {
-	}
-	
-	/*
-	 * Test that printer is disabled when out of paper
-	 */
-	@Test
-	public void testDisabledWhenOutPaper() {
-	}
-	
-	/*
-	 * Test that printer is disabled when out of ink
-	 */
-	@Test
-	public void testDisabledWhenOutInk() {
+		ac.addPaper(sc.getReceiptControl().paperLowThreshold);
+		updateLowInkAndPaper();
+		assertFalse(acl.lowPaper);
+		sc.getReceiptControl().printReceipt("\n");
+		updateLowInkAndPaper();
+		assertFalse(acl.lowPaper);
+    	sc.getReceiptControl().printReceipt("\n");
+    	updateLowInkAndPaper();
+    	assertTrue(acl.lowPaper);
 	}
 	
     /*
      *  Test EmptyException thrown when printing when out of ink
      */
-    @Test (expected = EmptyException.class)
+    @Test
     public void testPrintingWhenOutOfInk() throws EmptyException, OverloadException{
+    	sc.getReceiptControl().printReceipt("a");
+    	sc.getReceiptControl().printReceipt("a");
+    	assertTrue(rcl.takeIncompleteReceipt);
+    	assertFalse(rcl.takeReceipt);
     }
     
     /*
@@ -172,14 +212,6 @@ public class ReceiptControlTest {
      */
     @Test (expected = EmptyException.class)
     public void testPrintingWhenOutOfPaper() throws EmptyException, OverloadException{
-    }
-    
-    /*
-     *  Test that a new line is added when 60+ characters are printed on the same line
-     */
-    @Test
-    public void testCharactersPerLine(){
-    	
     }
     
     /*
@@ -343,10 +375,208 @@ public class ReceiptControlTest {
     	
     }
     
+    /*
+     * 	TODO add
+     *  Test that a new line is added when 60+ characters are printed on the same line
+     */
+    @Test
+    public void testCharactersPerLine(){
+    	
+    	
+    }
+    
+    /*
+     *  used to update the lowInk and lowPaper variables since they can be
+     *	updated in receiptControl without a way to read the updates
+     *	in AttendantControl
+     */
+    private void updateLowInkAndPaper() {
+    	if(sc.getReceiptControl().lowInk) {
+    		acl.lowInk = true;
+    	}
+    	else {
+    		acl.lowInk = false;
+    	}
+    	if(sc.getReceiptControl().lowPaper) {
+    		acl.lowPaper = true;
+    	}
+    	else {
+    		acl.lowPaper = false;
+    	}
+    }
+  
     
     
     
     
+	public class ReceiptControlListenerStub implements ReceiptControlListener{
+    	String checkedoutItemsMessage = "";
+    	String totalCostMessage = "";
+    	String membershipMessage = "";
+    	String dateandTimeMessage = "";
+    	String thankyouMessage = "";
+		boolean takeReceipt = false;
+		boolean takeIncompleteReceipt = false;
+
+		@Override
+		public void outOfInkOrPaper(ReceiptControl rc, String message) {	
+		}
+
+		@Override
+		public void setCheckedoutItems(ReceiptControl rc, String message) {
+			checkedoutItemsMessage = message;
+		}
+
+		@Override
+		public void setTotalCost(ReceiptControl rc, String totalCost) {
+			totalCostMessage = totalCost;	
+		}
+
+		@Override
+		public void setDateandTime(ReceiptControl rc, String dateTime) {
+			dateandTimeMessage = dateTime;
+		}
+
+		@Override
+		public void setThankyouMessage(ReceiptControl rc, String thankYou) {
+			thankyouMessage = thankYou;
+		}
+
+		@Override
+		public void setTakeReceiptState(ReceiptControl rc) {
+			takeReceipt = true;
+		}
+
+		@Override
+		public void setNoReceiptState(ReceiptControl rc) {
+			takeReceipt = false;
+		}
+
+		@Override
+		public void setIncompleteReceiptState(ReceiptControl rc) {
+			takeIncompleteReceipt = true;
+		}
+
+		@Override
+		public void setNoIncompleteReceiptState(ReceiptControl rc) {
+			takeIncompleteReceipt = false;
+		}
+	}
+	
+	public class AttendantControlListenerStub implements AttendantControlListener, ReceiptPrinterListener {
+    	boolean lowInk = false;
+    	boolean lowPaper = false;
+    	boolean outOfInk = true;
+    	boolean outOfPaper = true;
+
+		@Override
+		public void attendantApprovedBags(AttendantControl ac) {
+		}
+
+		@Override
+		public void attendantPreventUse(AttendantControl ac) {
+		}
+
+		@Override
+		public void lowInk(AttendantControl ac, String message) {
+			lowInk = true;
+		}
+
+		@Override
+		public void lowPaper(AttendantControl ac, String message) {
+			lowPaper = true;
+		}
+
+		@Override
+		public void printerNotLowInkState() {
+			lowInk = false;	
+		}
+
+		@Override
+		public void printerNotLowPaperState() {
+			lowPaper = false;	
+		}
+
+		@Override
+		public void outOfInk(AttendantControl ac, String message) {
+			outOfInk = true;
+		}
+
+		@Override
+		public void outOfPaper(AttendantControl ac, String message) {
+			outOfPaper = true;
+		}
+
+		@Override
+		public void addTooMuchInkState() {
+		}
+
+		@Override
+		public void addTooMuchPaperState() {
+		}
+
+		@Override
+		public void signalWeightDescrepancy(String updateMessage) {
+		}
+
+		@Override
+		public void noBagRequest() {
+		}
+
+		@Override
+		public void initialState() {
+		}
+
+		@Override
+		public void attendantPermitStationUse(AttendantControl ac) {
+		}
+
+		@Override
+		public void coinIsLowState(CoinStorageUnit unit, int amount) {
+		}
+
+		@Override
+		public void enabled(AbstractDevice<? extends AbstractDeviceListener> device) {
+		}
+
+		@Override
+		public void disabled(AbstractDevice<? extends AbstractDeviceListener> device) {
+		}
+
+		@Override
+		public void turnedOn(AbstractDevice<? extends AbstractDeviceListener> device) {
+		}
+
+		@Override
+		public void turnedOff(AbstractDevice<? extends AbstractDeviceListener> device) {
+		}
+
+		@Override
+		public void outOfPaper(IReceiptPrinter printer) {
+		}
+
+		@Override
+		public void outOfInk(IReceiptPrinter printer) {
+		}
+
+		@Override
+		public void lowInk(IReceiptPrinter printer) {
+		}
+
+		@Override
+		public void lowPaper(IReceiptPrinter printer) {
+		}
+
+		@Override
+		public void paperAdded(IReceiptPrinter printer) {
+			outOfPaper = false;
+		}
+
+		@Override
+		public void inkAdded(IReceiptPrinter printer) {
+			outOfInk = false;
+		}
+	}
 
 	public class StationControlListenerStub implements StationControlListener {
 
@@ -442,126 +672,6 @@ public class ReceiptControlTest {
 
 		@Override
 		public void notEnoughBagsInStock(StationControl systemControl, int numBag) {
-			// TODO Auto-generated method stub
-			
-		}
-	}
-	
-	public class AttendantControlListenerStub implements AttendantControlListener {
-
-		@Override
-		public void attendantApprovedBags(AttendantControl ac) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void attendantPreventUse(AttendantControl ac) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void lowInk(AttendantControl ac, String message) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void lowPaper(AttendantControl ac, String message) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void printerNotLowState() {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void outOfInk(AttendantControl ac, String message) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void outOfPaper(AttendantControl ac, String message) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void addTooMuchInkState() {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void addTooMuchPaperState() {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void signalWeightDescrepancy(String updateMessage) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void noBagRequest() {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void initialState() {
-			// TODO Auto-generated method stub
-			
-		}
-	}
-		
-	public class ReceiptControlListenerStub implements ReceiptControlListener {
-
-		@Override
-		public void outOfInkOrPaper(ReceiptControl rc, String message) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void setCheckedoutItems(ReceiptControl rc, String message) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void setTotalCost(ReceiptControl rc, String totalCost) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void setDateandTime(ReceiptControl rc, String dateTime) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void setThankyouMessage(ReceiptControl rc, String dateTime) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void setTakeReceiptState(ReceiptControl rc) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void setNoReceiptState(ReceiptControl rc) {
 			// TODO Auto-generated method stub
 			
 		}

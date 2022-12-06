@@ -725,6 +725,7 @@ public class StationControl
 		// unblock station when enough paper is added, checks if theres enough ink
 		if(!isOutOfInk) {
 			unblockStation();
+			rc.paperAdded(printer);
 			// System.out.println("station unblocked paper added");
 		}
 	}
@@ -735,6 +736,7 @@ public class StationControl
 		// unblock station when enough ink is added, checks if theres enough paper
 		if(!isOutOfPaper) {
 			unblockStation();
+			rc.inkAdded(printer);
 			// System.out.println("station unblocked ink added");
 		}
 	}

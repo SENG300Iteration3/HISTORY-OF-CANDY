@@ -80,22 +80,6 @@ public class TestAttendantControl {
     	ac.approveBagsAdded();
     	assertFalse(als.attendantBags);
     }
-
-    @Test
-    public void testAddPaper() throws OverloadException {
-    	ac.addListener(als);
-    	assertFalse(als.lowState);
-    	ac.addPaper();
-    	assertTrue(als.lowState);
-    }
-    
-    @Test
-    public void testAddInk() throws OverloadException {
-    	ac.addListener(als);
-    	assertFalse(als.lowState);
-    	ac.addInk();
-    	assertTrue(als.lowState);
-    }
     
     @Test
     public void testUpdateWeightDescrepancyMessage() {
@@ -130,41 +114,6 @@ public class TestAttendantControl {
 //    	ac.removeLastBaggedItem();
 //    	assertTrue(als.ini);
 //    }
-//    
-    
-    @Test
-    public void testLowInk() {
-    	ac.addListener(als);
-    	assertFalse(als.addInk);
-    	ac.lowInk(rp);
-    	assertTrue(als.addInk);
-    	
-    }
-    
-    @Test
-    public void testNoInk() {
-    	ac.addListener(als);
-    	assertFalse(als.addInk);
-    	ac.outOfInk(rp);
-    	assertTrue(als.addInk);
-    	
-    }
-    
-    @Test
-    public void testLowPaper() {
-    	ac.addListener(als);
-    	assertFalse(als.addPaper);
-    	ac.lowPaper(rp);
-    	assertTrue(als.addPaper);
-    }
-    
-    @Test
-    public void testOutOfPaper() {
-    	ac.addListener(als);
-    	assertFalse(als.addPaper);
-    	ac.outOfPaper(rp);
-    	assertTrue(als.addPaper);
-    }
     
 
     @Test
@@ -429,7 +378,6 @@ public class TestAttendantControl {
     	
     }
     
-
     public class AttendantListenerStub implements AttendantControlListener {
     	boolean attendantBags = false;
 		boolean attendantUse = false;
@@ -470,7 +418,6 @@ public class TestAttendantControl {
 		@Override
 		public void printerNotLowState() {
 			lowState = true;
-			
 		}
 
 		@Override
@@ -493,7 +440,6 @@ public class TestAttendantControl {
 		@Override
 		public void attendantPermitStationUse(AttendantControl ac) {
 			stationPermitted = true;
-			
 		}
     }
 

@@ -27,7 +27,7 @@ public interface ReceiptControlListener {
 	/**
 	 * thank you message
 	 */
-	public void setThankyouMessage(ReceiptControl rc, String dateTime);
+	public void setThankyouMessage(ReceiptControl rc, String thankyou);
 	
 	/**
 	 * successfully printed receipt and activates take receipt button

@@ -22,6 +22,7 @@ import com.jimmyselectronics.EmptyException;
 import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.abagnale.IReceiptPrinter;
 import com.jimmyselectronics.abagnale.ReceiptPrinterListener;
+import com.jimmyselectronics.abagnale.ReceiptPrinterND;
 
 import ca.ucalgary.seng300.simulation.InvalidArgumentSimulationException;
 import swing.panes.AttendantStationPane;
@@ -36,36 +37,34 @@ import java.util.Map;
 
 public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	private StationControl sc;
-	private ArrayList<ReceiptControlListener> listenersReceipt;
-	private ArrayList<AttendantControlListener> listenersAttendant;
+	private ArrayList<ReceiptControlListener> listeners;
 	private ArrayList<Tuple<String, Double>> checkoutList = new ArrayList<>();
 	private static final DecimalFormat formatPrice = new DecimalFormat("0.00");
 	private int retreivedMemNum;
 	public int currentPaperCount = 0;
 	public int currentInkCount = 0;
+	public int paperLowThreshold = 100;
+	public int inkLowThreshold = 1000;
 	public StringBuilder finalReceiptToShowOnScreen = new StringBuilder(); 
 	
 	public boolean outOfInk = false;
 	public boolean outOfPaper = false;
+	public boolean lowInk = false;
+	public boolean lowPaper = false;
 	
-	public ReceiptControl (StationControl sc) {
+	public ReceiptControl(StationControl sc) {
 		this.sc = sc;
-		this.listenersReceipt = new ArrayList<>();
-		this.listenersAttendant = new ArrayList<>();
+		this.listeners = new ArrayList<>();
 	}
 
-	public void addListenerReceipt(ReceiptControlListener lr) {
-		listenersReceipt.add(lr);
-	}
-	
-	public void addListenerAttendant(AttendantControlListener la) {
-		listenersAttendant.add(la);
+	public void addListener(ReceiptControlListener l) {
+		listeners.add(l);
 	}
 	
 	// Resets the data to its initial state. 
 	//TODO delete for later if not needed for GUI
 	public void resetState() {
-		retreivedMemNum = -1; // can't use null, gonnause this.
+		retreivedMemNum = -1; //indicates did not recive member number
 	}
 	
 	
@@ -138,10 +137,11 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	/**
 	 * used to check if the printer is on low ink or low paper
 	 */
-	private void checkLowInkNPaper() {
-		if(currentInkCount <= 1000)
+	private void checkLowInkOrPaper() {
+		if(currentInkCount <= inkLowThreshold) {
 			this.lowInk(sc.station.printer);
-		else if(currentPaperCount <= 100)
+		}
+		if(currentPaperCount <= paperLowThreshold)
 			this.lowPaper(sc.station.printer);
 	}
 	
@@ -150,20 +150,29 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	 * 
 	 * @param receipt the customer receipt as a string
 	 */
-	private void printReceipt(String receipt) {
+	public void printReceipt(String receipt) {
 		try {
-		checkLowInkNPaper();
-		for (char receiptChar : receipt.toCharArray()) {	
+		checkLowInkOrPaper();
+		for (char receiptChar : receipt.toCharArray()) {
+				if(receiptChar == '\n') {
+					--currentPaperCount;
+				}
+				if(!Character.isWhitespace(receiptChar)) {
+					--currentInkCount;
+				}
+				
 				sc.station.printer.print(receiptChar);
 				finalReceiptToShowOnScreen.append(receiptChar);
-				for (ReceiptControlListener l : listenersReceipt) {
+				for (ReceiptControlListener l : listeners) {
 					l.setTakeReceiptState(this);
 				}
 			}
 		
 		} catch (EmptyException e) {
 			sc.station.printer.cutPaper();
-			for (ReceiptControlListener l : listenersReceipt) {
+			System.out.println("Prints Here");
+			for (ReceiptControlListener l : listeners) {
+				System.out.println("Dosent Print Here");
 				l.setNoReceiptState(this);
 				l.setIncompleteReceiptState(this);
 			}
@@ -178,7 +187,7 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	 * called after the customer completes removing an incomplete receipt
 	 */
 	public void removedIncompleteReceipt() {
-		for (ReceiptControlListener l : listenersReceipt) {
+		for (ReceiptControlListener l : listeners) {
 			l.setNoIncompleteReceiptState(this);
 		}
 	}
@@ -187,15 +196,12 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	 * called after the customer completes removing a complete receipt
 	 */
 	public void removedCompleteReceipt() {
-		for (ReceiptControlListener l : listenersReceipt) {
+		for (ReceiptControlListener l : listeners) {
 			l.setNoReceiptState(this);
 			l.setNoIncompleteReceiptState(this);	
 		}
 		// need to refresh the station
 	}
-	
-	
-	
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -231,6 +237,54 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	}
 
 	@Override
+	public void outOfPaper(IReceiptPrinter printer) {
+		outOfPaper = true;
+		sc.getAttendantControl().outOfPaper(printer);
+	}
+
+	@Override
+	public void outOfInk(IReceiptPrinter printer) {
+		outOfInk = true;
+		sc.getAttendantControl().outOfInk(printer);
+	}
+
+	@Override
+	public void lowInk(IReceiptPrinter printer) {
+		if(outOfInk) {
+			this.outOfInk(printer);
+		}else {
+			lowInk = true;
+			sc.getAttendantControl().lowInk(printer);
+		}
+	}
+
+	@Override
+	public void lowPaper(IReceiptPrinter printer) {
+		if(outOfPaper) {
+			this.outOfPaper(printer);
+		}else {
+			lowPaper = true;
+			sc.getAttendantControl().lowPaper(printer);
+		}
+	}
+	
+	@Override
+	public void inkAdded(IReceiptPrinter printer) {
+		outOfInk = false;
+		if(currentInkCount > inkLowThreshold) {
+			lowInk = false;
+		}
+	}
+
+	@Override
+	public void paperAdded(IReceiptPrinter printer) {
+		outOfPaper = false;
+		if(currentPaperCount > paperLowThreshold) {
+			lowPaper = false;
+		}
+	}
+	
+	@Override
 	public void enabled(AbstractDevice<? extends AbstractDeviceListener> device) {
 		// TODO Auto-generated method stub
 		
@@ -252,46 +306,6 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	public void turnedOff(AbstractDevice<? extends AbstractDeviceListener> device) {
 		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public void outOfPaper(IReceiptPrinter printer) {
-		outOfPaper = true;
-		sc.getAttendantControl().outOfPaper(printer);
-	}
-
-	@Override
-	public void outOfInk(IReceiptPrinter printer) {
-		outOfInk = true;
-		sc.getAttendantControl().outOfInk(printer);
-	}
-
-	@Override
-	public void lowInk(IReceiptPrinter printer) {
-		if(outOfInk) {
-			this.outOfInk(printer);
-		}else {
-			sc.getAttendantControl().lowInk(printer);
-		}
-	}
-
-	@Override
-	public void lowPaper(IReceiptPrinter printer) {
-		if(outOfPaper) {
-			this.outOfPaper(printer);
-		}else {
-			sc.getAttendantControl().lowPaper(printer);
-		}
-	}
-
-	@Override
-	public void paperAdded(IReceiptPrinter printer) {
-		outOfPaper = false;
-	}
-
-	@Override
-	public void inkAdded(IReceiptPrinter printer) {
-		outOfInk = false;
 	}
 
 }

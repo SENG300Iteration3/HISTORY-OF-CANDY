@@ -43,7 +43,7 @@ public class AttendantActionsPanel extends JPanel
 		bc.addListener(this);
 		
 		rc = sc.getReceiptControl();
-		rc.addListenerReceipt(this);
+		rc.addListener(this);
 
 		inkButton = initializeButton("Refill Ink Dispenser", "addInk");
 		paperButton = initializeButton("Refill Paper Dispenser", "addPaper");

@@ -90,6 +90,34 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 			l.attendantPreventUse(this);
 		}
 	}
+	
+	/**
+	 * allow attendant to add ink to receipt printer
+	 * If too much ink is added, simulate fixing by adding the max amount of ink allowed - 100
+	 * @param inkUnit amount of ink to add
+	 * 
+	 * precondition: printer is low on ink or out of ink
+	 * 
+	 * @throws OverloadException if more ink than the printer can handle is added
+	 */
+	public void addInk(int inkUnit){
+		try {
+			sc.getReceiptControl().currentInkCount += inkUnit;
+			sc.station.printer.addInk(inkUnit);
+		} catch (OverloadException e) {
+			for (AttendantControlListener l : listeners) {
+				l.signalWeightDescrepancy("Added too much ink!");
+				l.addTooMuchInkState();
+			}	
+			if(sc.getReceiptControl().currentInkCount < 100)
+				addInk(ReceiptPrinterND.MAXIMUM_INK - 100);
+			
+		}
+		if(sc.getReceiptControl().currentPaperCount <= sc.getReceiptControl().paperLowThreshold) {
+			for (AttendantControlListener l : listeners)
+				l.printerNotLowInkState();
+		}
+	}
 
 	/**
 	 * allow attendant to add paper to receipt printer
@@ -103,8 +131,8 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	public void addPaper(int paperUnit) {
 		
 		try {
-			sc.station.printer.addPaper(paperUnit);
 			sc.getReceiptControl().currentPaperCount += paperUnit;
+			sc.station.printer.addPaper(paperUnit);
 		} catch (OverloadException e) {
 			for (AttendantControlListener l : listeners) {
 				l.signalWeightDescrepancy("Added too much paper!");
@@ -113,34 +141,13 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 			if(sc.getReceiptControl().currentPaperCount < 100) 
 				addPaper(ReceiptPrinterND.MAXIMUM_PAPER - 100);
 		}
-		for (AttendantControlListener l : listeners)
-			l.printerNotLowPaperState();
-	}
-
-	/**
-	 * allow attendant to add ink to receipt printer
-	 * If too much ink is added, simulate fixing by adding the max amount of ink allowed - 100
-	 * @param inkUnit amount of ink to add
-	 * 
-	 * precondition: printer is low on ink or out of ink
-	 * 
-	 * @throws OverloadException if more ink than the printer can handle is added
-	 */
-	public void addInk(int inkUnit){
-		try {
-			sc.station.printer.addInk(inkUnit);
-			sc.getReceiptControl().currentInkCount += inkUnit;
-		} catch (OverloadException e) {
+		if(sc.getReceiptControl().currentPaperCount <= sc.getReceiptControl().paperLowThreshold) {
+			System.out.println("Prints here");
 			for (AttendantControlListener l : listeners) {
-				l.signalWeightDescrepancy("Added too much ink!");
-				l.addTooMuchInkState();
-			}	
-			if(sc.getReceiptControl().currentInkCount < 100)
-				addInk(ReceiptPrinterND.MAXIMUM_INK - 100);
-			
+				System.out.println("Also Prints here");
+				l.printerNotLowPaperState();
+			}
 		}
-		for (AttendantControlListener l : listeners)
-			l.printerNotLowInkState();
 	}
 
 	/**
@@ -415,30 +422,6 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	}
 
 	@Override
-	public void enabled(AbstractDevice<? extends AbstractDeviceListener> device) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void disabled(AbstractDevice<? extends AbstractDeviceListener> device) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void turnedOn(AbstractDevice<? extends AbstractDeviceListener> device) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void turnedOff(AbstractDevice<? extends AbstractDeviceListener> device) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void outOfPaper(IReceiptPrinter printer) {
 		for (AttendantControlListener l : listeners) {
 			//l.addPaperState();
@@ -480,6 +463,30 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	@Override
 	public void inkAdded(IReceiptPrinter printer) {
 		
+	}
+	
+	@Override
+	public void enabled(AbstractDevice<? extends AbstractDeviceListener> device) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void disabled(AbstractDevice<? extends AbstractDeviceListener> device) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void turnedOn(AbstractDevice<? extends AbstractDeviceListener> device) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void turnedOff(AbstractDevice<? extends AbstractDeviceListener> device) {
+		// TODO Auto-generated method stub
+
 	}
 
 	public void noBagRequest() {
