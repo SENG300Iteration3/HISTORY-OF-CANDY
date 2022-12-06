@@ -165,4 +165,10 @@ public class AttendantStationPane implements AttendantControlListener {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void itemBagged() {
+		// TODO Auto-generated method stub
+		
+	}
 }

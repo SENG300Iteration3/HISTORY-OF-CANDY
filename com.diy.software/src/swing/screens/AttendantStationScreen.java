@@ -303,4 +303,10 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		// TODO Auto-generated method stub
 		
 	}
+
+
+	@Override
+	public void itemBagged() {
+		approveNoBagging.setEnabled(false);
+	}
 }

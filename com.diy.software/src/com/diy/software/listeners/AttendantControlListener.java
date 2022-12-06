@@ -55,6 +55,12 @@ public interface AttendantControlListener {
 	public void noBagRequest();
 	
 	/**
+	 * state to indicate item is bagged
+	 * cancel noBagRequest if needed
+	 */
+	public void itemBagged();
+	
+	/**
 	 * returns the attendant station to initial starting state when stations have no issues
 	 */
 	public void initialState();
