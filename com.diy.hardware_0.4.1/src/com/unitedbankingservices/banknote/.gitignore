@@ -1,0 +1,13 @@
+/AbstractBanknoteDispenser.class
+/Banknote.class
+/BanknoteDispensationSlot.class
+/BanknoteDispensationSlotObserver.class
+/BanknoteDispenserMR.class
+/BanknoteDispenserObserver.class
+/BanknoteInsertionSlot.class
+/BanknoteInsertionSlotObserver.class
+/BanknoteStorageUnit.class
+/BanknoteStorageUnitObserver.class
+/BanknoteValidator.class
+/BanknoteValidatorObserver.class
+/IBanknoteDispenser.class
