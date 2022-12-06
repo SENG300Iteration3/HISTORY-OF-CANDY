@@ -8,6 +8,7 @@ import java.util.Map;
 import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.DoItYourselfStation;
+import com.diy.hardware.PLUCodedItem;
 import com.diy.hardware.PLUCodedProduct;
 import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.Product;
@@ -165,9 +166,15 @@ public class StationControl
 
 		for (Card c : this.fakeData.getCards())
 			customer.wallet.cards.add(c);
-		for (BarcodedItem i : this.fakeData.getItems()) {
-			customer.shoppingCart.add(i);
-			this.barcodedItems.put(i.getBarcode(), i);
+		for (Item i : this.fakeData.getItems()) {
+			if (i instanceof BarcodedItem) {
+				BarcodedItem item = (BarcodedItem) i;
+				this.barcodedItems.put(item.getBarcode(), i);
+			}
+			else if (i instanceof PLUCodedItem) {
+				PLUCodedItem item = (PLUCodedItem) i;
+				this.pluCodedItems.put(item.getPLUCode(), i);
+			}
 		}
 	}
 
@@ -604,16 +611,6 @@ public class StationControl
 	}
 
 	
-	/**
-	 * Compares the expected weight after adding an item to the actual weight being
-	 * read on the scale.
-	 * 
-	 * @return Boolean True if weights match, false otherwise
-	 * @throws OverloadException If the weight has overloaded the scale.
-	 */
-	public boolean expectedWeightMatchesActualWeight(double actualWeight) {
-		return (this.getExpectedWeight() == actualWeight + bagWeight);
-	}
 	
 	/**
 	 * sets user message to announce weight on the indicated scale has changed

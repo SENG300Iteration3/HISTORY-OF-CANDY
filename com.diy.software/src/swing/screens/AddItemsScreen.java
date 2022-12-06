@@ -60,10 +60,10 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 	public AddItemsScreen(StationControl systemControl) {
 		super(systemControl, "Self Checkout");
 		
-		this.sc = systemControl;
+		this.systemControl = systemControl;
 		
-		this.ic = sc.getItemsControl();
-		this.ic.addListener(this);
+		this.itemsControl = systemControl.getItemsControl();
+		itemsControl.addListener(this);
 		
 		bc = systemControl.getBagsControl();
 		bc.addListener(this);
@@ -174,7 +174,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		this.removeItemBtn = makeButton("Remove Item", fourthButtonPanel);
 		rightSidebuttonPanel.add(fourthButtonPanel);
 		this.removeItemBtn.setActionCommand("remove item");
-		this.removeItemBtn.addActionListener(ic);
+		this.removeItemBtn.addActionListener(itemsControl);
 
 		this.addLayer(mainPanel, 0);
 
@@ -185,11 +185,11 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 
 		this.payBtn = makeButton("pay", buttonPanel);
 		this.payBtn.setActionCommand("pay");
-		this.payBtn.addActionListener(ic);
+		this.payBtn.addActionListener(itemsControl);
 
 		this.memberBtn = makeButton("enter member id", buttonPanel);
 		this.memberBtn.setActionCommand("member");
-		this.memberBtn.addActionListener(ic);
+		this.memberBtn.addActionListener(itemsControl);
 
 
 		this.addItemByPLUBtn.setActionCommand("enter plu");
@@ -344,7 +344,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		// TODO Auto-generated method stub
 		
 	}
-}
+	
 	public void numberFieldHasBeenUpdated(BagDispenserControl bdp, String memberNumber) {
 		// TODO Auto-generated method stub
 		

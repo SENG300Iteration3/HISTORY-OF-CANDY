@@ -3,6 +3,8 @@ package com.diy.software.controllers;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ThreadLocalRandom;
@@ -39,6 +41,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	private ArrayList<ItemsControlListener> listeners;
 	public ArrayList<Tuple<BarcodedProduct, Integer>> tempList = new ArrayList<>();
 	private ArrayList<Object> checkoutList = new ArrayList<>();
+	private Map<PLUCodedProduct, Double> pluProducts = new HashMap<>();
 	private ArrayList<ReusableBag> bags = new ArrayList<ReusableBag>(); // stores reusable bag item with no barcode
 	private double checkoutListTotal = 0.0;
 	private Item currentItem;
@@ -80,7 +83,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		listeners.remove(l);
 	}
 
-	public void addItemToCheckoutList(Tuple<String, Double> item) {
+	public void addItemToCheckoutList(Object item) {
 		checkoutList.add(item);
 		refreshGui();
 	}
