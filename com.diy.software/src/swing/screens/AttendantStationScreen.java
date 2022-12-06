@@ -9,6 +9,7 @@ import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import com.diy.software.controllers.AttendantControl;
@@ -31,11 +32,13 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	private StationControl sc;
 	private BagsControl bc;
 	private AttendantControl ac;
+	
 	private static final int BUTTON_WIDTH = 310;
 	private static final int BUTTON_HEIGHT = 50;
 	private static final int LABEL_WIDTH = 200;
 	private static final int LABEL_HEIGHT = 60;
 	private boolean cusAddedBags = false;
+	
 	GUI_JButton approveAddedBagsButton, approveNoBagging, startUpButton, shutDownButton, 
 				permitButton, preventButton, addItemButton, removeItemButton, logoutButton;
 	GUI_JLabel 	weightDisplayLabel, weightDescrepancyMssg, inkLabel, paperLabel,
@@ -58,8 +61,8 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		approveNoBagging = initializeButton("Approve no bagging", "approve no bag", false);
 		startUpButton = initializeButton("Start up station", "startUp", true);
 		shutDownButton = initializeButton("Shut down station", "shutdown", true);
-		permitButton = initializeButton("Permit station use", "permit", false);
-		preventButton = initializeButton("Prevent station use", "prevent", true);
+		permitButton = initializeButton("Permit station use", "permit_use", false);
+		preventButton = initializeButton("Prevent station use", "prevent_use", true);
 		addItemButton = initializeButton("Add item", "add", true);
 		removeItemButton = initializeButton("Remove item", "remove", true);
 		logoutButton = initializeButton("Logout", "logout", true);
@@ -83,30 +86,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		notificationPanel.add(adjustCoinLabel);
 		notificationPanel.add(adjustBanknoteLabel);
 		
-		GUI_JPanel topPanel = new GUI_JPanel();
-		JLabel notificationLabel = new JLabel("Notifications");
-		topPanel.add(notificationLabel);
-		topPanel.add(notificationPanel);
-
-		this.addLayer(topPanel, 0);
-		
-		//Scroll Pane for attendant buttons. Will be at bottom of screen.
-		JScrollPane bagScrollPane = initializeScrollPane(
-				approveAddedBagsButton, approveNoBagging);
-		
-		JScrollPane stationScrollPane = initializeScrollPane(
-				startUpButton, shutDownButton);
-		
-		JScrollPane approvalScrollPane = initializeScrollPane(
-				permitButton, preventButton);
-		
-		JScrollPane itemScrollPane = initializeScrollPane(
-				addItemButton, removeItemButton);
-
-//		this.addLayer(bagScrollPane, 50);
-//		this.addLayer(stationScrollPane, 50);
-//		this.addLayer(approvalScrollPane, 50);
-//		this.addLayer(itemScrollPane, 50);
+		this.addLayer(notificationPanel, 0);
 
 		GridBagConstraints panelGrid = new GridBagConstraints();
 		GUI_JPanel buttonPanel = new GUI_JPanel();
@@ -139,14 +119,10 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		panelGrid.gridx = 3;
 		buttonPanel.add(removeItemButton, panelGrid);
 		
-		
-		GUI_JPanel bottomPanel = new GUI_JPanel();
-		JLabel actionsLabel = new JLabel("Actions");
-		bottomPanel.add(actionsLabel);
-		bottomPanel.add(buttonPanel);
-		bottomPanel.add(logoutButton);
-		
-		this.addLayer(bottomPanel, 0);
+		buttonPanel.setPanelBorder(10, 10, 10, 10); 
+		buttonPanel.setBackground(GUI_Color_Palette.DARK_BLUE);
+		this.addLayer(buttonPanel, 150);
+		this.addLayer(logoutButton, 10);
 		
 //		// FIXME: Used for testing. Remove before submission.
 //		this.printReceiptButton = makeCentralButton("PRINT RECEIPT", this.width - 200, 25);
@@ -184,24 +160,24 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		return button;
 	}
 	
-	private JScrollPane initializeScrollPane(GUI_JButton b1, GUI_JButton b2) {
-		JScrollPane scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(12, 0));
-		scrollPane.setBackground(GUI_Color_Palette.DARK_BROWN);
-		scrollPane.setPreferredSize(new Dimension(200, 100));
-		scrollPane.setBorder(BorderFactory.createMatteBorder(20, 20, 20, 20, GUI_Color_Palette.DARK_BLUE));
-		
-		
-		GUI_JPanel buttonsPanel	= new GUI_JPanel();
-		buttonsPanel.setLayout(new GridLayout(2, 1));
-		scrollPane.getViewport().add(buttonsPanel);
-		
-		buttonsPanel.add(b1);
-		buttonsPanel.add(b2);
-		
-		return scrollPane;
-	}
+//	private JScrollPane initializeScrollPane(GUI_JButton b1, GUI_JButton b2) {
+//		JScrollPane scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+//				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+//		scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(12, 0));
+//		scrollPane.setBackground(GUI_Color_Palette.DARK_BROWN);
+//		scrollPane.setPreferredSize(new Dimension(200, 100));
+//		scrollPane.setBorder(BorderFactory.createMatteBorder(20, 20, 20, 20, GUI_Color_Palette.DARK_BLUE));
+//		
+//		
+//		GUI_JPanel buttonsPanel	= new GUI_JPanel();
+//		buttonsPanel.setLayout(new GridLayout(2, 1));
+//		scrollPane.getViewport().add(buttonsPanel);
+//		
+//		buttonsPanel.add(b1);
+//		buttonsPanel.add(b2);
+//		
+//		return scrollPane;
+//	}
 
 	@Override
 	public void awaitingAttendantToVerifyBagsPlacedInBaggingArea(BagsControl bc) {
@@ -253,24 +229,18 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	@Override
 	public void addPaperState() {
 		approveAddedBagsButton.setEnabled(false);
-//		addInkToPrinterButton.setEnabled(false);
-//		addPaperToPrinterButton.setEnabled(true);
 		
 	}
 
 	@Override
 	public void addInkState() {
 		approveAddedBagsButton.setEnabled(false);
-//		addInkToPrinterButton.setEnabled(true);
-//		addPaperToPrinterButton.setEnabled(false);
 		
 	}
 
 	@Override
 	public void printerNotLowState() {
 		approveAddedBagsButton.setEnabled(false);
-//		addInkToPrinterButton.setEnabled(false);
-//		addPaperToPrinterButton.setEnabled(false);
 		inkLabel.setText("Ink status");
 		paperLabel.setText("Paper status");
 	}
@@ -284,16 +254,12 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	@Override
 	public void noBagRequest() {
 		approveAddedBagsButton.setEnabled(false);
-//		addInkToPrinterButton.setEnabled(false);
-//		addPaperToPrinterButton.setEnabled(false);	
 		approveNoBagging.setEnabled(true);
 	}
 
 	@Override
 	public void initialState() {
 		approveAddedBagsButton.setEnabled(false);
-//		addInkToPrinterButton.setEnabled(false);
-//		addPaperToPrinterButton.setEnabled(false);	
 		approveNoBagging.setEnabled(false);
 		weightDescrepancyMssg.setText("");
 	}

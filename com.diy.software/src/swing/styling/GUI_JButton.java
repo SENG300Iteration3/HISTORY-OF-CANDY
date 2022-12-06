@@ -14,7 +14,6 @@ public class GUI_JButton extends JButton {
 
 		this.setFont(GUI_Fonts.TITLE);
 		this.setForeground(GUI_Color_Palette.WHITE);
-		this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED, getForeground(), getBackground()));
 	}
 
 	public GUI_JButton(String text) {

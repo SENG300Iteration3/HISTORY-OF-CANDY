@@ -32,7 +32,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	private Currency currency;
 	String attendantNotifications;
 	
-	
+	 
 	public static final ArrayList<String> logins = new ArrayList<String>();
 	
 	public void login(String password) {
@@ -384,6 +384,18 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 				case "startUp":
 					System.out.println("Station has been started up");
 					startUpStation();
+					break;
+				case "shutDown":
+					//TODO:
+					break;
+				case "add":
+					//TODO:
+					break;
+				case "remove":
+					//TODO:
+					break;
+				case "logout":
+					//TODO:
 					break;
 				default:
 					break;
