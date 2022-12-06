@@ -49,8 +49,8 @@ public class ReceiptControlTest {
 		PowerGrid.engageUninterruptiblePowerSource();
 		
 		sc = new StationControl();
-		ac = new AttendantControl(sc);
-		rc = new ReceiptControl(sc);
+		ac = sc.getAttendantControl();
+		rc = sc.getReceiptControl();
 		scl = new StationControlListenerStub();
     	acl = new AttendantControlListenerStub();
 		rcl = new ReceiptControlListenerStub();
@@ -58,7 +58,6 @@ public class ReceiptControlTest {
 		rp.register(ac);
 		rp.register(acl);
 		rp.register(rc);
-		//rp.register(rcl);
 		rp.plugIn();
 		rp.turnOff();
 		rp.turnOn();
