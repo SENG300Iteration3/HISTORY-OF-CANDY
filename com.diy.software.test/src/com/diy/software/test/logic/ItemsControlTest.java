@@ -46,7 +46,11 @@ public class ItemsControlTest {
 		item = fdi.getItems()[0];
 		itemTuple = new Tuple<String, Double>("Can of Beans", (double) 2);
 		barcode = new Barcode(new Numeral[] { Numeral.one, Numeral.two, Numeral.three, Numeral.four });
-
+		
+		// ### I need these - Jessy
+		
+		// ### I need these - Jessy
+		
 		systemControl.station.handheldScanner.register(itemsControl);
 		systemControl.station.handheldScanner.plugIn();
 		systemControl.station.handheldScanner.turnOff();
@@ -559,6 +563,17 @@ public class ItemsControlTest {
 		assertTrue(itemsControl.userMessage.equals("Excessive weight removed, continue scanning"));
 	}
 
+	
+	@Test
+	public void testActionPerformedCatalog() {
+		stub.bagging = true;
+		stub.selected = true;
+		itemsControl.weightChanged(systemControl.station.baggingArea, 1);
+		assertFalse(stub.bagging);
+		assertFalse(stub.selected);
+	}
+	
+	
 	public class StubItemsControl implements ItemsControlListener {
 		boolean available = true;
 		boolean selected = false;
