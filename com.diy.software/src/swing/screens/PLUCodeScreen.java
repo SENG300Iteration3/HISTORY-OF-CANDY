@@ -138,6 +138,8 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 
 	@Override
 	public void pluErrorMessageUpdated(PLUCodeControl ppc, String errorText) {
+		message.setFont(new Font("Franklin Gothic", Font.BOLD, 17));
+		message.setForeground(Color.RED);
 		message.setText(errorText);
 	}
 
