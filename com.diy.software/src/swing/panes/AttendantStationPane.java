@@ -29,16 +29,13 @@ public class AttendantStationPane implements AttendantControlListener {
 	//because they can be accessed by getting the components inside the AttendantLoginScreen
 	public Component currentComponent;
 	public AttendantLoginScreen loginScreen;
-	public JTabbedPane tabbedPane;
+	public JTabbedPane tabbedPane; 
 	public JFrame frame;
 	private PaneControl pc;
-	private ArrayList<JPanel> panels;
 	
 	public AttendantStationPane(PaneControl pc, JFrame frame) {
 		this.frame = frame;
 		this.pc = pc;
-		
-		panels = new ArrayList<JPanel>();
 		
 		this.loginScreen = new AttendantLoginScreen(pc.getStationControls());
 		this.tabbedPane = new JTabbedPane();
@@ -49,7 +46,6 @@ public class AttendantStationPane implements AttendantControlListener {
 			tempPanel.add(( new AttendantStationScreen(sc)).getRootPanel(), BorderLayout.CENTER);
 			tabbedPane.addTab("Station " + i++, tempPanel);
 			tabbedPane.addChangeListener(pc);
-			panels.add(tempPanel);
 		}
 		 
 		this.currentComponent = new JPanel();
@@ -116,6 +112,10 @@ public class AttendantStationPane implements AttendantControlListener {
 			loginScreen.loginFail();
 		}else{
 			//logout
+			if (!isLoggedIn) {
+				loginScreen = new AttendantLoginScreen(pc.getStationControls());
+				changeComponents(loginScreen.getRootPanel());
+			}
 		}
 		
 	}

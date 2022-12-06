@@ -34,14 +34,17 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	private Currency currency;
 	String attendantNotifications;
 	
-
-	// TODO REMOVE BEFORE RELEASE
-	Scanner scanner = new Scanner(System.in);
 	public static final ArrayList<String> logins = new ArrayList<String>();
 	
 	public void login(String password) {
 		for (AttendantControlListener l : listeners) {
 			l.loggedIn(logins.contains(password));
+		}
+	}
+	
+	public void logout() {
+		for (AttendantControlListener l : listeners) {
+			l.loggedIn(false);
 		}
 	}
 
@@ -76,7 +79,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	public void approveBagsAdded() {
 		sc.unblockStation();
 		for (AttendantControlListener l : listeners) {
-			l.attendantApprovedBags(this);
+			l.attendantApprovedBags(this); 
 		}
 	}
 	
@@ -131,7 +134,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 *
 	 */
 	public void preventStationUse(){
-		sc.blockStation();
+		sc.blockStation("prevent");
 		for(AttendantControlListener l : listeners){
 			l.attendantPreventUse(this);
 		}
@@ -432,6 +435,18 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 				case "startUp":
 					System.out.println("Station has been started up");
 					startUpStation();
+					break;
+				case "shutDown":
+					//TODO:
+					break;
+				case "add":
+					//TODO:
+					break;
+				case "remove":
+					//TODO:
+					break;
+				case "logout":
+					logout();
 					break;
 				default:
 					break;
