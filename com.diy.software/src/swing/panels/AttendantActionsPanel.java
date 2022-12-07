@@ -26,7 +26,8 @@ public class AttendantActionsPanel extends JPanel
 	private AttendantControl ac; 
 	private BagsControl bc;
 	private ReceiptControl rc;
-	private boolean stationBlocked = true; // FIXME: Testing now. Should be false to start
+	private boolean stationBlocked = false;
+	private boolean isLoggedIn = false;
 	
 	JButton inkButton, paperButton, bagDispenserButton, coinButton, banknoteButton, outOfOrderButton;
 	GridBagConstraints buttonGrid = new GridBagConstraints();
@@ -73,7 +74,8 @@ public class AttendantActionsPanel extends JPanel
 		buttonGrid.gridx = 5;
 		this.add(outOfOrderButton, buttonGrid);
 		
-		bagDispenserButton.setEnabled(true);		// attendant should be able to load bags anytime they want to
+//		bagDispenserButton.setEnabled(true);		// attendant should be able to load bags anytime they want to
+													// I thought you need to block a station before you change it?
 		
 //		Can add messages here
 //		buttonGrid.gridy = 1;
@@ -126,12 +128,6 @@ public class AttendantActionsPanel extends JPanel
 	}
 
 	@Override
-	public void attendantPreventUse(AttendantControl ac) {
-		// TODO Auto-generated method stub
-		stationBlocked = true;
-	}
-
-	@Override
 	public void readyToAcceptNewBagsInBaggingArea(BagsControl bc) {
 		// TODO Auto-generated method stub
 
@@ -144,7 +140,7 @@ public class AttendantActionsPanel extends JPanel
 
 	@Override
 	public void addPaperState() {
-		if(stationBlocked) paperButton.setEnabled(true);
+		if(stationBlocked && isLoggedIn) paperButton.setEnabled(true);
 	}
 	
 	public void itemsHaveBeenUpdated(ItemsControl ic) {
@@ -154,7 +150,7 @@ public class AttendantActionsPanel extends JPanel
 
 	@Override
 	public void addInkState() {
-		if (stationBlocked) inkButton.setEnabled(true);
+		if (stationBlocked && isLoggedIn) inkButton.setEnabled(true);
 	}
 
 	@Override
@@ -244,16 +240,21 @@ public class AttendantActionsPanel extends JPanel
 	@Override
 	public void setNoReceiptState(ReceiptControl rc) {
 	}
+	
+	@Override
+	public void attendantPreventUse(AttendantControl ac) {
+		stationBlocked = true;
+	}
 
 	@Override
 	public void attendantPermitStationUse(AttendantControl ac) {
-		// TODO Auto-generated method stub
-	}
-	
-	@Override
-	public void coinIsLowState(int amount) {
-		// TODO Auto-generated method stub
+		stationBlocked = false;
 		
+		inkButton.setEnabled(false); 
+		paperButton.setEnabled(false); 
+		bagDispenserButton.setEnabled(false);
+		coinButton.setEnabled(false);
+		banknoteButton.setEnabled(false); 
 	}
 
 	@Override
@@ -263,7 +264,8 @@ public class AttendantActionsPanel extends JPanel
 	@Override
 	public void loggedIn(boolean isLoggedIn) {
 		// TODO Auto-generated method stub
-		
+		this.isLoggedIn = isLoggedIn;
+		if (isLoggedIn) outOfOrderButton.setEnabled(true);
 	}
 	@Override
 	public void itemBagged() {
@@ -272,6 +274,23 @@ public class AttendantActionsPanel extends JPanel
 	}
 	@Override
 	public void banknotesInStorageLowState() {
+		// TODO Auto-generated method stub
+		if(stationBlocked && isLoggedIn) banknoteButton.setEnabled(true);
+	}
+	
+	
+	@Override
+	public void coinIsLowState(int amount) {
+		if(stationBlocked && isLoggedIn) coinButton.setEnabled(true);
+	}
+
+	@Override
+	public void banknotesNotLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void coinsNotLowState() {
 		// TODO Auto-generated method stub
 		
 	}

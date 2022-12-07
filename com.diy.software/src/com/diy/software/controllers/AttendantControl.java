@@ -179,6 +179,25 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		}
 	}
 	
+	/**
+	 * Attendant adjusts the amount of coin used for change
+	 * Cash controller notifies if storage is low in order to use
+	 * 
+	 * @throws SimulationException
+	 * 			For loading or checking null coin
+	 * @throws TooMuchCashException
+	 * 			Too much cash is loaded onto the storage
+	 */
+	public void notifyListenerAdjustCoinForChange() throws SimulationException, TooMuchCashException {
+		boolean isLow = sc.getCashControl().coinInStorageLow(this.sc.station.coinStorage);
+		if (isLow) {
+			for (AttendantControlListener l : listeners)
+				l.coinIsLowState(this.sc.station.coinStorage.getCapacity());
+			System.out.println("Banknote storage needs to be refilled.");
+		} else {
+			System.out.println("Banknote storage does not need to be loaded for now.");
+		}
+	}
 	
 	/*
 	 * Refills banknote storage if it is low
@@ -198,7 +217,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		int totalFifties = unit.getCapacity()/5;
 		int totalHundreds = unit.getCapacity()/5;
 
-		sc.getCashControl().disablePayments();
+//		sc.getCashControl().disablePayments();
 		List<Banknote> unloadedBanknotes = unit.unload();
 		sc.getCashControl().banknotesUnloaded(unit);	
 		
@@ -243,8 +262,14 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		}
 				
 		sc.getCashControl().banknotesLoaded(unit);
-		sc.getCashControl().enablePayments();
+		
+		for (AttendantControlListener l : listeners)
+			l.banknotesNotLowState();
+		
+//		sc.getCashControl().enablePayments();
 	}
+	
+	
 	
 	/**
 	 * fills up the coin slot and then signal cash controller that everything is okay
@@ -317,6 +342,8 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		//notify cash controller that the unit has been filled
 		sc.getCashControl().coinsLoaded(unit);
 		
+		for (AttendantControlListener l : listeners)
+			l.coinsNotLowState();
 		//re enable system
 		//sc.getCashControl().enablePayments();
 		
@@ -372,11 +399,10 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 					break;
 				case "addCoin": 
 					//TODO:
-					
+					adjustCoinsForChange(sc.getStation().coinStorage.getCapacity());
 					break;
-				case "addBanknote": 
-					//TODO:
-					
+				case "addBanknote":
+					loadBanknotesToStorage(sc.getStation().banknoteStorage);
 					break;
 				case "addBag": 
 					sc.loadBags();
@@ -387,11 +413,11 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 					noBagRequest();
 					break;
 
-				case "adjustBanknotesForChange":
-					attendantNotifications = ("Checking if banknotes in storage need to be adjusted");
-					adjustBanknotesForChange();
-					// TODO
-					// temporary delete later when button is moved
+//				case "adjustBanknotesForChange":
+//					attendantNotifications = ("Checking if banknotes in storage need to be adjusted");
+//					adjustBanknotesForChange();
+//					// TODO
+//					// temporary delete later when button is moved
 				case "printReceipt":
 					//attendantNotifications = ("approved no bagging request");
 					System.out.println("AC print receipt");

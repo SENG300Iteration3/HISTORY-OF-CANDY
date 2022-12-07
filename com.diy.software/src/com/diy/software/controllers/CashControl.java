@@ -391,5 +391,15 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 		}
 		return isLow;
 	}
+	
+	
+	public boolean coinInStorageLow(CoinStorageUnit unit) {
+		boolean isLow = false;
+		//count is less than 1/20 of the capacity
+		if (unit.getCoinCount() <= (unit.getCapacity()/20)) {
+			isLow = true;
+		}
+		return isLow;
+	}
 
 }
