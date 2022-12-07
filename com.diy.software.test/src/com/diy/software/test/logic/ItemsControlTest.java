@@ -42,7 +42,7 @@ public class ItemsControlTest {
 		itemsControl = new ItemsControl(systemControl);
 		stub = new StubItemsControl();
 		itemsControl.addListener(stub);
-		item = fdi.getItems()[0];
+		item = (BarcodedItem) fdi.getItems()[0];
 		itemTuple = new Tuple<String, Double>("Can of Beans", (double) 2);
 		barcode = new Barcode(new Numeral[] { Numeral.one, Numeral.two, Numeral.three, Numeral.four });
 

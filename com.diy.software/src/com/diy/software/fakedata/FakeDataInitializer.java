@@ -26,7 +26,8 @@ public class FakeDataInitializer {
 	/**
 	 * The known Barcoded Items. Indexed by barcode.
 	 */
-	public static final Map<Barcode, BarcodedItem> BARCODED_ITEM_DATABASE = new HashMap<>();
+	public Map<Barcode, BarcodedItem> BARCODED_ITEM_DATABASE = new HashMap<>();
+	public Map<PriceLookUpCode, PLUCodedItem> PLUCODED_ITEM_DATABASE = new HashMap<>();
 	private Barcode barcode1, barcode2, barcode3, barcode4;
 	private BarcodedItem item1, item2, item3, item4;
 	private BarcodedProduct bp1, bp2, bp3, bp4;
@@ -53,58 +54,35 @@ public class FakeDataInitializer {
 
 		barcode1 = new Barcode(new Numeral[] { Numeral.one, Numeral.two, Numeral.three, Numeral.four }); 
 		barcode2 = new Barcode(new Numeral[] { Numeral.zero, Numeral.four, Numeral.two, Numeral.zero });
+		barcode3 = new Barcode(new Numeral[] { Numeral.four, Numeral.three, Numeral.two, Numeral.one }); 
+		barcode4 = new Barcode(new Numeral[] { Numeral.one, Numeral.two, Numeral.one, Numeral.two }); 
 		
 		item1 = new BarcodedItem(barcode1, 450); 
-
 		item2 = new BarcodedItem(barcode2, 420); 
-
-		bp1 = new BarcodedProduct(barcode1, "Can of Beans", 2, 450);
-
-		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode1, bp1);
-		FakeDataInitializer.BARCODED_ITEM_DATABASE.put(barcode1, item1);
-		
-		barcode2 = new Barcode(new Numeral[] { Numeral.zero, Numeral.four, Numeral.two, Numeral.zero }); 
-		item2 = new BarcodedItem(barcode2, 420); 
-
-		bp2 = new BarcodedProduct(barcode2, "Bag of Doritos", 5, 420);
-
-		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode2, bp2);
-		FakeDataInitializer.BARCODED_ITEM_DATABASE.put(barcode2, item2);
-		
-		barcode3 = new Barcode(new Numeral[] { Numeral.four, Numeral.three, Numeral.two, Numeral.one }); 
 		item3 = new BarcodedItem(barcode3, 350); 
-		bp3 = new BarcodedProduct(barcode3, "Rib Eye Steak", 17, 350);
-		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode3, bp3);
-		FakeDataInitializer.BARCODED_ITEM_DATABASE.put(barcode3, item3);
-		
-		barcode4 = new Barcode(new Numeral[] { Numeral.one, Numeral.two, Numeral.one, Numeral.two }); 
 		item4 = new BarcodedItem(barcode4, 550); 	
+		
+		bp1 = new BarcodedProduct(barcode1, "Can of Beans", 2, 450);
+		bp2 = new BarcodedProduct(barcode2, "Bag of Doritos", 5, 420);
+		bp3 = new BarcodedProduct(barcode3, "Rib Eye Steak", 17, 350);
 		bp4 = new BarcodedProduct(barcode4, "Cauliflower", 6, 550);
-		FakeDataInitializer.BARCODED_ITEM_DATABASE.put(barcode4, item4);
+		
+		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode1, bp1);
+		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode2, bp2);
+		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode3, bp3);
 		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode4, bp4);
 		
-
-		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode1, bp1);
-		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode2, bp2);
-
+		BARCODED_ITEM_DATABASE.put(barcode1, item1);
+		BARCODED_ITEM_DATABASE.put(barcode2, item2);
+		BARCODED_ITEM_DATABASE.put(barcode3, item3);
+		BARCODED_ITEM_DATABASE.put(barcode4, item4);
+		
 		ProductDatabases.INVENTORY.put(bp1, 10);
 		ProductDatabases.INVENTORY.put(bp2, 10);
-		
-		/**
-		 * Other BarcodedProducts & BarcodedItems
-		 */
-		barcode3 = new Barcode(new Numeral[] { Numeral.four, Numeral.three, Numeral.two, Numeral.one }); 
-		barcode4 = new Barcode(new Numeral[] { Numeral.one, Numeral.two, Numeral.one, Numeral.two }); 
-		
-		item3 = new BarcodedItem(barcode3, 350); 
-		item4 = new BarcodedItem(barcode4, 550); 	
-		bp3 = new BarcodedProduct(barcode3, "Rib Eye Steak", 17, 350);
-		bp4 = new BarcodedProduct(barcode4, "Cauliflower", 6, 550);
-		
-		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode3, bp3);
-		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode4, bp4);
 		ProductDatabases.INVENTORY.put(bp3, 10);
 		ProductDatabases.INVENTORY.put(bp4, 10);
+
+
 	}
 	
 	public void addPLUCodedProduct() {
@@ -167,6 +145,12 @@ public class FakeDataInitializer {
 	
 		ProductDatabases.INVENTORY.put(pp3, 10);
 		ProductDatabases.INVENTORY.put(pp4, 10);
+		
+		PLUCODED_ITEM_DATABASE.put(code1, pitem1);
+		PLUCODED_ITEM_DATABASE.put(code2, pitem2);
+		PLUCODED_ITEM_DATABASE.put(code3, pitem3);
+		PLUCODED_ITEM_DATABASE.put(code4, pitem4);
+		
 	}
 	
 	/**

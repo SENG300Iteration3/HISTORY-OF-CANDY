@@ -4,12 +4,17 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import com.diy.hardware.BarcodedProduct;
+import com.diy.hardware.PLUCodedItem;
 import com.diy.hardware.PLUCodedProduct;
+import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.external.ProductDatabases;
+import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.KeyboardControlListener;
 import com.diy.software.listeners.TextLookupControlListener;
 import com.diy.software.util.CodedProduct;
 import com.diy.software.util.Tuple;
+import com.jimmyselectronics.necchi.Barcode;
+import com.jimmyselectronics.necchi.BarcodedItem;
 
 /* 
  * GUI TODO's:
@@ -33,6 +38,7 @@ import com.diy.software.util.Tuple;
 public class TextLookupControl implements KeyboardControlListener{
 	private AttendantControl ac;
 	private StationControl sc;
+	FakeDataInitializer fdi;
 	private ArrayList<TextLookupControlListener> listeners;
 	
 	// Can hold either Barcoded or PLUcoded product types without losing their different properties
@@ -49,6 +55,9 @@ public class TextLookupControl implements KeyboardControlListener{
 		this.sc = sc;
 		this.listeners = new ArrayList<>();
 		this.results = new ArrayList<>();
+		fdi = new FakeDataInitializer();
+		fdi.addPLUCodedProduct();
+		fdi.addProductAndBarcodeData();
 	}
 	
 	public void addListener(TextLookupControlListener l) {
@@ -114,17 +123,28 @@ public class TextLookupControl implements KeyboardControlListener{
 		selection = getResult(selectionIndex);
 		if (selection.getBarcodedProduct() == null) {
 			PLUCodedProduct productToAdd = selection.getPLUCodedProduct();
-			sc.getItemsControl().addItemToCheckoutList(productToAdd.getPLUCode());
-			productWeight = generateProductWeight();
-			productCost = calculatePrice(productToAdd, productWeight);
-			productDescription = productToAdd.getDescription();
+			PriceLookUpCode code  = productToAdd.getPLUCode();
+			PLUCodedItem item = fdi.PLUCODED_ITEM_DATABASE.get(code);
+			this.sc.getItemsControl().addItemToCheckoutList(code);
+			double weight = item.getWeight();
+			sc.getItemsControl().updateCheckoutTotal(productToAdd.getPrice() * weight / 1000);
+			this.sc.updateExpectedCheckoutWeight(item.getWeight());
+			this.sc.pluCodedItems.put(code, item);
+			this.sc.station.baggingArea.add(item);
+			
+//			productWeight = generateProductWeight();
+//			productCost = calculatePrice(productToAdd, productWeight);
+//			productDescription = productToAdd.getDescription();
 		}
 		else {
 			BarcodedProduct productToAdd = selection.getBarcodedProduct();
-			sc.getItemsControl().addItemToCheckoutList(productToAdd.getBarcode());
-			productWeight = productToAdd.getExpectedWeight();
-			productCost = (double)productToAdd.getPrice();
-			productDescription = productToAdd.getDescription();
+			Barcode barcode = productToAdd.getBarcode();
+			BarcodedItem item = fdi.BARCODED_ITEM_DATABASE.get(barcode);
+			sc.getItemsControl().addItemToCheckoutList(barcode);
+			sc.getItemsControl().updateCheckoutTotal(productToAdd.getPrice());	
+			this.sc.updateExpectedCheckoutWeight(productToAdd.getExpectedWeight()); 
+			this.sc.barcodedItems.put(barcode, item);
+			this.sc.station.baggingArea.add(item);
 		}
 		sc.getItemsControl().updateCheckoutTotal(productCost);
 		for (TextLookupControlListener l : listeners) {

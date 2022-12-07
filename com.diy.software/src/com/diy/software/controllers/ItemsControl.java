@@ -579,7 +579,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 					weighItem();
 					break;
 				case "remove item":
-					System.out.println("Requesting item removal. Please wait for Assistance!");
+					System.out.println("Customer requests item removal");
 					requestRemoveItem();
 					break;
 				default:
