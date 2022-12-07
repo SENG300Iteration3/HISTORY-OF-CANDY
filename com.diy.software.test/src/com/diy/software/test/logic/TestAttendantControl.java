@@ -110,22 +110,6 @@ public class TestAttendantControl {
 	}
 
 	@Test
-	public void testAddPaper() throws OverloadException {
-		ac.addListener(als);
-		assertFalse(als.lowState);
-		ac.addPaper();
-		assertTrue(als.lowState);
-	}
-
-	@Test
-	public void testAddInk() throws OverloadException {
-		ac.addListener(als);
-		assertFalse(als.lowState);
-		ac.addInk();
-		assertTrue(als.lowState);
-	}
-
-	@Test
 	public void testUpdateWeightDescrepancyMessage() {
 		ac.addListener(als);
 		assertFalse(als.testMsg.equals("test"));
@@ -159,40 +143,6 @@ public class TestAttendantControl {
 	// assertTrue(als.ini);
 	// }
 	//
-
-	@Test
-	public void testLowInk() {
-		ac.addListener(als);
-		assertFalse(als.addInk);
-		ac.lowInk(rp);
-		assertTrue(als.addInk);
-
-	}
-
-	@Test
-	public void testNoInk() {
-		ac.addListener(als);
-		assertFalse(als.addInk);
-		ac.outOfInk(rp);
-		assertTrue(als.addInk);
-
-	}
-
-	@Test
-	public void testLowPaper() {
-		ac.addListener(als);
-		assertFalse(als.addPaper);
-		ac.lowPaper(rp);
-		assertTrue(als.addPaper);
-	}
-
-	@Test
-	public void testOutOfPaper() {
-		ac.addListener(als);
-		assertFalse(als.addPaper);
-		ac.outOfPaper(rp);
-		assertTrue(als.addPaper);
-	}
 
 	@Test
 	public void testApproveBagsStationBlocked() {
@@ -280,44 +230,6 @@ public class TestAttendantControl {
 		ac.actionPerformed(e);
 
 		assertFalse(als.getAttendantBags());
-	}
-
-	@Test(expected = OverloadException.class)
-	public void testAddInkOverload() throws OverloadException {
-		ac.addListener(als);
-		ac.addInk();
-		ac.addInk();
-		ac.addInk();
-		ac.addInk();
-		ac.addInk();
-		ac.addInk();
-
-	}
-
-	@Test(expected = OverloadException.class)
-	public void testAddPaperOverload() throws OverloadException {
-		ac.addListener(als);
-		ac.addPaper();
-		ac.addPaper();
-		ac.addPaper();
-	}
-
-	@Test
-	public void testActionPerformedAddInk() {
-		ActionEvent e = new ActionEvent(this, 0, "addInk");
-		ac.addListener(als);
-		assertFalse(als.lowState);
-		ac.actionPerformed(e);
-		assertTrue(als.lowState);
-	}
-
-	@Test
-	public void testActionPerformedAddPaper() {
-		ActionEvent e = new ActionEvent(this, 0, "addPaper");
-		ac.addListener(als);
-		assertFalse(als.lowState);
-		ac.actionPerformed(e);
-		assertTrue(als.lowState);
 	}
 
 	// FIXME: Need to rewrite - Anh

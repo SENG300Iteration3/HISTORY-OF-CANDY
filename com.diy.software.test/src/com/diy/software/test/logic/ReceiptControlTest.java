@@ -70,6 +70,7 @@ public class ReceiptControlTest {
 		rp.register(acl);
 		rp.register(rc);
 		rp.plugIn();
+		rp.turnOff();
 		rp.turnOn();
 		rp.enable();
 		
@@ -81,6 +82,7 @@ public class ReceiptControlTest {
 		 * (dependent on the ink/paper added in station control)
 		 */
 		sc.getReceiptControl().printReceipt("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
+		sc.getReceiptControl().finalReceiptToShowOnScreen.setLength(0);
 		
 		/*
 		 * Due to limits in hardware out of ink and out of paper will only 
@@ -149,11 +151,9 @@ public class ReceiptControlTest {
 	public void testLowInk() {
 		ac.addInk(1);
 		sc.getReceiptControl().printReceipt("a");
-		updateLowInkAndPaper();
 		assertFalse(acl.outOfInk);
 		assertTrue(acl.lowInk);
     	sc.getReceiptControl().printReceipt("a");
-    	updateLowInkAndPaper();
     	assertTrue(acl.outOfInk);
     	assertTrue(acl.lowInk);
 	}
@@ -165,11 +165,9 @@ public class ReceiptControlTest {
 	public void testLowPaper() {
 		ac.addPaper(1);
 		sc.getReceiptControl().printReceipt("\n");
-		updateLowInkAndPaper();
 		assertFalse(acl.outOfPaper);
 		assertTrue(acl.lowPaper);
     	sc.getReceiptControl().printReceipt("\n");
-    	updateLowInkAndPaper();
     	assertTrue(acl.outOfPaper);
     	assertTrue(acl.lowPaper);
 	}
@@ -181,13 +179,10 @@ public class ReceiptControlTest {
 	@Test
 	public void testsLowInkThreshold() {
 		ac.addInk(sc.getReceiptControl().inkLowThreshold);
-		updateLowInkAndPaper();
 		assertFalse(acl.lowInk);
 		sc.getReceiptControl().printReceipt("a");
-		updateLowInkAndPaper();
 		assertFalse(acl.lowInk);
     	sc.getReceiptControl().printReceipt("a");
-    	updateLowInkAndPaper();
     	assertTrue(acl.lowInk);
 	}
 	
@@ -198,13 +193,10 @@ public class ReceiptControlTest {
 	@Test
 	public void testLowPaperThreshold() {
 		ac.addPaper(sc.getReceiptControl().paperLowThreshold);
-		updateLowInkAndPaper();
 		assertFalse(acl.lowPaper);
 		sc.getReceiptControl().printReceipt("\n");
-		updateLowInkAndPaper();
 		assertFalse(acl.lowPaper);
     	sc.getReceiptControl().printReceipt("\n");
-    	updateLowInkAndPaper();
     	assertTrue(acl.lowPaper);
 	}
 	
@@ -300,7 +292,7 @@ public class ReceiptControlTest {
         
     	sc.getItemsControl().addScannedItemToCheckoutList(fdi.getBarcodes()[0]);
 		
-    	itemTuple1 = sc.getItemsControl().getCheckoutList().get(0);
+    	itemTuple1 = sc.getItemsControl().getItemDescriptionPriceList().get(0);
     	
     	sc.getReceiptControl().printItems();
     	
@@ -318,8 +310,8 @@ public class ReceiptControlTest {
     	sc.getItemsControl().addScannedItemToCheckoutList(fdi.getBarcodes()[0]);
     	sc.getItemsControl().addScannedItemToCheckoutList(fdi.getBarcodes()[1]);
 		
-    	itemTuple1 = sc.getItemsControl().getCheckoutList().get(0);
-		itemTuple2 = sc.getItemsControl().getCheckoutList().get(1);
+    	itemTuple1 = sc.getItemsControl().getItemDescriptionPriceList().get(0);
+		itemTuple2 = sc.getItemsControl().getItemDescriptionPriceList().get(1);
     	
     	sc.getReceiptControl().printItems();
     	
@@ -349,7 +341,7 @@ public class ReceiptControlTest {
         
       	sc.getItemsControl().addScannedItemToCheckoutList(fdi.getBarcodes()[0]);
   		
-      	itemTuple1 = sc.getItemsControl().getCheckoutList().get(0);
+      	itemTuple1 = sc.getItemsControl().getItemDescriptionPriceList().get(0);
       	
       	sc.getReceiptControl().printTotalCost();
       	
@@ -369,8 +361,8 @@ public class ReceiptControlTest {
     	sc.getItemsControl().addScannedItemToCheckoutList(fdi.getBarcodes()[0]);
     	sc.getItemsControl().addScannedItemToCheckoutList(fdi.getBarcodes()[1]);
 		
-    	itemTuple1 = sc.getItemsControl().getCheckoutList().get(0);
-		itemTuple2 = sc.getItemsControl().getCheckoutList().get(1);
+    	itemTuple1 = sc.getItemsControl().getItemDescriptionPriceList().get(0);
+		itemTuple2 = sc.getItemsControl().getItemDescriptionPriceList().get(1);
     	
     	sc.getReceiptControl().printTotalCost();
     	
@@ -470,7 +462,7 @@ public class ReceiptControlTest {
     	
 		ActionEvent e = new ActionEvent(this, 0, "printReceipt");
     	sc.getItemsControl().addScannedItemToCheckoutList(fdi.getBarcodes()[0]);
-    	itemTuple1 = sc.getItemsControl().getCheckoutList().get(0);
+    	itemTuple1 = sc.getItemsControl().getItemDescriptionPriceList().get(0);
     	sc.getMembershipControl().checkMembership(1234);
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");  
 	    Date receiptPrintDate = new Date();
@@ -514,70 +506,98 @@ public class ReceiptControlTest {
         ActionEvent e = new ActionEvent(this, 0, "takeIncompleteReceipt");
         
         sc.getReceiptControl().printReceipt("aa");
-        assertTrue(rcl.takeReceipt);
+        assertTrue(rcl.takeIncompleteReceipt);
         
         sc.getReceiptControl().actionPerformed(e);
-        assertFalse(rcl.takeReceipt);
-    
-    @Test
-    public void testC(){
-        ac.addInk(2000);
-        ac.addPaper(500);
-    	
-		ActionEvent e = new ActionEvent(this, 0, "printReceipt");
-    	sc.getItemsControl().addScannedItemToCheckoutList(fdi.getBarcodes()[0]);
-    	itemTuple1 = sc.getItemsControl().getCheckoutList().get(0);
-    	sc.getMembershipControl().checkMembership(1234);
-		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");  
-	    Date receiptPrintDate = new Date();
-	    String formattedDate = formatter.format(receiptPrintDate) + "\n";
-    	
-    	sc.getReceiptControl().actionPerformed(e);
-    	
-    	assertEquals(rcl.checkedOutItemsMessage + 
-    			rcl.totalCostMessage + rcl.membershipMessage + 
-    			rcl.dateandTimeMessage + rcl.thankyouMessage,
-    			itemTuple1.x + " , $" + itemTuple1.y + 
-    			"\n" + "Total: $" + itemTuple1.y + "\n" +
-    			"Membership number: " + sc.getMembershipControl().getValidMembershipNumber() + "\n" +
-    			formattedDate +
-    			"Thank you for shopping with us " + sc.getMembershipControl().memberName + " !\n");
+        assertFalse(rcl.takeIncompleteReceipt);
     }
     
     /*
-     * 	TODO add
+     *  Test print an incomplete than an complete receipt than taking both
+     */
+    @Test
+    public void testCutAndTakeReceiptIncompleteThenComplete(){
+        
+        ActionEvent e = new ActionEvent(this, 0, "takeReceipt");
+        
+        sc.getReceiptControl().printReceipt("aa");
+        assertTrue(rcl.takeIncompleteReceipt);
+        
+        ac.addInk(2000);
+        ac.addInk(500);
+        
+        sc.getReceiptControl().printReceipt("a");
+        
+        assertTrue(rcl.takeReceipt);
+     
+        
+        sc.getReceiptControl().actionPerformed(e);
+        assertFalse(rcl.takeIncompleteReceipt);
+        assertFalse(rcl.takeReceipt);
+    }
+    
+    /*
+     *  Test invalid argument actionPerformed
+     */
+    @Test
+    public void testInvalidActionEvent(){
+		ActionEvent e = new ActionEvent(this, -888, "frick");
+    	sc.getReceiptControl().actionPerformed(e);
+    }
+    
+    /*
+     *  Test adding ink using action event
+     */
+    @Test
+    public void testAddInkActionEvent(){
+		ActionEvent e = new ActionEvent(this, 0, "addInk");
+    	sc.getAttendantControl().actionPerformed(e);
+    	assertEquals(sc.getReceiptControl().currentInkCount, 208001);
+    }
+    
+    
+    /*
+     *  Test adding paper using action event
+     */
+    @Test
+    public void testPaperActionEvent(){
+		ActionEvent e = new ActionEvent(this, 0, "addPaper");
+		sc.getAttendantControl().actionPerformed(e);
+		assertEquals(sc.getReceiptControl().currentPaperCount, 501);
+    }
+    
+    /*
+     * If add Integer.MAX_VALUE ink to the printer while it is not empty
+     * than the printer will not throw an overload exception even though it should
+     * This is an issue with the hardware/java itself
+     */
+    /*
+    @Test
+    public void BUGSHOWCASEtestAddingOverMaxValue(){
+    	//sc.getReceiptControl().printReceipt("a");
+		assertFalse(acl.tooMuchInk);
+		ac.addInk(Integer.MAX_VALUE);
+		assertTrue(acl.tooMuchInk);
+	}
+	*/
+    
+    /*
+     * 	TODO
      *  Test that a new line is added when 60+ characters are printed on the same line
      */
     @Test
     public void testCharactersPerLine(){
-    	
-    	
-    }
-    
-    /*
-     *  used to update the lowInk and lowPaper variables since they can be
-     *	updated in receiptControl without a way to read the updates
-     *	in AttendantControl
-     */
-    private void updateLowInkAndPaper() {
-    	if(sc.getReceiptControl().lowInk) {
-    		acl.lowInk = true;
-    	}
-    	else {
-    		acl.lowInk = false;
-    	}
-    	if(sc.getReceiptControl().lowPaper) {
-    		acl.lowPaper = true;
-    	}
-    	else {
-    		acl.lowPaper = false;
-    	}
+        ac.addInk(2000);
+        ac.addPaper(500);
+        
+        //60 characters in line1 and then a new line is made
+    	sc.getReceiptControl().printReceipt("LINE1LINE1LINE1LINE1LINE1LINE1LINE1LINE1LINE1LINE1LINE1LINE1LINE2");
+    	System.out.println(sc.getReceiptControl().finalReceiptToShowOnScreen);
+    	String finalReceiptString = sc.getReceiptControl().finalReceiptToShowOnScreen.toString();
+    	assertEquals(finalReceiptString, "LINE1LINE1LINE1LINE1LINE1LINE1LINE1LINE1LINE1LINE1LINE1LINE1" + "\n" + "LINE2");
     }
   
-    
-    
-    
-    
+
 	public class ReceiptControlListenerStub implements ReceiptControlListener{
     	String checkedOutItemsMessage = "";
     	String totalCostMessage = "";
@@ -754,6 +774,24 @@ public class ReceiptControlTest {
 		public void inkAdded(IReceiptPrinter printer) {
 			outOfInk = false;
 		}
+
+		@Override
+		public void attendantApprovedItemRemoval(AttendantControl bc) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void itemBagged() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void loggedIn(boolean isLoggedIn) {
+			// TODO Auto-generated method stub
+			
+		}
 	}
 
 	public class StationControlListenerStub implements StationControlListener {
@@ -850,6 +888,24 @@ public class ReceiptControlTest {
 
 		@Override
 		public void notEnoughBagsInStock(StationControl systemControl, int numBag) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerPLUCodeWorkflow(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerBrowsingCatalog(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerReceiptScreen(StationControl systemControl) {
 			// TODO Auto-generated method stub
 			
 		}

@@ -175,7 +175,15 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 					--currentInkCount;
 				}
 				
-				sc.station.printer.print(receiptChar);
+				try {
+					sc.station.printer.print(receiptChar);
+				} catch (OverloadException e) {
+					try {
+						sc.station.printer.print('\n');
+						finalReceiptToShowOnScreen.append('\n');
+						sc.station.printer.print(receiptChar);
+					} catch (OverloadException e1) {}//it is not possible to enter this catch block
+				}
 				finalReceiptToShowOnScreen.append(receiptChar);
 				for (ReceiptControlListener l : listeners) {
 					l.setTakeReceiptState(this);
@@ -189,8 +197,6 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 				l.setIncompleteReceiptState(this);
 			}
 			finalReceiptToShowOnScreen.setLength(0);
-		} catch (OverloadException e) {
-			
 		}
 		
 	}
