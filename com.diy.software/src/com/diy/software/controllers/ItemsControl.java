@@ -128,6 +128,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 	}
 	
+
 	/**
 	 * Method that checks to see if an integer passed in as argument is the same as
 	 * one of the reusable bags item numbers on screen.
@@ -194,6 +195,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			this.sc.station.baggingArea.remove(item);
 			checkoutList.remove(index); // remove the barcode or PLUCode from checkoutList so GUI updates accordingly
 			refreshGui();
+			//sc.goToInitialScreenOnUI();
 			return true;
 		}
 		else {

@@ -2,6 +2,7 @@ package com.diy.software.controllers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
@@ -284,32 +285,44 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 *@param unit
 	 *		the unit that needs to be filled up
 	 *@param AMOUNT
-	 *		the amount of coins to fill up
+	 *		the amount of coin capacity to fill up MUST BE EVENLY DIVISIBLE BY 5
+	 *
+	 *@return
+	 *		the filled up unit
 	 * @throws TooMuchCashException 
 	 * @throws SimulationException 
 
 	 */
-	public void adjustCoinsForChange(CoinStorageUnit unit, int AMOUNT) throws SimulationException, TooMuchCashException  {
+	public void adjustCoinsForChange(int AMOUNT) throws SimulationException, TooMuchCashException  {
 		
-		this.unit = unit;
-		//take system out of service
+		
+		
+		CoinStorageUnit unit = sc.station.coinStorage;
+		
+		if(AMOUNT > unit.getCapacity()) {
+			throw new TooMuchCashException();
+		}
+		//take system out of service//
+		
+		AMOUNT /= 5;
 		
 		sc.getCashControl().disablePayments();
 		
-		Coin nickelToAdd = new Coin(5);
-		Coin dimeToAdd = new Coin(10);
-		Coin quaterToAdd = new Coin(25);
-		Coin loonieToAdd = new Coin(100);
-		Coin toonieToAdd = new Coin(200);
+		Coin tCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(2.0));
+		Coin lCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(1.0));
+		Coin qCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(0.25));
+		Coin dCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(0.1));
+		Coin nCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(0.05));
 		
 		
 		List<Coin> unloadedCoins = unit.unload();
+		sc.getCashControl().coinsUnloaded(unit);
 		
-		int nCounter = countCoin(5,unloadedCoins);
-		int dCounter = countCoin(10,unloadedCoins);
-		int qCounter = countCoin(25,unloadedCoins);
-		int lCounter = countCoin(100,unloadedCoins);
-		int tCounter = countCoin(200,unloadedCoins);
+		int nCounter = countCoin(nCoin,unloadedCoins);
+		int dCounter = countCoin(dCoin,unloadedCoins);
+		int qCounter = countCoin(qCoin,unloadedCoins);
+		int lCounter = countCoin(lCoin,unloadedCoins);
+		int tCounter = countCoin(tCoin,unloadedCoins);
 		
 		int nAmount = AMOUNT - nCounter;
 		int dAmount = AMOUNT - dCounter;
@@ -317,21 +330,29 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		int lAmount = AMOUNT - lCounter;
 		int tAmount = AMOUNT - tCounter;
 		
-		addCoin(nAmount,nickelToAdd);
-		addCoin(dAmount,dimeToAdd);
-		addCoin(qAmount,quaterToAdd);
-		addCoin(lAmount,loonieToAdd);
-		addCoin(tAmount,toonieToAdd);
+		for(int i = 0; i < nAmount; i++) {
+			unit.load(nCoin);
+		}
+		for(int i = 0; i < dAmount; i++) {
+			unit.load(dCoin);
+		}
+		for(int i = 0; i < qAmount; i++) {
+			unit.load(qCoin);
+		}
+		for(int i = 0; i < lAmount; i++) {
+			unit.load(lCoin);
+		}
+		for(int i = 0; i < tAmount; i++) {
+			unit.load(tCoin);
+		}
 		
-		
+				
 		//notify cash controller that the unit has been filled
 		sc.getCashControl().coinsLoaded(unit);
 		
 		//re enable system
 		sc.getCashControl().enablePayments();
 		
-		for (AttendantControlListener l : listeners)
-			l.initialState();
 	}
 	
 	/**
@@ -345,31 +366,18 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 * @return
 	 * 		returns the amount of coins counted
 	 */
-	public int countCoin(long value, List<Coin> coins) {
+	public int countCoin(Coin coinToCount, List<Coin> coins) {
+	
 		int count = 0;
 		for(Coin c : coins) {
-			if(c.getValue() == value) {
-				count++;
+
+			if(c != null) {
+				if(c == coinToCount) {
+					count++;
+				}
 			}
 		}
 		return count;
-	}
-	
-	/**
-	 * add the specified amount of coins to a list to add to dispenser
-	 * 
-	 * @param amount
-	 * 		amount of coin to add
-	 * 
-	 * @param coin 
-	 * 		the coin type to add
-	 * @throws TooMuchCashException 
-	 * @throws SimulationException 
-	 */
-	public void addCoin(int amount,Coin coin) throws SimulationException, TooMuchCashException{
-		for(int i = 0; i < amount; i++) {
-			unit.load(coin);
-		}
 	}
 	
 

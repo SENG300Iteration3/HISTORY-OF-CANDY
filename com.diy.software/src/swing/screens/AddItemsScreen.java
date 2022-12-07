@@ -184,7 +184,8 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		rightSidebuttonPanel.add(fourthButtonPanel);
 		this.removeItemBtn.setActionCommand("remove item");
 		this.removeItemBtn.addActionListener(itemsControl);
-		removeItemBtn.setEnabled(true);
+		removeItemBtn.setEnabled(false);
+
 
 		this.addLayer(mainPanel, 0);
 
@@ -315,6 +316,12 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		this.invalidateAllScannedItems();
 		for (int i = 0; i < itemDescriptions.length; i++) {
 			this.addScannedItem(i+1 + " - " + itemDescriptions[i], itemPrices[i]);
+		}
+		
+		if(checkoutList.isEmpty()) {
+			removeItemBtn.setEnabled(false);
+		} else {
+			removeItemBtn.setEnabled(true);
 		}
 	}
 
