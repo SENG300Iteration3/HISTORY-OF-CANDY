@@ -655,13 +655,13 @@ public class ItemsControlTest {
 		}
 
 		@Override
-		public void addPaperState() {
+		public void addTooMuchPaperState() {
 			addPaper = true;
 
 		}
 
 		@Override
-		public void addInkState() {
+		public void addTooMuchInkState() {
 			addInk = true;
 
 		}

@@ -114,24 +114,31 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 	}
 
 	@Override
-	public void addPaperState() {
+	public void addTooMuchPaperState() {
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(false);
 		addPaperToPrinterButton.setEnabled(true);
 	}
 
 	@Override
-	public void addInkState() {
+	public void addTooMuchInkState() {
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(true);
 		addPaperToPrinterButton.setEnabled(false);
 	}
-
+	
 	@Override
-	public void printerNotLowState() {
+	public void printerNotLowInkState() {
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(false);
 		addPaperToPrinterButton.setEnabled(false);
+		
+	}
+
+	@Override
+	public void printerNotLowPaperState() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -181,6 +188,7 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 	public void outOfPaper(AttendantControl ac, String message) {
 		// TODO Auto-generated method stub
 	}
+
 
 	@Override
 	public void coinIsLowState(CoinStorageUnit unit, int amount) {
