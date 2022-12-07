@@ -296,4 +296,9 @@ public class AttendantActionsPanel extends JPanel
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+	public void banknotesInStorageLowState() {
+		// TODO Auto-generated method stub
+		
+	}
 }

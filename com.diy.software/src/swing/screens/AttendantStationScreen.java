@@ -497,4 +497,11 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		removePanelFromStack();
 		
 	}
+
+
+	@Override
+	public void banknotesInStorageLowState() {
+		// TODO Auto-generated method stub
+		
+	}
 }
