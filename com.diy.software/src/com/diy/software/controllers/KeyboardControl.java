@@ -1,11 +1,15 @@
 package com.diy.software.controllers;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import com.diy.software.listeners.KeyboardControlListener;
 import com.diy.software.util.MathUtils;
 
-public class KeyboardControl {
+public class KeyboardControl implements ActionListener {
+	private StationControl sc;
+	
 	private static final String SYMBOLS = "~!@#$%^&*()_+{}|:\"<>?";
 	
 	protected ArrayList<KeyboardControlListener> listeners = new ArrayList<>();
@@ -14,6 +18,10 @@ public class KeyboardControl {
 	protected boolean leftShiftPressed = false;
 	protected boolean rightShiftPressed = false;
 	protected int pointer = 0;
+	
+	public KeyboardControl(StationControl sc) {
+		this.sc = sc;
+	}
 
 	public void addListener(KeyboardControlListener l) {
 		listeners.add(l);
@@ -104,5 +112,17 @@ public class KeyboardControl {
 	
 	private boolean isShiftPressed() {
 		return rightShiftPressed || leftShiftPressed;
+	}
+	
+	/* Virtual keyboard functionality */
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String c = e.getActionCommand();
+		if (c.startsWith("KEY_PRESS: ")) {
+			String key = c.substring("KEY_PRESS: ".length()); //Get text after the command
+			this.keyAction(key);
+			for (KeyboardControlListener l : listeners)
+				l.keyboardInputRecieved(this, this.text, key, this.pointer);
+		}
 	}
 }

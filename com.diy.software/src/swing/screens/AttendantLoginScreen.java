@@ -16,10 +16,7 @@ import javax.swing.JTextField;
 
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.KeyboardControl;
-import com.diy.software.controllers.KeyboardInputControl;
-import com.diy.software.controllers.PhysicalKeyboardControl;
 import com.diy.software.controllers.StationControl;
-import com.diy.software.controllers.VirtualKeyboardControl;
 import com.diy.software.listeners.KeyboardControlListener;
 
 import swing.styling.GUI_Color_Palette;
@@ -43,8 +40,7 @@ public class AttendantLoginScreen extends Screen implements ActionListener, Keyb
 	private int width = 450;
 	private int height = 50;
 	private int overallMargin = 10;
-	private PhysicalKeyboardControl pkc;
-	private KeyboardInputControl kic;
+	private KeyboardControl kc;
 	
 	private static String HeaderText = "Attendant Login Screen".toUpperCase();
 	
@@ -54,9 +50,8 @@ public class AttendantLoginScreen extends Screen implements ActionListener, Keyb
 		super.rootPanel.setOpaque(true);
 		super.rootPanel.setBackground(GUI_Color_Palette.WHITE);
 		ac = stationControls.get(0).getAttendantControl();
-		pkc = (PhysicalKeyboardControl) ac.getKeyboardControl();
-		pkc.addListener(this);
-		kic = new KeyboardInputControl(ac);
+		kc = ac.getKeyboardControl();
+		kc.addListener(this);
 		
 		centerPanel = new GUI_JPanel();
 		centerPanel.setBackground(GUI_Color_Palette.DARK_BLUE);
@@ -123,7 +118,7 @@ public class AttendantLoginScreen extends Screen implements ActionListener, Keyb
 		loginInfo.setEditable(false);
 		loginInfo.getCaret().setVisible(true);
 		loginInfo.setFocusable(true);
-		loginInfo.addKeyListener(kic);
+		//loginInfo.addKeyListener(kc);
 
 		centerPanel.add(loginInfo, 1);
 		

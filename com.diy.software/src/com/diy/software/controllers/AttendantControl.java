@@ -33,7 +33,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 	private CoinStorageUnit unit;
 	private Currency currency;
 	private TextLookupControl tlc;
-	private PhysicalKeyboardControl kc;
+	private KeyboardControl kc;
 	private String attendantNotifications;
 	
 	public static final ArrayList<String> logins = new ArrayList<String>();
@@ -49,9 +49,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 		station.turnOn();
 		
 		tlc = new TextLookupControl(this, this.sc);
-		
-		kc = new PhysicalKeyboardControl(this);
-		
+		kc = new KeyboardControl(sc);
 		ic = sc.getItemsControl();
 	}
 
@@ -478,7 +476,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 		}
 	}
 	
-	public PhysicalKeyboardControl getKeyboardControl() {
+	public KeyboardControl getKeyboardControl() {
 		return kc;
 	}
 

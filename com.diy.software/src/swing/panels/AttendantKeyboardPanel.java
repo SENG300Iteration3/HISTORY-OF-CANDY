@@ -1,4 +1,4 @@
-package swing.screens;
+package swing.panels;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -16,10 +16,12 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.KeyboardControl;
 import com.diy.software.controllers.StationControl;
-import com.diy.software.controllers.VirtualKeyboardControl;
+import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.KeyboardControlListener;
+import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Constants;
@@ -27,8 +29,11 @@ import swing.styling.GUI_Fonts;
 import swing.styling.GUI_JButton;
 import swing.styling.Screen;
 
-public class KeyboardScreen extends Screen implements KeyboardControlListener {
-	private VirtualKeyboardControl keyboardController;
+public class AttendantKeyboardPanel extends JPanel implements KeyboardControlListener, AttendantControlListener {
+	private static final long serialVersionUID = 1L;
+	
+	AttendantControl ac;
+	KeyboardControl keyboardController;
 
 	// A modified Keyboard.windowsQwertyLabels with a better layout
 	private static final String[] MOD_WIN_QWERTY_LABELS = new String[] { /* Row 1 */ "FnLock Esc", "F1", "F2", "F3", "F4", "F5", "F6",
@@ -50,26 +55,31 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 	private JTextField outputField;
 	private JButton cancelBtn;
 
-	public KeyboardScreen(StationControl sc) {
-		super(sc);
-		keyboardController = sc.getKeyboardControl();
+	public AttendantKeyboardPanel(final StationControl sc) {
+		super(null); //Screen still requires station control but this is for the attendant station, so we can ignore this
+		
+		ac = sc.getAttendantControl();
+		ac.addListener(this);
+		
+		keyboardController = ac.getKeyboardControl();
 		keyboardController.addListener(this);
 
-		this.cancelBtn = this.makeCentralButton("CANCEL", 300, 70);
+		this.cancelBtn = new JButton("CANCEL");
+		cancelBtn.setPreferredSize(new Dimension(300, 70));
 		cancelBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				systemControl.goBackOnUI();
+				sc.goBackOnUI();
 			}
 		});
-		this.addLayer(cancelBtn, 0);
-
-		addOutputField();
-		addKeyboard();
+		this.setLayout(new BorderLayout());
+		this.add(cancelBtn);
+		this.add(makeOutputField(), BorderLayout.NORTH);
+		this.add(makeKeyboardPanel(), BorderLayout.SOUTH);
 	}
 
-	private void addOutputField() {
-		this.outputField = new JTextField();
+	private JTextField makeOutputField() {
+		JTextField outputField = new JTextField();
 		outputField.setEditable(false);
 		outputField.getCaret().setVisible(true); // Making it non-editable also makes caret invisible...
 		outputField.setBackground(Color.WHITE);
@@ -77,11 +87,12 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 		outputField.setForeground(Color.BLACK);
 		outputField.setFont(GUI_Fonts.TITLE);
 		outputField.setPreferredSize(new Dimension(GUI_Constants.SCREEN_WIDTH, 50));
-		this.rootPanel.add(outputField, BorderLayout.NORTH);
+		
+		return outputField;
 	}
 
-	private void addKeyboard() {
-		this.keyboardContainer = new JPanel(new GridLayout(NUM_ROWS, 1, 0, 0));
+	private JPanel makeKeyboardPanel() {
+		this.keyboardContainer = new JPanel(new GridLayout(NUM_ROWS + 1, 1, 0, 0)); //make room for text field
 		this.keyboardContainer.setPreferredSize(new Dimension(GUI_Constants.SCREEN_WIDTH, KEYBOARD_HEIGHT));
 		this.keyboardContainer.setOpaque(false);
 
@@ -138,8 +149,8 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 				curCol = 0;
 			}
 		}
-
-		this.rootPanel.add(keyboardContainer, BorderLayout.SOUTH);
+		
+		return keyboardContainer;
 	}
 
 	private JPanel makeKeyRow(int row) {
@@ -180,13 +191,6 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 		return this.outputField.getText();
 	}
 
-	/* temp: for testing purposes */
-	public static void main(String[] args) {
-		StationControl sc = new StationControl();
-		KeyboardScreen ks = new KeyboardScreen(sc);
-		ks.openInNewJFrame();
-	}
-
 	@Override
 	public void keyboardInputRecieved(KeyboardControl kc, String text, String key, int pointerPosition) {
 		// Get button that corresponds with the key that was pressed
@@ -205,5 +209,113 @@ public class KeyboardScreen extends Screen implements KeyboardControlListener {
 	@Override
 	public void keyboardInputCompleted(KeyboardControl kc, String text) {
 
+	}
+
+	@Override
+	public void attendantApprovedBags(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void attendantPreventUse(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void attendantApprovedItemRemoval(AttendantControl bc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void lowInk(AttendantControl ac, String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void lowPaper(AttendantControl ac, String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void printerNotLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void outOfInk(AttendantControl ac, String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void outOfPaper(AttendantControl ac, String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addInkState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addPaperState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void signalWeightDescrepancy(String updateMessage) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void noBagRequest() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void itemBagged() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void initialState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void attendantPermitStationUse(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void coinIsLowState(CoinStorageUnit unit, int amount) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void loggedIn(boolean isLoggedIn) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void triggerItemSearchScreen(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
 	}
 }

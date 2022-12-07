@@ -9,11 +9,16 @@ import com.jimmyselectronics.nightingale.KeyboardListener;
 
 
 public class PhysicalKeyboardControl extends KeyboardControl implements KeyboardListener {
-
-	public PhysicalKeyboardControl(AttendantControl ac) {
-		super();
-		ac.station.keyboard.register(this);
+	
+	// temp dummy constructor to avoid errors
+	public PhysicalKeyboardControl() {
+		super(null);
+		// TODO Auto-generated constructor stub
 	}
+
+//	public PhysicalKeyboardControl(AttendantControl ac) {
+//		ac.station.keyboard.register(this);
+//	}
 	
 
 	@Override
