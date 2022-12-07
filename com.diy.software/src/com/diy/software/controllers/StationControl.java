@@ -85,7 +85,6 @@ public class StationControl
 	private CashControl cc;
 	private PinPadControl ppc;
 	private PaymentControl pc;
-	private KeyboardControl kc;
 	private	ReceiptControl rc;
 
 	private boolean isLocked = false;
@@ -153,7 +152,6 @@ public class StationControl
 		ppc = new PinPadControl(this);
 		pc = new PaymentControl(this);
 		pcc = new PLUCodeControl(this);
-		kc = new KeyboardControl(this);
 	}
 
 	/**
@@ -239,10 +237,6 @@ public class StationControl
 
 	public CashControl getCashControl() {
 		return cc;
-	}
-
-	public KeyboardControl getKeyboardControl() {
-		return kc;
 	}
 	
 	public double getWeightOfScannerTray() {

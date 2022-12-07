@@ -50,7 +50,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 		station.turnOn();
 		
 		tlc = new TextLookupControl(this, this.sc);
-		kc = new KeyboardControl(sc);
+		kc = new KeyboardControl(station.keyboard);
 		ic = sc.getItemsControl();
 	}
 
