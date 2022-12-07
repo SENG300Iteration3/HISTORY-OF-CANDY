@@ -25,6 +25,7 @@ import com.unitedbankingservices.coin.Coin;
 import com.unitedbankingservices.coin.CoinDispenserAR;
 
 import ca.powerutility.PowerGrid;
+import ca.ucalgary.seng300.simulation.SimulationException;
 
 public class CashControlTest {
 	StationControl sc;
@@ -32,6 +33,7 @@ public class CashControlTest {
 	ItemsControl ic;
 	
 	BanknoteValidatorObserverStub bns;
+	Currency currency;
 	
 	public static void configureDoItYourselfStation() {
 	    DoItYourselfStation.configureBanknoteDenominations(new int[] { 100, 50, 20, 10, 5, 1 });
@@ -64,6 +66,8 @@ public class CashControlTest {
 		ic = sc.getItemsControl();
 		bns = new BanknoteValidatorObserverStub();
 		
+		this.currency = Currency.getInstance("CAD");
+				
 		cs.addListener(bns);
 		cs.paymentFailed();
 	}
@@ -186,6 +190,7 @@ public class CashControlTest {
 		assertFalse(bns.noteinsertionEnabled);
 	}
 	
+
 	@Test
 	public void emptyBanknotes() {
 		fillNotes(sc.station);
