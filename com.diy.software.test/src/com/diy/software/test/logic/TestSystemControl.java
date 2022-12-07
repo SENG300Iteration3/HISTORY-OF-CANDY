@@ -264,6 +264,14 @@ public class TestSystemControl {
 			} catch (Exception e) {}
 		}
 		assertTrue(ic.getCheckoutTotal() == 0);
+		ic.updateCheckoutTotal(10);
+		a = null;
+		while(a == null) {
+			try {
+				a = (CardSwipeData) systemControl.station.cardReader.swipe(giftcard);
+			}catch (Exception e) {}
+		}
+		assertTrue(ic.getCheckoutTotal() == 10);
 	}
 	
 	@After
