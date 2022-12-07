@@ -37,14 +37,11 @@ public class ItemsControlTest {
 	Barcode barcode;
 	FakeDataInitializer fdi;
 	Tuple<String, Double> itemTuple;
-	
-	
+
 	@Before
 	public void setup() {
 		PowerGrid.engageUninterruptiblePowerSource();
-		
 
-		
 		fdi = new FakeDataInitializer();
 		fdi.addProductAndBarcodeData();
 		systemControl = new StationControl();
@@ -54,9 +51,7 @@ public class ItemsControlTest {
 		item = fdi.getItems()[0];
 		itemTuple = new Tuple<String, Double>("Can of Beans", (double) 2);
 		barcode = new Barcode(new Numeral[] { Numeral.one, Numeral.two, Numeral.three, Numeral.four });
-		
 
-		
 		systemControl.station.handheldScanner.register(itemsControl);
 		systemControl.station.handheldScanner.plugIn();
 		systemControl.station.handheldScanner.turnOff();
@@ -499,7 +494,7 @@ public class ItemsControlTest {
 		assertTrue(stub.itemsHaveBeenUpdated);
 		assertTrue(stub.productSubtotalUpdated);
 
-		output = itemsControl.getCheckoutList().get(0);
+		output = (Tuple<String, Double>) itemsControl.getCheckoutList().get(0);
 		assertTrue(output.x.equals("Can of Beans"));
 		assertTrue(output.y == (double) 2);
 	}
@@ -517,7 +512,7 @@ public class ItemsControlTest {
 		assertTrue(stub.itemsHaveBeenUpdated);
 		assertTrue(stub.productSubtotalUpdated);
 
-		output = itemsControl.getCheckoutList().get(0);
+		output = (Tuple<String, Double>) itemsControl.getCheckoutList().get(0);
 		assertTrue(output.x.equals("Can of Beans"));
 		assertTrue(output.y == (double) 2);
 		assertTrue(itemsControl.getCheckoutTotal() == (double) 2);
@@ -569,67 +564,64 @@ public class ItemsControlTest {
 		assertTrue(itemsControl.userMessage.equals("Excessive weight removed, continue scanning"));
 	}
 
-	
 	@Test(expected = NullPointerSimulationException.class)
-	public void testAddPLUCodedItemByBrowsing() {	
+	public void testAddPLUCodedItemByBrowsing() {
 		PriceLookUpCode pcode = new PriceLookUpCode("4444");
 		PLUCodedProduct pcp = new PLUCodedProduct(pcode, "Durian", 9);
 		PLUCodedItem pitem = new PLUCodedItem(pcode, 200);
 		ProductDatabases.PLU_PRODUCT_DATABASE.put(pcode, pcp);
 		ProductDatabases.INVENTORY.put(pcp, 10);
 
-		
 		itemsControl.setCurrentItem(pitem);
 		itemsControl.setIsPLU(true);
 		itemsControl.setCurrentProductCode(pcode);
 		itemsControl.setExpectedPLU(pcode);
-		
+
 		// Flip Switch to Enter Catalog Browsing Code
 		ActionEvent e = new ActionEvent(this, 0, "catalog");
 		itemsControl.actionPerformed(e);
-		
+
 		e = new ActionEvent(this, 0, "Durian");
 		itemsControl.actionPerformed(e);
 		assertFalse(itemsControl.getInCatalog());
 	}
-	
+
 	@Test
-	public void testAddPLUCodedItemNotInProductDatabaseByBrowsing() {		
+	public void testAddPLUCodedItemNotInProductDatabaseByBrowsing() {
 		itemsControl.setIsPLU(true);
-		
+
 		// Flip Switch to Enter Catalog Browsing Code
 		ActionEvent e = new ActionEvent(this, 0, "catalog");
 		itemsControl.actionPerformed(e);
-		
+
 		e = new ActionEvent(this, 0, "Strawberry");
 		itemsControl.actionPerformed(e);
 		assertTrue(itemsControl.getInCatalog());
 	}
-	
+
 	@Test
-	public void testAddNonPLUCodedItemItemByBrowsing() {	
+	public void testAddNonPLUCodedItemItemByBrowsing() {
 		// Flip Switch to Enter Catalog Browsing Code
 		ActionEvent e = new ActionEvent(this, 0, "catalog");
 		itemsControl.actionPerformed(e);
-		
+
 		e = new ActionEvent(this, 0, "Can of Beans");
 		itemsControl.actionPerformed(e);
 		assertFalse(itemsControl.getInCatalog());
 	}
-	
+
 	@Test
 	public void testCancelCatalog() {
 		// Flip Switch to Enter Catalog Browsing Code
 		ActionEvent e = new ActionEvent(this, 0, "catalog");
 		itemsControl.actionPerformed(e);
 		assertTrue(itemsControl.getInCatalog());
-		
+
 		e = new ActionEvent(this, 0, "cancel catalog");
 		itemsControl.actionPerformed(e);
 		assertFalse(itemsControl.getInCatalog());
 	}
-	
-	
+
 	public class StubItemsControl implements ItemsControlListener {
 		boolean available = true;
 		boolean selected = false;
@@ -688,36 +680,20 @@ public class ItemsControlTest {
 		@Override
 		public void awaitingItemToBePlacedInScanningArea(StationControl sc) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void itemRemoved(ItemsControl itemsControl) {
 			// TODO Auto-generated method stub
-			
-		}
 
-		@Override
-		public void awaitingItemToBePlacedInScanningArea(StationControl sc) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void awaitingAttendantToApproveItemRemoval(ItemsControl ic) {
 			// TODO Auto-generated method stub
-			
+
 		}
-
-	}
-
-		@Override
-		public void itemRemoved(ItemsControl itemsControl) {
-			// TODO Auto-generated method stub
-			
-		}
-
-	}
 
 	}
 
@@ -815,6 +791,24 @@ public class ItemsControlTest {
 
 		@Override
 		public void loggedIn(boolean isLoggedIn) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void attendantApprovedItemRemoval(AttendantControl bc) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void itemBagged() {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void banknotesInStorageLowState() {
 			// TODO Auto-generated method stub
 
 		}
