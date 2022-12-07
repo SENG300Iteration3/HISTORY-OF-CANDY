@@ -116,6 +116,30 @@ public class StubSystem implements StationControlListener{
 	}
 
 	@Override
+	public void systemControlLocked(StationControl systemControl, boolean isLocked, String reason) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void triggerPurchaseBagsWorkflow(StationControl systemControl) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void noBagsInStock(StationControl systemControl) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void notEnoughBagsInStock(StationControl systemControl, int numBag) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
 	public void triggerPLUCodeWorkflow(StationControl systemControl) {
 		// TODO Auto-generated method stub
 		
