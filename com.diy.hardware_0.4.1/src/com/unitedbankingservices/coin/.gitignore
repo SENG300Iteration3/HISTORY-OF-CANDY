@@ -1,0 +1,11 @@
+/AbstractCoinDispenser.class
+/Coin.class
+/CoinDispenserAR.class
+/CoinDispenserObserver.class
+/CoinSlot.class
+/CoinSlotObserver.class
+/CoinStorageUnit.class
+/CoinStorageUnitObserver.class
+/CoinValidator.class
+/CoinValidatorObserver.class
+/ICoinDispenser.class

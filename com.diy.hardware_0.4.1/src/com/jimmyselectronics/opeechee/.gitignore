@@ -1,0 +1,13 @@
+/BlockedCardException.class
+/Card$CardData.class
+/Card$CardInsertData.class
+/Card$CardSwipeData.class
+/Card$CardTapData.class
+/Card.class
+/CardReader.class
+/CardReaderListener.class
+/ChipFailureException.class
+/InvalidPINException.class
+/MagneticStripeFailureException.class
+/TapFailureException.class
+/package-info.class
