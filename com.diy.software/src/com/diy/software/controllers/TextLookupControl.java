@@ -111,7 +111,6 @@ public class TextLookupControl implements KeyboardControlListener{
 	
 	public void addProduct(int selectionIndex) {
 		sc.blockStation();
-		//ac.preventStationUse();
 		selection = getResult(selectionIndex);
 		if (selection.getBarcodedProduct() == null) {
 			PLUCodedProduct productToAdd = selection.getPLUCodedProduct();
@@ -136,7 +135,7 @@ public class TextLookupControl implements KeyboardControlListener{
 	public void placeProductInBaggingArea() {
 		sc.updateWeightOfLastItemAddedToBaggingArea(productWeight);
 		sc.updateExpectedCheckoutWeight(productWeight);
-		ac.permitStationUse();
+		sc.unblockStation();
 		for (TextLookupControlListener l : listeners) {
 			l.itemHasBeenBagged(this);
 		}

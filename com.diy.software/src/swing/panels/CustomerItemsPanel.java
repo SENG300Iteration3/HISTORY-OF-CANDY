@@ -12,21 +12,24 @@ import com.diy.software.controllers.BagsControl;
 import com.diy.software.controllers.ItemsControl;
 import com.diy.software.controllers.ReceiptControl;
 import com.diy.software.controllers.StationControl;
+import com.diy.software.controllers.TextLookupControl;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
 import com.diy.software.listeners.ItemsControlListener;
 import com.unitedbankingservices.coin.CoinStorageUnit;
 import com.diy.software.listeners.ReceiptControlListener;
+import com.diy.software.listeners.TextLookupControlListener;
 import com.unitedbankingservices.coin.CoinStorageUnit;
 
 public class CustomerItemsPanel extends JPanel
-		implements ItemsControlListener, AttendantControlListener, BagsControlListener, ReceiptControlListener {
+		implements ItemsControlListener, AttendantControlListener, BagsControlListener, ReceiptControlListener, TextLookupControlListener {
 
 	private static final long serialVersionUID = 1L;
 	private ItemsControl ic;
 	private AttendantControl ac;
 	private BagsControl bc;
 	private ReceiptControl rc;
+	private TextLookupControl tlc;
 	private boolean itemsAvailable;
 	JButton selectNextItemButton, mainScannerButton, handheldScannerButton, deselectCurrentItemButton, placeItemInBaggingAreaButton, placeItemInScanningAreaButton, itemWeight, takeReceiptButton;
 	GridBagConstraints buttonGrid = new GridBagConstraints();
@@ -45,6 +48,9 @@ public class CustomerItemsPanel extends JPanel
 		
 		rc = sc.getReceiptControl();
 		rc.addListenerReceipt(this);
+		
+		tlc = sc.getAttendantControl().getTextLookupControl();
+		tlc.addListener(this);
 		
 		weightDescrepancyMessage = new JLabel();
 		
@@ -383,6 +389,53 @@ public class CustomerItemsPanel extends JPanel
 
 	@Override
 	public void exitTextSearchScreen(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void searchQueryWasEntered(TextLookupControl tlc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resultsWereFound(TextLookupControl tlc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void noResultsWereFound(TextLookupControl tlc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resultWasChosen(TextLookupControl tlc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void itemHasBeenAddedToCheckout(TextLookupControl tlc) {
+		selectNextItemButton.setEnabled(false);
+		mainScannerButton.setEnabled(false);
+		handheldScannerButton.setEnabled(false);
+		deselectCurrentItemButton.setEnabled(false);
+		placeItemInBaggingAreaButton.setEnabled(true);
+		itemWeight.setEnabled(false);
+		
+	}
+
+	@Override
+	public void itemHasBeenBagged(TextLookupControl tlc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void searchHasBeenCleared(TextLookupControl tlc) {
 		// TODO Auto-generated method stub
 		
 	}

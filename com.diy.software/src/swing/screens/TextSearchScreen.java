@@ -64,7 +64,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 		initailizeSearchButton();
 		initailizeBackButton();
 		
-		kc = sc.getKeyboardControl();
+		kc = ac.getKeyboardControl();
 		kc.addListener(this);
 		
 		tlc = ac.getTextLookupControl();
@@ -178,10 +178,8 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 			public void actionPerformed(ActionEvent e) 
 			{
 				tlc.findProduct(searchbar.getText());
-//				
-//				searchResultPanel.add(makeItemComponent("Item " + 1, 1));
-//				searchResultPanel.repaint();
-//				searchResultPanel.revalidate();
+				searchResultPanel.repaint();
+				searchResultPanel.revalidate();
 			}
 		});
 	}
@@ -299,13 +297,14 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 
 	@Override
 	public void keyboardInputRecieved(KeyboardControl kc, String query, String key, int pointerPosition) {
-		// TODO Auto-generated method stub
+		searchbar.setText(query);
+		searchbar.requestFocus();
+		searchbar.setCaretPosition(pointerPosition);
 		
 	}
 
 	@Override
 	public void keyboardInputCompleted(KeyboardControl kc, String text) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
