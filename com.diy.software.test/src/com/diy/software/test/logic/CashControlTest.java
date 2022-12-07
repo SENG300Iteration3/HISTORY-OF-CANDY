@@ -3,137 +3,271 @@ package com.diy.software.test.logic;
 import static org.junit.Assert.*;
 
 import java.awt.event.ActionEvent;
+import java.math.BigDecimal;
+import java.util.Currency;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import com.diy.hardware.DoItYourselfStation;
 import com.diy.software.controllers.CashControl;
+import com.diy.software.controllers.ItemsControl;
 import com.diy.software.controllers.StationControl;
+import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.CashControlListener;
+import com.unitedbankingservices.DisabledException;
+import com.unitedbankingservices.TooMuchCashException;
+import com.unitedbankingservices.banknote.Banknote;
+import com.unitedbankingservices.banknote.BanknoteDispenserMR;
 import com.unitedbankingservices.banknote.BanknoteValidatorObserver;
+import com.unitedbankingservices.coin.Coin;
+import com.unitedbankingservices.coin.CoinDispenserAR;
 
 import ca.powerutility.PowerGrid;
+import ca.ucalgary.seng300.simulation.SimulationException;
 
 public class CashControlTest {
 	StationControl sc;
 	CashControl cs;
+	ItemsControl ic;
+	
 	BanknoteValidatorObserverStub bns;
+	Currency currency;
+	
+	public static void configureDoItYourselfStation() {
+	    DoItYourselfStation.configureBanknoteDenominations(new int[] { 100, 50, 20, 10, 5, 1 });
+	    DoItYourselfStation.configureCoinDenominations(new BigDecimal[] { BigDecimal.valueOf(2.00), BigDecimal.valueOf(1.00), 
+	    		BigDecimal.valueOf(0.25), BigDecimal.valueOf(0.10), BigDecimal.valueOf(0.05), BigDecimal.valueOf(0.01) });
+	}
+	
+	public void fillNotes(DoItYourselfStation station) {
+		for(int i = 0; station.banknoteStorage.hasSpace(); i++) {
+			try {
+				station.banknoteStorage.receive(new Banknote(Currency.getInstance("CAD"), 100));
+			} catch (DisabledException | TooMuchCashException e) {}
+		}
+	}
+	
+	public void fillCoins(DoItYourselfStation station) {
+		for(int i = 0; station.coinStorage.hasSpace(); i++) {
+			try {
+				station.coinStorage.receive(new Coin(Currency.getInstance("CAD"), BigDecimal.valueOf(2.0)));
+			} catch (DisabledException | TooMuchCashException e) {}
+		}
+	}
 	
 	@Before
 	public void setUp() throws Exception {
-		sc = new StationControl();
-		cs = new CashControl(sc);
+		PowerGrid.engageUninterruptiblePowerSource();
+		configureDoItYourselfStation();
+		sc = new StationControl(new FakeDataInitializer());
+		cs = sc.getCashControl();
+		ic = sc.getItemsControl();
 		bns = new BanknoteValidatorObserverStub();
 		
+		this.currency = Currency.getInstance("CAD");
+				
 		cs.addListener(bns);
-		PowerGrid.engageUninterruptiblePowerSource();
+		cs.paymentFailed();
 	}
 
 	@Test
 	public void testAddListener() {
+		ic.updateCheckoutTotal(1.0);
 		cs.addListener(bns);
 		cs.enablePayments();
-		assertTrue(bns.insertionEnabled);
+		assertTrue(bns.coininsertionEnabled);
+		assertTrue(bns.noteinsertionEnabled);
 	}
 
 	@Test
 	public void testRemoveListener() {
+		ic.updateCheckoutTotal(0.0);
 		cs.removeListener(bns);
 		cs.enablePayments();
-		assertFalse(bns.insertionEnabled);
+		assertFalse(bns.coininsertionEnabled);
+		assertFalse(bns.noteinsertionEnabled);
 	}
 
 	@Test
 	public void testEnablePayments() {
+		ic.updateCheckoutTotal(1.0);
 		cs.enablePayments();
-		assertTrue(bns.insertionEnabled);
-		
+		assertTrue(bns.coininsertionEnabled);
+		assertTrue(bns.noteinsertionEnabled);
 	}
 
 	@Test
 	public void testDisablePayments() {
+		ic.updateCheckoutTotal(1.0);
 		cs.disablePayments();
-		assertTrue(bns.insertionDisabled);
+		assertFalse(bns.coininsertionEnabled);
+		assertFalse(bns.noteinsertionEnabled);
 	}
 
 	@Test
 	public void testCoinAdded() {
-		
+		ic.updateCheckoutTotal(1.0);
+		cs.enablePayments();
 		bns.cashInserted = false;
-		cs.coinAdded(null);
+		try {
+			sc.station.coinSlot.receive(new Coin(Currency.getInstance("CAD"), BigDecimal.valueOf(2.0)));
+		} catch (DisabledException | TooMuchCashException e) {}
 		assertTrue(bns.cashInserted);
 	}
 
 	@Test
 	public void testBanknoteAdded() {
-		
+		ic.updateCheckoutTotal(1.0);
+		cs.enablePayments();
 		bns.cashInserted = false;
-		cs.banknoteAdded(null);
+		try {
+			sc.station.banknoteInput.receive(new Banknote(Currency.getInstance("CAD"), 100));
+		} catch (DisabledException | TooMuchCashException e) {}
 		assertTrue(bns.cashInserted);
 	}
 
 	@Test
 	public void testValidCoinDetected() {
-		fail("Not yet implemented");
+		ic.updateCheckoutTotal(1000.0);
+		cs.enablePayments();
+		bns.cashInserted = false;
+		while(ic.getCheckoutTotal() == 1000.0) {
+			try {
+				sc.station.coinSlot.receive(new Coin(Currency.getInstance("CAD"), BigDecimal.valueOf(1.0)));
+			} catch (DisabledException | TooMuchCashException e) {}
+		}
+		assertTrue(bns.cashInserted);
 	}
 
 	@Test
 	public void testValidBanknoteDetected() {
-		fail("Not yet implemented");
+		ic.updateCheckoutTotal(1000.0);
+		cs.enablePayments();
+		bns.cashInserted = false;
+		while(ic.getCheckoutTotal() == 1000.0) {
+			try {
+				sc.station.banknoteInput.receive(new Banknote(Currency.getInstance("CAD"), 100));
+			} catch (DisabledException | TooMuchCashException e) {}
+		}
+		assertTrue(bns.cashInserted);
 	}
 
 	@Test
 	public void testInvalidBanknoteDetected() {
-		fail("Not yet implemented");
+		ic.updateCheckoutTotal(100.0);
+		bns.cashRejected = false;
+		while(!bns.cashRejected) {
+			cs.enablePayments();
+			ActionEvent e = new ActionEvent(this, 0, "d 100");
+			cs.actionPerformed(e);
+			ic.updateCheckoutTotal(100.0);
+		}
+		assertTrue(bns.cashRejected);
 	}
 
 	@Test
 	public void testInvalidCoinDetected() {
-		fail("Not yet implemented");
+		ic.updateCheckoutTotal(1.0);
+		bns.cashRejected = false;
+		while(!bns.cashRejected) {
+			cs.enablePayments();
+			ActionEvent e = new ActionEvent(this, 0, "c 100");
+			cs.actionPerformed(e);
+			ic.updateCheckoutTotal(1.0);
+		}
+		assertTrue(bns.cashRejected);
 	}
 
 	@Test
 	public void testBanknotesFull() {
-		fail("Not yet implemented");
+		fillNotes(sc.station);
+		ic.updateCheckoutTotal(1000.0);
+		cs.enablePayments();
+		ActionEvent e = new ActionEvent(this, 0, "d 100");
+		cs.actionPerformed(e);
+		assertFalse(bns.noteinsertionEnabled);
 	}
 	
-	/*
+
 	@Test
-	public void testBanknotesLoaded() {
-		fail("Not yet implemented");
+	public void emptyBanknotes() {
+		fillNotes(sc.station);
+		ic.updateCheckoutTotal(1000.0);
+		sc.station.banknoteStorage.unload();
+		cs.enablePayments();
+		assertTrue(bns.noteinsertionEnabled);
 	}
 	
 	@Test
-	public void testBanknotesUnloaded() {
-		fail("Not yet implemented");
+	public void emptyCoins() {
+		fillCoins(sc.station);
+		ic.updateCheckoutTotal(1000.0);
+		sc.station.coinStorage.unload();
+		cs.enablePayments();
+		assertTrue(bns.coininsertionEnabled);
 	}
-*/
+	
 	@Test
 	public void testCoinsFull() {
-		fail("Not yet implemented");
+		fillCoins(sc.station);
+		ic.updateCheckoutTotal(1000.0);
+		cs.enablePayments();
+		ActionEvent e = new ActionEvent(this, 0, "c 100");
+		cs.actionPerformed(e);
+		assertFalse(bns.coininsertionEnabled);
 	}
-/*
+	
 	@Test
-	public void testCoinsLoaded() {
-		fail("Not yet implemented");
+	public void badCoin() {
+		ic.updateCheckoutTotal(1000.0);
+		cs.enablePayments();
+		ActionEvent e = new ActionEvent(this, 0, "c -1");
+		cs.actionPerformed(e);
+		assertTrue(ic.getCheckoutTotal() == 1000.0);
 	}
-	*?
-/*
+	
 	@Test
-	public void testCoinsUnloaded() {
-		fail("Not yet implemented");
+	public void returnChange() {
+		ic.updateCheckoutTotal(22.22);
+		cs.enablePayments();
+		ActionEvent e = new ActionEvent(this, 0, "d 100");
+		while(ic.getCheckoutTotal() == 22.22) {
+			cs.actionPerformed(e);
+		}
+		assertTrue(Math.abs(bns.lastReturnedCash-77.78) < 0.01);
 	}
-
+	
 	@Test
-	public void testIsPaymentEnough() {
-		fail("Not yet implemented");
+	public void returnChange2() {
+		ic.updateCheckoutTotal(1.00);
+		cs.enablePayments();
+		ActionEvent e = new ActionEvent(this, 0, "c 2.0");
+		while(ic.getCheckoutTotal() == 1.00) {
+			cs.actionPerformed(e);
+		}
+		cs.actionPerformed(e);
+		assertTrue(Math.abs(bns.lastReturnedCash-1.00) < 0.01);
 	}
-
+	
 	@Test
-	public void testCalculateChange() {
-		// not used 
-		fail("Not yet implemented");
-	}*/
+	public void returnChange3() {
+		ic.updateCheckoutTotal(4.96);
+		cs.enablePayments();
+		
+		ActionEvent e = new ActionEvent(this, 0, "d 10");
+		for(CoinDispenserAR i : sc.station.coinDispensers.values()) {
+			i.disable();
+		}
+		for(BanknoteDispenserMR i : sc.station.banknoteDispensers.values()) {
+			i.disable();
+		}
+		while(ic.getCheckoutTotal() == 4.96) {
+			cs.actionPerformed(e);
+		}
+		assertTrue(Math.abs(bns.lastReturnedCash-0) < 0.01);
+	}
 
 	@Test
 	public void testActionPerformed() {
@@ -168,21 +302,13 @@ public class CashControlTest {
 	
 	public class BanknoteValidatorObserverStub implements CashControlListener, BanknoteValidatorObserver{
 		
-		public boolean insertionEnabled = false;
-		public boolean insertionDisabled = false;
+		public boolean coininsertionEnabled = false;
+		public boolean noteinsertionEnabled = false;
 		public boolean cashInserted = false;
-		
-		/*@Override
-		public void cashInsertionEnabled(CashControl cc) {
-			insertionEnabled = true;
-			
-		}
-
-		@Override
-		public void cashInsertionDisabled(CashControl cc) {
-			insertionDisabled = true;
-			
-		}*/
+		public boolean changeReturned = false;
+		public boolean paymentFailed = false;
+		public boolean cashRejected = false;
+		public double lastReturnedCash = 0.0;
 
 		@Override
 		public void cashInserted(CashControl cc) {
@@ -192,50 +318,73 @@ public class CashControlTest {
 
 		@Override
 		public void coinInsertionEnabled(CashControl cc) {
-			// TODO Auto-generated method stub
+			coininsertionEnabled = true;
 			
 		}
 
 		@Override
 		public void noteInsertionEnabled(CashControl cc) {
-			// TODO Auto-generated method stub
+			noteinsertionEnabled = true;
 			
 		}
 
 		@Override
 		public void coinInsertionDisabled(CashControl cc) {
-			// TODO Auto-generated method stub
+			coininsertionEnabled = false;
 			
 		}
 
 		@Override
 		public void noteInsertionDisabled(CashControl cc) {
-			// TODO Auto-generated method stub
+			noteinsertionEnabled = false;
 			
 		}
 
-//		@Override
-//		public void cashRejected(CashControl cc) {
-//			// TODO Auto-generated method stub
-//			
-//		}
-
 		@Override
 		public void changeReturned(CashControl cc) {
-			// TODO Auto-generated method stub
-			
+			changeReturned = true;
+			List<Coin> c = sc.station.coinTray.collectCoins();
+			List<Banknote> b = null; 
+			if(sc.station.banknoteOutput.hasDanglingBanknotes()) {
+				b = sc.station.banknoteOutput.removeDanglingBanknotes();
+			}
+			double returnedCash = 0;
+			for(Coin i : c) {
+				returnedCash += i.getValue().doubleValue();
+			}
+			if(b != null) {
+				for(Banknote i : b) {
+					returnedCash += i.getValue();
+				}
+			}
+			lastReturnedCash = returnedCash;
 		}
 
 		@Override
 		public void paymentFailed(CashControl cc) {
-			// TODO Auto-generated method stub
+			cashRejected = true;
 			
 		}
 
 		@Override
 		public void checkCashRejected(CashControl cc) {
-			// TODO Auto-generated method stub
-			
+			List<Coin> c = sc.station.coinTray.collectCoins();
+			Banknote b = null; 
+			if(sc.station.banknoteInput.hasDanglingBanknotes()) {
+				b = sc.station.banknoteInput.removeDanglingBanknote();
+			}
+			double returnedCash = 0;
+			for(Coin i : c) {
+				returnedCash += i.getValue().doubleValue();
+				cashRejected = true;
+			}
+			if(b != null) {
+				returnedCash += b.getValue();
+				cashRejected = true;
+			}
+			if(returnedCash != 0.0) {
+				lastReturnedCash = returnedCash;
+			}
 		}
 	}
 }

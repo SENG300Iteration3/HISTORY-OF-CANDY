@@ -96,7 +96,6 @@ public class StationControl
 	private int bagInStock;
 	private PLUCodeControl pcc;
 
-
 	
 	// used for receipt listeners
 	boolean isOutOfPaper = false;
@@ -143,12 +142,9 @@ public class StationControl
 		 * simulates what the printer has in it before the printing starts
 		 * to simulate low paper and low ink
 		 */
-		try {
-			station.printer.addInk(100);
-			station.printer.addPaper(1);
-		} catch (OverloadException e1) {
+		this.ac.addInk(50);
+		this.ac.addPaper(1);
 
-		}
 		wc = new WalletControl(this);
 		ppc = new PinPadControl(this);
 		pc = new PaymentControl(this);
@@ -198,6 +194,16 @@ public class StationControl
 	public void startUp() {
 		station.plugIn();
 		station.turnOn();
+	}
+	public void shutDown() {
+		ic.resetState();
+		ac.resetState(); // this method tells all listeners in ac to set themselves to their starting state. 
+						 // Might want to put it in startUp. 
+		rc.resetState();
+		cc.resetState();
+		
+		station.unplug();
+		station.turnOff();
 	}
 	
 	public ItemsControl getItemsControl() {
@@ -603,19 +609,19 @@ public class StationControl
 	 * 
 	 * @param receipt the customer receipt as a string
 	 */
-	public void printReceipt(String receipt) {
-
-		for (char receiptChar : receipt.toCharArray()) {
-			try {
-				station.printer.print(receiptChar);
-				//System.out.println(receiptChar);
-			} catch (EmptyException e) {
-
-			} catch (OverloadException e) {
-
-			}
-		}
-	}
+//	public void printReceipt(String receipt) {
+//
+//		for (char receiptChar : receipt.toCharArray()) {
+//			try {
+//				station.printer.print(receiptChar);
+//				//System.out.println(receiptChar);
+//			} catch (EmptyException e) {
+//
+//			} catch (OverloadException e) {
+//
+//			}
+//		}
+//	}
 
 	
 	
@@ -708,31 +714,27 @@ public class StationControl
 	@Override
 	public void outOfPaper(IReceiptPrinter printer) {
 		isOutOfPaper = true;
-		System.out.println("SC out of paper");
 		rc.outOfPaper(printer);
-		blockStation();
+		blockStation("Printer is out of ink or paper please wait for attendant");
 		rc.outOfPaper(printer);
 	}
 
 	@Override
 	public void outOfInk(IReceiptPrinter printer) {
 		isOutOfInk = true;
-		 System.out.println("SC out of ink");	
 		 rc.outOfInk(printer);
-		 blockStation();
+		 blockStation("Printer is out of ink or paper please wait for attendant");
 		// have the same functionality as low ink for now
 		 rc.outOfInk(printer);
 	}
-
+	
 	@Override
 	public void lowInk(IReceiptPrinter printer) {
-		System.out.println("SC low ink");
 		rc.lowInk(printer);
 	}
 
 	@Override
 	public void lowPaper(IReceiptPrinter printer) {
-		System.out.println("SC low paper");
 		rc.lowPaper(printer);
 	}
 
@@ -742,6 +744,8 @@ public class StationControl
 		// unblock station when enough paper is added, checks if theres enough ink
 		if(!isOutOfInk) {
 			unblockStation();
+			rc.paperAdded(printer);
+			// System.out.println("station unblocked paper added");
 		}
 	}
 
@@ -751,6 +755,8 @@ public class StationControl
 		// unblock station when enough ink is added, checks if theres enough paper
 		if(!isOutOfPaper) {
 			unblockStation();
+			rc.inkAdded(printer);
+			// System.out.println("station unblocked ink added");
 		}
 	}
 	
@@ -795,6 +801,17 @@ public class StationControl
 	@Override
 	public void bagsLoaded(ReusableBagDispenser dispenser, int count) {
 		bagInStock++;
+	}
+	
+	public void printReceipt() {
+		for (StationControlListener l: listeners) {
+			l.triggerReceiptScreen(this);
+		}
+		rc.printItems();
+		rc.printTotalCost();
+		rc.printMembership();
+		rc.printDateTime();
+		rc.printThankyouMsg();
 	}
 
 }
