@@ -383,4 +383,28 @@ public class CustomerItemsPanel extends JPanel
 		
 	}
 
+	public JButton getSelectNextItemButton() {
+		return selectNextItemButton;
+	}
+
+	public JButton getMainScannerButton() {
+		return mainScannerButton;
+	}
+
+	public JButton getHandheldScannerButton() {
+		return handheldScannerButton;
+	}
+
+	public JButton getPlaceItemInBaggingAreaButton() {
+		return placeItemInBaggingAreaButton;
+	}
+
+	public JButton getPlaceItemInScanningAreaButton() {
+		return placeItemInScanningAreaButton;
+	}
+
+	public JButton getTakeReceiptButton() {
+		return takeReceiptButton;
+	}
+
 }
