@@ -228,7 +228,9 @@ public class CashControlTest {
 		ic.updateCheckoutTotal(22.22);
 		cs.enablePayments();
 		ActionEvent e = new ActionEvent(this, 0, "d 100");
-		cs.actionPerformed(e);
+		while(ic.getCheckoutTotal() == 22.22) {
+			cs.actionPerformed(e);
+		}
 		assertTrue(Math.abs(bns.lastReturnedCash-77.78) < 0.01);
 	}
 	
@@ -237,7 +239,9 @@ public class CashControlTest {
 		ic.updateCheckoutTotal(1.00);
 		cs.enablePayments();
 		ActionEvent e = new ActionEvent(this, 0, "c 2.0");
-		cs.actionPerformed(e);
+		while(ic.getCheckoutTotal() == 1.00) {
+			cs.actionPerformed(e);
+		}
 		assertTrue(Math.abs(bns.lastReturnedCash-1.00) < 0.01);
 	}
 	
@@ -245,6 +249,7 @@ public class CashControlTest {
 	public void returnChange3() {
 		ic.updateCheckoutTotal(4.96);
 		cs.enablePayments();
+		
 		ActionEvent e = new ActionEvent(this, 0, "d 10");
 		for(CoinDispenserAR i : sc.station.coinDispensers.values()) {
 			i.disable();
@@ -252,7 +257,9 @@ public class CashControlTest {
 		for(BanknoteDispenserMR i : sc.station.banknoteDispensers.values()) {
 			i.disable();
 		}
-		cs.actionPerformed(e);
+		while(ic.getCheckoutTotal() == 4.96) {
+			cs.actionPerformed(e);
+		}
 		assertTrue(Math.abs(bns.lastReturnedCash-0) < 0.01);
 	}
 
