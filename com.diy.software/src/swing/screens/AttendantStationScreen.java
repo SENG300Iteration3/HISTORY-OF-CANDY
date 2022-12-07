@@ -456,14 +456,6 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	public void itemBagged() {
 		approveNoBagging.setEnabled(false);
 	}
-
-
-	@Override
-<<<<<<< Updated upstream
-	public void triggerItemSearchScreen(AttendantControl ac) {
-		TextSearchScreen screen = new TextSearchScreen(sc, ac);
-		addScreenToStack(screen);
-	}
 	
 	private void addScreenToStack(Screen newScreen) {
 		addPanel(newScreen.getRootPanel());
@@ -478,10 +470,10 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		parent.invalidate();
 		parent.validate();
 		parent.repaint();
-=======
-	public void triggerTextSearch(AttendantControl ac) {
+	}
+	
+	@Override
+	public void triggerItemSearchScreen(AttendantControl ac) {
 		// TODO Auto-generated method stub
-		
->>>>>>> Stashed changes
 	}
 }

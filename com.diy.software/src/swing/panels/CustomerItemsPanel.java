@@ -378,14 +378,7 @@ public class CustomerItemsPanel extends JPanel
 		
 	}
 
-	@Override
-<<<<<<< Updated upstream
 	public void triggerItemSearchScreen(AttendantControl ac) {
-=======
-	public void triggerTextSearch(AttendantControl ac) {
->>>>>>> Stashed changes
 		// TODO Auto-generated method stub
-		
 	}
-
 }
