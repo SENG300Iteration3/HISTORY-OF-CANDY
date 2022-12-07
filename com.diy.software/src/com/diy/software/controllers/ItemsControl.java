@@ -129,6 +129,25 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	}
 	
 	/**
+	 * Method that checks to see if an integer passed in as argument is the same as
+	 * one of the reusable bags item numbers on screen.
+	 * 
+	 * @param index
+	 * 		integer that matches an item number displayed on the customer GUI
+	 * @return
+	 * 		true if the index refers to a bag item number, false otherwise
+	 */
+	public boolean isIndexBag(int index) {
+		if (this.bags.size() > 0 && this.checkoutList.size() < index) {
+			if (index <= (this.checkoutList.size() + this.bags.size())){
+				return true;
+			}
+			return false;
+		}		
+		else return false;
+	}
+	
+	/**
 	 * The method responsible for removing an item from the system entirely.
 	 * Its cost is subtracted from the bill total, it is removed from the bagging area,
 	 * its weight is subtracted from expected weight, the "stores" inventory is updated
@@ -142,21 +161,18 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	public boolean removeItem(int index) {
 		double weight;
 		double price;
-		if (index > this.checkoutList.size()) {
-			if (this.bags.size() > 0) {
-				weight = 5.0;
-				price = sc.fakeData.getReusableBagPrice();
-				this.sc.updateExpectedCheckoutWeight(-weight);  // decrement weight
-				this.updateCheckoutTotal(-price);	// decrement price
-				this.sc.station.baggingArea.remove(bags.get(0));
-				this.bags.remove(0);
-				refreshGui();
-				return true;
-			}
-			System.err.println("There are no items left to remove.");
-			return false;
+		if (index <= 0) return false;
+		else if (isIndexBag(index)) {
+			weight = 5.0;
+			price = sc.fakeData.getReusableBagPrice();
+			this.sc.updateExpectedCheckoutWeight(-weight);
+			this.updateCheckoutTotal(-price);	
+			this.sc.station.baggingArea.remove(bags.get(0));
+			this.bags.remove(0);
+			refreshGui();
+			return true;
 		}
-		else {
+		else if (index <= this.checkoutList.size()) {
 			Item item;
 			index--; // decrement index so it matches actual array index!
 			if (this.checkoutList.get(index) instanceof Barcode) {
@@ -173,13 +189,15 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				weight = item.getWeight(); // When PLU coded items are made they will have to be added to pluCodedItems along with the PLU code
 				price = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getPrice() * weight / 1000;	
 			}
-			// TODO update inventory to increase "stock" since the item wasn't sold
-			this.updateCheckoutTotal(-price);
+			this.updateCheckoutTotal(-price);				// decrement price
 			this.sc.updateExpectedCheckoutWeight(-weight);  // decrement weight
 			this.sc.station.baggingArea.remove(item);
 			checkoutList.remove(index); // remove the barcode or PLUCode from checkoutList so GUI updates accordingly
 			refreshGui();
 			return true;
+		}
+		else {
+			return false;
 		}
 
 	}

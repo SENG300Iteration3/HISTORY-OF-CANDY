@@ -184,7 +184,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		rightSidebuttonPanel.add(fourthButtonPanel);
 		this.removeItemBtn.setActionCommand("remove item");
 		this.removeItemBtn.addActionListener(itemsControl);
-		removeItemBtn.setEnabled(false);
+		removeItemBtn.setEnabled(true);
 
 		this.addLayer(mainPanel, 0);
 
