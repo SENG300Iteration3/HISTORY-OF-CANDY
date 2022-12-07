@@ -166,7 +166,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				item = (PLUCodedItem) this.sc.pluCodedItems.get(pluCode);
 				weight = item.getWeight(); // When PLU coded items are made they will have to be added to pluCodedItems along with the PLU code
 				price = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getPrice() * weight / 1000;	
-				System.out.println("PLU Price in remove item = " + price);
 			}
 			// TODO update inventory to increase "stock" since the item wasn't sold
 			this.updateCheckoutTotal(-price);
@@ -195,7 +194,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 					PLUCodedItem item = (PLUCodedItem) this.sc.pluCodedItems.get(pluCode);
 					double weight = item.getWeight(); // When PLU coded items are made they will have to be added to pluCodedItems along with the PLU code
 					price = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getPrice() * weight / 1000;	
-					System.out.println("PLU Price in TUPLE = " + price);
 					description = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getDescription();
 				}
 			list.add(new Tuple<String, Double>(description, price));
@@ -322,7 +320,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 			// price per kg
 			price = (double) product.getPrice() * weight / 1000;
-			System.out.println("PLU Price in add PLU = " + price);
 			this.addItemToCheckoutList(currentProductCode);
 			this.updateCheckoutTotal(price);
 
