@@ -166,4 +166,10 @@ public class PresentCashScreen extends Screen implements CashControlListener {
 		lastRecievedCash = returnedCash;
 		System.out.println("You recieved $" + returnedCash + " as change from the machine");
 	}
+
+	@Override
+	public void paymentFailed(CashControl cc) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -278,4 +278,10 @@ public class AttendantActionsPanel extends JPanel
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void setMembership(ReceiptControl rc, String dateTime) {
+		// TODO Auto-generated method stub
+		
+	}
 }
