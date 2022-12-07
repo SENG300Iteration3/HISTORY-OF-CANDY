@@ -1,5 +1,6 @@
 package com.diy.software.controllers;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.HashMap;
@@ -283,7 +284,7 @@ public class StationControl
 			}
 		}
 		
-		for(long i : station.coinDenominations) {
+		for(BigDecimal i : station.coinDenominations) {
 			int capacity = station.coinDispensers.get(i).getCapacity();
 			Coin[] coins = new Coin[capacity];
 			for(int j = 0; j < capacity; j++) {
@@ -701,7 +702,7 @@ public class StationControl
 	 * @throws OverloadException If the weight has overloaded the scale.
 	 */
 	public boolean expectedWeightMatchesActualWeight(double actualWeight) {
-		return (this.getExpectedWeight() - (actualWeight + bagWeight) >= 1 || this.getExpectedWeight() - (actualWeight + bagWeight) <= 1);
+		return Math.abs(getExpectedWeight() - (actualWeight + bagWeight)) <= 1;
 	}
 	
 	public int getBagInStock() {

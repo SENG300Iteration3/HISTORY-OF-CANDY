@@ -36,15 +36,12 @@ public class BagDispenserControl implements ActionListener {
 				ic.addReusableBags(lastDispensedReusableBag);
 				numBag--;
 				
-			} catch (EmptyException e) {
-//				System.out.println("Not enough bag. Only " + (numBag - i) + " bag available.");
-			}
+			} catch (EmptyException e) {}
 		}
 		sc.goBackOnUI();
 	}
 	
-	// FIXME: GUI team pls help me w creating GUI for the commented code below
-	private void checkBagInStock() {
+	public void checkBagInStock() {
 		resetInput();
 		if(sc.getBagInStock() >= numBag) {
 			dispenseBag(); 
@@ -52,17 +49,11 @@ public class BagDispenserControl implements ActionListener {
 			// customer can choose "ask for more bag"
 			sc.notifyNoBagsInStock();
 		}else {
-			// customer can choose "ask for more bag" or "take [the number of bag left]"
-			// if choose "ask for more bag" -> notify attendant
-			// else{
-			//		setNumBag(sc.getBagInStock());
-			//		dispenseBag();
-			// }
 			sc.notifyNotEnoughBagsInStock(sc.getBagInStock());
 		}
 	}
 	
-	private void setNumBag(int value) {
+	public void setNumBag(int value) {
 		numBag = value;
 	}
 	
