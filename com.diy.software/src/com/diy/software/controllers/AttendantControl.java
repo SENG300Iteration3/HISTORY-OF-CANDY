@@ -24,7 +24,7 @@ import com.unitedbankingservices.banknote.BanknoteStorageUnit;
 
 import ca.ucalgary.seng300.simulation.SimulationException;
 
-public class AttendantControl implements ActionListener, ReceiptPrinterListener, KeyboardListener, KeyListener, AttendantControlListener {
+public class AttendantControl implements ActionListener, ReceiptPrinterListener, KeyboardListener, KeyListener {
 
 	public AttendantStation station;
 	private StationControl sc;
@@ -581,102 +581,6 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 
 	@Override
 	public void keyReleased(Keyboard keyboard, String label) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void attendantApprovedBags(AttendantControl ac) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void attendantPreventUse(AttendantControl ac) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void attendantApprovedItemRemoval(AttendantControl bc) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void lowInk(AttendantControl ac, String message) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void lowPaper(AttendantControl ac, String message) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void printerNotLowState() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void outOfInk(AttendantControl ac, String message) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void outOfPaper(AttendantControl ac, String message) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void addInkState() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void addPaperState() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void signalWeightDescrepancy(String updateMessage) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void initialState() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void attendantPermitStationUse(AttendantControl ac) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void coinIsLowState(CoinStorageUnit unit, int amount) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void loggedIn(boolean isLoggedIn) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void triggerItemSearchScreen(AttendantControl ac) {
 		// TODO Auto-generated method stub
 		
 	}
