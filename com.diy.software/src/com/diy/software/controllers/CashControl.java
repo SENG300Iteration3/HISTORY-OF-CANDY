@@ -94,9 +94,9 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 			listener.changeReturned(this);
 	}
 
-	public void paymentFailed() {
+	public void paymentFailed(boolean a) {
 		for (CashControlListener listener : listeners)
-			listener.paymentFailed(this);
+			listener.paymentFailed(this, a);
 	}
 
 	/*
