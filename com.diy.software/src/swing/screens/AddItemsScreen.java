@@ -317,6 +317,12 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		for (int i = 0; i < itemDescriptions.length; i++) {
 			this.addScannedItem(i+1 + " - " + itemDescriptions[i], itemPrices[i]);
 		}
+		
+		if(checkoutList.isEmpty()) {
+			removeItemBtn.setEnabled(false);
+		} else {
+			removeItemBtn.setEnabled(true);
+		}
 	}
 
 	@Override
