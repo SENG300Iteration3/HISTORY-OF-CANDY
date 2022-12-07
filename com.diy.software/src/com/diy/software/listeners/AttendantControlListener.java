@@ -65,6 +65,12 @@ public interface AttendantControlListener {
 	 */
 	public void initialState();
 	
+
+	/*
+	 * allows attendant to load banknotes to storage when amount of banknotes is low
+	 */
+	public void banknotesInStorageLowState();
+	
 	/** 
 	 * attendant permits customer station use
 	 */
@@ -81,5 +87,5 @@ public interface AttendantControlListener {
 	public void coinIsLowState(CoinStorageUnit unit, int amount);
 
 	public void loggedIn(boolean isLoggedIn);
-		
+
 }

@@ -1,5 +1,6 @@
 package com.diy.software.app;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import com.diy.hardware.BarcodedProduct;
@@ -48,7 +49,8 @@ public class SENG300DoItYourselfStation {
 
   public static void configureDoItYourselfStation() {
     DoItYourselfStation.configureBanknoteDenominations(new int[] { 100, 50, 20, 10, 5, 1 });
-    DoItYourselfStation.configureCoinDenominations(new long[] { 200, 100, 25, 10, 5, 1 });
+    DoItYourselfStation.configureCoinDenominations(new BigDecimal[] { BigDecimal.valueOf(2.00), BigDecimal.valueOf(1.00), 
+    		BigDecimal.valueOf(0.25), BigDecimal.valueOf(0.10), BigDecimal.valueOf(0.05), BigDecimal.valueOf(0.01) });
   }
   
 	public static void initializeInventory() {

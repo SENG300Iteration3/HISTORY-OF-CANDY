@@ -1,9 +1,9 @@
 package com.diy.software.test.logic;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.awt.event.ActionEvent;
+import java.util.Currency;
 
 import org.junit.After;
 import org.junit.Before;
@@ -19,12 +19,16 @@ import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.abagnale.ReceiptPrinterND;
 import com.jimmyselectronics.opeechee.Card.CardData;
+import com.unitedbankingservices.TooMuchCashException;
+import com.unitedbankingservices.banknote.Banknote;
 import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import ca.powerutility.PowerGrid;
 import ca.ucalgary.seng300.simulation.InvalidArgumentSimulationException;
+import ca.ucalgary.seng300.simulation.SimulationException;
 
 public class TestAttendantControl {
+
 	AttendantControl ac;
 	StationControl sc;
 	AttendantListenerStub als;
@@ -32,6 +36,7 @@ public class TestAttendantControl {
 	SystemControlListenerStub scl;
 	ReceiptPrinterND rp;
 	ItemsControl ic;
+  Currency currency;
 
 	@Before
 	public void setup() {
@@ -50,6 +55,8 @@ public class TestAttendantControl {
 		rp.turnOff();
 		rp.turnOn();
 		rp.enable();
+    
+    this.currency = Currency.getInstance("CAD");
 	}
 
 	@Test
@@ -326,6 +333,76 @@ public class TestAttendantControl {
 	// ac.approveNoBaggingRequest();
 	// assertTrue(als.noBagging);
 	// }
+  
+  /*
+     * Test adjust banknote for change when storage is empty
+     * Should fill up storage completely
+     * 
+     * Capacity of storage is 1000 in DoItYourselfStation
+     */
+    @Test
+    public void testAdjustBanknoteForChangeEmptyStorage() throws SimulationException, TooMuchCashException {
+    	ac.addListener(als);
+    	assertFalse(als.banknoteAdjusted);
+    	ac.adjustBanknotesForChange();
+    	assertTrue(sc.station.banknoteStorage.getBanknoteCount() == 1000);
+    	assertTrue(als.banknoteAdjusted);
+    }
+    
+    /*
+     * Test adjust banknote for change when storage is already full and not below a threshold
+     * Loads 500 banknotes to storage. Should not adjust for change
+     */
+    @Test
+    public void testAdjustBanknoteForChangeFullStorage() throws SimulationException, TooMuchCashException {
+    	ac.addListener(als);
+    	assertFalse(als.banknoteAdjusted);
+    	for (int i = 0; i < 100; i++) {
+    		sc.station.banknoteStorage.load(new Banknote(currency, 5));
+    		sc.station.banknoteStorage.load(new Banknote(currency, 10));
+    		sc.station.banknoteStorage.load(new Banknote(currency, 20));
+    		sc.station.banknoteStorage.load(new Banknote(currency, 50));
+    		sc.station.banknoteStorage.load(new Banknote(currency, 100));
+    	}
+    	assertTrue(sc.station.banknoteStorage.getBanknoteCount() == 500);
+    	ac.adjustBanknotesForChange();
+    	assertFalse(sc.getCashControl().banknotesInStorageLow(sc.station.banknoteStorage));
+    }
+    
+    /*
+     * Test adjust banknote for change when amount of banknotes is exactly at threshold
+     * Loads 100 banknotes to storage (threshold set to 1/20 of storage (i.e. 50))
+     * More banknotes should be loaded
+     */
+    @Test
+    public void testAdjustBanknoteForChangeAtThreshold() throws SimulationException, TooMuchCashException {
+    	ac.addListener(als);
+    	assertFalse(als.banknoteAdjusted);
+    	for (int i = 0; i < 10; i++) {
+    		sc.station.banknoteStorage.load(new Banknote(currency, 5));
+    		sc.station.banknoteStorage.load(new Banknote(currency, 10));
+    		sc.station.banknoteStorage.load(new Banknote(currency, 20));
+    		sc.station.banknoteStorage.load(new Banknote(currency, 50));
+    		sc.station.banknoteStorage.load(new Banknote(currency, 100));
+    	}
+    	assertTrue(sc.station.banknoteStorage.getBanknoteCount() == 50);
+    	ac.adjustBanknotesForChange();
+    	assertTrue(sc.station.banknoteStorage.getBanknoteCount() == 1000);
+    	assertTrue(als.banknoteAdjusted);
+    }
+    
+    /*
+     * Test action for adjusting banknote storage for change
+     * The storage is initially empty and should be reloaded
+     */
+    @Test
+    public void testActionPerformedAdjustBanknote() {
+    	ActionEvent e = new ActionEvent(this, 0, "adjustBanknotesForChange");
+    	ac.addListener(als);
+    	assertFalse(als.banknoteAdjusted);
+    	ac.actionPerformed(e);
+    	assertTrue(als.banknoteAdjusted);
+    }
 
 	@Test
 	public void testActionPerformedPreventUse() {
@@ -451,7 +528,6 @@ public class TestAttendantControl {
 			// TODO Auto-generated method stub
 
 		}
-
 		@Override
 		public void triggerPurchaseBagsWorkflow(StationControl systemControl) {
 			// TODO Auto-generated method stub
@@ -475,6 +551,7 @@ public class TestAttendantControl {
 	public class AttendantListenerStub implements AttendantControlListener {
 		boolean attendantBags = false;
 		boolean attendantUse = false;
+		boolean banknoteAdjusted = false;
 		boolean lowState = false;
 		boolean addPaper = false;
 		boolean addInk = false;
@@ -535,6 +612,11 @@ public class TestAttendantControl {
 		@Override
 		public void noBagRequest() {
 			noBagging = true;
+		}
+
+		@Override
+		public void banknotesInStorageLowState() {
+			banknoteAdjusted = true;
 		}
 
 		@Override

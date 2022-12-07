@@ -2,6 +2,7 @@ package com.diy.software.controllers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
@@ -15,8 +16,6 @@ import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.abagnale.IReceiptPrinter;
 import com.jimmyselectronics.abagnale.ReceiptPrinterListener;
 import com.unitedbankingservices.TooMuchCashException;
-import com.unitedbankingservices.coin.Coin;
-import com.unitedbankingservices.coin.CoinStorageUnit;
 import com.unitedbankingservices.banknote.Banknote;
 import com.unitedbankingservices.banknote.BanknoteStorageUnit;
 import com.unitedbankingservices.coin.Coin;
@@ -50,7 +49,8 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	public AttendantControl(StationControl sc) {
 		this.sc = sc;
 		this.listeners = new ArrayList<>();
-		
+
+		this.currency = Currency.getInstance("CAD");
 	}
 
 	public void addListener(AttendantControlListener l) {
@@ -160,73 +160,85 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	}
 	
 	/*
-	 * Updates banknotes in station to be used for change and notifies cash controller
+	 * Attendant adjusts the amount of banknotes used for change
+	 * Cash controller notifies if storage is low in order to use
 	 * 
 	 * @throws SimulationException
-	 * 
+	 * 			For loading or checking null banknotes
 	 * @throws TooMuchCashException
 	 * 			Too much cash is loaded onto the storage
 	 */
 	public void adjustBanknotesForChange() throws SimulationException, TooMuchCashException {
-		//Maybe change amount to add??
-		int totalOnes = 20;
-		int totalFives = 20;
-		int totalTens = 20;
-		int totalTwenties = 20;
-		int totalFifties = 20;
-		int totalHundreds = 20;
+		boolean isLow = sc.getCashControl().banknotesInStorageLow(this.sc.station.banknoteStorage);
+		if (isLow) {
+			for (AttendantControlListener l : listeners)
+				l.banknotesInStorageLowState();
+			System.out.println("Banknote storage needs to be refilled.");
+		} else {
+			System.out.println("Banknote storage does not need to be loaded for now.");
+		}
+	}
+	
+	/*
+	 * Refills banknote storage if it is low
+	 * 
+	 * @param unit
+	 * 			The storage unit where the banknotes will be loaded
+	 * @throws SimulationException
+	 * 			For loading or checking null banknotes
+	 * @throws TooMuchCashException
+	 * 			Too much cash is loaded onto the storage
+	 */
+	public void loadBanknotesToStorage(BanknoteStorageUnit unit) throws SimulationException, TooMuchCashException {
+		// amount of each kind of banknote to add
+		int totalFives = unit.getCapacity()/5;
+		int totalTens = unit.getCapacity()/5;
+		int totalTwenties = unit.getCapacity()/5;
+		int totalFifties = unit.getCapacity()/5;
+		int totalHundreds = unit.getCapacity()/5;
 
-		Banknote one = new Banknote(currency, 1);
-		Banknote five = new Banknote(currency, 5);
-		Banknote ten = new Banknote(currency, 10);
-		Banknote twenty = new Banknote(currency, 20);
-		Banknote fifty = new Banknote(currency, 50);
-		Banknote oneHundred = new Banknote(currency, 100);
-
-		BanknoteStorageUnit unit = sc.station.banknoteStorage;
-		
 		sc.getCashControl().disablePayments();
 		List<Banknote> unloadedBanknotes = unit.unload();
 		sc.getCashControl().banknotesUnloaded(unit);	
 		
+		// Verify value of existing banknotes, decrement it associated counter, reload the banknote
 		for(Banknote banknote : unloadedBanknotes) {
-			if (banknote.getValue() == one.getValue()) {
-				totalOnes--;
+			if (banknote == null) {
+				break;
 			}
-			if (banknote.getValue() == five.getValue()) {
+			if (banknote.getValue() == 5) {
 				totalFives--;
 			}
-			if (banknote.getValue() == ten.getValue()) {
+			if (banknote.getValue() == 10) {
 				totalTens--;
 			}
-			if (banknote.getValue() == twenty.getValue()) {
+			if (banknote.getValue() == 20) {
 				totalTwenties--;
 			}
-			if (banknote.getValue() == fifty.getValue()) {
+			if (banknote.getValue() == 50) {
 				totalFifties--;
 			}
-			if (banknote.getValue() == oneHundred.getValue()) {
+			if (banknote.getValue() == 100) {
 				totalHundreds--;
 			}
+			unit.load(banknote);
 		}
 		
-		for (int i = 0; i < totalOnes; i++) {
-			unit.load(one);
-		}
+		// Load banknotes
 		for (int i = 0; i < totalFives; i++) {
-			unit.load(five);
+			unit.load(new Banknote(currency, 5));
 		}
 		for (int i = 0; i < totalTens; i++) {
-			unit.load(ten);
+			unit.load(new Banknote(currency, 10));
 		}
 		for (int i = 0; i < totalTwenties; i++) {
-			unit.load(twenty);
+			unit.load(new Banknote(currency, 20));
 		}
 		for (int i = 0; i < totalFifties; i++) {
-			unit.load(fifty);
+			unit.load(new Banknote(currency, 50));
 		}
 		for(int i = 0; i < totalHundreds; i++) {
-			unit.load(oneHundred);
+			unit.load(new Banknote(currency, 100));
 		}
 				
 		sc.getCashControl().banknotesLoaded(unit);
@@ -239,32 +251,44 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 *@param unit
 	 *		the unit that needs to be filled up
 	 *@param AMOUNT
-	 *		the amount of coins to fill up
+	 *		the amount of coin capacity to fill up MUST BE EVENLY DIVISIBLE BY 5
+	 *
+	 *@return
+	 *		the filled up unit
 	 * @throws TooMuchCashException 
 	 * @throws SimulationException 
 
 	 */
-	public void adjustCoinsForChange(CoinStorageUnit unit, int AMOUNT) throws SimulationException, TooMuchCashException  {
+	public void adjustCoinsForChange(int AMOUNT) throws SimulationException, TooMuchCashException  {
 		
-		this.unit = unit;
-		//take system out of service
+		
+		
+		CoinStorageUnit unit = sc.station.coinStorage;
+		
+		if(AMOUNT > unit.getCapacity()) {
+			throw new TooMuchCashException();
+		}
+		//take system out of service//
+		
+		AMOUNT /= 5;
 		
 		sc.getCashControl().disablePayments();
 		
-		Coin nickelToAdd = new Coin(5);
-		Coin dimeToAdd = new Coin(10);
-		Coin quaterToAdd = new Coin(25);
-		Coin loonieToAdd = new Coin(100);
-		Coin toonieToAdd = new Coin(200);
+		Coin tCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(2.0));
+		Coin lCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(1.0));
+		Coin qCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(0.25));
+		Coin dCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(0.1));
+		Coin nCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(0.05));
 		
 		
 		List<Coin> unloadedCoins = unit.unload();
+		sc.getCashControl().coinsUnloaded(unit);
 		
-		int nCounter = countCoin(5,unloadedCoins);
-		int dCounter = countCoin(10,unloadedCoins);
-		int qCounter = countCoin(25,unloadedCoins);
-		int lCounter = countCoin(100,unloadedCoins);
-		int tCounter = countCoin(200,unloadedCoins);
+		int nCounter = countCoin(nCoin,unloadedCoins);
+		int dCounter = countCoin(dCoin,unloadedCoins);
+		int qCounter = countCoin(qCoin,unloadedCoins);
+		int lCounter = countCoin(lCoin,unloadedCoins);
+		int tCounter = countCoin(tCoin,unloadedCoins);
 		
 		int nAmount = AMOUNT - nCounter;
 		int dAmount = AMOUNT - dCounter;
@@ -272,21 +296,29 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		int lAmount = AMOUNT - lCounter;
 		int tAmount = AMOUNT - tCounter;
 		
-		addCoin(nAmount,nickelToAdd);
-		addCoin(dAmount,dimeToAdd);
-		addCoin(qAmount,quaterToAdd);
-		addCoin(lAmount,loonieToAdd);
-		addCoin(tAmount,toonieToAdd);
+		for(int i = 0; i < nAmount; i++) {
+			unit.load(nCoin);
+		}
+		for(int i = 0; i < dAmount; i++) {
+			unit.load(dCoin);
+		}
+		for(int i = 0; i < qAmount; i++) {
+			unit.load(qCoin);
+		}
+		for(int i = 0; i < lAmount; i++) {
+			unit.load(lCoin);
+		}
+		for(int i = 0; i < tAmount; i++) {
+			unit.load(tCoin);
+		}
 		
-		
+				
 		//notify cash controller that the unit has been filled
 		sc.getCashControl().coinsLoaded(unit);
 		
 		//re enable system
 		sc.getCashControl().enablePayments();
 		
-		for (AttendantControlListener l : listeners)
-			l.initialState();
 	}
 	
 	/**
@@ -300,31 +332,18 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 * @return
 	 * 		returns the amount of coins counted
 	 */
-	public int countCoin(long value, List<Coin> coins) {
+	public int countCoin(Coin coinToCount, List<Coin> coins) {
+	
 		int count = 0;
 		for(Coin c : coins) {
-			if(c.getValue() == value) {
-				count++;
+
+			if(c != null) {
+				if(c == coinToCount) {
+					count++;
+				}
 			}
 		}
 		return count;
-	}
-	
-	/**
-	 * add the specified amount of coins to a list to add to dispenser
-	 * 
-	 * @param amount
-	 * 		amount of coin to add
-	 * 
-	 * @param coin 
-	 * 		the coin type to add
-	 * @throws TooMuchCashException 
-	 * @throws SimulationException 
-	 */
-	public void addCoin(int amount,Coin coin) throws SimulationException, TooMuchCashException{
-		for(int i = 0; i < amount; i++) {
-			unit.load(coin);
-		}
 	}
 	
 
@@ -366,6 +385,10 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 					System.out.println("request no bag");
 					noBagRequest();
 					break;
+
+				case "adjustBanknotesForChange":
+					attendantNotifications = ("Checking if banknotes in storage need to be adjusted");
+					adjustBanknotesForChange();
 					// TODO
 					// temporary delete later when button is moved
 				case "printReceipt":

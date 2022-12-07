@@ -2,6 +2,7 @@ package swing.panes;
 
 import com.diy.hardware.DoItYourselfStation;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -83,7 +84,8 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 
 	public static void configureDiItYourselfStationAR() {
 		DoItYourselfStation.configureBanknoteDenominations(new int[] { 100, 50, 20, 10, 5, 1 });
-		DoItYourselfStation.configureCoinDenominations(new long[] { 200, 100, 25, 10, 5, 1 });
+		DoItYourselfStation.configureCoinDenominations(new BigDecimal[] { new BigDecimal(2.00), new BigDecimal(1.00), 
+								new BigDecimal(.25), new BigDecimal(.10), new BigDecimal(.05), new BigDecimal(.01) });
 	}
 
 	private void addScreenToStack(Screen newScreen) {
