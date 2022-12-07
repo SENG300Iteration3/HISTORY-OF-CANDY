@@ -377,4 +377,10 @@ public class CustomerItemsPanel extends JPanel
 		
 	}
 
+	@Override
+	public void banknotesInStorageLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

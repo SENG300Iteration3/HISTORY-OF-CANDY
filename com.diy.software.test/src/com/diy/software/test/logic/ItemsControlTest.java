@@ -287,16 +287,9 @@ public class ItemsControlTest {
 	public void testPlaceItemRemoveLastItem() {
 		systemControl.customer.shoppingCart.add(itemsControl.getWrongBaggedItem());
 		systemControl.customer.selectNextItem();
-<<<<<<< HEAD
 		
 		itemsControl.placeItemOnBaggingArea();
 		
-		
-=======
-
-		itemsControl.placeItemOnScale();
-
->>>>>>> 2ca2c2d2fc7b8db7130ff9c97edf79962864bd32
 		try {
 			System.out.println(systemControl.station.baggingArea.getCurrentWeight());
 			assertTrue(systemControl.station.baggingArea.getCurrentWeight() >= itemsControl.getWrongBaggedItem().getWeight());
@@ -729,6 +722,24 @@ public class ItemsControlTest {
 		public void loggedIn(boolean isLoggedIn) {
 			// TODO Auto-generated method stub
 
+		}
+
+		@Override
+		public void attendantApprovedItemRemoval(AttendantControl bc) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void itemBagged() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void banknotesInStorageLowState() {
+			// TODO Auto-generated method stub
+			
 		}
 	}
 }

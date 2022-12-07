@@ -32,6 +32,7 @@ public class MembershipScreenTest {
 		PowerGrid.engageUninterruptiblePowerSource();
 		
 		fdi = new FakeDataInitializer();
+		fdi.addFakeMembers();
 		sc = new StationControl(fdi);
 		mc = sc.getMembershipControl();
 		
