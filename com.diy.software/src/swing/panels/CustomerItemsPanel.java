@@ -378,4 +378,10 @@ public class CustomerItemsPanel extends JPanel
 		
 	}
 
+	@Override
+	public void triggerItemSearchScreen(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

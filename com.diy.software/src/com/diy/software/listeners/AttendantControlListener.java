@@ -90,5 +90,6 @@ public interface AttendantControlListener {
 
 	public void loggedIn(boolean isLoggedIn);
 
+	public void triggerItemSearchScreen(AttendantControl ac);
 		
 }

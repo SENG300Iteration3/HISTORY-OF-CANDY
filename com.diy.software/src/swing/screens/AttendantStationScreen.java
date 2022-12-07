@@ -8,6 +8,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -54,6 +55,9 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	GUI_JButton printReceiptButton;
 
 	private static String HeaderText = "Attendant Screen";
+	
+	private ArrayList<JPanel> panelStack;
+	private JPanel currentPanel;
 
 	public AttendantStationScreen(final StationControl sc) {
 		super(sc, HeaderText);
@@ -65,6 +69,8 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		ac.addListener(this);
 		
 		sc.getItemsControl().addListener(this);
+		
+		currentPanel = centralPanel;
 		
 		// Initialize attendant buttons
 		approveAddedBagsButton = initializeButton("Approve Added Bags", "approve added bags", cusAddedBags);
@@ -449,5 +455,27 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		
 	public void itemBagged() {
 		approveNoBagging.setEnabled(false);
+	}
+
+
+	@Override
+	public void triggerItemSearchScreen(AttendantControl ac) {
+		TextSearchScreen screen = new TextSearchScreen(sc, ac);
+		addScreenToStack(screen);
+	}
+	
+	private void addScreenToStack(Screen newScreen) {
+		addPanel(newScreen.getRootPanel());
+		panelStack.add(newScreen.getRootPanel());
+	}
+	
+	private void addPanel(JPanel newPanel) {
+		JPanel parent = (JPanel) currentPanel.getParent();
+		parent.remove(currentPanel);
+		currentPanel = newPanel;
+		parent.add(currentPanel);
+		parent.invalidate();
+		parent.validate();
+		parent.repaint();
 	}
 }

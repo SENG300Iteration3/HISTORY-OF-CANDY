@@ -182,4 +182,10 @@ public class AttendantStationPane implements AttendantControlListener {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void triggerItemSearchScreen(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
 }

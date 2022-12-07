@@ -467,7 +467,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 					//TODO:
 					break;
 				case "remove":
-					//TODO:
+					removeItem();
 					break;
 				case "logout":
 					logout();
@@ -479,6 +479,12 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 			
 		}
 		
+	}
+	
+	private void removeItem() {
+		for (AttendantControlListener l : listeners) {
+			l.triggerItemSearchScreen(this);
+		}
 	}
 
 	@Override
