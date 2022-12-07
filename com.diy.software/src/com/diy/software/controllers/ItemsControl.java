@@ -122,6 +122,12 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 	}
 	
+	public void notifyItemRemoved() {
+		for (ItemsControlListener l : listeners){
+			l.itemRemoved(this);
+		}
+	}
+	
 	/**
 	 * The method responsible for removing an item from the system entirely.
 	 * Its cost is subtracted from the bill total, it is removed from the bagging area,
@@ -178,7 +184,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 	}
 	
-	
 	public ArrayList<Tuple<String, Double>> getItemDescriptionPriceList() {
 		 ArrayList<Tuple<String, Double>> list = new ArrayList<>();
 		 double price;
@@ -204,7 +209,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		 }
 		 return list;
 	}
-	
 	
 	public ArrayList<Object> getCheckoutList() {
 		return checkoutList;
@@ -485,7 +489,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			
 			if(!isPLU) {
 				System.err.println("The currently selected item has no PLU code! Or there is no item selected!");
-				currentProductCode = null;				sc.goBackOnUI();;
+				currentProductCode = null;
+				sc.goBackOnUI();;
 			} else if(expectedPLU.hashCode() != currentProductCode.hashCode()) {
 				System.err.println("You entered the wrong PLU code for the item!");
 				System.err.printf("The expected PLU code is %s\n", expectedPLU);
@@ -555,9 +560,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 					break;
 				case "remove item":
 					System.out.println("Requesting item removal. Please wait for Assistance!");
-					this.removeItem(1);
-					// TODO requestRemoveItem() currently doesn't work and crashes the code.
-					//requestRemoveItem();
+					requestRemoveItem();
 					break;
 				default:
 					break;

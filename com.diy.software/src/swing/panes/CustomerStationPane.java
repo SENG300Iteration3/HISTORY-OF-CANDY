@@ -135,7 +135,9 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 				AddOwnBagsPromptScreen screen = new AddOwnBagsPromptScreen(systemControl, 
 						"Please Place Your Bags In the Bagging Area");
 				addScreenToStack(screen);
-				
+			}else if (reason == "prevent") {
+				OkayPromptScreen screen = new OkayPromptScreen(systemControl, "Station Closed For Maintainence", true, false);
+				addScreenToStack(screen);
 			} else {
 				blockedPromptScreen = new BlockedPromptScreen(systemControl, reason);
 				addScreenToStack(blockedPromptScreen);
@@ -298,7 +300,7 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 
 	@Override
 	public void awaitingItemToBeRemoved(ItemsControl itemsControl, String updateMessage) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -316,7 +318,13 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 
 	@Override
 	public void awaitingAttendantToApproveItemRemoval(ItemsControl ic) {
-		// TODO Auto-generated method stub
+		okayPromptScreen = new OkayPromptScreen(sc, "Please Ask Attendant For Assistance In Removing An Item", false, false);
+		addScreenToStack(okayPromptScreen);
+	}
+
+	@Override
+	public void itemRemoved(ItemsControl itemsControl) {
+		triggerPanelBack(sc);
 		
 	}
 }

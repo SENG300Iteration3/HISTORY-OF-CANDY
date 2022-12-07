@@ -8,7 +8,7 @@ import com.diy.software.controllers.ReceiptControl;
 public interface AttendantControlListener {
 	public void attendantApprovedBags(AttendantControl ac);
 
-	public void attendantPreventUse(AttendantControl ac);
+	public void attendantPreventUse(AttendantControl ac);;
 	
 	/**
 	 *	Changes GUI to allow scanning of items
@@ -60,6 +60,12 @@ public interface AttendantControlListener {
 	 * state to approve no bagging request
 	 */
 	public void noBagRequest();
+	
+	/**
+	 * state to indicate item is bagged
+	 * cancel noBagRequest if needed
+	 */
+	public void itemBagged();
 	
 	/**
 	 * returns the attendant station to initial starting state when stations have no issues

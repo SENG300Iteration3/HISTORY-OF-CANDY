@@ -28,7 +28,7 @@ public class AttendantActionsPanel extends JPanel
 	private ReceiptControl rc;
 	private boolean stationBlocked = true; // FIXME: Testing now. Should be false to start
 	
-	JButton inkButton, paperButton, bagDispenserButton, coinButton, banknoteButton;
+	JButton inkButton, paperButton, bagDispenserButton, coinButton, banknoteButton, outOfOrderButton;
 	GridBagConstraints buttonGrid = new GridBagConstraints();
 
 	public AttendantActionsPanel(StationControl sc) {
@@ -50,9 +50,10 @@ public class AttendantActionsPanel extends JPanel
 		coinButton = initializeButton("Refill Coin Dispenser", "addCoin");
 		banknoteButton = initializeButton("Refill Banknote Dispenser", "addBanknote");
 		bagDispenserButton = initializeButton("Refill Bag Dispenser", "addBag");
+		outOfOrderButton = initializeButton("Out Of Order", "outOfOrder");
 		
 		this.setLayout(new GridBagLayout());
-
+ 
 		buttonGrid.gridx = 0;
 		buttonGrid.gridy = 0;
 		this.add(inkButton, buttonGrid);
@@ -68,6 +69,11 @@ public class AttendantActionsPanel extends JPanel
 		
 		buttonGrid.gridx = 4;
 		this.add(bagDispenserButton, buttonGrid);
+		
+		buttonGrid.gridx = 5;
+		this.add(outOfOrderButton, buttonGrid);
+		
+		bagDispenserButton.setEnabled(true);		// attendant should be able to load bags anytime they want to
 		
 //		Can add messages here
 //		buttonGrid.gridy = 1;
@@ -266,6 +272,16 @@ public class AttendantActionsPanel extends JPanel
 	}
 	@Override
 	public void awaitingAttendantToApproveItemRemoval(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void itemRemoved(ItemsControl itemsControl) {
+	
+	}
+	
+	public void itemBagged() {
+
 		// TODO Auto-generated method stub
 		
 	}

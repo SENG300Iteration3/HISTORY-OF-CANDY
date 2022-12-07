@@ -9,6 +9,7 @@ import java.util.Scanner;
 import java.util.HashMap;
 import java.util.Objects;
 import com.diy.software.listeners.AttendantControlListener;
+import com.diy.software.listeners.MembershipControlListener;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.OverloadException;
@@ -33,14 +34,17 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	private Currency currency;
 	String attendantNotifications;
 	
-
-	// TODO REMOVE BEFORE RELEASE
-	Scanner scanner = new Scanner(System.in);
 	public static final ArrayList<String> logins = new ArrayList<String>();
 	
 	public void login(String password) {
 		for (AttendantControlListener l : listeners) {
 			l.loggedIn(logins.contains(password));
+		}
+	}
+	
+	public void logout() {
+		for (AttendantControlListener l : listeners) {
+			l.loggedIn(false);
 		}
 	}
 
@@ -60,7 +64,6 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		listeners.remove(l);
 	}
 	
-	
 	// allow attendant to enable customer station use after it has been suspended
 	public void permitStationUse() {
 		sc.unblockStation();
@@ -76,7 +79,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	public void approveBagsAdded() {
 		sc.unblockStation();
 		for (AttendantControlListener l : listeners) {
-			l.attendantApprovedBags(this);
+			l.attendantApprovedBags(this); 
 		}
 	}
 	
@@ -99,16 +102,28 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 * 
 	 * Precondition: The customer must have requested "remove item" from their console.
 	 * 
+	 * @param i	The item number to remove
+	 * @return	Whether the removal was successful
 	 */
-	public void removeItem() {
-		// TODO Switch this so that the GUI uses a pinpad/numpad to enter the number
-		System.out.println("Enter the number corrseponding to the item to be removed: ");
-		int itemNumber = scanner.nextInt();
-		while (!ic.removeItem(itemNumber)) {
-			System.out.println("Enter the number corrseponding to the item to be removed: ");
-			itemNumber = scanner.nextInt();
+	public boolean removeItem(int i) {
+		
+		boolean success = ic.removeItem(i);
+		
+		if (success) {
+			removeItemSuccesful();
+			ic.notifyItemRemoved();
 		}
-		this.removeItemSuccesful();
+		
+		return success;
+		
+		// TODO Switch this so that the GUI uses a pinpad/numpad to enter the number
+//		System.out.println("Enter the number corrseponding to the item to be removed: ");
+//		int itemNumber = scanner.nextInt();
+//		while (!ic.removeItem(itemNumber)) {
+//			System.out.println("Enter the number corrseponding to the item to be removed: ");
+//			itemNumber = scanner.nextInt();
+//		}
+		
 	}
 	
 	/**
@@ -119,7 +134,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 *
 	 */
 	public void preventStationUse(){
-		sc.blockStation();
+		sc.blockStation("prevent");
 		for(AttendantControlListener l : listeners){
 			l.attendantPreventUse(this);
 		}
@@ -182,7 +197,11 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		sc.ItemApprovedToNotBag();
 		for (AttendantControlListener l : listeners)
 			l.initialState();
-		sc.getItemsControl().placeBulkyItemInCart();
+	}
+	
+	public void itemBagged() {
+		for (AttendantControlListener l : listeners)
+			l.itemBagged();
 	}
 	
 	/*
@@ -385,8 +404,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 					
 					break;
 				case "addBag": 
-					//TODO:
-					
+					sc.loadBags();
 					break;
 				case "request no bag":
 					attendantNotifications = ("customer requests no bagging");
@@ -414,18 +432,29 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 				case "prevent_use":
 					attendantNotifications = ("Preventing use on station for maintenance");
 					preventStationUse();
-				case "remove item":
-					removeItem();
 				case "startUp":
 					System.out.println("Station has been started up");
 					startUpStation();
+					break;
+				case "shutDown":
+					//TODO:
+					break;
+				case "add":
+					//TODO:
+					break;
+				case "remove":
+					//TODO:
+					break;
+				case "logout":
+					logout();
 					break;
 				default:
 					break;
 			}
 		} catch (Exception ex) {
-
+			
 		}
+		
 	}
 
 	@Override
@@ -505,6 +534,5 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	public void noBagRequest() {
 		for (AttendantControlListener l : listeners)
 			l.noBagRequest();
-
 	}
 }
