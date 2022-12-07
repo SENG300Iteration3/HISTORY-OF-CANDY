@@ -132,7 +132,7 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 
 	@Override
 	public void pluCodeEntered(PLUCodeControl pcc, String pluCode) {
-		this.pluCode.setText("");
+		this.pluCode.setText("PLU CODE");
 
 		//to give proper formatting for when an invalid code is given and then fixed. previously the code would keep the error message on screen instead of resetting font properly
 		message.setText(("Enter the item's PLU code".toUpperCase()));
