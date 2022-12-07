@@ -244,6 +244,12 @@ public class AttendantActionsPanel extends JPanel
 	@Override
 	public void attendantPreventUse(AttendantControl ac) {
 		stationBlocked = true;
+		
+		inkButton.setEnabled(true); 
+		paperButton.setEnabled(true); 
+		bagDispenserButton.setEnabled(true);
+		coinButton.setEnabled(true);
+		banknoteButton.setEnabled(true);
 	}
 
 	@Override
