@@ -106,12 +106,20 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		scannedPanel.setLayout(new GridLayout(20, 1));
 		itemScrollPane.getViewport().add(scannedPanel);
 
-
-		GUI_JPanel totalPanelBg = makeItemLabel("subtotal", 0);
-		((GUI_JLabel) totalPanelBg.getComponent(0)).setFont(GUI_Fonts.TITLE);
-		this.subtotalLabel = (GUI_JLabel) totalPanelBg.getComponent(1);
+		
+		GUI_JPanel totalPanelBg = new GUI_JPanel();
+		totalPanelBg.setPreferredSize(new Dimension(this.width - 200, 50));
+		totalPanelBg.setLayout(new BorderLayout());
+			
+		DecimalFormat df = new DecimalFormat("0.00");
+		subtotalLabel = new GUI_JLabel("Subtotal: $" + df.format(itemsControl.getCheckoutTotal()));
 		subtotalLabel.setBorder(new EmptyBorder(0, 0, 0, 34)); // adjust position of text
 		subtotalLabel.setFont(GUI_Fonts.TITLE);
+		
+		totalPanelBg.add(subtotalLabel);
+		((GUI_JLabel) totalPanelBg.getComponent(0)).setFont(GUI_Fonts.TITLE);
+		
+		
 		totalPanelBg.setPreferredSize(new Dimension(this.width - 400, 80));
 		totalPanelBg.setBorder(BorderFactory.createMatteBorder(0, 20, 20, 20, GUI_Color_Palette.DARK_BLUE));
 		totalPanelBg.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -211,17 +219,19 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 	private GUI_JPanel makeItemLabel(String itemName, double cost) {
 		GUI_JPanel itemPanel = new GUI_JPanel();
 		itemPanel.setPreferredSize(new Dimension(this.width - 200, 50));
-		itemPanel.setLayout(new BorderLayout());
+		BorderLayout layout = new BorderLayout();
+		layout.setHgap(50);
+		itemPanel.setLayout(layout);
 
-		GUI_JLabel totalLabel = new GUI_JLabel(itemName.toUpperCase());
-		totalLabel.setFont(GUI_Fonts.SUB_HEADER);
-		totalLabel.setBorder(new EmptyBorder(0, 30, 0, 0));
-		itemPanel.add(totalLabel, BorderLayout.WEST);
+		GUI_JLabel itemLabel = new GUI_JLabel(itemName.toUpperCase());
+		itemLabel.setFont(GUI_Fonts.SUB_HEADER);
+		itemLabel.setBorder(new EmptyBorder(0, 30, 0, 0));
+		itemPanel.add(itemLabel, BorderLayout.WEST);
 
 		GUI_JLabel costLabel = new GUI_JLabel(formatDollars(cost));
 		costLabel.setFont(GUI_Fonts.SUB_HEADER);
-		costLabel.setBorder(new EmptyBorder(0, 0, 0, 100));
-		itemPanel.add(costLabel, BorderLayout.EAST);
+		costLabel.setBorder(new EmptyBorder(0, 0, 0, 0));
+		itemPanel.add(costLabel, BorderLayout.CENTER);
 
 		return itemPanel;
 	}

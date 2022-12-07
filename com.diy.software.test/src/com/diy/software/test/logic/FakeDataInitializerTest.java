@@ -5,10 +5,13 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.diy.hardware.PLUCodedItem;
+import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.external.ProductDatabases;
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.fakedata.MembershipDatabase;
+import com.jimmyselectronics.Item;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.necchi.Numeral;
@@ -20,6 +23,7 @@ public class FakeDataInitializerTest {
 	private Barcode b2;
 	private Barcode b3;
 	private Barcode b4;
+	private PriceLookUpCode code1, code2;
 	private Card c1;
 	private Card c2;
 	private Card c3;
@@ -31,6 +35,9 @@ public class FakeDataInitializerTest {
 		b2 = new Barcode(new Numeral[] { Numeral.zero, Numeral.four, Numeral.two, Numeral.zero });
 		b3 = new Barcode(new Numeral[] { Numeral.four, Numeral.three, Numeral.two, Numeral.one }); 
 		b4 = new Barcode(new Numeral[] { Numeral.one, Numeral.two, Numeral.one, Numeral.two }); 
+		
+		code1 = new PriceLookUpCode("11111");
+		code2 = new PriceLookUpCode("23456");
 		
 		c1 = new Card("AMEX", "0000000000001234", "Stephen Strange", "000", "1234", true, true);
 		c2 = new Card("VISA", "0000000000004321", "Tony Stark", "111", "0987", true, true);
@@ -110,24 +117,25 @@ public class FakeDataInitializerTest {
 	@Test
 	public void testGetItems() {
 		FakeDataInitializer fdi = new FakeDataInitializer();
-		for (BarcodedItem item : fdi.getItems()) {
+		for(Item item : fdi.getItems()) {
 			assertNull(item);
 		}
+		
 		fdi.addProductAndBarcodeData();
-		for (BarcodedItem item : fdi.getItems()) {
+		fdi.addPLUCodedProduct();
+		for (Item item : fdi.getItems()) {
 			assertNotNull(item);
 		}
 		
-		BarcodedItem[] items = fdi.getItems();
+		Item[] items = fdi.getItems();
 		
-		assertTrue(items[0].getBarcode().equals(b1));
-		assertTrue(items[1].getBarcode().equals(b2));
-		assertTrue(items[2].getBarcode().equals(b3));
-		assertTrue(items[3].getBarcode().equals(b4));
-		assertTrue(items[0].getWeight() == 450);
-		assertTrue(items[3].getWeight() == 550);
+		assertTrue(((BarcodedItem) items[0]).getBarcode().equals(b1));
+		assertTrue(((BarcodedItem) items[1]).getBarcode().equals(b2));
+		assertTrue(((PLUCodedItem) items[2]).getPLUCode().equals(code1));
+		assertTrue(((PLUCodedItem) items[3]).getPLUCode().equals(code2));
 		
 		ProductDatabases.BARCODED_PRODUCT_DATABASE.clear();
+		ProductDatabases.PLU_PRODUCT_DATABASE.clear();
 	}
 
 	@Test

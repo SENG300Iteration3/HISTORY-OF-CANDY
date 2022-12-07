@@ -69,6 +69,8 @@ public class AttendantActionsPanel extends JPanel
 		buttonGrid.gridx = 4;
 		this.add(bagDispenserButton, buttonGrid);
 		
+		bagDispenserButton.setEnabled(true);		// attendant should be able to load bags anytime they want to
+		
 //		Can add messages here
 //		buttonGrid.gridy = 1;
 //		buttonGrid.gridx = 3;
@@ -256,6 +258,11 @@ public class AttendantActionsPanel extends JPanel
 
 	@Override
 	public void loggedIn(boolean isLoggedIn) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void itemBagged() {
 		// TODO Auto-generated method stub
 		
 	}
