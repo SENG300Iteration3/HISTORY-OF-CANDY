@@ -49,7 +49,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 	private TextLookupControl tlc;
 	
 	
-	public TextSearchScreen(ArrayList<StationControl> stationControls) 
+	public TextSearchScreen(StationControl sc, AttendantControl ac) 
 	{
 		super(null, headerTitle);
 		
@@ -60,7 +60,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 		initailizeSearchButton();
 		initailizeBackButton();
 		
-		kc = stationControls.get(0).getAttendantControl().getKeyboardControl();
+		kc = sc.getKeyboardControl();
 		kc.addListener(this);
 	}
 	

@@ -33,7 +33,7 @@ public class AttendantStationPane implements AttendantControlListener {
 		this.pc = pc;
 		
 		this.loginScreen = new AttendantLoginScreen(pc.getStationControls());
-		this.textScreen = new TextSearchScreen(pc.getStationControls());
+		//this.textScreen = new TextSearchScreen(pc.getStationControls());
 		this.tabbedPane = new JTabbedPane();
 		int i = 1;
 		for (StationControl sc : pc.getStationControls()) {
@@ -180,7 +180,7 @@ public class AttendantStationPane implements AttendantControlListener {
 	}
 
 	public void triggerItemSearchScreen(AttendantControl ac) {
-		System.out.println("fired");
-		this.changeComponents(textScreen.getRootPanel());
+//		System.out.println("fired");
+//		this.changeComponents(textScreen.getRootPanel());
 	}
 }
