@@ -33,6 +33,7 @@ public class PresentGiftCardOrCashScreenTest {
 PowerGrid.engageUninterruptiblePowerSource();
 		
 		fdi = new FakeDataInitializer();
+		fdi.addProductAndBarcodeData();
 		sc = new StationControl(fdi);
 		
 		sStub = new StubSystem();

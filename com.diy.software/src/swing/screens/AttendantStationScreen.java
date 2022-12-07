@@ -450,4 +450,11 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	public void itemBagged() {
 		approveNoBagging.setEnabled(false);
 	}
+
+
+	@Override
+	public void banknotesInStorageLowState() {
+		// TODO Auto-generated method stub
+		
+	}
 }
