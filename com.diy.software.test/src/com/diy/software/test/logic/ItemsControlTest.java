@@ -89,7 +89,8 @@ public class ItemsControlTest {
 		assertTrue(output2.x == "Tomatoes");
 		assertTrue(output3.x == "Reusable Bag");
 		assertTrue(output1.y == 2.0); 
-		assertTrue(output2.y == 1.2);
+		System.out.println(output2.y);
+		assertTrue(output2.y == 2.868);
 		assertTrue(output3.y == 2.0);
 		}
 
