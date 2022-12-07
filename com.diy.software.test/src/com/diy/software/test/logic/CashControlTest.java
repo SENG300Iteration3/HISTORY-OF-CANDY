@@ -3,6 +3,7 @@ package com.diy.software.test.logic;
 import static org.junit.Assert.*;
 
 import java.awt.event.ActionEvent;
+import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.List;
 
@@ -34,7 +35,8 @@ public class CashControlTest {
 	
 	public static void configureDoItYourselfStation() {
 	    DoItYourselfStation.configureBanknoteDenominations(new int[] { 100, 50, 20, 10, 5, 1 });
-	    DoItYourselfStation.configureCoinDenominations(new long[] { 200, 100, 25, 10, 5, 1 });
+	    DoItYourselfStation.configureCoinDenominations(new BigDecimal[] { BigDecimal.valueOf(2.00), BigDecimal.valueOf(1.00), 
+	    		BigDecimal.valueOf(0.25), BigDecimal.valueOf(0.10), BigDecimal.valueOf(0.05), BigDecimal.valueOf(0.01) });
 	}
 	
 	public void fillNotes(DoItYourselfStation station) {
@@ -48,7 +50,7 @@ public class CashControlTest {
 	public void fillCoins(DoItYourselfStation station) {
 		for(int i = 0; station.coinStorage.hasSpace(); i++) {
 			try {
-				station.coinStorage.receive(new Coin(Currency.getInstance("CAD"), 200));
+				station.coinStorage.receive(new Coin(Currency.getInstance("CAD"), BigDecimal.valueOf(2.0)));
 			} catch (DisabledException | TooMuchCashException e) {}
 		}
 	}
@@ -106,7 +108,7 @@ public class CashControlTest {
 		cs.enablePayments();
 		bns.cashInserted = false;
 		try {
-			sc.station.coinSlot.receive(new Coin(Currency.getInstance("CAD"), 200));
+			sc.station.coinSlot.receive(new Coin(Currency.getInstance("CAD"), BigDecimal.valueOf(2.0)));
 		} catch (DisabledException | TooMuchCashException e) {}
 		assertTrue(bns.cashInserted);
 	}
@@ -129,7 +131,7 @@ public class CashControlTest {
 		bns.cashInserted = false;
 		while(ic.getCheckoutTotal() == 1000.0) {
 			try {
-				sc.station.coinSlot.receive(new Coin(Currency.getInstance("CAD"), 100));
+				sc.station.coinSlot.receive(new Coin(Currency.getInstance("CAD"), BigDecimal.valueOf(1.0)));
 			} catch (DisabledException | TooMuchCashException e) {}
 		}
 		assertTrue(bns.cashInserted);
@@ -234,7 +236,7 @@ public class CashControlTest {
 	public void returnChange2() {
 		ic.updateCheckoutTotal(1.00);
 		cs.enablePayments();
-		ActionEvent e = new ActionEvent(this, 0, "c 200");
+		ActionEvent e = new ActionEvent(this, 0, "c 2.0");
 		cs.actionPerformed(e);
 		assertTrue(Math.abs(bns.lastReturnedCash-1.00) < 0.01);
 	}
@@ -251,7 +253,7 @@ public class CashControlTest {
 			i.disable();
 		}
 		cs.actionPerformed(e);
-		assertTrue(Math.abs(bns.lastReturnedCash-5.00) < 0.01);
+		assertTrue(Math.abs(bns.lastReturnedCash-0) < 0.01);
 	}
 
 	@Test
@@ -335,7 +337,7 @@ public class CashControlTest {
 			}
 			double returnedCash = 0;
 			for(Coin i : c) {
-				returnedCash += ((double)i.getValue())/100.0;
+				returnedCash += i.getValue().doubleValue();
 			}
 			if(b != null) {
 				for(Banknote i : b) {
@@ -360,7 +362,7 @@ public class CashControlTest {
 			}
 			double returnedCash = 0;
 			for(Coin i : c) {
-				returnedCash += ((double)i.getValue())/100.0;
+				returnedCash += i.getValue().doubleValue();
 				cashRejected = true;
 			}
 			if(b != null) {
