@@ -9,11 +9,9 @@ public class StubSystem implements StationControlListener{
 	boolean locked = false;
 	boolean paymentStatus = false;
 	boolean triggerPaymentWorkflow = false;
+	public boolean triggerCatalogWorkflow = false;
 	public String paymentType;
-<<<<<<< HEAD
 	boolean membershipCardInput = false;
-=======
->>>>>>> branch 'liza/gui-tests' of https://github.com/SENG300Iteration3/SENG-300-Iteration-3.git
 	public boolean triggerPanelBack = false;
 
 	@Override
@@ -84,8 +82,6 @@ public class StubSystem implements StationControlListener{
 
 	@Override
 	public void startMembershipCardInput(StationControl systemControl) {
-<<<<<<< HEAD
-<<<<<<< Upstream, based on origin/main
 		membershipCardInput = true;
 		
 	}
@@ -121,42 +117,6 @@ public class StubSystem implements StationControlListener{
 	}
 
 	@Override
-	public void systemControlLocked(StationControl systemControl, boolean isLocked, String reason) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void membershipCardInputFinished(StationControl systemControl) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void membershipCardInputCanceled(StationControl systemControl, String reason) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void triggerPurchaseBagsWorkflow(StationControl systemControl) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void noBagsInStock(StationControl systemControl) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void notEnoughBagsInStock(StationControl systemControl, int numBag) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void triggerPLUCodeWorkflow(StationControl systemControl) {
 		// TODO Auto-generated method stub
 		
@@ -164,38 +124,6 @@ public class StubSystem implements StationControlListener{
 
 	@Override
 	public void triggerBrowsingCatalog(StationControl systemControl) {
-=======
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void membershipCardInputFinished(StationControl systemControl) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void membershipCardInputCanceled(StationControl systemControl, String reason) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void triggerPurchaseBagsWorkflow(StationControl systemControl) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void noBagsInStock(StationControl systemControl) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void notEnoughBagsInStock(StationControl systemControl, int numBag) {
->>>>>>> branch 'liza/gui-tests' of https://github.com/SENG300Iteration3/SENG-300-Iteration-3.git
 		// TODO Auto-generated method stub
 		
 	}
