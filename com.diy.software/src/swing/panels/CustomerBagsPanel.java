@@ -229,6 +229,22 @@ public class CustomerBagsPanel extends JPanel
 	}
 
 	@Override
+	public void attendantApprovedItemRemoval(AttendantControl bc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void awaitingAttendantToApproveItemRemoval(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void itemRemoved(ItemsControl itemsControl) {
+		
+	}
+	
 	public void itemBagged() {
 		// TODO Auto-generated method stub
 		

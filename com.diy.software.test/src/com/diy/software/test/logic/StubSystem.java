@@ -118,7 +118,6 @@ public class StubSystem implements StationControlListener{
 
 	@Override
 	public void systemControlLocked(StationControl systemControl, boolean isLocked, String reason) {
-=======
 		// TODO Auto-generated method stub
 		
 	}
@@ -131,7 +130,6 @@ public class StubSystem implements StationControlListener{
 
 	@Override
 	public void membershipCardInputCanceled(StationControl systemControl, String reason) {
->>>>>>> 296c4ff Added tests for PaymentScreen
 		// TODO Auto-generated method stub
 		
 	}

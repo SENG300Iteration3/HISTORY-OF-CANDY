@@ -162,7 +162,7 @@ public class PresentGiftCardOrCashScreen extends Screen implements CashControlLi
 			}
 			double returnedCash = 0;
 			for(Coin i : c) {
-				returnedCash += ((double)i.getValue())/100.0;
+				returnedCash += i.getValue().doubleValue();
 			}
 			if(b != null) {
 				returnedCash += b.getValue();
@@ -185,7 +185,7 @@ public class PresentGiftCardOrCashScreen extends Screen implements CashControlLi
 			}
 			double returnedCash = 0;
 			for(Coin i : c) {
-				returnedCash += ((double)i.getValue())/100.0;
+				returnedCash += i.getValue().doubleValue();
 			}
 			if(b != null) {
 				for(Banknote i : b) {

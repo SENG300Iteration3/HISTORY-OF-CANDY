@@ -3,9 +3,9 @@ package com.diy.software.fakedata;
 
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
-
-import javax.swing.text.PlainDocument;
+import java.util.Map;
 
 import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.PLUCodedItem;
@@ -19,11 +19,14 @@ import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.necchi.Numeral;
 import com.jimmyselectronics.opeechee.Card;
-import com.jimmyselectronics.svenden.ReusableBag;
 import com.unitedbankingservices.coin.CoinStorageUnit;
 
 public class FakeDataInitializer {
 	
+	/**
+	 * The known Barcoded Items. Indexed by barcode.
+	 */
+	public static final Map<Barcode, BarcodedItem> BARCODED_ITEM_DATABASE = new HashMap<>();
 	private Barcode barcode1, barcode2, barcode3, barcode4;
 	private BarcodedItem item1, item2, item3, item4;
 	private BarcodedProduct bp1, bp2, bp3, bp4;
@@ -34,26 +37,56 @@ public class FakeDataInitializer {
 	private long reusableBagPrice = 2;
 	
 	private Card card1, card2, card3, card4, card5;
+
 	private CardIssuer fakebank;
 	private CoinStorageUnit fakeCoinStorageUnit;
 	private final Double AMOUNT_AVAILABLE = 1000.0;
 	private final int COIN_STORAGE_CAPACITY = 50;
-	Calendar expire_date = Calendar.getInstance();
+	private Calendar calendar = Calendar.getInstance();
+	private Date today = new Date();
+	private Date expire_date = new Date(today.getTime() + (1000*60*60*24));
 	
 	public void addProductAndBarcodeData () {
 		/**
 		 * BarcodedProducts & BarcodedItems in customer shopping cart starts here
 		 */
+
 		barcode1 = new Barcode(new Numeral[] { Numeral.one, Numeral.two, Numeral.three, Numeral.four }); 
 		barcode2 = new Barcode(new Numeral[] { Numeral.zero, Numeral.four, Numeral.two, Numeral.zero });
 		
 		item1 = new BarcodedItem(barcode1, 450); 
+
 		item2 = new BarcodedItem(barcode2, 420); 
+
 		bp1 = new BarcodedProduct(barcode1, "Can of Beans", 2, 450);
-		bp2 = new BarcodedProduct(barcode2, "Bag of Doritos", 5, 420);
+
+		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode1, bp1);
+		FakeDataInitializer.BARCODED_ITEM_DATABASE.put(barcode1, item1);
 		
+		barcode2 = new Barcode(new Numeral[] { Numeral.zero, Numeral.four, Numeral.two, Numeral.zero }); 
+		item2 = new BarcodedItem(barcode2, 420); 
+
+		bp2 = new BarcodedProduct(barcode2, "Bag of Doritos", 5, 420);
+
+		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode2, bp2);
+		FakeDataInitializer.BARCODED_ITEM_DATABASE.put(barcode2, item2);
+		
+		barcode3 = new Barcode(new Numeral[] { Numeral.four, Numeral.three, Numeral.two, Numeral.one }); 
+		item3 = new BarcodedItem(barcode3, 350); 
+		bp3 = new BarcodedProduct(barcode3, "Rib Eye Steak", 17, 350);
+		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode3, bp3);
+		FakeDataInitializer.BARCODED_ITEM_DATABASE.put(barcode3, item3);
+		
+		barcode4 = new Barcode(new Numeral[] { Numeral.one, Numeral.two, Numeral.one, Numeral.two }); 
+		item4 = new BarcodedItem(barcode4, 550); 	
+		bp4 = new BarcodedProduct(barcode4, "Cauliflower", 6, 550);
+		FakeDataInitializer.BARCODED_ITEM_DATABASE.put(barcode4, item4);
+		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode4, bp4);
+		
+
 		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode1, bp1);
 		ProductDatabases.BARCODED_PRODUCT_DATABASE.put(barcode2, bp2);
+
 		ProductDatabases.INVENTORY.put(bp1, 10);
 		ProductDatabases.INVENTORY.put(bp2, 10);
 		
@@ -153,7 +186,6 @@ public class FakeDataInitializer {
 	public void addCardData() {
 		
 		fakebank = new CardIssuer("RBC", 14);
-		expire_date.add(Calendar.YEAR, 5);
 		card1 = new Card("AMEX", "0000000000001234", "Stephen Strange", "000", "1234", false, true);
 		card2 = new Card("VISA", "0000000000004321", "Tony Stark", "111", "0987", true, true);
 		card3 = new Card("MAST", "0000000000009999", "Natasha Romanoff", "222", "1111", true, false);
@@ -213,7 +245,9 @@ public class FakeDataInitializer {
 		return MembershipDatabase.membershipMap;
 	}
 	
+
 	public CoinStorageUnit getFakeUnit() {
 		return fakeCoinStorageUnit;
+
 	}
 }

@@ -1,6 +1,8 @@
 package swing.styling;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.border.EtchedBorder;
 
 @SuppressWarnings("serial")
 public class GUI_JButton extends JButton {

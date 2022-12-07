@@ -1,15 +1,22 @@
 package com.diy.software.listeners;
 
 import com.diy.software.controllers.AttendantControl;
+import com.diy.software.controllers.BagsControl;
 import com.unitedbankingservices.coin.CoinStorageUnit;
 import com.diy.software.controllers.ReceiptControl;
 
 public interface AttendantControlListener {
 	public void attendantApprovedBags(AttendantControl ac);
 
-	public void attendantPreventUse(AttendantControl ac);
+	public void attendantPreventUse(AttendantControl ac);;
 	
 	/**
+	 *	Changes GUI to allow scanning of items
+	 */
+	public void attendantApprovedItemRemoval(AttendantControl bc);
+	
+	/**
+	 * allowing attendant to add paper to the printer when the printer is out or low on paper
 	 * used to notify low ink state
 	 */
 	public void lowInk(AttendantControl ac, String message);
@@ -65,6 +72,7 @@ public interface AttendantControlListener {
 	 */
 	public void initialState();
 	
+
 	/** 
 	 * attendant permits customer station use
 	 */
@@ -81,5 +89,6 @@ public interface AttendantControlListener {
 	public void coinIsLowState(CoinStorageUnit unit, int amount);
 
 	public void loggedIn(boolean isLoggedIn);
+
 		
 }
