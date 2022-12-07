@@ -207,7 +207,6 @@ public class CustomerItemsPanel extends JPanel
 	
 	@Override
 	public void awaitingAttendantToApproveItemRemoval(ItemsControl bc) {
-		System.out.println("Triggered in customer panel");
 		selectNextItemButton.setEnabled(false);
 		mainScannerButton.setEnabled(false);
 		handheldScannerButton.setEnabled(false);

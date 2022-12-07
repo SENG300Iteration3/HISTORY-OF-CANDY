@@ -186,6 +186,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		this.removeItemBtn.addActionListener(itemsControl);
 		removeItemBtn.setEnabled(false);
 
+
 		this.addLayer(mainPanel, 0);
 
 		//Bottom 3 buttons
@@ -302,40 +303,20 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 	}
 
 	@Override
-	public void itemsHaveBeenUpdated(ItemsControl ic) {
-		ArrayList<Object> checkoutList = ic.getCheckoutList();
-		ArrayList<ReusableBag> bags = ic.getBagsList();
-		String name;
-		double price;
+	public void itemsHaveBeenUpdated(ItemsControl itemsControl) {
+		ArrayList<Tuple<String, Double>> checkoutList = itemsControl.getItemDescriptionPriceList();
+
+		String[] itemDescriptions = new String[checkoutList.size()];
+		double[] itemPrices = new double[checkoutList.size()];
+
+		for (int i = 0; i < checkoutList.size(); i++) {
+			itemDescriptions[i] = checkoutList.get(i).x;
+			itemPrices[i] = checkoutList.get(i).y;
+		}
 		this.invalidateAllScannedItems();
-		for (int i = 0; i < checkoutList.size(); i ++) {
-			if (checkoutList.get(i) instanceof Barcode) {
-				Barcode barcode = (Barcode) checkoutList.get(i);
-				price = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getPrice();
-				name = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getDescription();
-			}
-			else {
-				PriceLookUpCode pluCode = (PriceLookUpCode) checkoutList.get(i);
-				PLUCodedItem item = (PLUCodedItem) this.sc.pluCodedItems.get(pluCode);
-				double weight = item.getWeight(); // When PLU coded items are made they will have to be added to pluCodedItems along with the PLU code
-				price = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getPrice() * weight / 1000;	
-				name = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getDescription();
-			}		
-			this.addScannedItem(i+1 + " - " + name, price);
+		for (int i = 0; i < itemDescriptions.length; i++) {
+			this.addScannedItem(i+1 + " - " + itemDescriptions[i], itemPrices[i]);
 		}
-		int index = checkoutList.size();
-		double reusableBagPrice = sc.fakeData.getReusableBagPrice();
-		for (ReusableBag bag: bags) {
-			index++;
-			this.addScannedItem(index + " - " + "Reusable Bag", reusableBagPrice);
-		}
-		
-		if(checkoutList.isEmpty()) {
-			removeItemBtn.setEnabled(false);
-		} else {
-			removeItemBtn.setEnabled(true);
-		}
-		
 	}
 
 	@Override
