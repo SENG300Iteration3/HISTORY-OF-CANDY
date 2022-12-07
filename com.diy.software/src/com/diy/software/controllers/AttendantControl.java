@@ -476,6 +476,12 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 		}
 	}
 	
+	public void exitTextSearch() {
+		for (AttendantControlListener l : listeners) {
+			l.exitTextSearchScreen(this);
+		}
+	}
+	
 	public KeyboardControl getKeyboardControl() {
 		return kc;
 	}

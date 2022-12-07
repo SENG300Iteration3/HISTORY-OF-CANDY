@@ -311,4 +311,10 @@ public class AttendantKeyboardPanel extends JPanel implements KeyboardControlLis
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void exitTextSearchScreen(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
 }

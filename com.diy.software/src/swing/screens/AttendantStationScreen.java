@@ -71,6 +71,8 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		sc.getItemsControl().addListener(this);
 		
 		currentPanel = centralPanel;
+		panelStack = new ArrayList<JPanel>();
+		panelStack.add(currentPanel);
 		
 		// Initialize attendant buttons
 		approveAddedBagsButton = initializeButton("Approve Added Bags", "approve added bags", cusAddedBags);
@@ -476,5 +478,23 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		parent.invalidate();
 		parent.validate();
 		parent.repaint();
+	}
+	
+	private void removePanelFromStack() {
+		JPanel parent = (JPanel) currentPanel.getParent();
+		parent.remove(currentPanel);
+		currentPanel = panelStack.get(panelStack.size() - 2);
+		parent.add(currentPanel);
+		parent.invalidate();
+		parent.validate();
+		parent.repaint();
+		panelStack.remove(panelStack.size() - 1);
+	}
+
+
+	@Override
+	public void exitTextSearchScreen(AttendantControl ac) {
+		removePanelFromStack();
+		
 	}
 }

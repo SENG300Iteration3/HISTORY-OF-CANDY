@@ -184,4 +184,10 @@ public class AttendantStationPane implements AttendantControlListener {
 //		System.out.println("fired");
 //		this.changeComponents(textScreen.getRootPanel());
 	}
+
+	@Override
+	public void exitTextSearchScreen(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
 }

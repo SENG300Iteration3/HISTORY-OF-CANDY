@@ -47,11 +47,14 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 	
 	private KeyboardControl kc;
 	private TextLookupControl tlc;
+	private AttendantControl ac;
 	
 	
 	public TextSearchScreen(StationControl sc, AttendantControl ac) 
 	{
 		super(null, headerTitle);
+		
+		this.ac = ac;
 		
 		// Initializing all GUI Components
 		initalizeSearchAreaBackground();
@@ -189,6 +192,14 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 		backButton.setPreferredSize(new Dimension(searchButtonWidth, searchButtonHeight));
 		backButton.setLayout(new BorderLayout());
 		backButton.setBorder(emptyBorder);
+		backButton.addActionListener(new ActionListener() 
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				ac.exitTextSearch();
+			}
+		});
 		
 		//Setting up grid Bag Constraints on the back button
 		gridBagConstraints.gridx = 0;
@@ -197,6 +208,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 		
 		//Adding the component to the main Background
 		backgroundPanel.add(backButton, gridBagConstraints);
+		
 	}
 	
 	
