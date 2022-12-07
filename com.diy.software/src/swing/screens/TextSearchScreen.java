@@ -25,6 +25,7 @@ import com.diy.software.controllers.StationControl;
 import com.diy.software.controllers.TextLookupControl;
 import com.diy.software.listeners.KeyboardControlListener;
 import com.diy.software.listeners.TextLookupControlListener;
+import com.diy.software.util.CodedProduct;
 
 import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Fonts;
@@ -52,7 +53,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 	
 	public TextSearchScreen(StationControl sc, AttendantControl ac) 
 	{
-		super(null, headerTitle);
+		super(sc, headerTitle);
 		
 		this.ac = ac;
 		
@@ -65,6 +66,9 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 		
 		kc = sc.getKeyboardControl();
 		kc.addListener(this);
+		
+		tlc = ac.getTextLookupControl();
+		tlc.addListener(this);
 	}
 	
 	private void initalizeSearchAreaBackground()
@@ -173,9 +177,11 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
-				searchResultPanel.add(makeItemComponent("Item " + 1, 1));
-				searchResultPanel.repaint();
-				searchResultPanel.revalidate();
+				tlc.findProduct(searchbar.getText());
+//				
+//				searchResultPanel.add(makeItemComponent("Item " + 1, 1));
+//				searchResultPanel.repaint();
+//				searchResultPanel.revalidate();
 			}
 		});
 	}
@@ -213,7 +219,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 	
 	
 	//Creates  Item detail/button
-	private GUI_JButton makeItemComponent(String itemName, double cost) 
+	private GUI_JButton makeItemComponent(String itemName, double cost, final int index) 
 	{
 		//Setting up the button 
 		int buttonSize  = 200;
@@ -221,6 +227,14 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 		itemButton.setPreferredSize(new Dimension(this.width - buttonSize, 100));
 		itemButton.setLayout(new BorderLayout());
 		itemButton.setBorder(emptyBorder);
+		itemButton.addActionListener(new ActionListener() 
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				tlc.addProduct(index);
+			}
+		});
 		
 		//Setting up and adding the total label
 		GUI_JLabel totalLabel = new GUI_JLabel(itemName.toUpperCase());
@@ -254,8 +268,8 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 	{
 		StationControl stationControl = new StationControl();
 		AttendantControl attendantControl = new AttendantControl(stationControl);
-		//TextSearchScreen testGui = new TextSearchScreen(stationControl, attendantControl);
-		//testGui.openInNewJFrame();
+		TextSearchScreen testGui = new TextSearchScreen(stationControl, attendantControl);
+		testGui.openInNewJFrame();
 	}
 
 
@@ -296,13 +310,18 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 
 	@Override
 	public void searchHasBeenCleared(TextLookupControl tlc) {
-		// TODO Auto-generated method stub
+		clearSearchResults();
 		
 	}
 
 	@Override
 	public void resultsWereFound(TextLookupControl tlc) {
-		// TODO Auto-generated method stub
+		ArrayList<CodedProduct> results = tlc.getResults();
+		for (int i = 0; i < results.size(); i++) {
+			CodedProduct product = results.get(i);
+			searchResultPanel.add(makeItemComponent(product.toString(), product.getPrice(), i));
+			
+		}
 		
 	}
 

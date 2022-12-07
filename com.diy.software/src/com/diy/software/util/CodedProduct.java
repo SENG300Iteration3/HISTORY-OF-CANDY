@@ -19,4 +19,20 @@ public class CodedProduct {
 	public PLUCodedProduct getPLUCodedProduct() {
 		return plu;
 	}
+	
+	public String toString() {
+		if (bar != null) {
+			return bar.getDescription();
+		} else {
+			return plu.getDescription();
+		}
+	}
+	
+	public long getPrice() {
+		if (bar != null) {
+			return bar.getPrice();
+		} else {
+			return plu.getPrice();
+		}
+	}
 }

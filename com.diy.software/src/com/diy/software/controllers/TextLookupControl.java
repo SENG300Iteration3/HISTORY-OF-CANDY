@@ -105,8 +105,13 @@ public class TextLookupControl implements KeyboardControlListener{
 		return result;
 	}
 	
+	public ArrayList<CodedProduct> getResults() {
+		return results;
+	}
+	
 	public void addProduct(int selectionIndex) {
-		ac.preventStationUse();
+		sc.blockStation();
+		//ac.preventStationUse();
 		selection = getResult(selectionIndex);
 		if (selection.getBarcodedProduct() == null) {
 			PLUCodedProduct productToAdd = selection.getPLUCodedProduct();
