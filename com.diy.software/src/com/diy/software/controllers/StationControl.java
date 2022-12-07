@@ -801,5 +801,11 @@ public class StationControl
 	public void bagsLoaded(ReusableBagDispenser dispenser, int count) {
 		bagInStock++;
 	}
+	
+	public void printReceipt() {
+		for (StationControlListener l: listeners) {
+			l.triggerReceiptScreen(this);
+		}
+	}
 
 }

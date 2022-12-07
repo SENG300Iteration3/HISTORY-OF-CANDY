@@ -329,4 +329,11 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 		triggerPanelBack(sc);
 		
 	}
+
+	@Override
+	public void triggerReceiptScreen(StationControl systemControl) {
+		ReceiptScreen screen = new ReceiptScreen(systemControl);
+		addScreenToStack(screen);
+		
+	}
 }
