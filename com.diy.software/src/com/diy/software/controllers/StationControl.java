@@ -673,7 +673,7 @@ public class StationControl
 	 * @throws OverloadException If the weight has overloaded the scale.
 	 */
 	public boolean expectedWeightMatchesActualWeight(double actualWeight) {
-		return (this.getExpectedWeight() - (actualWeight + bagWeight) >= 1 || this.getExpectedWeight() - (actualWeight + bagWeight) <= 1);
+		return Math.abs(getExpectedWeight() - (actualWeight + bagWeight)) <= 1;
 	}
 	
 	public int getBagInStock() {
