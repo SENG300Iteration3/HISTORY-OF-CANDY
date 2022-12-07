@@ -29,7 +29,7 @@ public class AttendantActionsPanel extends JPanel
 	private boolean stationBlocked = false;
 	private boolean isLoggedIn = false;
 	
-	JButton inkButton, paperButton, bagDispenserButton, coinButton, banknoteButton, outOfOrderButton;
+	JButton inkButton, paperButton, bagDispenserButton, coinButton, banknoteButton;
 	GridBagConstraints buttonGrid = new GridBagConstraints();
 
 	public AttendantActionsPanel(StationControl sc) {
@@ -51,7 +51,6 @@ public class AttendantActionsPanel extends JPanel
 		coinButton = initializeButton("Refill Coin Dispenser", "addCoin");
 		banknoteButton = initializeButton("Refill Banknote Dispenser", "addBanknote");
 		bagDispenserButton = initializeButton("Refill Bag Dispenser", "addBag");
-		outOfOrderButton = initializeButton("Out Of Order", "outOfOrder");
 		
 		this.setLayout(new GridBagLayout());
  
@@ -70,9 +69,6 @@ public class AttendantActionsPanel extends JPanel
 		
 		buttonGrid.gridx = 4;
 		this.add(bagDispenserButton, buttonGrid);
-		
-		buttonGrid.gridx = 5;
-		this.add(outOfOrderButton, buttonGrid);
 		
 //		bagDispenserButton.setEnabled(true);		// attendant should be able to load bags anytime they want to
 													// I thought you need to block a station before you change it?
@@ -271,7 +267,6 @@ public class AttendantActionsPanel extends JPanel
 	public void loggedIn(boolean isLoggedIn) {
 		// TODO Auto-generated method stub
 		this.isLoggedIn = isLoggedIn;
-		if (isLoggedIn) outOfOrderButton.setEnabled(true);
 	}
 	@Override
 	public void itemBagged() {

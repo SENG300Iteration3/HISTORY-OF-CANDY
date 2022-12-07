@@ -43,7 +43,6 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 				permitButton, preventButton, addItemButton, removeItemButton, logoutButton;
 	GUI_JLabel 	weightDisplayLabel, weightDescrepancyMssg, inkLabel, paperLabel,
 				adjustCoinLabel, adjustBanknoteLabel;
-	GUI_JButton printReceiptButton;
 
 	private static String HeaderText = "Attendant Screen";
 
