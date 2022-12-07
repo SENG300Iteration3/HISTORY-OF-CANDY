@@ -3,10 +3,13 @@ package com.diy.software.controllers;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.DoItYourselfStation;
+import com.diy.hardware.PLUCodedItem;
 import com.diy.hardware.PLUCodedProduct;
 import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.Product;
@@ -27,6 +30,7 @@ import com.jimmyselectronics.abagnale.ReceiptPrinterListener;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodeScanner;
 import com.jimmyselectronics.necchi.BarcodeScannerListener;
+import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.opeechee.Card;
 import com.jimmyselectronics.opeechee.Card.CardData;
 import com.jimmyselectronics.opeechee.CardReader;
@@ -66,6 +70,10 @@ public class StationControl
 	public String userMessage;
 
 	public ArrayList<StationControlListener> listeners = new ArrayList<>();
+	
+	// Need to track item objects associated with this particular instance
+	public Map<Barcode, Item> barcodedItems = new HashMap<>();
+	public Map<PriceLookUpCode, Item> pluCodedItems = new HashMap<>();
 
 	/******** Control Classes ********/
 	private ItemsControl ic;
@@ -158,8 +166,18 @@ public class StationControl
 
 		for (Card c : this.fakeData.getCards())
 			customer.wallet.cards.add(c);
-		for (Item i : this.fakeData.getItems())
-			customer.shoppingCart.add(i);		
+		for (Item i : this.fakeData.getItems()) {
+			if (i instanceof BarcodedItem) {
+				BarcodedItem item = (BarcodedItem) i;
+				this.barcodedItems.put(item.getBarcode(), i);
+				customer.shoppingCart.add(i);	
+			}
+			else if (i instanceof PLUCodedItem) {
+				PLUCodedItem item = (PLUCodedItem) i;
+				this.pluCodedItems.put(item.getPLUCode(), i);
+				customer.shoppingCart.add(i);	
+			}
+		}
 	}
 
 	/**
@@ -598,6 +616,8 @@ public class StationControl
 		}
 	}
 
+	
+	
 	/**
 	 * sets user message to announce weight on the indicated scale has changed
 	 * 
@@ -624,6 +644,8 @@ public class StationControl
 		}
 		
 	}
+	
+	
 
 	
 	@Override
@@ -665,6 +687,7 @@ public class StationControl
 		this.unblockStation();
 	}
 
+
 	/**
 	 * Compares the expected weight after adding an item to the actual weight being
 	 * read on the scale.
@@ -673,7 +696,7 @@ public class StationControl
 	 * @throws OverloadException If the weight has overloaded the scale.
 	 */
 	public boolean expectedWeightMatchesActualWeight(double actualWeight) {
-		return (this.getExpectedWeight() - (actualWeight + bagWeight) >= 1 || this.getExpectedWeight() - (actualWeight + bagWeight) <= 1);
+		return Math.abs(getExpectedWeight() - (actualWeight + bagWeight)) <= 1;
 	}
 	
 	public int getBagInStock() {

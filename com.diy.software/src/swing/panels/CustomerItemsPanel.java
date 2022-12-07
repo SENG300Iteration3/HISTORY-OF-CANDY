@@ -204,6 +204,15 @@ public class CustomerItemsPanel extends JPanel
 		placeItemInBaggingAreaButton.setEnabled(false);
 		itemWeight.setEnabled(false);
 	}
+	
+	@Override
+	public void awaitingAttendantToApproveItemRemoval(ItemsControl bc) {
+		selectNextItemButton.setEnabled(false);
+		mainScannerButton.setEnabled(false);
+		handheldScannerButton.setEnabled(false);
+		deselectCurrentItemButton.setEnabled(false);
+		placeItemInBaggingAreaButton.setEnabled(false);
+	}
 
 	@Override
 	public void attendantApprovedBags(AttendantControl ac) {
@@ -213,6 +222,15 @@ public class CustomerItemsPanel extends JPanel
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
 		itemWeight.setEnabled(false);
+	}
+	
+	@Override 
+	public void attendantApprovedItemRemoval(AttendantControl bc) {
+		selectNextItemButton.setEnabled(itemsAvailable);
+		mainScannerButton.setEnabled(false);
+		handheldScannerButton.setEnabled(false);
+		deselectCurrentItemButton.setEnabled(false);
+		placeItemInBaggingAreaButton.setEnabled(false);
 	}
 
 	@Override
@@ -349,10 +367,14 @@ public class CustomerItemsPanel extends JPanel
 	}
 
 	@Override
+	public void itemRemoved(ItemsControl itemsControl) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	public void itemBagged() {
 		// TODO Auto-generated method stub
 		
 	}
 
-	
 }
