@@ -6,9 +6,13 @@ import java.util.ArrayList;
 
 import com.diy.software.listeners.KeyboardControlListener;
 import com.diy.software.util.MathUtils;
+import com.jimmyselectronics.AbstractDevice;
+import com.jimmyselectronics.AbstractDeviceListener;
+import com.jimmyselectronics.nightingale.Keyboard;
+import com.jimmyselectronics.nightingale.KeyboardListener;
 
-public class KeyboardControl implements ActionListener {
-	private StationControl sc;
+public class KeyboardControl implements ActionListener, KeyboardListener {
+	private Keyboard keyboard;
 	
 	private static final String SYMBOLS = "~!@#$%^&*()_+{}|:\"<>?";
 	
@@ -19,8 +23,8 @@ public class KeyboardControl implements ActionListener {
 	protected boolean rightShiftPressed = false;
 	protected int pointer = 0;
 	
-	public KeyboardControl(StationControl sc) {
-		this.sc = sc;
+	public KeyboardControl(Keyboard keyboard) {
+		this.keyboard = keyboard;
 	}
 
 	public void addListener(KeyboardControlListener l) {
@@ -33,8 +37,10 @@ public class KeyboardControl implements ActionListener {
 	
 	// Fires when enter key is pressed
 	public void inputComplete() {
-		for (KeyboardControlListener l : listeners)
+		for (KeyboardControlListener l : listeners) {
 			l.keyboardInputCompleted(this, this.text);
+		}
+		clearText();
 	}
 	
 	// Supports functionality for letters, numbers, symbols, backspace, delete, L/R
@@ -66,6 +72,11 @@ public class KeyboardControl implements ActionListener {
 		} else if (isNumberOrSymbol(key)) {
 			addTextAtPointer(getNumberOrSymbol(key));
 		}
+	}
+	
+	private void clearText() {
+		this.text = "";
+		this.pointer = 0;
 	}
 	
 	private void addTextAtPointer(String newText) {
@@ -124,5 +135,41 @@ public class KeyboardControl implements ActionListener {
 			for (KeyboardControlListener l : listeners)
 				l.keyboardInputRecieved(this, this.text, key, this.pointer);
 		}
+	}
+
+	@Override
+	public void enabled(AbstractDevice<? extends AbstractDeviceListener> device) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void disabled(AbstractDevice<? extends AbstractDeviceListener> device) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void turnedOn(AbstractDevice<? extends AbstractDeviceListener> device) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void turnedOff(AbstractDevice<? extends AbstractDeviceListener> device) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyPressed(Keyboard keyboard, String label) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyReleased(Keyboard keyboard, String label) {
+		// TODO Auto-generated method stub
+		
 	}
 }

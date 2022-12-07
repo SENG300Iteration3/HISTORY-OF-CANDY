@@ -52,7 +52,6 @@ public class AttendantKeyboardPanel extends JPanel implements KeyboardControlLis
 
 	private Map<String, JButton> keyBtnMap = new HashMap<>();
 	private JPanel keyboardContainer;
-	private JTextField outputField;
 
 	public AttendantKeyboardPanel(final StationControl sc) {
 		super(null); //Screen still requires station control but this is for the attendant station, so we can ignore this
@@ -65,28 +64,7 @@ public class AttendantKeyboardPanel extends JPanel implements KeyboardControlLis
 
 		this.setOpaque(false);
 		this.setLayout(new BorderLayout());
-		this.add(makeDummyOutputField(), BorderLayout.NORTH);
 		this.add(makeKeyboardPanel(), BorderLayout.SOUTH);
-	}
-	
-	public void setOutputField(JTextField outputField) {
-		this.outputField = outputField;
-	}
-
-	// This is for testing only
-	private JTextField makeDummyOutputField() {
-		JTextField outputField = new JTextField();
-		outputField.setEditable(false);
-		outputField.getCaret().setVisible(true); // Making it non-editable also makes caret invisible...
-		outputField.setBackground(Color.WHITE);
-		outputField.setOpaque(true);
-		outputField.setForeground(Color.BLACK);
-		outputField.setFont(GUI_Fonts.TITLE);
-		outputField.setPreferredSize(new Dimension(GUI_Constants.SCREEN_WIDTH, 50));
-		
-		this.outputField = outputField;
-		
-		return outputField;
 	}
 
 	private JPanel makeKeyboardPanel() {
@@ -189,19 +167,10 @@ public class AttendantKeyboardPanel extends JPanel implements KeyboardControlLis
 		// Get button that corresponds with the key that was pressed
 		JButton keyBtn = keyBtnMap.get(key);
 
-		outputField.setText(text); // Update the text visual to reflect KeyController
-		outputField.requestFocus(); // Required before setting caret
-		outputField.setCaretPosition(pointerPosition); // Update cursor position
-
 		if (key.equals("CapsLock") || key.startsWith("Shift")) {
 			// Change button color to indicate whether it is pressed or not
 			toggleKeyColor(keyBtn);
 		}
-	}
-
-	@Override
-	public void keyboardInputCompleted(KeyboardControl kc, String text) {
-		this.outputField.setText(""); // Clear the text field
 	}
 
 	@Override
@@ -314,6 +283,12 @@ public class AttendantKeyboardPanel extends JPanel implements KeyboardControlLis
 
 	@Override
 	public void exitTextSearchScreen(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyboardInputCompleted(KeyboardControl kc, String text) {
 		// TODO Auto-generated method stub
 		
 	}

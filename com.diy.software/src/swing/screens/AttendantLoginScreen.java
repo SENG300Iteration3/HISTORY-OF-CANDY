@@ -131,14 +131,19 @@ public class AttendantLoginScreen extends Screen implements ActionListener, Keyb
 
 	@Override
 	public void keyboardInputRecieved(KeyboardControl kc, String text, String key, int pointerPosition) {
-		loginInfo.setText(text);
-		loginInfo.requestFocus();
-		loginInfo.setCaretPosition(pointerPosition);
-		
+		// Very important check to only update the text field when the attendant is viewing this screen
+		if (this.rootPanel.getParent() != null) {
+			loginInfo.setText(text);
+			loginInfo.requestFocus();
+			loginInfo.setCaretPosition(pointerPosition);
+		}
 	}
 
 	@Override
 	public void keyboardInputCompleted(KeyboardControl kc, String text) {
-		ac.login(text);
+		if (this.rootPanel.getParent() != null) {
+			ac.login(text);
+			loginInfo.setText("");
+		}
 	}
 }

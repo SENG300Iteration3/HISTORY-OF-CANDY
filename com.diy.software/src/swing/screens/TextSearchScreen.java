@@ -65,6 +65,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 		initailizeBackButton();
 		
 		kc = ac.getKeyboardControl();
+
 		kc.addListener(this);
 		
 		tlc = ac.getTextLookupControl();
@@ -296,11 +297,13 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 //	}
 
 	@Override
-	public void keyboardInputRecieved(KeyboardControl kc, String query, String key, int pointerPosition) {
-		searchbar.setText(query);
-		searchbar.requestFocus();
-		searchbar.setCaretPosition(pointerPosition);
-		
+	public void keyboardInputRecieved(KeyboardControl kc, String text, String key, int pointerPosition) {
+		// Very important check to only update the text field when the attendant is viewing this screen
+		if (this.rootPanel.getParent() != null) {
+			searchbar.setText(text);
+			searchbar.requestFocus();
+			searchbar.setCaretPosition(pointerPosition);
+		}
 	}
 
 	@Override
@@ -310,7 +313,6 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 	@Override
 	public void searchHasBeenCleared(TextLookupControl tlc) {
 		clearSearchResults();
-		
 	}
 
 	@Override
