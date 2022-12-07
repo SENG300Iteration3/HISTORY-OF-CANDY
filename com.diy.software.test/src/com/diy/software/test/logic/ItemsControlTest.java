@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.diy.software.util.Tuple;
+import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.PLUCodedItem;
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.BagsControl;
@@ -89,11 +90,45 @@ public class ItemsControlTest {
 		assertTrue(output2.x == "Tomatoes");
 		assertTrue(output3.x == "Reusable Bag");
 		assertTrue(output1.y == 2.0); 
-		System.out.println(output2.y);
 		assertTrue(output2.y == 2.868);
 		assertTrue(output3.y == 2.0);
 		}
+	
+	
+	/**
+	 * Test ensuring that no data is created when no items 
+	 * and no bags have been checked out.
+	 */
+	@Test
+	public void testGetEmptyItemDescriptionList() {
+		StationControl sc = new StationControl(fdi);
+		BagsControl bc = new BagsControl(sc);
+		itemsControl = new ItemsControl(sc);
+		ArrayList<Tuple<String, Double>> list = itemsControl.getItemDescriptionPriceList();
+		assertTrue(list.size() == 0);
+		}
+	
+	/**
+	 * Test ensuring that the correct data is scraped from 
+	 * checkoutList and stored in the ArrayList<Tuple<String, Double>>
+	 * returned by getItemDescriptionList.
+	 */
+	@Test
+	public void testRemoveBarcodedItem() {
+		StationControl sc = new StationControl(fdi);
+		itemsControl = sc.getItemsControl();		
+		BarcodedItem item = fdi.getBarcodedItems()[0];    // item is a "Can of Beans"
+		BarcodedProduct product = fdi.getBarcodedProducts()[0];
+		assertTrue(itemsControl.getCheckoutList().size() == 0);
+		assertTrue(itemsControl.getCheckoutTotal() == 0);
+		sc.station.mainScanner.scan(item);		
+		assertTrue(itemsControl.getCheckoutList().size() == 1);
+		assertTrue(itemsControl.getCheckoutTotal() == product.getPrice());
 
+		}
+
+	
+	
 	@Test
 	public void testRemoveListener() {
 		stub.bagging = true;
