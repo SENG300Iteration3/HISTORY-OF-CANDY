@@ -806,6 +806,11 @@ public class StationControl
 		for (StationControlListener l: listeners) {
 			l.triggerReceiptScreen(this);
 		}
+		rc.printItems();
+		rc.printTotalCost();
+		rc.printMembership();
+		rc.printDateTime();
+		rc.printThankyouMsg();
 	}
 
 }
