@@ -6,13 +6,16 @@ import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.opeechee.Card.CardData;
 
 public class StubSystem implements StationControlListener{
-	boolean locked = false;
-	boolean paymentStatus = false;
-	boolean triggerPaymentWorkflow = false;
+	public boolean locked = false;
+	public boolean paymentStatus = false;
+	public boolean triggerPaymentWorkflow = false;
 	public boolean triggerCatalogWorkflow = false;
 	public String paymentType;
-	boolean membershipCardInput = false;
+	public boolean membershipCardInput = false;
 	public boolean triggerPanelBack = false;
+	public boolean triggerMembershipWorkflow = false;
+	public boolean triggerPurchaseBagsWorkflow = false;
+	public boolean startPLUCodeWorkflow = false;
 
 	@Override
 	public void systemControlLocked(StationControl systemControl, boolean isLocked) {
@@ -70,7 +73,7 @@ public class StubSystem implements StationControlListener{
 
 	@Override
 	public void triggerMembershipWorkflow(StationControl systemControl) {
-		// TODO Auto-generated method stub
+		triggerMembershipWorkflow  = true;
 		
 	}
 
@@ -100,7 +103,7 @@ public class StubSystem implements StationControlListener{
 
 	@Override
 	public void triggerPurchaseBagsWorkflow(StationControl systemControl) {
-		// TODO Auto-generated method stub
+		triggerPurchaseBagsWorkflow = true;
 		
 	}
 
@@ -118,13 +121,13 @@ public class StubSystem implements StationControlListener{
 
 	@Override
 	public void triggerPLUCodeWorkflow(StationControl systemControl) {
-		// TODO Auto-generated method stub
+		startPLUCodeWorkflow = true;
 		
 	}
 
 	@Override
 	public void triggerBrowsingCatalog(StationControl systemControl) {
-		// TODO Auto-generated method stub
+		triggerCatalogWorkflow = true;
 		
 	}
 	

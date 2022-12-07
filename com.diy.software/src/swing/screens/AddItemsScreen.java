@@ -42,18 +42,18 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 	private BagsControl bc;
 	private BagDispenserControl bdc;
 
-	protected GUI_JLabel subtotalLabel;
-	protected GUI_JPanel scannedPanel;
-	protected GUI_JButton payBtn;
-	protected GUI_JButton memberBtn;
+	public GUI_JLabel subtotalLabel;
+	public GUI_JPanel scannedPanel;
+	
+	public GUI_JButton payBtn;
+	public GUI_JButton memberBtn;
+	
+	public GUI_JButton addOwnBagsBtn;
+	public GUI_JButton removeItemBtn;
 
-	protected GUI_JButton requestNoBaggingBtn;
-	protected GUI_JButton addOwnBagsBtn;
-	protected GUI_JButton removeItemBtn;
-
-	protected GUI_JButton purchaseBagsBtn;
-	protected GUI_JButton addItemByPLUBtn;
-	protected GUI_JButton catalogBtn;
+	public GUI_JButton purchaseBagsBtn;
+	public GUI_JButton addItemByPLUBtn;
+	public GUI_JButton catalogBtn;
 	
 	private AddOwnBagsPromptScreen ownBagsPromptScreen;
 
