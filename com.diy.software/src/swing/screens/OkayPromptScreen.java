@@ -29,12 +29,6 @@ public class OkayPromptScreen extends Screen {
 		promptLabel.setPreferredSize(new Dimension(this.width - 200, 100));
 		this.addLayer(promptLabel, 0);
 
-		//TODO delete later if not used
-		this.printReceiptButton = makeCentralButton("PRINT RECEIPT", this.width - 200, 100);
-		printReceiptButton.setActionCommand("printReceipt");
-		printReceiptButton.addActionListener(systemControl.getReceiptControl());
-		this.addLayer(printReceiptButton, 1);
-
 		if(okay) {
 			this.okayButton = makeCentralButton("OKAY", this.width - 200, 100);
 			okayButton.addActionListener(new ActionListener() {
