@@ -345,8 +345,9 @@ public class TestAttendantControl {
     	ac.addListener(als);
     	assertFalse(als.banknoteAdjusted);
     	ac.adjustBanknotesForChange();
-    	assertTrue(sc.station.banknoteStorage.getBanknoteCount() == 1000);
     	assertTrue(als.banknoteAdjusted);
+    	ac.loadBanknotesToStorage(this.sc.station.banknoteStorage);
+    	assertEquals(1000, sc.station.banknoteStorage.getBanknoteCount());
     }
     
     /*
@@ -364,9 +365,10 @@ public class TestAttendantControl {
     		sc.station.banknoteStorage.load(new Banknote(currency, 50));
     		sc.station.banknoteStorage.load(new Banknote(currency, 100));
     	}
-    	assertTrue(sc.station.banknoteStorage.getBanknoteCount() == 500);
+    	assertEquals(500, sc.station.banknoteStorage.getBanknoteCount());
     	ac.adjustBanknotesForChange();
     	assertFalse(sc.getCashControl().banknotesInStorageLow(sc.station.banknoteStorage));
+    	assertFalse(als.banknoteAdjusted);
     }
     
     /*
@@ -385,10 +387,11 @@ public class TestAttendantControl {
     		sc.station.banknoteStorage.load(new Banknote(currency, 50));
     		sc.station.banknoteStorage.load(new Banknote(currency, 100));
     	}
-    	assertTrue(sc.station.banknoteStorage.getBanknoteCount() == 50);
+    	assertEquals(50, sc.station.banknoteStorage.getBanknoteCount());
     	ac.adjustBanknotesForChange();
-    	assertTrue(sc.station.banknoteStorage.getBanknoteCount() == 1000);
     	assertTrue(als.banknoteAdjusted);
+    	ac.loadBanknotesToStorage(this.sc.station.banknoteStorage);
+    	assertEquals(1000, sc.station.banknoteStorage.getBanknoteCount());
     }
     
     /*
@@ -546,6 +549,18 @@ public class TestAttendantControl {
 
 		}
 
+		@Override
+		public void triggerPLUCodeWorkflow(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerBrowsingCatalog(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
+
 	}
 
 	public class AttendantListenerStub implements AttendantControlListener {
@@ -657,6 +672,12 @@ public class TestAttendantControl {
 
 		@Override
 		public void coinIsLowState(CoinStorageUnit unit, int amount) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void itemBagged() {
 			// TODO Auto-generated method stub
 			
 		}
