@@ -74,6 +74,25 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		return wrongBaggedItem;
 	}
 
+	public void setIsPLU(boolean proposition) {
+		isPLU = proposition;
+	}
+	
+	public void setExpectedPLU(PriceLookUpCode pcode) {
+		expectedPLU = pcode;
+	}
+
+	public void setCurrentProductCode(PriceLookUpCode pcode) {
+		currentProductCode = pcode;
+	}
+	public void setCurrentItem(Item item) {
+		currentItem = item;
+	}
+
+	public boolean getInCatalog() {
+		return inCatalog;
+	}
+
 	public void addListener(ItemsControlListener l) {
 		listeners.add(l);
 	}
@@ -499,16 +518,16 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	}
 
 	private void addItemByBrowsing(String strProductName) {
-		if(!isPLU) {
+		if (!isPLU) {
 			System.err.println("The currently selected item has no PLU code! Or there is no item selected!");
 			currentProductCode = null;
 			inCatalog = false;
 			sc.goBackOnUI();
-		}else {
+		} else {
 			PriceLookUpCode PLUCodeIdentifier = searchPLUCodedProductDatabase(strProductName);
 			if (PLUCodeIdentifier != null) {
 				currentProductCode = PLUCodeIdentifier;
-				pluItemSelected();
+				pluItemSelected(); // FIXME: can probably remove this line and replace with below commented
 			}
 		}
 	}
