@@ -498,9 +498,26 @@ public class ReceiptControlTest {
         
         ActionEvent e = new ActionEvent(this, 0, "takeReceipt");
         
+        sc.getReceiptControl().printReceipt("a");
+        assertTrue(rcl.takeReceipt);
+        
         sc.getReceiptControl().actionPerformed(e);
-    	
+        assertFalse(rcl.takeReceipt);
     }
+    
+    /*
+     *  Test the taking of receipt (using action performed)
+     */
+    @Test
+    public void testCutAndTakeReceiptIncomplete(){
+        
+        ActionEvent e = new ActionEvent(this, 0, "takeIncompleteReceipt");
+        
+        sc.getReceiptControl().printReceipt("aa");
+        assertTrue(rcl.takeReceipt);
+        
+        sc.getReceiptControl().actionPerformed(e);
+        assertFalse(rcl.takeReceipt);
     
     @Test
     public void testC(){

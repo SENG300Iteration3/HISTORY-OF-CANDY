@@ -384,15 +384,6 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 					break;
 					// TODO
 					// temporary delete later when button is moved
-				case "printReceipt":
-					//attendantNotifications = ("approved no bagging request");
-					System.out.println("AC print receipt");
-//					sc.getReceiptControl().printItems();
-//					sc.getReceiptControl().printTotalCost();
-//					sc.getReceiptControl().printMembership();
-//					sc.getReceiptControl().printDateTime();
-//					sc.getReceiptControl().printThankyouMsg();		
-					break;
 				case "approve no bag":
 					approveNoBagRequest();
 					break;
