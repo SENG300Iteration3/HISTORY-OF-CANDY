@@ -172,5 +172,40 @@ public class CustomerWalletPanel extends JPanel implements WalletControlListener
 		updateButtonStates();
 	}
 
+	public JRadioButton getCc1() {
+		return cc1;
+	}
+
+	public JRadioButton getCc2() {
+		return cc2;
+	}
+
+	public JRadioButton getCc3() {
+		return cc3;
+	}
+
+	public JRadioButton getM() {
+		return m;
+	}
+
+	public JButton getTapButton() {
+		return tapButton;
+	}
+
+	public JButton getSwipeButton() {
+		return swipeButton;
+	}
+
+	public JButton getScanMemButton() {
+		return scanMemButton;
+	}
+
+	public JRadioButton getGc() {
+		return gc;
+	}
+
+	public JButton getInsertOrEjectButton() {
+		return insertOrEjectButton;
+	}
 	
 }
