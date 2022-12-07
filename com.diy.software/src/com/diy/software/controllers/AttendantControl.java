@@ -90,6 +90,10 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 		sc.startUp();
 	}
 	
+	public void shutDownStation() {
+		sc.shutDown();
+	}	
+	
 	public void approveBagsAdded() {
 		sc.unblockStation();
 		for (AttendantControlListener l : listeners) {
@@ -458,7 +462,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 					startUpStation();
 					break;
 				case "shutDown":
-					//TODO:
+					shutDownStation();
 					break;
 				case "add":
 					textSearch();

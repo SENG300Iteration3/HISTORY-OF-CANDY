@@ -199,6 +199,11 @@ public class StationControl
 		station.turnOn();
 	}
 	
+	public void shutDown() {
+		station.unplug();
+		station.turnOff();
+	}
+	
 	public ItemsControl getItemsControl() {
 		return ic;
 	}
