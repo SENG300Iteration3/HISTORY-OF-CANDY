@@ -204,12 +204,6 @@ public class AttendantKeyboardPanel extends JPanel implements KeyboardControlLis
 	}
 
 	@Override
-	public void printerNotLowState() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void outOfInk(AttendantControl ac, String message) {
 		// TODO Auto-generated method stub
 		
@@ -217,18 +211,6 @@ public class AttendantKeyboardPanel extends JPanel implements KeyboardControlLis
 
 	@Override
 	public void outOfPaper(AttendantControl ac, String message) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void addInkState() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void addPaperState() {
 		// TODO Auto-generated method stub
 		
 	}
@@ -295,6 +277,30 @@ public class AttendantKeyboardPanel extends JPanel implements KeyboardControlLis
 
 	@Override
 	public void banknotesInStorageLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void printerNotLowInkState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void printerNotLowPaperState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addTooMuchInkState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addTooMuchPaperState() {
 		// TODO Auto-generated method stub
 		
 	}

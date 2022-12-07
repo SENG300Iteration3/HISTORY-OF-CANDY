@@ -40,6 +40,7 @@ public class TestSystemControl {
 	BarcodedItem[] items;
 	private ItemsControl ic;
 	private Card membershipCard;
+	private Card giftcard;
 	
 	@Before
 	public void setup() {
@@ -52,6 +53,8 @@ public class TestSystemControl {
 		items = fdi.getItems();
 		
 		membershipCard = fdi.getCards()[3];
+		
+		giftcard = fdi.getCards()[4];
 		
 		PowerGrid.engageUninterruptiblePowerSource();
 		
@@ -233,6 +236,34 @@ public class TestSystemControl {
 		wStub.membershipCardInputEnabled = true;
 		systemControl.triggerMembershipCardInputFailScreen("message");
 		assertFalse(wStub.membershipCardInputEnabled);
+	}
+	
+	@Test
+	public void giftcardTest() {
+		ic.updateCheckoutTotal(40);
+		CardSwipeData a = null;
+		while(a == null) {
+			try {
+				a = (CardSwipeData) systemControl.getStation().cardReader.swipe(giftcard);
+			} catch (Exception e) {}
+		}
+		assertTrue(ic.getCheckoutTotal() == 0);
+		ic.updateCheckoutTotal(40);
+		a = null;
+		while(a == null) {
+			try {
+				a = (CardSwipeData) systemControl.station.cardReader.swipe(giftcard);
+			} catch (Exception e) {}
+		}
+		assertTrue(ic.getCheckoutTotal() == 30);
+		ic.updateCheckoutTotal(-30);
+		a = null;
+		while(a == null) {
+			try {
+				a = (CardSwipeData) systemControl.station.cardReader.swipe(giftcard);
+			} catch (Exception e) {}
+		}
+		assertTrue(ic.getCheckoutTotal() == 0);
 	}
 	
 	@After
