@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
-
 import com.diy.software.listeners.CashControlListener;
 import com.unitedbankingservices.DisabledException;
 import com.unitedbankingservices.OutOfCashException;
@@ -369,12 +368,28 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 				times--;
 			}
 		}
-
-		if (totalReturned - change * 100 < -0.01) {
+    
+    if (totalReturned - change * 100 < -0.01) {
 			// TODO: notify attendant that customer was shortchanged by
 			// change-totalReturned
 		}
 
 		changeReturned();
+  }
+
+	/*
+	 * Checks if banknote storage is below a threshold and notifies system
+	 * 
+	 * @param unit
+	 * 			The storage unit being checked
+	 */
+	public boolean banknotesInStorageLow(BanknoteStorageUnit unit) {
+		boolean isLow = false;
+		//count is less than 1/20 of the capacity
+		if (unit.getBanknoteCount() <= (unit.getCapacity()/20)) {
+			isLow = true;
+		}
+		return isLow;
 	}
+
 }
