@@ -251,7 +251,7 @@ public class AttendantActionsPanel extends JPanel
 	}
 	
 	@Override
-	public void coinIsLowState(CoinStorageUnit unit, int amount) {
+	public void coinIsLowState(int amount) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -267,6 +267,11 @@ public class AttendantActionsPanel extends JPanel
 	}
 	@Override
 	public void itemBagged() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void banknotesInStorageLowState() {
 		// TODO Auto-generated method stub
 		
 	}

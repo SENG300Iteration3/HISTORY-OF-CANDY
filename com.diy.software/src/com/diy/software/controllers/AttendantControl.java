@@ -179,6 +179,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		}
 	}
 	
+	
 	/*
 	 * Refills banknote storage if it is low
 	 * 

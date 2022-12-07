@@ -301,7 +301,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 
 
 	@Override
-	public void coinIsLowState(CoinStorageUnit unit, int amount) {
+	public void coinIsLowState(int amount) {
 		// TODO Auto-generated method stub
 	}
 
@@ -323,5 +323,12 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	@Override
 	public void itemBagged() {
 		approveNoBagging.setEnabled(false);
+	}
+
+
+	@Override
+	public void banknotesInStorageLowState() {
+		// TODO Auto-generated method stub
+		
 	}
 }

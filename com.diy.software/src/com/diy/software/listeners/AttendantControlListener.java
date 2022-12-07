@@ -84,7 +84,7 @@ public interface AttendantControlListener {
 	 * @param amount
 	 * 		the amount of max coins to fill (if 10 then fill coins to 10 each)
 	 */
-	public void coinIsLowState(CoinStorageUnit unit, int amount);
+	public void coinIsLowState(int amount);
 
 	public void loggedIn(boolean isLoggedIn);
 

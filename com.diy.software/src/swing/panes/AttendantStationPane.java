@@ -155,12 +155,6 @@ public class AttendantStationPane implements AttendantControlListener {
 		
 	}
 
-	@Override
-	public void coinIsLowState(CoinStorageUnit unit, int amount) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	public void setTabIndex(int index) {
 		tabbedPane.setSelectedIndex(index);
 		
@@ -174,6 +168,18 @@ public class AttendantStationPane implements AttendantControlListener {
 
 	@Override
 	public void itemBagged() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void banknotesInStorageLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void coinIsLowState(int amount) {
 		// TODO Auto-generated method stub
 		
 	}
