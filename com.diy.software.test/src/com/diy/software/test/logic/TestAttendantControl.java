@@ -551,7 +551,7 @@ public class TestAttendantControl {
 	public class AttendantListenerStub implements AttendantControlListener {
 		boolean attendantBags = false;
 		boolean attendantUse = false;
-    boolean banknoteAdjusted = false;
+		boolean banknoteAdjusted = false;
 		boolean lowState = false;
 		boolean addPaper = false;
 		boolean addInk = false;
