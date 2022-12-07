@@ -229,7 +229,7 @@ public class CashControlTest {
 		cs.enablePayments();
 		ActionEvent e = new ActionEvent(this, 0, "d 100");
 		while(ic.getCheckoutTotal() == 22.22) {
-			cs.actionPerformed(e);
+			cs.actionPerzformed(e);
 		}
 		assertTrue(Math.abs(bns.lastReturnedCash-77.78) < 0.01);
 	}
@@ -242,10 +242,9 @@ public class CashControlTest {
 		while(ic.getCheckoutTotal() == 1.00) {
 			cs.actionPerformed(e);
 		}
+		cs.actionPerformed(e);
 		assertTrue(Math.abs(bns.lastReturnedCash-1.00) < 0.01);
-	}
-	
-	@Test
+		
 	public void returnChange3() {
 		ic.updateCheckoutTotal(4.96);
 		cs.enablePayments();
