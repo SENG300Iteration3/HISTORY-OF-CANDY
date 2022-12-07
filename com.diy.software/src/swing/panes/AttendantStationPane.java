@@ -179,15 +179,8 @@ public class AttendantStationPane implements AttendantControlListener {
 		
 	}
 
-	@Override
-<<<<<<< Updated upstream
 	public void triggerItemSearchScreen(AttendantControl ac) {
-		// TODO Auto-generated method stub
-		
-=======
-	public void triggerTextSearch(AttendantControl ac) {
 		System.out.println("fired");
 		this.changeComponents(textScreen.getRootPanel());
->>>>>>> Stashed changes
 	}
 }

@@ -458,7 +458,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 					textSearch();
 					break;
 				case "remove":
-					removeItem();
+					textSearch();
 					break;
 				case "logout":
 					logout();
@@ -472,24 +472,15 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 		
 	}
 	
-<<<<<<< Updated upstream
-	private void removeItem() {
-		for (AttendantControlListener l : listeners) {
-			l.triggerItemSearchScreen(this);
-		}
-	}
-=======
 	public void textSearch() {
 		for (AttendantControlListener l : listeners) {
-			l.triggerTextSearch(this);
+			l.triggerItemSearchScreen(this);
 		}
 	}
 	
 	public PhysicalKeyboardControl getKeyboardControl() {
 		return kc;
 	}
-	
->>>>>>> Stashed changes
 
 	@Override
 	public void enabled(AbstractDevice<? extends AbstractDeviceListener> device) {
@@ -685,7 +676,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 	}
 
 	@Override
-	public void triggerTextSearch(AttendantControl ac) {
+	public void triggerItemSearchScreen(AttendantControl ac) {
 		// TODO Auto-generated method stub
 		
 	}
