@@ -115,17 +115,18 @@ public class TextLookupControl implements KeyboardControlListener{
 		selection = getResult(selectionIndex);
 		if (selection.getBarcodedProduct() == null) {
 			PLUCodedProduct productToAdd = selection.getPLUCodedProduct();
+			sc.getItemsControl().addItemToCheckoutList(productToAdd.getPLUCode());
 			productWeight = generateProductWeight();
 			productCost = calculatePrice(productToAdd, productWeight);
 			productDescription = productToAdd.getDescription();
 		}
 		else {
 			BarcodedProduct productToAdd = selection.getBarcodedProduct();
+			sc.getItemsControl().addItemToCheckoutList(productToAdd.getBarcode());
 			productWeight = productToAdd.getExpectedWeight();
 			productCost = (double)productToAdd.getPrice();
 			productDescription = productToAdd.getDescription();
 		}
-		sc.getItemsControl().addItemToCheckoutList(new Tuple<String,Double>(productDescription, productCost));
 		sc.getItemsControl().updateCheckoutTotal(productCost);
 		for (TextLookupControlListener l : listeners) {
 			l.itemHasBeenAddedToCheckout(this);
