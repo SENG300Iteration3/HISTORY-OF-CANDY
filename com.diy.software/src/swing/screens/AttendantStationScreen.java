@@ -459,6 +459,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 
 
 	@Override
+<<<<<<< Updated upstream
 	public void triggerItemSearchScreen(AttendantControl ac) {
 		TextSearchScreen screen = new TextSearchScreen(sc, ac);
 		addScreenToStack(screen);
@@ -477,5 +478,10 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		parent.invalidate();
 		parent.validate();
 		parent.repaint();
+=======
+	public void triggerTextSearch(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+>>>>>>> Stashed changes
 	}
 }

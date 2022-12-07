@@ -5,12 +5,8 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
-import java.util.Scanner;
-import java.util.HashMap;
-import java.util.Objects;
 import com.diy.hardware.AttendantStation;
 import com.diy.software.listeners.AttendantControlListener;
-import com.diy.software.listeners.MembershipControlListener;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.OverloadException;
@@ -25,12 +21,10 @@ import com.unitedbankingservices.coin.Coin;
 import com.unitedbankingservices.coin.CoinStorageUnit;
 import com.unitedbankingservices.banknote.Banknote;
 import com.unitedbankingservices.banknote.BanknoteStorageUnit;
-import com.unitedbankingservices.coin.Coin;
-import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import ca.ucalgary.seng300.simulation.SimulationException;
 
-public class AttendantControl implements ActionListener, ReceiptPrinterListener, KeyboardListener, KeyListener {
+public class AttendantControl implements ActionListener, ReceiptPrinterListener, KeyboardListener, KeyListener, AttendantControlListener {
 
 	public AttendantStation station;
 	private StationControl sc;
@@ -38,8 +32,8 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 	private ArrayList<AttendantControlListener> listeners;
 	private CoinStorageUnit unit;
 	private Currency currency;
-	private KeyboardControl kc;
 	private TextLookupControl tlc;
+	private PhysicalKeyboardControl kc;
 	private String attendantNotifications;
 	
 	public static final ArrayList<String> logins = new ArrayList<String>();
@@ -54,8 +48,9 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 		station.plugIn();
 		station.turnOn();
 		
-		kc = new PhysicalKeyboardControl(this);
 		tlc = new TextLookupControl(this, this.sc);
+		
+		kc = new PhysicalKeyboardControl(this);
 		
 		ic = sc.getItemsControl();
 	}
@@ -78,10 +73,6 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 
 	public void removeListener(AttendantControlListener l) {
 		listeners.remove(l);
-	}
-	
-	public KeyboardControl getKeyboardControl() {
-		return kc;
 	}
 	
 	public TextLookupControl getTextLookupControl() {
@@ -464,7 +455,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 					//TODO:
 					break;
 				case "add":
-					//TODO:
+					textSearch();
 					break;
 				case "remove":
 					removeItem();
@@ -481,11 +472,24 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 		
 	}
 	
+<<<<<<< Updated upstream
 	private void removeItem() {
 		for (AttendantControlListener l : listeners) {
 			l.triggerItemSearchScreen(this);
 		}
 	}
+=======
+	public void textSearch() {
+		for (AttendantControlListener l : listeners) {
+			l.triggerTextSearch(this);
+		}
+	}
+	
+	public PhysicalKeyboardControl getKeyboardControl() {
+		return kc;
+	}
+	
+>>>>>>> Stashed changes
 
 	@Override
 	public void enabled(AbstractDevice<? extends AbstractDeviceListener> device) {
@@ -586,6 +590,102 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 
 	@Override
 	public void keyReleased(Keyboard keyboard, String label) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void attendantApprovedBags(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void attendantPreventUse(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void attendantApprovedItemRemoval(AttendantControl bc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void lowInk(AttendantControl ac, String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void lowPaper(AttendantControl ac, String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void printerNotLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void outOfInk(AttendantControl ac, String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void outOfPaper(AttendantControl ac, String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addInkState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addPaperState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void signalWeightDescrepancy(String updateMessage) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void initialState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void attendantPermitStationUse(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void coinIsLowState(CoinStorageUnit unit, int amount) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void loggedIn(boolean isLoggedIn) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void triggerTextSearch(AttendantControl ac) {
 		// TODO Auto-generated method stub
 		
 	}

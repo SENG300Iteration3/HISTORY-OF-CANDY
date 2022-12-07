@@ -90,6 +90,11 @@ public interface AttendantControlListener {
 
 	public void loggedIn(boolean isLoggedIn);
 
+<<<<<<< Updated upstream
 	public void triggerItemSearchScreen(AttendantControl ac);
 		
+=======
+	
+	public void triggerTextSearch(AttendantControl ac);
+>>>>>>> Stashed changes
 }

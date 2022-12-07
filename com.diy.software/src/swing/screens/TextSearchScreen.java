@@ -8,6 +8,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -19,6 +20,7 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.KeyboardControl;
+import com.diy.software.controllers.PhysicalKeyboardControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.controllers.TextLookupControl;
 import com.diy.software.listeners.KeyboardControlListener;
@@ -47,9 +49,9 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 	private TextLookupControl tlc;
 	
 	
-	public TextSearchScreen(StationControl sc, AttendantControl ac) 
+	public TextSearchScreen(ArrayList<StationControl> stationControls) 
 	{
-		super(sc, headerTitle);
+		super(null, headerTitle);
 		
 		// Initializing all GUI Components
 		initalizeSearchAreaBackground();
@@ -58,7 +60,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 		initailizeSearchButton();
 		initailizeBackButton();
 		
-		kc = ac.getKeyboardControl();
+		kc = stationControls.get(0).getAttendantControl().getKeyboardControl();
 		kc.addListener(this);
 	}
 	
@@ -240,8 +242,8 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 	{
 		StationControl stationControl = new StationControl();
 		AttendantControl attendantControl = new AttendantControl(stationControl);
-		TextSearchScreen testGui = new TextSearchScreen(stationControl, attendantControl);
-		testGui.openInNewJFrame();
+		//TextSearchScreen testGui = new TextSearchScreen(stationControl, attendantControl);
+		//testGui.openInNewJFrame();
 	}
 
 
