@@ -245,8 +245,8 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	public void adjustCoinsForChange(int AMOUNT) throws SimulationException, TooMuchCashException  {
 		
 		
-		
 		CoinStorageUnit unit = sc.station.coinStorage;
+	
 		
 		if(AMOUNT > unit.getCapacity()) {
 			throw new TooMuchCashException();
@@ -255,7 +255,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		
 		AMOUNT /= 5;
 		
-		sc.getCashControl().disablePayments();
+		//sc.getCashControl().disablePayments();
 		
 		Coin tCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(2.0));
 		Coin lCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(1.0));
@@ -300,7 +300,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		sc.getCashControl().coinsLoaded(unit);
 		
 		//re enable system
-		sc.getCashControl().enablePayments();
+		//sc.getCashControl().enablePayments();
 		
 	}
 	
