@@ -691,6 +691,34 @@ public class ItemsControlTest {
 			
 		}
 
+		@Override
+		public void itemRemoved(ItemsControl itemsControl) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void awaitingItemToBePlacedInScanningArea(StationControl sc) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void awaitingAttendantToApproveItemRemoval(ItemsControl ic) {
+			// TODO Auto-generated method stub
+			
+		}
+
+	}
+
+		@Override
+		public void itemRemoved(ItemsControl itemsControl) {
+			// TODO Auto-generated method stub
+			
+		}
+
+	}
+
 	}
 
 	public class AttendantListenerStub implements AttendantControlListener {

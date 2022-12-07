@@ -1,11 +1,15 @@
 package com.diy.software.controllers;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.DoItYourselfStation;
+import com.diy.hardware.PLUCodedItem;
 import com.diy.hardware.PLUCodedProduct;
 import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.Product;
@@ -26,6 +30,7 @@ import com.jimmyselectronics.abagnale.ReceiptPrinterListener;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodeScanner;
 import com.jimmyselectronics.necchi.BarcodeScannerListener;
+import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.opeechee.Card;
 import com.jimmyselectronics.opeechee.Card.CardData;
 import com.jimmyselectronics.opeechee.CardReader;
@@ -65,6 +70,10 @@ public class StationControl
 	public String userMessage;
 
 	public ArrayList<StationControlListener> listeners = new ArrayList<>();
+	
+	// Need to track item objects associated with this particular instance
+	public Map<Barcode, Item> barcodedItems = new HashMap<>();
+	public Map<PriceLookUpCode, Item> pluCodedItems = new HashMap<>();
 
 	/******** Control Classes ********/
 	private ItemsControl ic;
@@ -127,7 +136,6 @@ public class StationControl
 		 */
 		station.reusableBagDispenser.plugIn();
 		station.reusableBagDispenser.turnOn();
-		bagInStock = station.reusableBagDispenser.getCapacity();
 		loadBags();
 
 		/*
@@ -158,8 +166,18 @@ public class StationControl
 
 		for (Card c : this.fakeData.getCards())
 			customer.wallet.cards.add(c);
-		for (Item i : this.fakeData.getItems())
-			customer.shoppingCart.add(i);		
+		for (Item i : this.fakeData.getItems()) {
+			if (i instanceof BarcodedItem) {
+				BarcodedItem item = (BarcodedItem) i;
+				this.barcodedItems.put(item.getBarcode(), i);
+				customer.shoppingCart.add(i);	
+			}
+			else if (i instanceof PLUCodedItem) {
+				PLUCodedItem item = (PLUCodedItem) i;
+				this.pluCodedItems.put(item.getPLUCode(), i);
+				customer.shoppingCart.add(i);	
+			}
+		}
 	}
 
 	/**
@@ -232,13 +250,17 @@ public class StationControl
 		return station;
 	}
 	
-	private void loadBags() {
+	public void loadBags() {
 		try {
-			for(int i = 0; i < bagInStock; i++) {
-				ReusableBag aBag = new ReusableBag();
-				station.reusableBagDispenser.load(aBag);
-			}
-
+			// loads full capacity
+			int limit = station.reusableBagDispenser.getCapacity() - bagInStock;
+			if(limit > 0) {
+				for(int i = 0; i < limit; i++) {
+					ReusableBag aBag = new ReusableBag();
+					station.reusableBagDispenser.load(aBag);
+				}
+				System.out.println("Loaded " + limit + " bags!");		// notify in console
+			}else System.out.println("Bag Dispenser is full. No bag loaded!");	
 		}catch(OverloadException e) {}
 	}
 	
@@ -256,7 +278,7 @@ public class StationControl
 			}
 		}
 		
-		for(long i : station.coinDenominations) {
+		for(BigDecimal i : station.coinDenominations) {
 			int capacity = station.coinDispensers.get(i).getCapacity();
 			Coin[] coins = new Coin[capacity];
 			for(int j = 0; j < capacity; j++) {
@@ -594,6 +616,8 @@ public class StationControl
 		}
 	}
 
+	
+	
 	/**
 	 * sets user message to announce weight on the indicated scale has changed
 	 * 
@@ -620,6 +644,8 @@ public class StationControl
 		}
 		
 	}
+	
+	
 
 	
 	@Override
@@ -647,12 +673,9 @@ public class StationControl
 		} 
 	}
 				
-	public void addReusableBag(ReusableBag lastDispensedReusableBag) {
-		// ADD: update inventory
-
-		weightOfLastItem = lastDispensedReusableBag.getWeight();
-		
+	public void addReusableBag(ReusableBag lastDispensedReusableBag) {		
 		// Set the expected weight in SystemControl
+		weightOfLastItem = lastDispensedReusableBag.getWeight();
 		this.updateExpectedCheckoutWeight(weightOfLastItem);
 		this.updateWeightOfLastItemAddedToBaggingArea(weightOfLastItem);
 	}
@@ -660,8 +683,10 @@ public class StationControl
 	public void ItemApprovedToNotBag() {
 		this.updateExpectedCheckoutWeight(-weightOfLastItem);
 		this.updateWeightOfLastItemAddedToBaggingArea(-weightOfLastItem);
+		ic.placeBulkyItemInCart();
 		this.unblockStation();
 	}
+
 
 	/**
 	 * Compares the expected weight after adding an item to the actual weight being
@@ -671,7 +696,7 @@ public class StationControl
 	 * @throws OverloadException If the weight has overloaded the scale.
 	 */
 	public boolean expectedWeightMatchesActualWeight(double actualWeight) {
-		return (this.getExpectedWeight() - (actualWeight + bagWeight) >= 1 || this.getExpectedWeight() - (actualWeight + bagWeight) <= 1);
+		return Math.abs(getExpectedWeight() - (actualWeight + bagWeight)) <= 1;
 	}
 	
 	public int getBagInStock() {
@@ -757,8 +782,7 @@ public class StationControl
 
 	@Override
 	public void bagDispensed(ReusableBagDispenser dispenser) {
-		// TODO Auto-generated method stub
-		
+		bagInStock--;
 	}
 
 	@Override
@@ -769,8 +793,7 @@ public class StationControl
 
 	@Override
 	public void bagsLoaded(ReusableBagDispenser dispenser, int count) {
-		// TODO Auto-generated method stub
-		
+		bagInStock++;
 	}
 
 }

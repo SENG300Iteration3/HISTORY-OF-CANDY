@@ -3,6 +3,7 @@ package com.diy.software.test.logic;
 import static org.junit.Assert.*;
 
 import java.awt.event.ActionEvent;
+import java.util.Currency;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,14 +11,18 @@ import org.junit.Test;
 import com.diy.software.controllers.CashControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.CashControlListener;
+import com.unitedbankingservices.TooMuchCashException;
+import com.unitedbankingservices.banknote.Banknote;
 import com.unitedbankingservices.banknote.BanknoteValidatorObserver;
 
 import ca.powerutility.PowerGrid;
+import ca.ucalgary.seng300.simulation.SimulationException;
 
 public class CashControlTest {
 	StationControl sc;
 	CashControl cs;
 	BanknoteValidatorObserverStub bns;
+	Currency currency;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -25,6 +30,8 @@ public class CashControlTest {
 		cs = new CashControl(sc);
 		bns = new BanknoteValidatorObserverStub();
 		
+		this.currency = Currency.getInstance("CAD");
+				
 		cs.addListener(bns);
 		PowerGrid.engageUninterruptiblePowerSource();
 	}
@@ -95,6 +102,30 @@ public class CashControlTest {
 	@Test
 	public void testBanknotesFull() {
 		fail("Not yet implemented");
+	}
+	
+	@Test
+	public void testBanknotesInStorageLow() throws SimulationException, TooMuchCashException {
+		for (int i = 0; i < 1; i++) {
+			sc.station.banknoteStorage.load(new Banknote(currency, 20));
+		}
+		assertTrue(cs.banknotesInStorageLow(sc.station.banknoteStorage));
+	}
+	
+	@Test
+	public void testBanknotesInStorageNotLow() throws SimulationException, TooMuchCashException {
+		for (int i = 0; i < 1000; i++) {
+			sc.station.banknoteStorage.load(new Banknote(currency, 20));
+		}
+		assertFalse(cs.banknotesInStorageLow(sc.station.banknoteStorage));
+	}
+	
+	@Test
+	public void testBanknotesInStorageAtThreshold() throws SimulationException, TooMuchCashException {
+		for (int i = 0; i < 50; i++) {
+			sc.station.banknoteStorage.load(new Banknote(currency, 20));
+		}
+		assertTrue(cs.banknotesInStorageLow(sc.station.banknoteStorage));
 	}
 	
 	/*
@@ -214,11 +245,11 @@ public class CashControlTest {
 			
 		}
 
-		@Override
-		public void cashRejected(CashControl cc) {
-			// TODO Auto-generated method stub
-			
-		}
+//		@Override
+//		public void cashRejected(CashControl cc) {
+//			// TODO Auto-generated method stub
+//			
+//		}
 
 		@Override
 		public void changeReturned(CashControl cc) {
@@ -228,6 +259,12 @@ public class CashControlTest {
 
 		@Override
 		public void paymentFailed(CashControl cc) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void checkCashRejected(CashControl cc) {
 			// TODO Auto-generated method stub
 			
 		}

@@ -97,5 +97,22 @@ public class AttendantControlStub implements AttendantControlListener{
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void attendantApprovedItemRemoval(AttendantControl bc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void banknotesInStorageLowState() {
+    // TODO Auto-generated method stub
+    
+  }
+  
+	public void itemBagged() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

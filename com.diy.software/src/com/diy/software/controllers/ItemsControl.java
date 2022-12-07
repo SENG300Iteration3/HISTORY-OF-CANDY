@@ -3,6 +3,8 @@ package com.diy.software.controllers;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ThreadLocalRandom;
@@ -34,12 +36,11 @@ import com.jimmyselectronics.virgilio.ElectronicScaleListener;
 import ca.ucalgary.seng300.simulation.InvalidArgumentSimulationException;
 import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
 
-public class ItemsControl
-		implements ActionListener, BarcodeScannerListener, ElectronicScaleListener, PLUCodeControlListener {
+public class ItemsControl implements ActionListener, BarcodeScannerListener, ElectronicScaleListener, PLUCodeControlListener {
 	private StationControl sc;
 	private ArrayList<ItemsControlListener> listeners;
 	public ArrayList<Tuple<BarcodedProduct, Integer>> tempList = new ArrayList<>();
-	private ArrayList<Tuple<String, Double>> checkoutList = new ArrayList<>();
+	private ArrayList<Object> checkoutList = new ArrayList<>();
 	private ArrayList<ReusableBag> bags = new ArrayList<ReusableBag>(); // stores reusable bag item with no barcode
 	private double checkoutListTotal = 0.0;
 	private Item currentItem;
@@ -52,8 +53,7 @@ public class ItemsControl
 	private long baggingAreaTimerEnd;
 	private final static double PROBABILITY_OF_BAGGING_WRONG_ITEM = 0.20;
 	private final static ThreadLocalRandom random = ThreadLocalRandom.current();
-	private Item wrongBaggedItem = new Item(235) {
-	};
+	private Item wrongBaggedItem = new Item(235) {};
 	private boolean isPLU = false;
 	private PriceLookUpCode expectedPLU = null;
 	private boolean removedWrongBaggedItem;
@@ -101,22 +101,158 @@ public class ItemsControl
 		listeners.remove(l);
 	}
 
-	public void addItemToCheckoutList(Tuple<String, Double> item) {
+	public void addItemToCheckoutList(Object item) {
 		checkoutList.add(item);
 		refreshGui();
 	}
 
+	
+	public void addItemToCheckoutList(Barcode barcode, PriceLookUpCode pluCode) {
+		if (barcode == null) {
+			checkoutList.add(pluCode);
+		}
+		else if (pluCode == null) {
+			checkoutList.add(barcode);
+		}
+		refreshGui();
+	}
+	
 	public void addScannedItemToCheckoutList(Barcode barcode) {
 		BarcodedProduct barcodedProduct = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode);
 		double price;
 		if (barcodedProduct != null) {
 			price = (double) barcodedProduct.getPrice();
-			this.addItemToCheckoutList(new Tuple<String, Double>(barcodedProduct.getDescription(), price));
+			this.addItemToCheckoutList(barcode, null);
 			this.updateCheckoutTotal(price);
 		} else {
 			System.err.println("Scanned item is not in product database!");
 		}
 	}
+	
+	
+	/**
+	 * Blocks the customers DIYStation and announces that
+	 * the customer wants to remove an item to any ItemsControl listeners.
+	 */
+	public void requestRemoveItem() {
+		sc.blockStation(); // block station
+		for (ItemsControlListener l : listeners){
+			l.awaitingAttendantToApproveItemRemoval(this);
+		}
+	}
+	
+	public void notifyItemRemoved() {
+		for (ItemsControlListener l : listeners){
+			l.itemRemoved(this);
+		}
+	}
+	
+
+	/**
+	 * Method that checks to see if an integer passed in as argument is the same as
+	 * one of the reusable bags item numbers on screen.
+	 * 
+	 * @param index
+	 * 		integer that matches an item number displayed on the customer GUI
+	 * @return
+	 * 		true if the index refers to a bag item number, false otherwise
+	 */
+	public boolean isIndexBag(int index) {
+		if (this.bags.size() > 0 && this.checkoutList.size() < index) {
+			if (index <= (this.checkoutList.size() + this.bags.size())){
+				return true;
+			}
+			return false;
+		}		
+		else return false;
+	}
+	
+	/**
+	 * The method responsible for removing an item from the system entirely.
+	 * Its cost is subtracted from the bill total, it is removed from the bagging area,
+	 * its weight is subtracted from expected weight, the "stores" inventory is updated
+	 * and the GUI is refreshed.
+	 * 
+	 * @param index 
+	 * 			The item number displayed on screen which you want to remove
+	 * @return
+	 * 		True if the index is within . False otherwise.
+	 */
+	public boolean removeItem(int index) {
+		double weight;
+		double price;
+		if (index <= 0) return false;
+		else if (isIndexBag(index)) {
+			weight = 5.0;
+			price = sc.fakeData.getReusableBagPrice();
+			this.sc.updateExpectedCheckoutWeight(-weight);
+			this.updateCheckoutTotal(-price);	
+			this.sc.station.baggingArea.remove(bags.get(0));
+			this.bags.remove(0);
+			refreshGui();
+			return true;
+		}
+		else if (index <= this.checkoutList.size()) {
+			Item item;
+			index--; // decrement index so it matches actual array index!
+			if (this.checkoutList.get(index) instanceof Barcode) {
+				Barcode barcode = (Barcode) this.checkoutList.get(index);
+				// getting the actual object that the customer had in his shopping cart and was subsequently added to the baggingArea
+				item = (BarcodedItem) this.sc.barcodedItems.get(barcode);
+				price = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getPrice();
+				weight = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getExpectedWeight();
+			}
+			else {
+				PriceLookUpCode pluCode = (PriceLookUpCode) this.checkoutList.get(index);
+				// getting the actual object that the customer had in his shopping cart and was subsequently added to the baggingArea
+				item = (PLUCodedItem) this.sc.pluCodedItems.get(pluCode);
+				weight = item.getWeight(); // When PLU coded items are made they will have to be added to pluCodedItems along with the PLU code
+				price = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getPrice() * weight / 1000;	
+			}
+			this.updateCheckoutTotal(-price);				// decrement price
+			this.sc.updateExpectedCheckoutWeight(-weight);  // decrement weight
+			this.sc.station.baggingArea.remove(item);
+			checkoutList.remove(index); // remove the barcode or PLUCode from checkoutList so GUI updates accordingly
+			refreshGui();
+			//sc.goToInitialScreenOnUI();
+			return true;
+		}
+		else {
+			return false;
+		}
+
+	}
+	
+	public ArrayList<Tuple<String, Double>> getItemDescriptionPriceList() {
+		 ArrayList<Tuple<String, Double>> list = new ArrayList<>();
+		 double price;
+		 String description;
+		 for (int i = 0; i < this.checkoutList.size(); i ++) {
+				if (this.checkoutList.get(i) instanceof Barcode) {
+					Barcode barcode = (Barcode) this.checkoutList.get(i);
+					price = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getPrice();
+					description = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode).getDescription();
+				}
+				else {
+					PriceLookUpCode pluCode = (PriceLookUpCode) this.checkoutList.get(i);
+					PLUCodedItem item = (PLUCodedItem) this.sc.pluCodedItems.get(pluCode);
+					double weight = item.getWeight(); // When PLU coded items are made they will have to be added to pluCodedItems along with the PLU code
+					price = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getPrice() * weight / 1000;	
+					description = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getDescription();
+				}
+			list.add(new Tuple<String, Double>(description, price));
+		 }
+		 double reusableBagPrice = this.sc.fakeData.getReusableBagPrice();
+		 for (int i = 0; i < bags.size(); i++) {
+			 list.add(new Tuple<String, Double>("Reusable Bag", reusableBagPrice));
+		 }
+		 return list;
+	}
+	
+	public ArrayList<Object> getCheckoutList() {
+		return checkoutList;
+	}
+	
 
 	public void updateCheckoutTotal(double amount) {
 		if (checkoutListTotal + amount >= 0)
@@ -126,19 +262,15 @@ public class ItemsControl
 
 	public void addReusableBags(ReusableBag aBag) {
 		bags.add(aBag); // add to reusable bags doesnt really need it for now
-
 		double reusableBagPrice = sc.fakeData.getReusableBagPrice();
 		this.updateCheckoutTotal(reusableBagPrice); // update total balance
-		this.addItemToCheckoutList(new Tuple<String, Double>("Reusable bag", reusableBagPrice));
+		refreshGui();
 	}
 
 	public double getCheckoutTotal() {
 		return checkoutListTotal;
 	}
 
-	public ArrayList<Tuple<String, Double>> getCheckoutList() {
-		return checkoutList;
-	}
 
 	private void refreshGui() {
 		for (ItemsControlListener l : listeners) {
@@ -159,8 +291,8 @@ public class ItemsControl
 			// TODO: Find another way to do this
 			this.currentItem = sc.customer.shoppingCart.get(sc.customer.shoppingCart.size() - 1);
 			isPLU = currentItem.getClass() == PLUCodedItem.class;
-			if (isPLU) {
-				expectedPLU = ((PLUCodedItem) currentItem).getPLUCode();
+			if(isPLU) {
+				expectedPLU = ((PLUCodedItem)currentItem).getPLUCode();
 			}
 
 			sc.customer.selectNextItem();
@@ -187,7 +319,7 @@ public class ItemsControl
 			sc.customer.deselectCurrentItem();
 
 			// if there was a plu item on the scanner tray then remove it
-			if (weightofScannerTray != 0) {
+			if(weightofScannerTray != 0) {
 				sc.station.scanningArea.remove(currentItem);
 			}
 
@@ -214,23 +346,24 @@ public class ItemsControl
 //			pluItemSelected();
 
 			double weight = weightofScannerTray - sc.getWeightOfScannerTray();
+			
 			System.out.println(weight + " Scale weight");
 
 			sc.setWeightOfScannerTray(weightofScannerTray);
 			sc.updateExpectedCheckoutWeight(weight);
 			sc.updateWeightOfLastItemAddedToBaggingArea(weight);
-
+			
 			// Maybe add this to the right of the item in the checkout list
 			System.out.println("Weight of item: " + weight);
 
-			if (weight == 0.0) {
+			if(weight == 0.0) {
 				System.err.println("Please place the item on the scale before entering the code!!");
 				return false;
 			}
 
 			// price per kg
 			price = (double) product.getPrice() * weight / 1000;
-			this.addItemToCheckoutList(new Tuple<String, Double>(product.getDescription(), price));
+			this.addItemToCheckoutList(currentProductCode);
 			this.updateCheckoutTotal(price);
 
 			System.out.println("Added item to checkout list!");
@@ -241,7 +374,7 @@ public class ItemsControl
 				l.awaitingItemToBePlacedInBaggingArea(this);
 
 			return true;
-		} catch (InvalidArgumentSimulationException | NullPointerSimulationException e) {
+		} catch(InvalidArgumentSimulationException | NullPointerSimulationException e) {
 			System.err.println(e.toString());
 			return false;
 		}
@@ -315,7 +448,7 @@ public class ItemsControl
 	 * Weighs the item before entering the plu code.
 	 */
 	public void weighItem() {
-		if (isPLU) {
+		if(isPLU) {
 			System.out.println("Weighing item!!");
 			sc.station.scanningArea.add(currentItem);
 
@@ -392,26 +525,25 @@ public class ItemsControl
 			// Check with product database and update inventory
 			Product product = findProduct(currentProductCode);
 			checkInventory(product);
-
-			if (!isPLU) {
+			
+			if(!isPLU) {
 				System.err.println("The currently selected item has no PLU code! Or there is no item selected!");
 				currentProductCode = null;
-				sc.goBackOnUI();
-				;
-			} else if (expectedPLU.hashCode() != currentProductCode.hashCode()) {
+				sc.goBackOnUI();;
+			} else if(expectedPLU.hashCode() != currentProductCode.hashCode()) {
 				System.err.println("You entered the wrong PLU code for the item!");
 				System.err.printf("The expected PLU code is %s\n", expectedPLU);
 			} else {
 				inCatalog = false;
-
+				
 				// Signal scanning area to wait for item to be placed on
 				for (ItemsControlListener l : listeners)
 					l.awaitingItemToBePlacedInScanningArea(sc);
 			}
-
-		} catch (NullPointerSimulationException e) {
+			
+		}catch(NullPointerSimulationException e) {
 			System.err.println("PLU code does not exist in the database");
-		}
+		} 
 	}
 
 	@Override
@@ -465,6 +597,10 @@ public class ItemsControl
 				case "weigh":
 					weighItem();
 					break;
+				case "remove item":
+					System.out.println("Requesting item removal. Please wait for Assistance!");
+					requestRemoveItem();
+					break;
 				default:
 					break;
 				}
@@ -515,6 +651,10 @@ public class ItemsControl
 		}
 	}
 
+	public ArrayList<ReusableBag> getBagsList() {
+		return this.bags;
+	}
+	
 	private void checkInventory(Product product) {
 		if (ProductDatabases.INVENTORY.containsKey(product) && ProductDatabases.INVENTORY.get(product) >= 1) {
 			ProductDatabases.INVENTORY.put(product, ProductDatabases.INVENTORY.get(product) - 1); // updates INVENTORY
@@ -534,11 +674,12 @@ public class ItemsControl
 			throw new NullPointerSimulationException();
 		}
 	}
-
+	
 	private PLUCodedProduct findProduct(PriceLookUpCode code) throws NullPointerSimulationException {
-		if (ProductDatabases.PLU_PRODUCT_DATABASE.containsKey(code)) {
-			return ProductDatabases.PLU_PRODUCT_DATABASE.get(code);
-		} else {
+		if(ProductDatabases.PLU_PRODUCT_DATABASE.containsKey(code)) {
+					return ProductDatabases.PLU_PRODUCT_DATABASE.get(code);        
+			}
+		else {
 			// TODO: Inform customer station
 			System.out.println("Cannot find the product. Please try again or ask for assistant!");
 			throw new NullPointerSimulationException();
@@ -581,7 +722,7 @@ public class ItemsControl
 					l.awaitingItemToBeSelected(this);
 			}
 		} else {
-			weightofScannerTray = weightInGrams;
+			weightofScannerTray = weightInGrams;	
 			addItemByPLU();
 		}
 	}
@@ -601,7 +742,7 @@ public class ItemsControl
 	public Item getCurrentItem() {
 		return currentItem;
 	}
-
+	
 	public void setCurrentProduct(PriceLookUpCode code) {
 		currentProductCode = code;
 	}
@@ -611,7 +752,7 @@ public class ItemsControl
 		// pass in plu input
 		PriceLookUpCode code = new PriceLookUpCode(pluCode);
 		setCurrentProduct(code);
-
+		
 		// next step: scanning area
 		pluItemSelected();
 	}
@@ -619,12 +760,12 @@ public class ItemsControl
 	@Override
 	public void pluErrorMessageUpdated(PLUCodeControl pcc, String errorMessage) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void pluHasBeenUpdated(PLUCodeControl pcc, String pluCode) {
 		// TODO Auto-generated method stub
-
+		
 	}
 }
