@@ -210,7 +210,7 @@ public class FakeDataInitializer {
 	}
 
 	/**
-	 * Get certain items for shopping cart
+	 * Get certain items for shopping cart 
 	 * This method does not return all items in the database
 	 * @return a list of items that will be in customer shopping cart
 	 */
