@@ -52,6 +52,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 	protected GUI_JButton requestNoBaggingBtn;
 	protected GUI_JButton addOwnBagsBtn;
 	protected GUI_JButton removeItemBtn;
+	protected GUI_JButton doneBtn;
 
 	protected GUI_JButton purchaseBagsBtn;
 	protected GUI_JButton addItemByPLUBtn;
@@ -189,7 +190,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		removeItemBtn.setEnabled(false);
 		
 		JPanel fifthButtonPanel = new JPanel(new GridLayout());
-		GUI_JButton doneBtn = makeButton("Print Receipt", fifthButtonPanel);
+		doneBtn = makeButton("Print Receipt", fifthButtonPanel);
 		rightSidebuttonPanel.add(fifthButtonPanel);
 		doneBtn.addActionListener(new ActionListener() {
 			@Override
@@ -197,6 +198,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 				sc.printReceipt();
 			}
 		});
+		doneBtn.setEnabled(false);
 
 
 		this.addLayer(mainPanel, 0);
@@ -341,6 +343,10 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 	public void productSubtotalUpdated(ItemsControl itemsControl) {
 		DecimalFormat df = new DecimalFormat("0.00");
 		subtotalLabel.setText("Subtotal: $" + df.format(itemsControl.getCheckoutTotal()));
+		
+		if(itemsControl.getCheckoutTotal()==0) {
+			doneBtn.setEnabled(true);
+		}
 	}
 
 	@Override
