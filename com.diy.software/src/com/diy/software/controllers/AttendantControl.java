@@ -2,11 +2,15 @@ package com.diy.software.controllers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
-
+import java.util.Scanner;
+import java.util.HashMap;
+import java.util.Objects;
 import com.diy.software.listeners.AttendantControlListener;
+import com.diy.software.listeners.MembershipControlListener;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.OverloadException;
@@ -26,15 +30,33 @@ import ca.ucalgary.seng300.simulation.SimulationException;
 public class AttendantControl implements ActionListener, ReceiptPrinterListener {
 
 	private StationControl sc;
+	private ItemsControl ic;
 	private ArrayList<AttendantControlListener> listeners;
 	private CoinStorageUnit unit;
 	private Currency currency;
 	private int MAXIMUM_INK = 0;
 	String attendantNotifications;
+	
+	public static final ArrayList<String> logins = new ArrayList<String>();
+	
+	public void login(String password) {
+		for (AttendantControlListener l : listeners) {
+			l.loggedIn(logins.contains(password));
+		}
+	}
+	
+	public void logout() {
+		for (AttendantControlListener l : listeners) {
+			l.loggedIn(false);
+		}
+	}
+
 
 	public AttendantControl(StationControl sc) {
 		this.sc = sc;
+		this.ic = sc.getItemsControl();
 		this.listeners = new ArrayList<>();
+		
 	}
 
 	public void addListener(AttendantControlListener l) {
@@ -44,7 +66,6 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	public void removeListener(AttendantControlListener l) {
 		listeners.remove(l);
 	}
-	
 	
 	// allow attendant to enable customer station use after it has been suspended
 	public void permitStationUse() {
@@ -73,10 +94,53 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	public void approveBagsAdded() {
 		sc.unblockStation();
 		for (AttendantControlListener l : listeners) {
-			l.attendantApprovedBags(this);
+			l.attendantApprovedBags(this); 
 		}
 	}
-
+	
+	/**
+	 * Unblocks the customer DIYStation and announces that an item
+	 * has been removed to any AttendantControl listeners.
+	 */
+	public void removeItemSuccesful() {
+		sc.unblockStation();
+		for (AttendantControlListener l : listeners) {
+			l.attendantApprovedItemRemoval(this);
+		}
+	}
+	
+	/**
+	 * This method should be triggered when the attendant selects the "Remove Item"
+	 * option from their console. It calls removeItem in ItemsControl and passes
+	 * an integer as an argument. This integer should correspond to the item number which
+	 * is to be removed.
+	 * 
+	 * Precondition: The customer must have requested "remove item" from their console.
+	 * 
+	 * @param i	The item number to remove
+	 * @return	Whether the removal was successful
+	 */
+	public boolean removeItem(int i) {
+		
+		boolean success = ic.removeItem(i);
+		
+		if (success) {
+			removeItemSuccesful();
+			ic.notifyItemRemoved();
+		}
+		
+		return success;
+		
+		// TODO Switch this so that the GUI uses a pinpad/numpad to enter the number
+//		System.out.println("Enter the number corrseponding to the item to be removed: ");
+//		int itemNumber = scanner.nextInt();
+//		while (!ic.removeItem(itemNumber)) {
+//			System.out.println("Enter the number corrseponding to the item to be removed: ");
+//			itemNumber = scanner.nextInt();
+//		}
+		
+	}
+	
 	/**
 	 * Allow attendant to shut down a station in order to do maintenance
 	 *
@@ -85,7 +149,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 *
 	 */
 	public void preventStationUse(){
-		sc.blockStation();
+		sc.blockStation("prevent");
 		for(AttendantControlListener l : listeners){
 			l.attendantPreventUse(this);
 		}
@@ -166,7 +230,11 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		sc.ItemApprovedToNotBag();
 		for (AttendantControlListener l : listeners)
 			l.initialState();
-		sc.getItemsControl().placeBulkyItemInCart();
+	}
+	
+	public void itemBagged() {
+		for (AttendantControlListener l : listeners)
+			l.itemBagged();
 	}
 	
 	/*
@@ -249,32 +317,44 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 *@param unit
 	 *		the unit that needs to be filled up
 	 *@param AMOUNT
-	 *		the amount of coins to fill up
+	 *		the amount of coin capacity to fill up MUST BE EVENLY DIVISIBLE BY 5
+	 *
+	 *@return
+	 *		the filled up unit
 	 * @throws TooMuchCashException 
 	 * @throws SimulationException 
 
 	 */
-	public void adjustCoinsForChange(CoinStorageUnit unit, int AMOUNT) throws SimulationException, TooMuchCashException  {
+	public void adjustCoinsForChange(int AMOUNT) throws SimulationException, TooMuchCashException  {
 		
-		this.unit = unit;
-		//take system out of service
+		
+		
+		CoinStorageUnit unit = sc.station.coinStorage;
+		
+		if(AMOUNT > unit.getCapacity()) {
+			throw new TooMuchCashException();
+		}
+		//take system out of service//
+		
+		AMOUNT /= 5;
 		
 		sc.getCashControl().disablePayments();
 		
-		Coin nickelToAdd = new Coin(5);
-		Coin dimeToAdd = new Coin(10);
-		Coin quaterToAdd = new Coin(25);
-		Coin loonieToAdd = new Coin(100);
-		Coin toonieToAdd = new Coin(200);
+		Coin tCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(2.0));
+		Coin lCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(1.0));
+		Coin qCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(0.25));
+		Coin dCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(0.1));
+		Coin nCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(0.05));
 		
 		
 		List<Coin> unloadedCoins = unit.unload();
+		sc.getCashControl().coinsUnloaded(unit);
 		
-		int nCounter = countCoin(5,unloadedCoins);
-		int dCounter = countCoin(10,unloadedCoins);
-		int qCounter = countCoin(25,unloadedCoins);
-		int lCounter = countCoin(100,unloadedCoins);
-		int tCounter = countCoin(200,unloadedCoins);
+		int nCounter = countCoin(nCoin,unloadedCoins);
+		int dCounter = countCoin(dCoin,unloadedCoins);
+		int qCounter = countCoin(qCoin,unloadedCoins);
+		int lCounter = countCoin(lCoin,unloadedCoins);
+		int tCounter = countCoin(tCoin,unloadedCoins);
 		
 		int nAmount = AMOUNT - nCounter;
 		int dAmount = AMOUNT - dCounter;
@@ -282,21 +362,29 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		int lAmount = AMOUNT - lCounter;
 		int tAmount = AMOUNT - tCounter;
 		
-		addCoin(nAmount,nickelToAdd);
-		addCoin(dAmount,dimeToAdd);
-		addCoin(qAmount,quaterToAdd);
-		addCoin(lAmount,loonieToAdd);
-		addCoin(tAmount,toonieToAdd);
+		for(int i = 0; i < nAmount; i++) {
+			unit.load(nCoin);
+		}
+		for(int i = 0; i < dAmount; i++) {
+			unit.load(dCoin);
+		}
+		for(int i = 0; i < qAmount; i++) {
+			unit.load(qCoin);
+		}
+		for(int i = 0; i < lAmount; i++) {
+			unit.load(lCoin);
+		}
+		for(int i = 0; i < tAmount; i++) {
+			unit.load(tCoin);
+		}
 		
-		
+				
 		//notify cash controller that the unit has been filled
 		sc.getCashControl().coinsLoaded(unit);
 		
 		//re enable system
 		sc.getCashControl().enablePayments();
 		
-		for (AttendantControlListener l : listeners)
-			l.initialState();
 	}
 	
 	/**
@@ -310,31 +398,18 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	 * @return
 	 * 		returns the amount of coins counted
 	 */
-	public int countCoin(long value, List<Coin> coins) {
+	public int countCoin(Coin coinToCount, List<Coin> coins) {
+	
 		int count = 0;
 		for(Coin c : coins) {
-			if(c.getValue() == value) {
-				count++;
+
+			if(c != null) {
+				if(c == coinToCount) {
+					count++;
+				}
 			}
 		}
 		return count;
-	}
-	
-	/**
-	 * add the specified amount of coins to a list to add to dispenser
-	 * 
-	 * @param amount
-	 * 		amount of coin to add
-	 * 
-	 * @param coin 
-	 * 		the coin type to add
-	 * @throws TooMuchCashException 
-	 * @throws SimulationException 
-	 */
-	public void addCoin(int amount,Coin coin) throws SimulationException, TooMuchCashException{
-		for(int i = 0; i < amount; i++) {
-			unit.load(coin);
-		}
 	}
 	
 
@@ -374,8 +449,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 					
 					break;
 				case "addBag": 
-					//TODO:
-					
+					sc.loadBags();
 					break;
 				case "request no bag":
 					attendantNotifications = ("customer requests no bagging");
@@ -399,15 +473,27 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 					startUpStation();
 					break;
 				case "shutDown":
-					System.out.println("Station has been shut down");
-					shutDownStation();
+					//TODO:
+					// not sure if it was needed from merge conflict commented out
+					// System.out.println("Station has been shut down");
+					// shutDownStation();
+					break;
+				case "add":
+					//TODO:
+					break;
+				case "remove":
+					//TODO:
+					break;
+				case "logout":
+					logout();
 					break;
 				default:
 					break;
 			}
 		} catch (Exception ex) {
-
+			
 		}
+		
 	}
 
 	@Override
@@ -481,6 +567,5 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	public void noBagRequest() {
 		for (AttendantControlListener l : listeners)
 			l.noBagRequest();
-
 	}
 }

@@ -28,7 +28,7 @@ public class CustomerItemsPanel extends JPanel
 	private BagsControl bc;
 	private ReceiptControl rc;
 	private boolean itemsAvailable;
-	JButton selectNextItemButton, mainScannerButton, handheldScannerButton, deselectCurrentItemButton, placeItemInBaggingAreaButton, takeReceiptButton, takeIncompleteReceipt;
+	JButton selectNextItemButton, mainScannerButton, handheldScannerButton, deselectCurrentItemButton, placeItemInBaggingAreaButton, placeItemInScanningAreaButton, itemWeight, takeReceiptButton, takeIncompleteReceipt;
 	GridBagConstraints buttonGrid = new GridBagConstraints();
 	JLabel weightDescrepancyMessage;
 
@@ -63,10 +63,15 @@ public class CustomerItemsPanel extends JPanel
 		deselectCurrentItemButton = new JButton("deselectCurrentItem()");
 		deselectCurrentItemButton.setActionCommand("put back");
 		deselectCurrentItemButton.addActionListener(ic);
-
-		placeItemInBaggingAreaButton = new JButton("placeItemInBagginArea()");
+		
+		placeItemInBaggingAreaButton = new JButton("placeItemInBaggingArea()");
 		placeItemInBaggingAreaButton.setActionCommand("bag");
 		placeItemInBaggingAreaButton.addActionListener(ic);
+
+		itemWeight = new JButton("weighItem()");
+		itemWeight.setActionCommand("weigh");
+		itemWeight.addActionListener(ic);
+
 		
 		takeReceiptButton = new JButton("Take Receipt");
 		takeReceiptButton.setActionCommand("takeReceipt");
@@ -98,15 +103,18 @@ public class CustomerItemsPanel extends JPanel
 
 		buttonGrid.gridx = 4;
 		this.add(placeItemInBaggingAreaButton, buttonGrid);
-		
+
 		buttonGrid.gridx = 5;
+		this.add(itemWeight, buttonGrid);
+
+		buttonGrid.gridx = 6;
 		this.add(takeReceiptButton, buttonGrid);
 		
-		buttonGrid.gridx = 6;
+		buttonGrid.gridx = 7;
 		this.add(takeIncompleteReceipt, buttonGrid);
 		
 		buttonGrid.gridy = 1;
-		buttonGrid.gridx = 7;
+		buttonGrid.gridx = 8;
 		this.add(weightDescrepancyMessage);
 		
 
@@ -118,6 +126,7 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
+		itemWeight.setEnabled(false);
 		takeReceiptButton.setEnabled(false);
 		takeIncompleteReceipt.setEnabled(false);
 	}
@@ -129,6 +138,7 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
+		itemWeight.setEnabled(false);
 		weightDescrepancyMessage.setText("");
 	}
 
@@ -139,7 +149,18 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(true);
 		deselectCurrentItemButton.setEnabled(true);
 		placeItemInBaggingAreaButton.setEnabled(false);
+		itemWeight.setEnabled(false);
 	}
+	
+//	@Override
+//	public void plucodedItemWasSelected(ItemsControl ic) {
+//		selectNextItemButton.setEnabled(false);
+//		mainScannerButton.setEnabled(true);
+//		handheldScannerButton.setEnabled(true);
+//		deselectCurrentItemButton.setEnabled(true);
+//		placeItemInBaggingAreaButton.setEnabled(false);
+//		itemWeight.setEnabled(false);
+//	}
 
 	@Override
 	public void awaitingItemToBePlacedInBaggingArea(ItemsControl ic) {
@@ -148,6 +169,7 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(true);
+		itemWeight.setEnabled(false);
 	}
 
 	@Override
@@ -169,10 +191,31 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
+		itemWeight.setEnabled(false);
 	}
 
 	@Override
+	public void awaitingItemToBePlacedInScanningArea(StationControl sc) {
+		selectNextItemButton.setEnabled(false);
+		mainScannerButton.setEnabled(false);
+		handheldScannerButton.setEnabled(false);
+		deselectCurrentItemButton.setEnabled(false);
+		placeItemInBaggingAreaButton.setEnabled(false);
+		itemWeight.setEnabled(true);
+	}
+	
+	@Override
 	public void awaitingCustomerToFinishPlacingBagsInBaggingArea(BagsControl bc) {
+		selectNextItemButton.setEnabled(false);
+		mainScannerButton.setEnabled(false);
+		handheldScannerButton.setEnabled(false);
+		deselectCurrentItemButton.setEnabled(false);
+		placeItemInBaggingAreaButton.setEnabled(false);
+		itemWeight.setEnabled(false);
+	}
+	
+	@Override
+	public void awaitingAttendantToApproveItemRemoval(ItemsControl bc) {
 		selectNextItemButton.setEnabled(false);
 		mainScannerButton.setEnabled(false);
 		handheldScannerButton.setEnabled(false);
@@ -182,6 +225,16 @@ public class CustomerItemsPanel extends JPanel
 
 	@Override
 	public void attendantApprovedBags(AttendantControl ac) {
+		selectNextItemButton.setEnabled(itemsAvailable);
+		mainScannerButton.setEnabled(false);
+		handheldScannerButton.setEnabled(false);
+		deselectCurrentItemButton.setEnabled(false);
+		placeItemInBaggingAreaButton.setEnabled(false);
+		itemWeight.setEnabled(false);
+	}
+	
+	@Override 
+	public void attendantApprovedItemRemoval(AttendantControl bc) {
 		selectNextItemButton.setEnabled(itemsAvailable);
 		mainScannerButton.setEnabled(false);
 		handheldScannerButton.setEnabled(false);
@@ -207,6 +260,7 @@ public class CustomerItemsPanel extends JPanel
 		handheldScannerButton.setEnabled(false);
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
+		itemWeight.setEnabled(false);
 		weightDescrepancyMessage.setText(updateMessage);
 	}
 
@@ -340,6 +394,11 @@ public class CustomerItemsPanel extends JPanel
 	@Override
 	public void attendantPermitStationUse(AttendantControl ac) {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void loggedIn(boolean isLoggedIn) {
+		// TODO Auto-generated method stub
 		
 	}
 
@@ -348,4 +407,16 @@ public class CustomerItemsPanel extends JPanel
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public void itemRemoved(ItemsControl itemsControl) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public void itemBagged() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

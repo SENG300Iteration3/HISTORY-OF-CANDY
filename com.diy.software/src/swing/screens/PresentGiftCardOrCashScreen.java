@@ -153,7 +153,7 @@ public class PresentGiftCardOrCashScreen extends Screen implements CashControlLi
 	}
 
 	@Override
-	public void cashRejected(CashControl cc) {
+	public void checkCashRejected(CashControl cc) {
 		if(!isGiftCard) {
 			List<Coin> c = systemControl.station.coinTray.collectCoins();
 			Banknote b = null; 
@@ -162,14 +162,16 @@ public class PresentGiftCardOrCashScreen extends Screen implements CashControlLi
 			}
 			double returnedCash = 0;
 			for(Coin i : c) {
-				returnedCash += ((double)i.getValue())/100.0;
+				returnedCash += i.getValue().doubleValue();
 			}
 			if(b != null) {
 				returnedCash += b.getValue();
 			}
-			message.setText("Input cash was rejected. You recieved $" + returnedCash + " back from the machine");
-			lastRecievedCash = returnedCash;
-			System.out.println("Input cash was rejected. You recieved $" + returnedCash + " back from the machine");
+			if(returnedCash > 0) {
+				message.setText("Input cash was rejected. You recieved $" + returnedCash + " back from the machine");
+				lastRecievedCash = returnedCash;
+				System.out.println("Input cash was rejected. You recieved $" + returnedCash + " back from the machine");
+			}
 		}
 	}
 
@@ -183,7 +185,7 @@ public class PresentGiftCardOrCashScreen extends Screen implements CashControlLi
 			}
 			double returnedCash = 0;
 			for(Coin i : c) {
-				returnedCash += ((double)i.getValue())/100.0;
+				returnedCash += i.getValue().doubleValue();
 			}
 			if(b != null) {
 				for(Banknote i : b) {

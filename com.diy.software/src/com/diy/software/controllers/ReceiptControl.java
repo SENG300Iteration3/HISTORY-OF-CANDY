@@ -25,7 +25,7 @@ import com.jimmyselectronics.abagnale.ReceiptPrinterListener;
 import com.jimmyselectronics.abagnale.ReceiptPrinterND;
 
 import ca.ucalgary.seng300.simulation.InvalidArgumentSimulationException;
-import swing.panes.AttendantStationPane;
+import swing.screens.AttendantStationScreen;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -73,6 +73,8 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	public void printItems() {
 		String allItems = "";
 		for(Tuple<String, Double> item : sc.getItemsControl().getCheckoutList()) {
+			// delete after merge conflict sort
+		// for(Tuple<String, Double> item : sc.getItemsControl().getItemDescriptionPriceList()) {
 			printReceipt(item.x + " , $" + item.y + "\n");
 			allItems = allItems.concat(item.x + " , $" + item.y + "\n");
 		}
@@ -86,7 +88,7 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	 */
 	public void printTotalCost() {
 		double total = 0.0;
-		for(Tuple<String, Double> item : sc.getItemsControl().getCheckoutList()) {
+		for(Tuple<String, Double> item : sc.getItemsControl().getItemDescriptionPriceList()) {
 			total += item.y;
 		}
 		printReceipt("Total: $" + total + "\n");
