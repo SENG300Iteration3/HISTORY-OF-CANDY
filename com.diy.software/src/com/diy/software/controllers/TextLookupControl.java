@@ -122,28 +122,31 @@ public class TextLookupControl implements KeyboardControlListener{
 		sc.blockStation();
 		selection = getResult(selectionIndex);
 		if (selection.getBarcodedProduct() == null) {
+			// TODO Add check to see if item has already been added
+			System.out.println(fdi.PLUCODED_ITEM_DATABASE.size());
 			PLUCodedProduct productToAdd = selection.getPLUCodedProduct();
-			PriceLookUpCode code  = productToAdd.getPLUCode();
-			PLUCodedItem item = fdi.PLUCODED_ITEM_DATABASE.get(code);
-			this.sc.getItemsControl().addItemToCheckoutList(code);
-			double weight = item.getWeight();
+			PriceLookUpCode code = productToAdd.getPLUCode();
+			PLUCodedItem pluItem = fdi.PLUCODED_ITEM_DATABASE.get(code);
+			this.sc.pluCodedItems.put(code, pluItem);
+			this.sc.getItemsControl().addItemToCheckoutList(code);		
+			double weight = pluItem.getWeight();
 			sc.getItemsControl().updateCheckoutTotal(productToAdd.getPrice() * weight / 1000);
-			this.sc.updateExpectedCheckoutWeight(item.getWeight());
-			this.sc.pluCodedItems.put(code, item);
-			this.sc.station.baggingArea.add(item);
+			this.sc.updateExpectedCheckoutWeight(weight);	
+			this.sc.station.baggingArea.add(pluItem);
 			
 //			productWeight = generateProductWeight();
 //			productCost = calculatePrice(productToAdd, productWeight);
 //			productDescription = productToAdd.getDescription();
 		}
 		else {
+			// TODO Add check to see if item has already been added
 			BarcodedProduct productToAdd = selection.getBarcodedProduct();
 			Barcode barcode = productToAdd.getBarcode();
 			BarcodedItem item = fdi.BARCODED_ITEM_DATABASE.get(barcode);
+			this.sc.barcodedItems.put(barcode, item);
 			sc.getItemsControl().addItemToCheckoutList(barcode);
 			sc.getItemsControl().updateCheckoutTotal(productToAdd.getPrice());	
 			this.sc.updateExpectedCheckoutWeight(productToAdd.getExpectedWeight()); 
-			this.sc.barcodedItems.put(barcode, item);
 			this.sc.station.baggingArea.add(item);
 		}
 		sc.getItemsControl().updateCheckoutTotal(productCost);

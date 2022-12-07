@@ -187,7 +187,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				PriceLookUpCode pluCode = (PriceLookUpCode) this.checkoutList.get(index);
 				// getting the actual object that the customer had in his shopping cart and was subsequently added to the baggingArea
 				item = (PLUCodedItem) this.sc.pluCodedItems.get(pluCode);
-				weight = item.getWeight(); // When PLU coded items are made they will have to be added to pluCodedItems along with the PLU code
+				weight = item.getWeight();
 				price = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getPrice() * weight / 1000;	
 			}
 			this.updateCheckoutTotal(-price);				// decrement price
