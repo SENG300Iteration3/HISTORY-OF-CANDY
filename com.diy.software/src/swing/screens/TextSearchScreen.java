@@ -334,6 +334,5 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 
 	@Override
 	public void itemHasBeenAddedToCheckout(TextLookupControl tlc) {
-		System.out.println("Clicked");
 	}
 }

@@ -122,26 +122,31 @@ public class TextLookupControl implements KeyboardControlListener{
 		sc.blockStation();
 		selection = getResult(selectionIndex);
 		if (selection.getBarcodedProduct() == null) {
-			// TODO Add check to see if item has already been added
-			System.out.println(fdi.PLUCODED_ITEM_DATABASE.size());
 			PLUCodedProduct productToAdd = selection.getPLUCodedProduct();
 			PriceLookUpCode code = productToAdd.getPLUCode();
-			PLUCodedItem pluItem = fdi.PLUCODED_ITEM_DATABASE.get(code);
-			this.sc.pluCodedItems.put(code, pluItem);
-			this.sc.getItemsControl().addItemToCheckoutList(code);		
-			double weight = pluItem.getWeight();
-			sc.getItemsControl().updateCheckoutTotal(productToAdd.getPrice() * weight / 1000);
-			this.sc.updateExpectedCheckoutWeight(weight);	
-			this.sc.station.baggingArea.add(pluItem);
-			
-//			productWeight = generateProductWeight();
-//			productCost = calculatePrice(productToAdd, productWeight);
-//			productDescription = productToAdd.getDescription();
+			if (this.sc.pluCodedItems.containsKey(code)) {
+				System.err.println("Cannot add duplicate items");
+				sc.unblockStation();
+				return;
+			}
+			else {
+				PLUCodedItem pluItem = fdi.PLUCODED_ITEM_DATABASE.get(code);
+				this.sc.pluCodedItems.put(code, pluItem);
+				this.sc.getItemsControl().addItemToCheckoutList(code);		
+				double weight = pluItem.getWeight();
+				sc.getItemsControl().updateCheckoutTotal(productToAdd.getPrice() * weight / 1000);
+				this.sc.updateExpectedCheckoutWeight(weight);	
+				this.sc.station.baggingArea.add(pluItem);
+			}
 		}
 		else {
-			// TODO Add check to see if item has already been added
 			BarcodedProduct productToAdd = selection.getBarcodedProduct();
 			Barcode barcode = productToAdd.getBarcode();
+			if (this.sc.barcodedItems.containsKey(barcode)) {
+				System.err.println("Cannot add duplicate items");
+				sc.unblockStation();
+				return;
+			}
 			BarcodedItem item = fdi.BARCODED_ITEM_DATABASE.get(barcode);
 			this.sc.barcodedItems.put(barcode, item);
 			sc.getItemsControl().addItemToCheckoutList(barcode);
