@@ -158,6 +158,11 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 	}
 
 	@Override
+	public void attendantApprovedItemRemoval(AttendantControl bc) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	public void lowInk(AttendantControl ac, String message) {
 		// TODO Auto-generated method stub
 	}

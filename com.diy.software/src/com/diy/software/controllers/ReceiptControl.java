@@ -64,7 +64,7 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	 * Finds what the contents of the receipt should be based on checked out items
 	 */
 	public void printItems() {
-		for(Tuple<String, Double> item : sc.getItemsControl().getCheckoutList()) {
+		for(Tuple<String, Double> item : sc.getItemsControl().getItemDescriptionPriceList()) {
 			System.out.println(item.x + " , $" + item.y);
 			printReceipt(item.x + " , $" + item.y + "\n");
 		}
@@ -76,7 +76,7 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	 */
 	public void printTotalCost() {
 		double total = 0.0;
-		for(Tuple<String, Double> item : sc.getItemsControl().getCheckoutList()) {
+		for(Tuple<String, Double> item : sc.getItemsControl().getItemDescriptionPriceList()) {
 			total += item.y;
 		}
 		System.out.println("Total: $" + total);
