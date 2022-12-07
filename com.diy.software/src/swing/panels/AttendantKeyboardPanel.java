@@ -48,12 +48,11 @@ public class AttendantKeyboardPanel extends JPanel implements KeyboardControlLis
 	private static final String[] END_OF_ROW = new String[] {"Delete", "Backspace", "\\ |", "Enter", "PgDn", "Right Arrow"};
 	private static final int NUM_ROWS = END_OF_ROW.length;
 	private static final JPanel[] KEY_ROWS = new JPanel[NUM_ROWS];
-	private static final int KEYBOARD_HEIGHT = 400;
+	private static final int KEYBOARD_HEIGHT = 500;
 
 	private Map<String, JButton> keyBtnMap = new HashMap<>();
 	private JPanel keyboardContainer;
 	private JTextField outputField;
-	private JButton cancelBtn;
 
 	public AttendantKeyboardPanel(final StationControl sc) {
 		super(null); //Screen still requires station control but this is for the attendant station, so we can ignore this
@@ -64,21 +63,18 @@ public class AttendantKeyboardPanel extends JPanel implements KeyboardControlLis
 		keyboardController = ac.getKeyboardControl();
 		keyboardController.addListener(this);
 
-		this.cancelBtn = new JButton("CANCEL");
-		cancelBtn.setPreferredSize(new Dimension(300, 70));
-		cancelBtn.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				sc.goBackOnUI();
-			}
-		});
+		this.setOpaque(false);
 		this.setLayout(new BorderLayout());
-		this.add(cancelBtn);
-		this.add(makeOutputField(), BorderLayout.NORTH);
+		this.add(makeDummyOutputField(), BorderLayout.NORTH);
 		this.add(makeKeyboardPanel(), BorderLayout.SOUTH);
 	}
+	
+	public void setOutputField(JTextField outputField) {
+		this.outputField = outputField;
+	}
 
-	private JTextField makeOutputField() {
+	// This is for testing only
+	private JTextField makeDummyOutputField() {
 		JTextField outputField = new JTextField();
 		outputField.setEditable(false);
 		outputField.getCaret().setVisible(true); // Making it non-editable also makes caret invisible...
@@ -87,6 +83,8 @@ public class AttendantKeyboardPanel extends JPanel implements KeyboardControlLis
 		outputField.setForeground(Color.BLACK);
 		outputField.setFont(GUI_Fonts.TITLE);
 		outputField.setPreferredSize(new Dimension(GUI_Constants.SCREEN_WIDTH, 50));
+		
+		this.outputField = outputField;
 		
 		return outputField;
 	}
@@ -129,7 +127,7 @@ public class AttendantKeyboardPanel extends JPanel implements KeyboardControlLis
 			} else if (key.startsWith("Ctrl")) {
 				curKeyRow.add(makeKeyButton("Ctrl", key, 120), gc);
 			} else if (key.startsWith("CapsLock")) {
-				curKeyRow.add(makeKeyButton(key, key, 145), gc);
+				curKeyRow.add(makeKeyButton("Caps Lock", key, 145), gc);
 			} else if (key.startsWith("Tab")) {
 				curKeyRow.add(makeKeyButton(key, key, 130), gc);
 			} else if (key.startsWith("\\")) { //Need to use escape sequence char
@@ -137,7 +135,7 @@ public class AttendantKeyboardPanel extends JPanel implements KeyboardControlLis
 			} else if (key.startsWith("Left")) {
 				curKeyRow.add(makeKeyButton("Left", key, 60), gc);
 			} else if (key.equals("Spacebar")) {
-				curKeyRow.add(makeKeyButton(key, key, 462), gc);
+				curKeyRow.add(makeKeyButton("", key, 462), gc);
 			} else {
 				curKeyRow.add(makeKeyButton(key, key, 60), gc);
 			}
@@ -186,11 +184,6 @@ public class AttendantKeyboardPanel extends JPanel implements KeyboardControlLis
 		}
 	}
 	
-	// Returns the typed text
-	public String getOutputText() {
-		return this.outputField.getText();
-	}
-
 	@Override
 	public void keyboardInputRecieved(KeyboardControl kc, String text, String key, int pointerPosition) {
 		// Get button that corresponds with the key that was pressed
@@ -208,7 +201,7 @@ public class AttendantKeyboardPanel extends JPanel implements KeyboardControlLis
 
 	@Override
 	public void keyboardInputCompleted(KeyboardControl kc, String text) {
-
+		this.outputField.setText(""); // Clear the text field
 	}
 
 	@Override

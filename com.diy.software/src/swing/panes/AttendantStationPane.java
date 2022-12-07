@@ -102,13 +102,14 @@ public class AttendantStationPane implements AttendantControlListener {
 		if (isLoggedIn) {
 			changeComponents(tabbedPane);
 			
-			
 		}else if (currentComponent.equals(loginScreen.getRootPanel())){
 		
 			loginScreen.loginFail();
 		}else{
 			//logout
 			if (!isLoggedIn) {
+				
+				
 				loginScreen = new AttendantLoginScreen(pc.getStationControls());
 				changeComponents(loginScreen.getRootPanel());
 			}
