@@ -140,6 +140,9 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 			}else if (reason == "prevent") {
 				OkayPromptScreen screen = new OkayPromptScreen(systemControl, "Station Closed For Maintainence", true, false);
 				addScreenToStack(screen);
+			}else if (reason == "Printer is out of ink or paper please wait for attendant") {
+				OkayPromptScreen screen = new OkayPromptScreen(systemControl, reason, true, false);
+				addScreenToStack(screen);
 			} else {
 				blockedPromptScreen = new BlockedPromptScreen(systemControl, reason);
 				addScreenToStack(blockedPromptScreen);
