@@ -128,7 +128,6 @@ public class StationControl
 		 */
 		station.reusableBagDispenser.plugIn();
 		station.reusableBagDispenser.turnOn();
-		bagInStock = station.reusableBagDispenser.getCapacity();
 		loadBags();
 
 		/*
@@ -233,13 +232,17 @@ public class StationControl
 		return station;
 	}
 	
-	private void loadBags() {
+	public void loadBags() {
 		try {
-			for(int i = 0; i < bagInStock; i++) {
-				ReusableBag aBag = new ReusableBag();
-				station.reusableBagDispenser.load(aBag);
-			}
-
+			// loads full capacity
+			int limit = station.reusableBagDispenser.getCapacity() - bagInStock;
+			if(limit > 0) {
+				for(int i = 0; i < limit; i++) {
+					ReusableBag aBag = new ReusableBag();
+					station.reusableBagDispenser.load(aBag);
+				}
+				System.out.println("Loaded " + limit + " bags!");		// notify in console
+			}else System.out.println("Bag Dispenser is full. No bag loaded!");	
 		}catch(OverloadException e) {}
 	}
 	
@@ -648,12 +651,9 @@ public class StationControl
 		} 
 	}
 				
-	public void addReusableBag(ReusableBag lastDispensedReusableBag) {
-		// ADD: update inventory
-
-		weightOfLastItem = lastDispensedReusableBag.getWeight();
-		
+	public void addReusableBag(ReusableBag lastDispensedReusableBag) {		
 		// Set the expected weight in SystemControl
+		weightOfLastItem = lastDispensedReusableBag.getWeight();
 		this.updateExpectedCheckoutWeight(weightOfLastItem);
 		this.updateWeightOfLastItemAddedToBaggingArea(weightOfLastItem);
 	}
@@ -661,6 +661,7 @@ public class StationControl
 	public void ItemApprovedToNotBag() {
 		this.updateExpectedCheckoutWeight(-weightOfLastItem);
 		this.updateWeightOfLastItemAddedToBaggingArea(-weightOfLastItem);
+		ic.placeBulkyItemInCart();
 		this.unblockStation();
 	}
 
@@ -758,8 +759,7 @@ public class StationControl
 
 	@Override
 	public void bagDispensed(ReusableBagDispenser dispenser) {
-		// TODO Auto-generated method stub
-		
+		bagInStock--;
 	}
 
 	@Override
@@ -770,8 +770,7 @@ public class StationControl
 
 	@Override
 	public void bagsLoaded(ReusableBagDispenser dispenser, int count) {
-		// TODO Auto-generated method stub
-		
+		bagInStock++;
 	}
 
 }
