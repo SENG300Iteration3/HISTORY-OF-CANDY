@@ -318,4 +318,5 @@ public class AttendantActionsPanel extends JPanel
 		// TODO Auto-generated method stub
 		
 	}
+}
 

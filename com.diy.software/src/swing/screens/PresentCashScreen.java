@@ -172,4 +172,10 @@ public class PresentCashScreen extends Screen implements CashControlListener {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void checkCashRejected(CashControl cc) {
+		// TODO Auto-generated method stub
+		
+	}
 }
