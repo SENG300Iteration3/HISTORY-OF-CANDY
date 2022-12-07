@@ -166,9 +166,8 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		if (isLow) {
 			for (AttendantControlListener l : listeners)
 				l.banknotesInStorageLowState();
-			loadBanknotesToStorage(this.sc.station.banknoteStorage);
+			System.out.println("Banknote storage needs to be refilled.");
 		} else {
-			//Change so message is on gui instead??
 			System.out.println("Banknote storage does not need to be loaded for now.");
 		}
 	}
