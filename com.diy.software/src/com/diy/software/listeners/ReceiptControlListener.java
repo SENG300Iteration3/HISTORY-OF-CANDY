@@ -10,7 +10,7 @@ public interface ReceiptControlListener {
 	public void outOfInkOrPaper(ReceiptControl rc, String message);
 	
 	/**
-	 * used to pass a list of checked out items
+	 * used to pass a single checked out item
 	 */
 	public void setCheckedoutItems(ReceiptControl rc, String message);
 	
@@ -18,6 +18,11 @@ public interface ReceiptControlListener {
 	 * use to pass total cost of checked out items
 	 */
 	public void setTotalCost(ReceiptControl rc, String totalCost);
+	
+	/**
+	 * used to pass the date and time receipt is printed
+	 */
+	public void setMembership(ReceiptControl rc, String dateTime);
 	
 	/**
 	 * used to pass the date and time receipt is printed

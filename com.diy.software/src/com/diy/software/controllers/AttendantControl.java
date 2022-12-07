@@ -105,15 +105,15 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 			sc.getReceiptControl().currentInkCount += inkUnit;
 			sc.station.printer.addInk(inkUnit);
 		} catch (OverloadException e) {
+			sc.getReceiptControl().currentInkCount -= inkUnit;
 			for (AttendantControlListener l : listeners) {
 				l.signalWeightDescrepancy("Added too much ink!");
 				l.addTooMuchInkState();
-			}	
-			if(sc.getReceiptControl().currentInkCount < 100)
-				addInk(ReceiptPrinterND.MAXIMUM_INK - 100);
+			}
+			addInk(ReceiptPrinterND.MAXIMUM_INK - sc.getReceiptControl().currentInkCount); //add maximum amount of ink possible that doesn't cause overload
 			
 		}
-		if(sc.getReceiptControl().currentPaperCount <= sc.getReceiptControl().paperLowThreshold) {
+		if(sc.getReceiptControl().currentInkCount <= sc.getReceiptControl().paperLowThreshold) {
 			for (AttendantControlListener l : listeners)
 				l.printerNotLowInkState();
 		}
@@ -134,17 +134,15 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 			sc.getReceiptControl().currentPaperCount += paperUnit;
 			sc.station.printer.addPaper(paperUnit);
 		} catch (OverloadException e) {
+			sc.getReceiptControl().currentPaperCount -= paperUnit;
 			for (AttendantControlListener l : listeners) {
 				l.signalWeightDescrepancy("Added too much paper!");
 				l.addTooMuchPaperState();
 			}
-			if(sc.getReceiptControl().currentPaperCount < 100) 
-				addPaper(ReceiptPrinterND.MAXIMUM_PAPER - 100);
+			addPaper(ReceiptPrinterND.MAXIMUM_PAPER - sc.getReceiptControl().currentPaperCount); //add maximum amount of paper possible that doesn't cause overload
 		}
 		if(sc.getReceiptControl().currentPaperCount <= sc.getReceiptControl().paperLowThreshold) {
-			System.out.println("Prints here");
 			for (AttendantControlListener l : listeners) {
-				System.out.println("Also Prints here");
 				l.printerNotLowPaperState();
 			}
 		}

@@ -11,6 +11,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.awt.event.ActionEvent;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 import com.jimmyselectronics.abagnale.IReceiptPrinter;
 import com.jimmyselectronics.abagnale.ReceiptPrinterListener;
@@ -28,6 +31,7 @@ import com.diy.software.controllers.ReceiptControl;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.StationControlListener;
 import com.diy.software.listeners.ReceiptControlListener;
+import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.util.Tuple;
 
 import ca.powerutility.PowerGrid;
@@ -42,13 +46,20 @@ public class ReceiptControlTest {
     AttendantControlListenerStub acl;
     ReceiptControlListenerStub rcl;
     ReceiptPrinterND rp;
+	FakeDataInitializer fdi;
+	Tuple<String, Double> itemTuple1;
+	Tuple<String, Double> itemTuple2;
 
    
 	@Before
 	public void setup() throws EmptyException, OverloadException {
 		PowerGrid.engageUninterruptiblePowerSource();
 		
-		sc = new StationControl();
+		fdi = new FakeDataInitializer();
+		fdi.addFakeMembers();
+		fdi.addProductAndBarcodeData();
+		
+		sc = new StationControl(fdi);
 		ac = sc.getAttendantControl();
 		rc = sc.getReceiptControl();
 		scl = new StationControlListenerStub();
@@ -59,7 +70,6 @@ public class ReceiptControlTest {
 		rp.register(acl);
 		rp.register(rc);
 		rp.plugIn();
-		rp.turnOff();
 		rp.turnOn();
 		rp.enable();
 		
@@ -87,6 +97,9 @@ public class ReceiptControlTest {
 	@After
 	public void teardown() {
 		ac.removeListener(acl);
+		rp.disable();
+		rp.turnOff();
+		rp.unplug();
 	}
 	
 	/*
@@ -207,18 +220,74 @@ public class ReceiptControlTest {
     }
     
     /*
+     *  TEST INTENTIONALLY FAILS TO SHOWCASEBUG
      *  Test EmptyException thrown when printing when out of paper
+     *  
+     *  BUG FOUND IN HARDWARE: If printing \n to use more paper when the printer
+     *  is out of paper than an empty exception will not be thrown and the paper
+     *  count will be decremented into the negatives.
+     *  
+     *  In order to get an empty exception a character must be printed
+     *  on the new line of paper
      */
-    @Test (expected = EmptyException.class)
-    public void testPrintingWhenOutOfPaper() throws EmptyException, OverloadException{
+    @Test
+    public void BUGSHOWCASEtestPrintingWhenOutOfPaper() throws EmptyException, OverloadException{
+       	sc.getReceiptControl().printReceipt("\n");
+    	sc.getReceiptControl().printReceipt("\n");
+    	//This is false when it should be true because an empty exception is not thrown
+    	//by the hardware even though a new line was printed when out of paper
+    	assertTrue(rcl.takeIncompleteReceipt);
+    	assertFalse(rcl.takeReceipt);
     }
+    
+    /*
+     *  Test EmptyException thrown when printing when out of paper
+     *  
+     *  This test case works, unlike the one with the bug, because
+     *  the bug since the empty exception registers when printing a
+     *  character that consumes ink
+     */
+    @Test
+    public void testPrintingWhenOutOfPaper() throws EmptyException, OverloadException{
+       	sc.getReceiptControl().printReceipt("\n");
+    	sc.getReceiptControl().printReceipt("a");
+    	//This is false when it should be true because an empty exception is not thrown
+    	//by the hardware even though a new line was printed when out of paper
+    	assertTrue(rcl.takeIncompleteReceipt);
+    	assertFalse(rcl.takeReceipt);
+    }
+    
+	/*
+	 * Tests overloading ink
+	 */
+	@Test
+	public void overloadInk() {
+		assertFalse(acl.tooMuchInk);
+		ac.addInk(ReceiptPrinterND.MAXIMUM_INK + 1);
+		assertTrue(acl.tooMuchInk);
+	}
+	
+	/*
+	 * Tests overloading paper
+	 */
+	@Test
+	public void overloadPaper() {
+		assertFalse(acl.tooMuchPaper);
+		ac.addPaper(ReceiptPrinterND.MAXIMUM_PAPER + 1);
+		assertTrue(acl.tooMuchPaper);
+	}
     
     /*
      *  Test that printItems prints items properly when no items are bought
      */
     @Test
     public void testPrintItemsNoItems(){
+        ac.addInk(2000);
+        ac.addPaper(500);
+        
+    	sc.getReceiptControl().printItems();
     	
+    	assertEquals(rcl.checkedOutItemsMessage, "");
     }
     
     /*
@@ -226,7 +295,16 @@ public class ReceiptControlTest {
      */
     @Test
     public void testPrintItemsOneItem(){
+        ac.addInk(2000);
+        ac.addPaper(500);
+        
+    	sc.getItemsControl().addScannedItemToCheckoutList(fdi.getBarcodes()[0]);
+		
+    	itemTuple1 = sc.getItemsControl().getCheckoutList().get(0);
     	
+    	sc.getReceiptControl().printItems();
+    	
+    	assertEquals(rcl.checkedOutItemsMessage, itemTuple1.x + " , $" + itemTuple1.y + "\n");
     }
     
     /*
@@ -234,7 +312,18 @@ public class ReceiptControlTest {
      */
     @Test
     public void testPrintItemsTwoItems(){
+        ac.addInk(2000);
+        ac.addPaper(500);
+        
+    	sc.getItemsControl().addScannedItemToCheckoutList(fdi.getBarcodes()[0]);
+    	sc.getItemsControl().addScannedItemToCheckoutList(fdi.getBarcodes()[1]);
+		
+    	itemTuple1 = sc.getItemsControl().getCheckoutList().get(0);
+		itemTuple2 = sc.getItemsControl().getCheckoutList().get(1);
     	
+    	sc.getReceiptControl().printItems();
+    	
+    	assertEquals(rcl.checkedOutItemsMessage, itemTuple1.x + " , $" + itemTuple1.y + "\n" + itemTuple2.x + " , $" + itemTuple2.y + "\n");
     }
     
     /*
@@ -242,7 +331,12 @@ public class ReceiptControlTest {
      */
     @Test
     public void testPrintTotalCostNoItems(){
+        ac.addInk(2000);
+        ac.addPaper(500);
+        
+    	sc.getReceiptControl().printTotalCost();
     	
+    	assertEquals(rcl.totalCostMessage, "Total: $0.0\n");
     }
     
     /*
@@ -250,6 +344,17 @@ public class ReceiptControlTest {
      */
     @Test
     public void testPrintTotalCostOneItem(){
+        ac.addInk(2000);
+        ac.addPaper(500);
+        
+      	sc.getItemsControl().addScannedItemToCheckoutList(fdi.getBarcodes()[0]);
+  		
+      	itemTuple1 = sc.getItemsControl().getCheckoutList().get(0);
+      	
+      	sc.getReceiptControl().printTotalCost();
+      	
+      	assertEquals(rcl.totalCostMessage, "Total: $" + itemTuple1.y + "\n");
+        
     	
     }
     
@@ -258,7 +363,19 @@ public class ReceiptControlTest {
      */
     @Test
     public void testPrintTotalCostTwoItems(){
+        ac.addInk(2000);
+        ac.addPaper(500);
+        
+    	sc.getItemsControl().addScannedItemToCheckoutList(fdi.getBarcodes()[0]);
+    	sc.getItemsControl().addScannedItemToCheckoutList(fdi.getBarcodes()[1]);
+		
+    	itemTuple1 = sc.getItemsControl().getCheckoutList().get(0);
+		itemTuple2 = sc.getItemsControl().getCheckoutList().get(1);
     	
+    	sc.getReceiptControl().printTotalCost();
+    	
+    	double tempTotal = itemTuple1.y + itemTuple2.y;
+    	assertEquals(rcl.totalCostMessage, "Total: $" + tempTotal + "\n");
     }
     
     /*
@@ -266,7 +383,12 @@ public class ReceiptControlTest {
      */
     @Test
     public void testPrintMembershipWithMembership(){
-    	
+        ac.addInk(2000);
+        ac.addPaper(500);
+        
+        sc.getMembershipControl().checkMembership(1234);
+        sc.getReceiptControl().printMembership();
+        assertEquals(rcl.membershipMessage, "Membership number: " + sc.getMembershipControl().getValidMembershipNumber() + "\n");
     }
     
     /*
@@ -274,7 +396,11 @@ public class ReceiptControlTest {
      */
     @Test
     public void testPrintMembershipNoMembership(){
-    	
+        ac.addInk(2000);
+        ac.addPaper(500);
+        
+        sc.getReceiptControl().printMembership();
+        assertEquals(rcl.membershipMessage, "");
     }
     
     /*
@@ -282,96 +408,123 @@ public class ReceiptControlTest {
      */
     @Test
     public void TestPrintDateTime(){
-    	
+        ac.addInk(2000);
+        ac.addPaper(500);
+        
+    	sc.getReceiptControl().printDateTime();
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");  
+	    Date receiptPrintDate = new Date();
+	    String formattedDate = formatter.format(receiptPrintDate) + "\n";
+	    assertEquals(rcl.dateandTimeMessage, formattedDate);
     }
     
     /*
-     *  Test print thank you message
+     *  Test print thank you message with membership
      */
     @Test
-    public void testPrintThankyouMsg(){
-    	
+    public void testPrintThankyouMsgWithMembership(){
+        sc.getMembershipControl().checkMembership(1234);
+        sc.getReceiptControl().printMembership();//update retrivedMemNum
+        sc.getReceiptControl().printThankyouMsg();
+        
+        assertEquals(rcl.thankyouMessage, "Thank you for shopping with us " + sc.getMembershipControl().memberName + " !\n");
     }
     
     /*
-     *  Test that the receipt is cut after printing a receipt properly
+     *  Test print thank you message no membership
      */
     @Test
-    public void testCutReceipt(){
-    	
+    public void testPrintThankyouMsgNoMembership(){
+    	sc.getReceiptControl().printThankyouMsg();
+    	assertEquals(rcl.thankyouMessage, "Thank you for shopping with us  !\n");
     }
     
     /*
-     *  Test printFullReceipt (using action performed)
+     * test reset State to see if recived mem number reset
+     */
+    @Test
+    public void testResetState(){
+        ac.addInk(2000);
+        ac.addPaper(500);
+        
+        sc.getMembershipControl().checkMembership(1234);
+        sc.getReceiptControl().printMembership();//update retrivedMemNum
+        sc.getReceiptControl().printThankyouMsg();
+        
+        assertEquals(rcl.thankyouMessage, "Thank you for shopping with us " + sc.getMembershipControl().memberName + " !\n");
+        
+        sc.getReceiptControl().resetState();
+        
+        //prints like no membership number occured because reset state
+    	sc.getReceiptControl().printThankyouMsg();
+    	assertEquals(rcl.thankyouMessage, "Thank you for shopping with us!\n");
+    }
+    
+    /*
+     *  Test printFullReceipt
      */
     @Test
     public void testPrintFullReceipt(){
+        ac.addInk(2000);
+        ac.addPaper(500);
     	
-    }
-    
-    /*
-     *  Test printFullReceipt running out of ink part way though
-     */
-    @Test
-    public void testPrintFullReceiptOutOfInk(){
+		ActionEvent e = new ActionEvent(this, 0, "printReceipt");
+    	sc.getItemsControl().addScannedItemToCheckoutList(fdi.getBarcodes()[0]);
+    	itemTuple1 = sc.getItemsControl().getCheckoutList().get(0);
+    	sc.getMembershipControl().checkMembership(1234);
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");  
+	    Date receiptPrintDate = new Date();
+	    String formattedDate = formatter.format(receiptPrintDate) + "\n";
     	
-    }
-    
-    /*
-     *  Test printFullReceipt running out of paper part way though
-     */
-    @Test
-    public void testPrintFullReceiptOutOfPaper(){
+    	sc.getReceiptControl().actionPerformed(e);
     	
-    }
-    
-    /*
-     *  Test printFullReceipt running out of ink on last possible character
-     */
-    @Test
-    public void testPrintFullReceiptOutOfInkLastChar(){
-    	
-    }
-    
-    /*
-     *  Test that the receipt is cut after attempting to print a receipt but running out of paper
-     */
-    @Test
-    public void testCutReceiptOutOfInk(){
-    	
-    }
-    
-    /*
-     *  Test that the receipt is cut after attempting to print a receipt but running out of ink
-     */
-    @Test
-    public void testCutReceiptOutOfPaper(){
-    	
+    	assertEquals(rcl.checkedOutItemsMessage + 
+    			rcl.totalCostMessage + rcl.membershipMessage + 
+    			rcl.dateandTimeMessage + rcl.thankyouMessage,
+    			itemTuple1.x + " , $" + itemTuple1.y + 
+    			"\n" + "Total: $" + itemTuple1.y + "\n" +
+    			"Membership number: " + sc.getMembershipControl().getValidMembershipNumber() + "\n" +
+    			formattedDate +
+    			"Thank you for shopping with us " + sc.getMembershipControl().memberName + " !\n");
     }
     
     /*
      *  Test the taking of receipt (using action performed)
      */
     @Test
-    public void testTakeReceipt(){
+    public void testCutAndTakeReceipt(){
+        ac.addInk(2000);
+        ac.addPaper(500);
+        
+        ActionEvent e = new ActionEvent(this, 0, "takeReceipt");
+        
+        sc.getReceiptControl().actionPerformed(e);
     	
     }
     
-    /*
-     *  Test to make sure state resets
-     *  TODO only keep is reset state is not removed
-     */
     @Test
-    public void testResetState(){
+    public void testC(){
+        ac.addInk(2000);
+        ac.addPaper(500);
     	
-    }
-    
-    /*
-     *  Test to make a completed receipt removal is called
-     */
-    @Test
-    public void testremovedCompleteReceipt(){
+		ActionEvent e = new ActionEvent(this, 0, "printReceipt");
+    	sc.getItemsControl().addScannedItemToCheckoutList(fdi.getBarcodes()[0]);
+    	itemTuple1 = sc.getItemsControl().getCheckoutList().get(0);
+    	sc.getMembershipControl().checkMembership(1234);
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");  
+	    Date receiptPrintDate = new Date();
+	    String formattedDate = formatter.format(receiptPrintDate) + "\n";
     	
+    	sc.getReceiptControl().actionPerformed(e);
+    	
+    	assertEquals(rcl.checkedOutItemsMessage + 
+    			rcl.totalCostMessage + rcl.membershipMessage + 
+    			rcl.dateandTimeMessage + rcl.thankyouMessage,
+    			itemTuple1.x + " , $" + itemTuple1.y + 
+    			"\n" + "Total: $" + itemTuple1.y + "\n" +
+    			"Membership number: " + sc.getMembershipControl().getValidMembershipNumber() + "\n" +
+    			formattedDate +
+    			"Thank you for shopping with us " + sc.getMembershipControl().memberName + " !\n");
     }
     
     /*
@@ -409,7 +562,7 @@ public class ReceiptControlTest {
     
     
 	public class ReceiptControlListenerStub implements ReceiptControlListener{
-    	String checkedoutItemsMessage = "";
+    	String checkedOutItemsMessage = "";
     	String totalCostMessage = "";
     	String membershipMessage = "";
     	String dateandTimeMessage = "";
@@ -423,12 +576,17 @@ public class ReceiptControlTest {
 
 		@Override
 		public void setCheckedoutItems(ReceiptControl rc, String message) {
-			checkedoutItemsMessage = message;
+			checkedOutItemsMessage = message;
 		}
 
 		@Override
 		public void setTotalCost(ReceiptControl rc, String totalCost) {
 			totalCostMessage = totalCost;	
+		}
+		
+		@Override
+		public void setMembership(ReceiptControl rc, String membership) {
+			membershipMessage = membership;
 		}
 
 		@Override
@@ -467,6 +625,8 @@ public class ReceiptControlTest {
     	boolean lowPaper = false;
     	boolean outOfInk = true;
     	boolean outOfPaper = true;
+    	boolean tooMuchInk = false;
+    	boolean tooMuchPaper = false;
 
 		@Override
 		public void attendantApprovedBags(AttendantControl ac) {
@@ -508,10 +668,12 @@ public class ReceiptControlTest {
 
 		@Override
 		public void addTooMuchInkState() {
+			tooMuchInk = true;
 		}
 
 		@Override
 		public void addTooMuchPaperState() {
+			tooMuchPaper = true;
 		}
 
 		@Override

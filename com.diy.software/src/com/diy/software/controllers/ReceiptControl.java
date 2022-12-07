@@ -62,7 +62,6 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	}
 	
 	// Resets the data to its initial state. 
-	//TODO delete for later if not needed for GUI
 	public void resetState() {
 		retreivedMemNum = -1; //indicates did not recive member number
 	}
@@ -72,11 +71,14 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	 * Finds what the contents of the receipt should be based on checked out items
 	 */
 	public void printItems() {
+		String allItems = "";
 		for(Tuple<String, Double> item : sc.getItemsControl().getCheckoutList()) {
-//			System.out.println(item.x + " , $" + item.y);
 			printReceipt(item.x + " , $" + item.y + "\n");
+			allItems = allItems.concat(item.x + " , $" + item.y + "\n");
 		}
-		//System.out.println("test print receipt");
+		for (ReceiptControlListener l : listeners) {
+			l.setCheckedoutItems(this, allItems);
+		}
 	}
 	
 	/**
@@ -87,8 +89,10 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 		for(Tuple<String, Double> item : sc.getItemsControl().getCheckoutList()) {
 			total += item.y;
 		}
-//		System.out.println("Total: $" + total);
 		printReceipt("Total: $" + total + "\n");
+		for (ReceiptControlListener l : listeners) {
+			l.setTotalCost(this, "Total: $" + total + "\n");	
+		}
 	}
 	
 	/**
@@ -96,15 +100,17 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	 */
 	public void printMembership() {
 		retreivedMemNum = sc.getMembershipControl().getValidMembershipNumber();
-		//String retreivedMemName = sc.getMembershipControl().memberName;
 		
-		if(retreivedMemNum == -1) {
-			// Do nothing
-			//System.out.println("No member found");
-			//printReceipt("No member found");
-		}else {
-//			System.out.println("Membership number: " + retreivedMemNum);
+		if(retreivedMemNum != -1) {
 			printReceipt("Membership number: " + retreivedMemNum + "\n");
+			for (ReceiptControlListener l : listeners) {
+				l.setMembership(this, "Membership number: " + retreivedMemNum + "\n");	
+			}
+		}
+		else {
+			for (ReceiptControlListener l : listeners) {
+				l.setMembership(this, "");	
+			}
 		}
 		
 	}
@@ -115,8 +121,10 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	public void printDateTime() {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");  
 	    Date receiptPrintDate = new Date();  
-//	    System.out.println(formatter.format(receiptPrintDate));
 	    printReceipt(formatter.format(receiptPrintDate) + "\n");
+		for (ReceiptControlListener l : listeners) {
+			l.setDateandTime(this, formatter.format(receiptPrintDate) + "\n");	
+		}
 	}
 	
 	/**
@@ -124,11 +132,15 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 	 */
 	public void printThankyouMsg() {
 		if (retreivedMemNum == -1) {
-			//System.out.println("Thank you for shopping with us!");
 			printReceipt("Thank you for shopping with us!\n");
+			for (ReceiptControlListener l : listeners) {
+				l.setThankyouMessage(this, "Thank you for shopping with us!\n");
+			}
 		}else {
-			//System.out.println("Thank you for shopping with us " + sc.getMembershipControl().memberName + " !");
 			printReceipt("Thank you for shopping with us " + sc.getMembershipControl().memberName + " !\n");
+			for (ReceiptControlListener l : listeners) {
+				l.setThankyouMessage(this, "Thank you for shopping with us " + sc.getMembershipControl().memberName + " !\n");	
+			}
 
 		}
 		
@@ -170,9 +182,7 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 		
 		} catch (EmptyException e) {
 			sc.station.printer.cutPaper();
-			System.out.println("Prints Here");
 			for (ReceiptControlListener l : listeners) {
-				System.out.println("Dosent Print Here");
 				l.setNoReceiptState(this);
 				l.setIncompleteReceiptState(this);
 			}
@@ -209,13 +219,11 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 		try {
 			switch (c) {
 			case "printReceipt":
-				System.out.println("Customer prints receipt");
 				printItems();
 				printTotalCost();
 				printMembership();
 				printDateTime();
 				printThankyouMsg();
-				System.out.print(finalReceiptToShowOnScreen);
 				break;
 			case "takeReceipt":
 				sc.station.printer.cutPaper();

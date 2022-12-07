@@ -1,3 +1,5 @@
+//Note: receipt related methods tested in receipt control test
+
 package com.diy.software.test.logic;
 
 import static org.junit.Assert.assertFalse;
