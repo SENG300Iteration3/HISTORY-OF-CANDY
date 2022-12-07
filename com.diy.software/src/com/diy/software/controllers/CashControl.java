@@ -2,7 +2,7 @@ package com.diy.software.controllers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
@@ -144,15 +144,15 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 	 *                  The value of the coin.
 	 */
 	@Override
-	public void validCoinDetected(CoinValidator validator, long value) {
+	public void validCoinDetected(CoinValidator validator, BigDecimal value) {
 		double current = sc.getItemsControl().getCheckoutTotal();
-		if (current - (double) value / 100.0 >= 0) { // if no change needs to be returned
-			sc.getItemsControl().updateCheckoutTotal(-(double) value / 100.0);
+		if (current - value.doubleValue() >= 0) { // if no change needs to be returned
+			sc.getItemsControl().updateCheckoutTotal(-1*value.doubleValue());
 			cashInserted();
 		} else {
 			sc.getItemsControl().updateCheckoutTotal(-current);
 			cashInserted();
-			returnChange((value / 100.0) - current);
+			returnChange((value.doubleValue()) - current);
 			disablePayments();
 		}
 	}
@@ -266,7 +266,7 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 					System.out.println("Banknote storage unit is full");
 				}
 			} else if (c.startsWith("c")) {
-				Coin coin = new Coin(Currency.getInstance("CAD"), Long.parseLong(c.split(" ")[1]));
+				Coin coin = new Coin(Currency.getInstance("CAD"), new BigDecimal(c.split(" ")[1]));
 				if (!sc.station.coinSlot.isDisabled()) {
 					sc.station.coinSlot.receive(coin);
 				} else {
@@ -280,7 +280,7 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 	}
 
 	public void returnChange(double change) {
-		ArrayList<Long> coins = new ArrayList<Long>(); // arraylist of the coin dispensers
+		ArrayList<BigDecimal> coins = new ArrayList<BigDecimal>(); // arraylist of the coin dispensers
 		ArrayList<Integer> bills = new ArrayList<Integer>(); // arraylist of the bank note dispensers
 		ArrayList<Integer> returnCoins = new ArrayList<Integer>(); // arraylist of how much a given coin dispenser needs to
 																																// return
@@ -289,7 +289,7 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 
 		double returned = 0;
 
-		for (long x : sc.station.coinDenominations) { // gets all of the coin dispensers in the machine
+		for (BigDecimal x : sc.station.coinDenominations) { // gets all of the coin dispensers in the machine
 			coins.add(x);
 			returnCoins.add(0);
 		}
@@ -321,23 +321,23 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 		q = 0;
 		MAX_q = 25;
 		for (int i = 0; i < coins.size() && q < MAX_q; i++) { // gets how many coins should be returned
-			if ((change - returned) < coins.get(coins.size() - 1) / 100.0) { // if the smallest coin is too big to be used as
+			if ((change - returned) < coins.get(coins.size() - 1).doubleValue()) { // if the smallest coin is too big to be used as
 																																				// change
 				break;
 			}
 
-			long value = coins.get(i);
+			BigDecimal value = coins.get(i);
 
 			int capacity = sc.station.coinDispensers.get(value).size();
 
-			int n = Math.min(Math.min((MAX_q - q), capacity), (int) ((change - returned) / (((double) value) / 100.0)));
+			int n = Math.min(Math.min((MAX_q - q), capacity), (int) ((change - returned) / value.doubleValue()));
 
-			returned += (((double) value) / 100.0) * n;
+			returned += value.doubleValue() * n;
 			returnCoins.set(i, n);
 			q += n;
 		}
 
-		long totalReturned = 0;
+		double totalReturned = 0;
 
 		for (int i = 0; i < bills.size(); i++) { // returns all of the bills that you have accounted for
 			int times = returnBills.get(i);
@@ -345,7 +345,7 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 			while (times > 0) {
 				try {
 					sc.station.banknoteDispensers.get(value).emit();
-					totalReturned += 100 * value;
+					totalReturned += value;
 				} catch (OutOfCashException | DisabledException | TooMuchCashException e) {
 					break;
 				}
@@ -357,11 +357,11 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 
 		for (int i = 0; i < coins.size(); i++) { // returns all of the coins that you have accounted for
 			int times = returnCoins.get(i);
-			long value = coins.get(i);
+			BigDecimal value = coins.get(i);
 			while (times > 0) {
 				try {
 					sc.station.coinDispensers.get(value).emit();
-					totalReturned += value;
+					totalReturned += value.doubleValue();
 				} catch (OutOfCashException | DisabledException | TooMuchCashException e) {
 					break;
 				}
@@ -371,7 +371,7 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
     
     if (totalReturned - change * 100 < -0.01) {
 			// TODO: notify attendant that customer was shortchanged by
-			// ((double)totalReturned)/100.0
+			// change-totalReturned
 		}
 
 		changeReturned();

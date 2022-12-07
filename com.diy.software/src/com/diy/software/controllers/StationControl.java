@@ -1,5 +1,6 @@
 package com.diy.software.controllers;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Currency;
 
@@ -259,7 +260,7 @@ public class StationControl
 			}
 		}
 		
-		for(long i : station.coinDenominations) {
+		for(BigDecimal i : station.coinDenominations) {
 			int capacity = station.coinDispensers.get(i).getCapacity();
 			Coin[] coins = new Coin[capacity];
 			for(int j = 0; j < capacity; j++) {
