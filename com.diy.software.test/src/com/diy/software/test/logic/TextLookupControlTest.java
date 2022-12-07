@@ -373,6 +373,30 @@ public class TextLookupControlTest {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public void attendantApprovedItemRemoval(AttendantControl bc) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void itemBagged() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerItemSearchScreen(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void exitTextSearchScreen(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
+		}
     }
 	
 }
