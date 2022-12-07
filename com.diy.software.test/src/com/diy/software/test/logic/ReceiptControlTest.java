@@ -582,7 +582,6 @@ public class ReceiptControlTest {
 	*/
     
     /*
-     * 	TODO
      *  Test that a new line is added when 60+ characters are printed on the same line
      */
     @Test
