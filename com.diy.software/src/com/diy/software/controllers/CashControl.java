@@ -266,6 +266,7 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 			if (c.startsWith("d")) {
 				Banknote banknote = new Banknote(Currency.getInstance("CAD"), Long.parseLong(c.split(" ")[1]));
 				sc.getAttendantControl().notifyListenerAdjustCoinForChange();
+				sc.getAttendantControl().adjustBanknotesForChange();
 				System.out.println("bank note clicked");
 				if (!sc.station.banknoteInput.isDisabled()) {
 					sc.station.banknoteInput.receive(banknote);
@@ -275,6 +276,7 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 			} else if (c.startsWith("c")) {
 				Coin coin = new Coin(Currency.getInstance("CAD"), new BigDecimal(c.split(" ")[1]));
 				sc.getAttendantControl().notifyListenerAdjustCoinForChange();
+				sc.getAttendantControl().adjustBanknotesForChange();
 				System.out.println("coin clicked");
 				if (!sc.station.coinSlot.isDisabled()) {
 					sc.station.coinSlot.receive(coin);

@@ -219,10 +219,10 @@ public class TestMain {
 	public void scanWhileBlocked() {
 		BarcodeScanner scanner = controller.station.handheldScanner;
 		controller.blockStation();
-		assertFalse(scanner.scan(fakeData.getItems()[1]));
+		assertFalse(scanner.scan((BarcodedItem)fakeData.getItems()[1]));
 		controller.unblockStation();
 
-		assertTrue(scanner.scan(fakeData.getItems()[2]));
+		assertTrue(scanner.scan((BarcodedItem)fakeData.getItems()[2]));
 	}
 	
 	/**
@@ -358,7 +358,7 @@ public class TestMain {
 		list = checkoutList;
 		
 		ArrayList<Tuple<String, Double>> manualList = new ArrayList<>();
-		BarcodedProduct product = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(fakeData.getItems()[0].getBarcode());
+		BarcodedProduct product = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(((BarcodedItem)fakeData.getItems()[0]).getBarcode());
 		Tuple<String, Double> item = new Tuple<String, Double>(product.getDescription(), fakeData.getItems()[0].getWeight());
 		manualList.add(item);
 		

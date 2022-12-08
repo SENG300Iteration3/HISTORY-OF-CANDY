@@ -50,7 +50,7 @@ public class TestSystemControl {
 		fdi.addCardData();
 		fdi.addFakeMembers();
 		barcodes = fdi.getBarcodes();
-		items = fdi.getItems();
+		items = (BarcodedItem[])fdi.getItems();
 		
 		membershipCard = fdi.getCards()[3];
 		

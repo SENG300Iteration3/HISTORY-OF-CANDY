@@ -75,6 +75,7 @@ public class TextLookupControl implements KeyboardControlListener{
 	}
 	
 	public void findProduct(String keyword) {
+		results.clear();
 		for (BarcodedProduct product : ProductDatabases.BARCODED_PRODUCT_DATABASE.values()) {
 			//System.out.println("Product: " + product.getDescription() + "   Keyword: " + keyword);
 			if (product.getDescription().toLowerCase().contains(keyword.toLowerCase())){
