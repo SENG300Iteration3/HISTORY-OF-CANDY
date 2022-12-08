@@ -205,4 +205,10 @@ public class PresentGiftCardOrCashScreen extends Screen implements CashControlLi
 		}
 		  
 	  }
+
+	@Override
+	public void cashRejected(CashControl cc) {
+		// TODO Auto-generated method stub
+		
+	}
 }

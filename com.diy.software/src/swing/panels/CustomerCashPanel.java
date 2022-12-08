@@ -153,4 +153,10 @@ public class CustomerCashPanel extends JPanel implements CashControlListener {
 	  
   }
 
+@Override
+public void cashRejected(CashControl cc) {
+	// TODO Auto-generated method stub
+	
+}
+
 }
