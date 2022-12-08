@@ -829,6 +829,18 @@ public class ReceiptControlTest {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public void stationShutDown(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void stationStartedUp(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
+		}
 	}
 
 	public class StationControlListenerStub implements StationControlListener {

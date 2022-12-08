@@ -345,7 +345,10 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		DecimalFormat df = new DecimalFormat("0.00");
 		subtotalLabel.setText("Subtotal: $" + df.format(itemsControl.getCheckoutTotal()));
 		
-		if(itemsControl.getCheckoutTotal()==0) {
+		if(subtotalLabel.getText().equals("Subtotal: $0.00")) {
+			System.out.println(subtotalLabel.getText());
+			doneBtn.setEnabled(false);
+		}else {
 			doneBtn.setEnabled(true);
 		}
 	}
