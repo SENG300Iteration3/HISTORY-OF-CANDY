@@ -32,7 +32,6 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 	private StationControl sc;
 	private ItemsControl ic;
 	private ArrayList<AttendantControlListener> listeners;
-	private CoinStorageUnit unit;
 	private Currency currency;
 	private TextLookupControl tlc;
 	private KeyboardControl kc;
@@ -362,7 +361,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 	}
 	
 	
-	
+		
 	/**
 	 * fills up the coin slot and then signal cash controller that everything is okay
 	 *
@@ -380,8 +379,8 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 	public void adjustCoinsForChange(int AMOUNT) throws SimulationException, TooMuchCashException  {
 		
 		
+		
 		CoinStorageUnit unit = sc.station.coinStorage;
-	
 		
 		if(AMOUNT > unit.getCapacity()) {
 			throw new TooMuchCashException();
@@ -390,7 +389,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 		
 		AMOUNT /= 5;
 		
-		//sc.getCashControl().disablePayments();
+		sc.getCashControl().disablePayments();
 		
 		Coin tCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(2.0));
 		Coin lCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(1.0));
@@ -434,10 +433,8 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 		//notify cash controller that the unit has been filled
 		sc.getCashControl().coinsLoaded(unit);
 		
-		for (AttendantControlListener l : listeners)
-			l.coinsNotLowState();
 		//re enable system
-		//sc.getCashControl().enablePayments();
+		sc.getCashControl().enablePayments();
 		
 	}
 	
@@ -465,6 +462,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 		}
 		return count;
 	}
+	
 	
 
 	/**
