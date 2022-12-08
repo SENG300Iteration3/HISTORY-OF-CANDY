@@ -840,7 +840,6 @@ public class ReceiptControlTest {
 			// TODO Auto-generated method stub
 			
 		}
-	}
 
 	public class StationControlListenerStub implements StationControlListener {
 

@@ -208,6 +208,45 @@ public class FakeDataInitializer {
 	}
 
 	/**
+	 * Get all BarcodedProducts
+	 * 
+	 * @return
+	 * 		An array of all BarcodedProducts
+	 */
+	public BarcodedProduct[] getBarcodedProducts() {
+		return new BarcodedProduct[] {bp1, bp2, bp3, bp4};
+	}
+	
+	/**
+	 * Get all BarcodedItems
+	 * 
+	 * @return
+	 * 		An array of all BarcodedItems
+	 */
+	public BarcodedItem[] getBarcodedItems() {
+		return new BarcodedItem[] {item1, item2, item3, item4};
+	}
+	
+	/**
+	 *  Get all PriceLookupCodes
+	 * @return
+	 * 		An array of all PriceLookupCodes
+	 */
+	public PriceLookUpCode[] getPLUCodes() {
+		return new PriceLookUpCode[] {code1, code2, code3, code4, code5, code6, code7, code8};
+	}
+	
+	/**
+	 *  Get all PLUCodedProducts
+	 * @return
+	 * 		An array of all PLUCodedProducts
+	 */
+	public PLUCodedProduct[] getPLUProducts() {
+		return new PLUCodedProduct[] {pp1, pp2, pp3, pp4, pp5, pp6, pp7, pp8};
+	}
+			
+	
+	/**
 	 * Get all PLUCodedItems including PLUCodedItems in customer shopping cart
 	 * @return
 	 */

@@ -46,6 +46,7 @@ import com.unitedbankingservices.coin.Coin;
 
 import ca.powerutility.NoPowerException;
 import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
+import swing.styling.KioskAudio;
 
 /**
  * SystemControl is a class that acts as an intermediary between listeners
@@ -95,10 +96,13 @@ public class StationControl
 	private int bagInStock;
 	private PLUCodeControl pcc;
 
-	
+
 	// used for receipt listeners
 	boolean isOutOfPaper = false;
 	boolean isOutOfInk = false;
+
+	//Set up kiosk Audio
+	KioskAudio kioskAudio;
 	/**
 	 * Constructor for the SystemControl class. Instantiates an object of type
 	 * DoItYourselfStation as well as a set of listeners which are registered to the
@@ -125,6 +129,7 @@ public class StationControl
 		station.reusableBagDispenser.register(this);
 		rc = new ReceiptControl(this);
 		
+		kioskAudio = new KioskAudio();
 
 		startUp();
 		
@@ -156,6 +161,8 @@ public class StationControl
 	public StationControl(FakeDataInitializer fakeData) {
 		this();
 		this.fakeData = fakeData;
+		fakeData.addProductAndBarcodeData();
+		fakeData.addPLUCodedProduct();
 
 		// for (Card c: this.fakeData.getCards()) customer.wallet.cards.add(c);
 		// for (Item i: this.fakeData.getItems()) customer.shoppingCart.add(i);
@@ -171,9 +178,9 @@ public class StationControl
 			else if (i instanceof PLUCodedItem) {
 				PLUCodedItem item = (PLUCodedItem) i;
 				this.pluCodedItems.put(item.getPLUCode(), i);
-				customer.shoppingCart.add(i);	
+				customer.shoppingCart.add(i);
 			}
-		}
+		}		
 	}
 	
 	/**
@@ -408,6 +415,7 @@ public class StationControl
 	}
 
 	public void askForPin(String kind) {
+		kioskAudio.usePinPadSound();
 		for (StationControlListener l : listeners)
 			l.initiatePinInput(this, kind);
 	}
@@ -684,7 +692,7 @@ public class StationControl
 			}
 			membershipInput = false;
 			wc.membershipCardInputCanceled();
-		} 
+		}
 	}
 				
 	public void addReusableBag(ReusableBag lastDispensedReusableBag) {		
