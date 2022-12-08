@@ -202,7 +202,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		doneBtn.setEnabled(false);
 
 
-		this.addLayer(mainPanel, 0);
+		this.addLayer(mainPanel, -100);
 
 		//Bottom 3 buttons
 		JPanel buttonPanel = new JPanel(new GridLayout(1, 3));
