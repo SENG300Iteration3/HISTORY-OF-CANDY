@@ -151,4 +151,20 @@ public class PurchaseBagScreen extends Screen implements BagDispenserControlList
 	public void numberFieldHasBeenUpdated(BagDispenserControl bdp, String input) {
 		numberEntry.setText(input);
 	}
+	
+	public JButton[] getNumberPadButtons() {
+		return numberPadButtons;
+	}
+	
+	public JButton getCancelButton() {
+		return cancelButton;
+	}
+	
+	public JButton getCorrectButton() {
+		return correctButton;
+	}
+	
+	public JButton getSubmitButton() {
+		return submitButton;
+	}
 }

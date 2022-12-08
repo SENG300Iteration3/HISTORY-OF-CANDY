@@ -45,7 +45,26 @@ public class PaymentScreen extends Screen {
 		creditButton.addActionListener(pc);
 		debitButton.addActionListener(pc);
 		cancelButton.addActionListener(pc);
+	}
 
+	public GUI_JButton getGiftCardButton() {
+		return giftCardButton;
+	}
+
+	public GUI_JButton getCashButton() {
+		return cashButton;
+	}
+
+	public GUI_JButton getCreditButton() {
+		return creditButton;
+	}
+
+	public GUI_JButton getDebitButton() {
+		return debitButton;
+	}
+
+	public GUI_JButton getCancelButton() {
+		return cancelButton;
 	}
 
 }

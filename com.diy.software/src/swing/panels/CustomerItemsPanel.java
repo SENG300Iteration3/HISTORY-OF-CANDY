@@ -493,4 +493,62 @@ public class CustomerItemsPanel extends JPanel
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void coinIsLowState(int amount) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void banknotesNotLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void coinsNotLowState() {
+		// TODO Auto-generated method stub
+	}
+
+	public JButton getSelectNextItemButton() {
+		return selectNextItemButton;
+	}
+
+	public JButton getMainScannerButton() {
+		return mainScannerButton;
+	}
+
+	public JButton getHandheldScannerButton() {
+		return handheldScannerButton;
+	}
+
+	public JButton getDeselectCurrentItemButton() {
+		return deselectCurrentItemButton;
+	}
+
+	public JButton getPlaceItemInBaggingAreaButton() {
+		return placeItemInBaggingAreaButton;
+	}
+
+	public JButton getPlaceItemInScanningAreaButton() {
+		return placeItemInScanningAreaButton;
+	}
+
+	public JButton getTakeReceiptButton() {
+		return takeReceiptButton;
+	}
+
+	public JButton getTakeIncompleteReceipt() {
+		return takeIncompleteReceipt;
+	}
+
+	public JLabel getWeightDescrepancyMessage() {
+		return weightDescrepancyMessage;
+	}
+
+	public JButton getItemWeight() {
+		return itemWeight;
+	}
+	
 }

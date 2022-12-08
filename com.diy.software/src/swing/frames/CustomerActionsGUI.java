@@ -44,4 +44,10 @@ public class CustomerActionsGUI implements PaneControlListener {
   public void clientSidePaneChanged(StationControl sc, int index) {
 		tabbedPane.setSelectedIndex(index);
   }
+
+	public JTabbedPane getTabbedPane() {
+		return tabbedPane;
+	}
+
+  
 }
