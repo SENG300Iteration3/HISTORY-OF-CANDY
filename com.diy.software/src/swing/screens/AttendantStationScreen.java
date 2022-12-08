@@ -348,7 +348,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 
 	@Override
 	public void coinIsLowState(int amount) {
-		adjustBanknoteLabel.setText("Coins low");
+		adjustCoinLabel.setText("Coins low");
 		adjustBanknoteLabel.setBackground(GUI_Color_Palette.RED_BROWN);
 	}
 
@@ -517,7 +517,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	@Override
 	public void coinsNotLowState() {
 		adjustCoinLabel.setText("Adjust Coins");
-		adjustBanknoteLabel.setBackground(GUI_Color_Palette.DARK_BROWN);
+		adjustCoinLabel.setBackground(GUI_Color_Palette.DARK_BROWN);
 	}
 	
 	@Override
