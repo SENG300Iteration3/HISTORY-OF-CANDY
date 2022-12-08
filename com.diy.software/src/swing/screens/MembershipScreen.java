@@ -131,7 +131,7 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 	}
 
 	private void initalizeTextField() {
-		numberEntry = new JTextField("MemberID".toUpperCase());
+		numberEntry = new JTextField();
 		numberEntry.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		numberEntry.setHorizontalAlignment(JLabel.CENTER);
 		numberEntry.setBorder(BorderFactory.createLineBorder(GUI_Color_Palette.DARK_BLUE, 10));
