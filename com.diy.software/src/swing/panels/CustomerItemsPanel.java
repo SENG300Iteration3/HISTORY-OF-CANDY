@@ -395,6 +395,10 @@ public class CustomerItemsPanel extends JPanel
 		return handheldScannerButton;
 	}
 
+	public JButton getDeselectCurrentItemButton() {
+		return deselectCurrentItemButton;
+	}
+
 	public JButton getPlaceItemInBaggingAreaButton() {
 		return placeItemInBaggingAreaButton;
 	}
@@ -402,6 +406,8 @@ public class CustomerItemsPanel extends JPanel
 	public JButton getPlaceItemInScanningAreaButton() {
 		return placeItemInScanningAreaButton;
 	}
+
+	public JButton getItemWeight() {return itemWeight;}
 
 	public JButton getTakeReceiptButton() {
 		return takeReceiptButton;
