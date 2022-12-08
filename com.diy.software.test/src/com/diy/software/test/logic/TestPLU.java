@@ -98,6 +98,28 @@ public class TestPLU {
 			  assertFalse(pcls.updated);
 			assertFalse(pcls.stubplu.equals("1234"));
 		  }
+		  
+			@Test 
+			public void testActionPerformedCorrectWithPLUCode() {
+				pc.addListener(pcls);
+				ActionEvent e = new ActionEvent(this, 0, "PLU_INPUT_BUTTON: 1234");
+				
+				assertFalse(pcls.updated);
+				assertTrue(pcls.stubplu.equals(""));
+				
+				pc.actionPerformed(e);
+				
+				assertTrue(pcls.stubplu.equals("1234"));
+				assertTrue(pcls.updated);
+				pcls.updated = false;
+				
+				e = new ActionEvent(this, 0, "correct");
+				
+				pc.actionPerformed(e);
+				
+				assertTrue(pcls.updated);
+				assertTrue(pcls.stubplu.equals(""));
+			}
 	  
 	  @Test
 	  public void testActionPerformedCancelButton() {
