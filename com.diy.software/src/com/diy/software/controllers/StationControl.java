@@ -691,6 +691,7 @@ public class StationControl
 			}
 			membershipInput = false;
 			wc.membershipCardInputCanceled();
+		}
 	}
 				
 	public void addReusableBag(ReusableBag lastDispensedReusableBag) {		
