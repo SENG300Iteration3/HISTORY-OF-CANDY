@@ -127,6 +127,7 @@ public class AttendantLoginScreen extends Screen implements ActionListener, Keyb
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		ac.login(loginInfo.getText());
+		kc.clearText();
 	}
 
 	@Override
@@ -144,6 +145,7 @@ public class AttendantLoginScreen extends Screen implements ActionListener, Keyb
 		if (this.rootPanel.getParent() != null) {
 			ac.login(text);
 			loginInfo.setText("");
+			kc.clearText();
 		}
 	}
 }

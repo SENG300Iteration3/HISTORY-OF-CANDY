@@ -441,9 +441,10 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 				
 		//notify cash controller that the unit has been filled
 		sc.getCashControl().coinsLoaded(unit);
+
 		for (AttendantControlListener l : listeners)
 			l.coinsNotLowState();
-		
+			
 		//re enable system
 		sc.getCashControl().enablePayments();
 		
