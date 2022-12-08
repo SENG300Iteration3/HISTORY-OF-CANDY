@@ -329,5 +329,7 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 		// TODO Auto-generated method stub
 		
 	}
+	
+	
 
 }

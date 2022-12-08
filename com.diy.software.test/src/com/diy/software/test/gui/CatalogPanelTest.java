@@ -50,6 +50,7 @@ public class CatalogPanelTest {
 	@Test
 	public void testItemButton() {
 		ic.setIsPLU(true);
+		ic.pluCodeEntered(sc.getPLUCodeControl(), "23456");
 		panel.getItemButtons().get(4).doClick();
 		assertTrue(sStub.triggerCatalogWorkflow);
 		assertTrue(iStub.awaitingItemToBePlacedInBaggingArea);

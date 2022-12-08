@@ -16,6 +16,7 @@ public class StubSystem implements StationControlListener{
 	public boolean triggerMembershipWorkflow = false;
 	public boolean triggerPurchaseBagsWorkflow = false;
 	public boolean startPLUCodeWorkflow = false;
+	public boolean initialScreen = false;
 
 	@Override
 	public void systemControlLocked(StationControl systemControl, boolean isLocked) {
@@ -60,7 +61,7 @@ public class StubSystem implements StationControlListener{
 
 	@Override
 	public void triggerInitialScreen(StationControl systemControl) {
-		// TODO Auto-generated method stub
+		initialScreen = true;
 		
 	}
 
@@ -103,7 +104,7 @@ public class StubSystem implements StationControlListener{
 
 	@Override
 	public void triggerPurchaseBagsWorkflow(StationControl systemControl) {
-		// TODO Auto-generated method stub
+		triggerPaymentWorkflow = true;
 		
 	}
 

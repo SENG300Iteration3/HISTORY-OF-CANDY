@@ -74,6 +74,8 @@ PowerGrid.engageUninterruptiblePowerSource();
 	@Test
 	public void testScreenIsCashNonZeroCheckoutTotal() {
 		sc.customer.selectNextItem();
+		sc.customer.selectNextItem();
+		sc.customer.selectNextItem();
 		sc.customer.scanItem(false); //FIXME: dealing with scanning failures
 		sc.customer.placeItemInBaggingArea();
 		screen = new PresentGiftCardOrCashScreen(sc, false);

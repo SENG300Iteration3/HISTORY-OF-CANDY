@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.Test; 
 
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.StationControl;
@@ -13,13 +13,16 @@ import com.diy.software.listeners.AttendantControlListener;
 import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import ca.powerutility.PowerGrid;
+import swing.panels.AttendantActionsPanel;
+import swing.panes.AttendantActionsPane;
 import swing.screens.AttendantStationScreen;
 
-public class AttendantStationScreenTest {
+public class AttendantActionsPanelTest {
 	
 	FakeDataInitializer fdi;
 	StationControl sc;
-	AttendantStationScreen screen;
+	AttendantActionsPanel screen;
+	AttendantStationScreen aScreen;
 	AttendantControlListenerStub aStub;
 
 	@Before
@@ -35,95 +38,123 @@ public class AttendantStationScreenTest {
 		
 		sc = new StationControl(fdi);
 		
-		screen = new AttendantStationScreen(sc);
+		screen = new AttendantActionsPanel(sc);
+		aScreen = new AttendantStationScreen(sc);
 		
 		aStub = new AttendantControlListenerStub();
 		sc.getAttendantControl().addListener(aStub);
 	}
-
+	
 	@After
 	public void tearDown() throws Exception {
 	}
 
 	@Test
-	public void testStartUpButton() {
-		sc.station.unplug();
-		screen.getStartUpButton().setEnabled(true);
-		screen.getStartUpButton().doClick();
-		assertTrue(aStub.startup);
-	}
-	
-	@Test
-	public void testShutdownButton() {
-		screen.getShutDownButton().setEnabled(true);
-		screen.getShutDownButton().doClick();
-		assertTrue(aStub.shutdown);
-	}
-	
-	@Test
-	public void testPermitButton() {
-		screen.getPermitButton().setEnabled(true);
-		screen.getPermitButton().doClick();
-		assertFalse(sc.station.handheldScanner.isDisabled());
-		
+	public void testInitialState() {
+		assertTrue(screen.getInkButton().isEnabled());
+		assertTrue(screen.getPaperButton().isEnabled());
+		assertFalse(screen.getBagDispenserButton().isEnabled());
+		assertFalse(screen.getCoinButton().isEnabled());
+		assertFalse(screen.getBanknoteButton().isEnabled());
 	}
 	
 	@Test
 	public void testPreventButton() {
-		sc.station.handheldScanner.disable();
-		screen.getPreventButton().setEnabled(true);
-		screen.getPreventButton().doClick();
-		assertTrue(sc.station.handheldScanner.isDisabled());
+		aScreen.getPreventButton().doClick();
+		assertTrue(aStub.stationBlocked);
+		assertTrue(screen.getInkButton().isEnabled());
+		assertTrue(screen.getPaperButton().isEnabled());
+		assertTrue(screen.getBagDispenserButton().isEnabled());
+		assertTrue(screen.getCoinButton().isEnabled());
+		assertTrue(screen.getBanknoteButton().isEnabled());
 	}
 	
 	@Test
-	public void testAddItemButton() {
-		screen.getAddItemButton().doClick();
-		assertTrue(aStub.triggerTextSearch);
+	public void testPermitButton() {
+		aScreen.getPreventButton().doClick();
+		aScreen.getPermitButton().doClick();
+		assertFalse(aStub.stationBlocked);
+		assertFalse(screen.getInkButton().isEnabled());
+		assertFalse(screen.getPaperButton().isEnabled());
+		assertFalse(screen.getBagDispenserButton().isEnabled());
+		assertFalse(screen.getCoinButton().isEnabled());
+		assertFalse(screen.getBanknoteButton().isEnabled());
 	}
 	
 	@Test
-	public void testRemoveItemButton() {
-		
+	public void testInkButton() {
+		aScreen.getPreventButton().doClick();
+		screen.getInkButton().doClick();
+		if (!aStub.inkOverload) {
+			assertTrue(aStub.inkAdded);
+//			assertFalse(screen.getInkButton().isEnabled());
+		} else {
+			assertFalse(aStub.inkAdded);
+//			assertTrue(screen.getInkButton().isEnabled());
+		}
 	}
 	
 	@Test
-	public void testLogoutButton() {
-		
+	public void testPaperButton() {
+		aScreen.getPreventButton().doClick();
+		screen.getPaperButton().doClick();
+		if (!aStub.paperOverload) {
+			assertTrue(aStub.paperAdded);
+//			assertFalse(screen.getPaperButton().isEnabled());
+		} else {
+			assertFalse(aStub.paperAdded);
+//			assertTrue(screen.getPaperButton().isEnabled());
+		}
 	}
 	
+//	@Test
+//	public void testBagButton() {
+//		int before = sc.getBagInStock();
+//		
+//		aScreen.getPreventButton().doClick();
+//		screen.getBagDispenserButton().doClick();
+//		int after = sc.getBagInStock();
+//		
+//		assertTrue(after > before);
+//	}
+	
 	@Test
-	public void testApproveAddedBagsButton() {
-		
+	public void testCoinButton() {
+		aScreen.getPreventButton().doClick();
+		screen.getCoinButton().doClick();
+		assertTrue(aStub.coinsAdded);
+	}
+	 
+	@Test
+	public void testBanknoteButton() {
+		aScreen.getPreventButton().doClick();
+		screen.getBanknoteButton().doClick();
+		assertTrue(aStub.banknotesAdded);
 	}
 	
 	public class AttendantControlListenerStub implements AttendantControlListener {
 		
-		public boolean isLoggedIn = false;
-		public boolean bagsApproved = false;
-		public boolean permitUse = true;
-		public boolean removeItemApproved = false;
-		public boolean initialState = false;
-		public boolean attendantApprovedBags = false;
-		public boolean shutdown = false;
-		public boolean startup = false;
-		public boolean triggerTextSearch = false;
-
+		public boolean inkAdded = false;
+		public boolean paperAdded = false;
+		public boolean coinsAdded = false;
+		public boolean banknotesAdded = false;
+		public boolean stationBlocked = false;
+		public boolean inkOverload = false;
+		public boolean paperOverload = false;
+		
 		@Override
 		public void attendantApprovedBags(AttendantControl ac) {
-			attendantApprovedBags = true;
+			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
 		public void attendantPreventUse(AttendantControl ac) {
-			permitUse = false;
-			
+			stationBlocked = true;
 		}
 
 		@Override
 		public void attendantApprovedItemRemoval(AttendantControl bc) {
-			removeItemApproved = true;
 			
 		}
 
@@ -177,7 +208,6 @@ public class AttendantStationScreenTest {
 
 		@Override
 		public void initialState() {
-			initialState = true;
 			
 		}
 
@@ -190,37 +220,7 @@ public class AttendantStationScreenTest {
 		@Override
 		public void attendantPermitStationUse(AttendantControl ac) {
 			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void loggedIn(boolean isLoggedIn) {
-			this.isLoggedIn = isLoggedIn;
-			
-		}
-
-		@Override
-		public void printerNotLowInkState() {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void printerNotLowPaperState() {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void addTooMuchInkState() {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void addTooMuchPaperState() {
-			// TODO Auto-generated method stub
-			
+			stationBlocked = false;
 		}
 
 		@Override
@@ -230,20 +230,49 @@ public class AttendantStationScreenTest {
 		}
 
 		@Override
+		public void loggedIn(boolean isLoggedIn) {
+			
+		}
+
+		@Override
+		public void printerNotLowInkState() {
+			// TODO Auto-generated method stub
+			inkAdded = true;
+		}
+
+		@Override
+		public void printerNotLowPaperState() {
+			// TODO Auto-generated method stub
+			paperAdded = true;
+		}
+
+		@Override
+		public void addTooMuchInkState() {
+			// TODO Auto-generated method stub
+			inkOverload = true;
+		}
+
+		@Override
+		public void addTooMuchPaperState() {
+			// TODO Auto-generated method stub
+			paperOverload = true;
+		}
+
+		@Override
 		public void banknotesNotLowState() {
 			// TODO Auto-generated method stub
-			
+			banknotesAdded = true;
 		}
 
 		@Override
 		public void coinsNotLowState() {
 			// TODO Auto-generated method stub
-			
+			coinsAdded = true;
 		}
 
 		@Override
 		public void triggerItemSearchScreen(AttendantControl ac) {
-			triggerTextSearch = true;
+			// TODO Auto-generated method stub
 			
 		}
 
@@ -255,13 +284,13 @@ public class AttendantStationScreenTest {
 
 		@Override
 		public void stationShutDown(AttendantControl ac) {
-			shutdown = true;
+			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
 		public void stationStartedUp(AttendantControl ac) {
-			startup = true;
+			// TODO Auto-generated method stub
 			
 		}
 		
