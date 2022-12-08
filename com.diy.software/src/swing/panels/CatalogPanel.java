@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -35,11 +36,14 @@ public class CatalogPanel extends JPanel implements ItemsControlListener {
 	private static final long serialVersionUID = 1L;
 	private ItemsControl ic;
 	private GUI_JButton cancelBtn;
+	private ArrayList<GUI_JButton> itemButtons;
 
 	public CatalogPanel(StationControl sc) {
 		super();
 		ic = sc.getItemsControl();
 		ic.addListener(this);
+		
+		itemButtons = new ArrayList<GUI_JButton>();
 
 		String strProductName;
 
@@ -80,6 +84,8 @@ public class CatalogPanel extends JPanel implements ItemsControlListener {
 			button.setActionCommand(strProductName);
 			button.addActionListener(ic);
             buttonsPanel.add(panel);
+            
+            itemButtons.add(button);
 		}
 
         JScrollPane scrollPane = new JScrollPane(buttonsPanel);
@@ -159,5 +165,25 @@ public class CatalogPanel extends JPanel implements ItemsControlListener {
 	public void awaitingItemToBePlacedInScanningArea(StationControl sc) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void awaitingAttendantToApproveItemRemoval(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void itemRemoved(ItemsControl itemsControl) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public GUI_JButton getCancelBtn() {
+		return cancelBtn;
+	}
+
+	public ArrayList<GUI_JButton> getItemButtons() {
+		return itemButtons;
 	}
 }

@@ -1,6 +1,6 @@
 package swing.screens;
 
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -96,8 +96,10 @@ public class PresentGiftCardOrCashScreen extends Screen implements CashControlLi
 	public void cashInserted(CashControl cc) {
 		if (isGiftCard) {
 			this.prompt.setText("Please swipe gift card. Total remaining: $" + fix(systemControl.getItemsControl().getCheckoutTotal()));
+			prompt.setForeground(Color.BLACK);
 		} else {
 			this.prompt.setText("Please insert $" + fix(systemControl.getItemsControl().getCheckoutTotal()));
+			prompt.setForeground(Color.BLACK);
 		}
 	}
 	
@@ -162,7 +164,7 @@ public class PresentGiftCardOrCashScreen extends Screen implements CashControlLi
 			}
 			double returnedCash = 0;
 			for(Coin i : c) {
-				returnedCash += ((double)i.getValue())/100.0;
+				returnedCash += i.getValue().doubleValue();
 			}
 			if(b != null) {
 				returnedCash += b.getValue();
@@ -185,7 +187,7 @@ public class PresentGiftCardOrCashScreen extends Screen implements CashControlLi
 			}
 			double returnedCash = 0;
 			for(Coin i : c) {
-				returnedCash += ((double)i.getValue())/100.0;
+				returnedCash += i.getValue().doubleValue();
 			}
 			if(b != null) {
 				for(Banknote i : b) {
@@ -199,10 +201,18 @@ public class PresentGiftCardOrCashScreen extends Screen implements CashControlLi
 	}
 	
 	@Override
-	  public void paymentFailed(CashControl cc) {
+	  public void paymentFailed(CashControl cc, boolean a) {
 		if (isGiftCard) {
-			this.prompt.setText("Payment failed: No cost associated with current transaction");
+			if(a) {
+				this.prompt.setText("Payment failed: No cost associated with current transaction");
+			}else {
+				this.prompt.setText("Payment failed: GiftCard is out of money");
+			}
 		}
 		  
 	  }
+	
+	public GUI_JButton getBackButton(){
+		return backButton;
+	}
 }

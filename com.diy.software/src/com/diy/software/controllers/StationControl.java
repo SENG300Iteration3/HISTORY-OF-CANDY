@@ -1,11 +1,14 @@
 package com.diy.software.controllers;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.DoItYourselfStation;
+import com.diy.hardware.PLUCodedItem;
 import com.diy.hardware.PLUCodedProduct;
 import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.Product;
@@ -16,6 +19,7 @@ import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.PLUCodeControlListener;
 import com.diy.software.fakedata.GiftcardDatabase;
 import com.diy.software.listeners.StationControlListener;
+import com.diy.software.util.Tuple;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.EmptyException;
@@ -26,6 +30,7 @@ import com.jimmyselectronics.abagnale.ReceiptPrinterListener;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodeScanner;
 import com.jimmyselectronics.necchi.BarcodeScannerListener;
+import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.opeechee.Card;
 import com.jimmyselectronics.opeechee.Card.CardData;
 import com.jimmyselectronics.opeechee.CardReader;
@@ -66,6 +71,10 @@ public class StationControl
 	public String userMessage;
 
 	public ArrayList<StationControlListener> listeners = new ArrayList<>();
+	
+	// Need to track item objects associated with this particular instance
+	public Map<Barcode, Item> barcodedItems = new HashMap<>();
+	public Map<PriceLookUpCode, Item> pluCodedItems = new HashMap<>();
 
 	/******** Control Classes ********/
 	private ItemsControl ic;
@@ -86,6 +95,7 @@ public class StationControl
 	private boolean membershipInput = false;
 	private int bagInStock;
 	private PLUCodeControl pcc;
+
 
 	// used for receipt listeners
 	boolean isOutOfPaper = false;
@@ -130,19 +140,15 @@ public class StationControl
 		 */
 		station.reusableBagDispenser.plugIn();
 		station.reusableBagDispenser.turnOn();
-		bagInStock = station.reusableBagDispenser.getCapacity();
 		loadBags();
 
 		/*
 		 * simulates what the printer has in it before the printing starts
 		 * to simulate low paper and low ink
 		 */
-		try {
-			station.printer.addInk(100);
-			station.printer.addPaper(1);
-		} catch (OverloadException e1) {
+		this.ac.addInk(50);
+		this.ac.addPaper(1);
 
-		}
 		wc = new WalletControl(this);
 		ppc = new PinPadControl(this);
 		pc = new PaymentControl(this);
@@ -161,8 +167,18 @@ public class StationControl
 
 		for (Card c : this.fakeData.getCards())
 			customer.wallet.cards.add(c);
-		for (Item i : this.fakeData.getItems())
-			customer.shoppingCart.add(i);		
+		for (Item i : this.fakeData.getItems()) {
+			if (i instanceof BarcodedItem) {
+				BarcodedItem item = (BarcodedItem) i;
+				this.barcodedItems.put(item.getBarcode(), i);
+				customer.shoppingCart.add(i);	
+			}
+			else if (i instanceof PLUCodedItem) {
+				PLUCodedItem item = (PLUCodedItem) i;
+				this.pluCodedItems.put(item.getPLUCode(), i);
+				customer.shoppingCart.add(i);	
+			}
+		}
 	}
 
 	/**
@@ -182,6 +198,17 @@ public class StationControl
 	public void startUp() {
 		station.plugIn();
 		station.turnOn();
+		
+		ic.resetState();
+		ac.resetState();
+		rc.resetState();
+		cc.resetState();
+	}
+	
+	public void shutDown() {
+		
+		station.unplug();
+		station.turnOff();
 	}
 	
 	public ItemsControl getItemsControl() {
@@ -235,13 +262,17 @@ public class StationControl
 		return station;
 	}
 	
-	private void loadBags() {
+	public void loadBags() {
 		try {
-			for(int i = 0; i < bagInStock; i++) {
-				ReusableBag aBag = new ReusableBag();
-				station.reusableBagDispenser.load(aBag);
-			}
-
+			// loads full capacity
+			int limit = station.reusableBagDispenser.getCapacity() - bagInStock;
+			if(limit > 0) {
+				for(int i = 0; i < limit; i++) {
+					ReusableBag aBag = new ReusableBag();
+					station.reusableBagDispenser.load(aBag);
+				}
+				System.out.println("Loaded " + limit + " bags!");		// notify in console
+			}else System.out.println("Bag Dispenser is full. No bag loaded!");	
 		}catch(OverloadException e) {}
 	}
 	
@@ -259,7 +290,7 @@ public class StationControl
 			}
 		}
 		
-		for(long i : station.coinDenominations) {
+		for(BigDecimal i : station.coinDenominations) {
 			int capacity = station.coinDispensers.get(i).getCapacity();
 			Coin[] coins = new Coin[capacity];
 			for(int j = 0; j < capacity; j++) {
@@ -293,6 +324,7 @@ public class StationControl
 					this.station.handheldScanner.disable();
 					this.station.mainScanner.disable();
 					this.station.cardReader.disable();
+					this.cc.disablePayments(); // Added this method for when adjusting banknotes/coins.
 					for (StationControlListener l : listeners) {
 						l.systemControlLocked(this, true);
 					}
@@ -341,6 +373,7 @@ public class StationControl
 					this.station.handheldScanner.enable();
 					this.station.mainScanner.enable();
 					this.station.cardReader.enable();
+					this.cc.enablePayments(); // Added this method for when adjusting banknotes/coins is finished.
 					for (StationControlListener l : listeners)
 						l.systemControlLocked(this, false);
 					isLocked = false;
@@ -501,24 +534,30 @@ public class StationControl
 			
 			if(data.getType().equals(GiftcardDatabase.CompanyGiftCard)) {
 				if(amountOwed == 0) {
-					cc.paymentFailed();
+					cc.paymentFailed(true);
 					return;
 				}
 				
 				Double amountOnCard = GiftcardDatabase.giftcardMap.get(cardNumber);
 				Double dif = amountOnCard - amountOwed;
-				if(dif >= 0) {
-					GiftcardDatabase.giftcardMap.put(cardNumber, dif);
-					ic.updateCheckoutTotal(-amountOwed);
-					for (StationControlListener l : listeners) {
-						l.paymentHasBeenMade(this, data);
+				Double amountPlaced = Math.min(amountOwed, amountOnCard);
+				long holdNum = bank.authorizeHold(cardNumber, amountPlaced);
+				if(holdNum != -1L && bank.postTransaction(cardNumber, holdNum, amountPlaced)) {
+					if(dif >= 0) {
+						GiftcardDatabase.giftcardMap.put(cardNumber, dif);
+						ic.updateCheckoutTotal(-amountOwed);
+						for (StationControlListener l : listeners) {
+							l.paymentHasBeenMade(this, data);
+						}
+					}else {
+						GiftcardDatabase.giftcardMap.put(cardNumber, 0.0);
+						ic.updateCheckoutTotal(-amountOnCard);
 					}
-				}else {
-					GiftcardDatabase.giftcardMap.put(cardNumber, 0.0);
-					ic.updateCheckoutTotal(-amountOnCard);
-					//TODO: tell customer that their card wasn't enough maybe?
-				}
+					bank.releaseHold(cardNumber, holdNum);
 				cc.cashInserted();
+				}else {
+					cc.paymentFailed(false);
+				}
 				return;
 			}
 
@@ -584,20 +623,22 @@ public class StationControl
 	 * 
 	 * @param receipt the customer receipt as a string
 	 */
-	public void printReceipt(String receipt) {
+//	public void printReceipt(String receipt) {
+//
+//		for (char receiptChar : receipt.toCharArray()) {
+//			try {
+//				station.printer.print(receiptChar);
+//				//System.out.println(receiptChar);
+//			} catch (EmptyException e) {
+//
+//			} catch (OverloadException e) {
+//
+//			}
+//		}
+//	}
 
-		for (char receiptChar : receipt.toCharArray()) {
-			try {
-				station.printer.print(receiptChar);
-				//System.out.println(receiptChar);
-			} catch (EmptyException e) {
-
-			} catch (OverloadException e) {
-
-			}
-		}
-	}
-
+	
+	
 	/**
 	 * sets user message to announce weight on the indicated scale has changed
 	 * 
@@ -624,6 +665,8 @@ public class StationControl
 		}
 		
 	}
+	
+	
 
 	
 	@Override
@@ -650,12 +693,9 @@ public class StationControl
 			wc.membershipCardInputCanceled();
 	}
 				
-	public void addReusableBag(ReusableBag lastDispensedReusableBag) {
-		// ADD: update inventory
-
-		weightOfLastItem = lastDispensedReusableBag.getWeight();
-		
+	public void addReusableBag(ReusableBag lastDispensedReusableBag) {		
 		// Set the expected weight in SystemControl
+		weightOfLastItem = lastDispensedReusableBag.getWeight();
 		this.updateExpectedCheckoutWeight(weightOfLastItem);
 		this.updateWeightOfLastItemAddedToBaggingArea(weightOfLastItem);
 	}
@@ -663,8 +703,10 @@ public class StationControl
 	public void ItemApprovedToNotBag() {
 		this.updateExpectedCheckoutWeight(-weightOfLastItem);
 		this.updateWeightOfLastItemAddedToBaggingArea(-weightOfLastItem);
+		ic.placeBulkyItemInCart();
 		this.unblockStation();
 	}
+
 
 	/**
 	 * Compares the expected weight after adding an item to the actual weight being
@@ -674,7 +716,7 @@ public class StationControl
 	 * @throws OverloadException If the weight has overloaded the scale.
 	 */
 	public boolean expectedWeightMatchesActualWeight(double actualWeight) {
-		return (this.getExpectedWeight() - (actualWeight + bagWeight) >= 1 || this.getExpectedWeight() - (actualWeight + bagWeight) <= 1);
+		return Math.abs(getExpectedWeight() - (actualWeight + bagWeight)) <= 1;
 	}
 	
 	public int getBagInStock() {
@@ -685,31 +727,27 @@ public class StationControl
 	@Override
 	public void outOfPaper(IReceiptPrinter printer) {
 		isOutOfPaper = true;
-		System.out.println("SC out of paper");
 		rc.outOfPaper(printer);
-		blockStation();
+		blockStation("Printer is out of ink or paper please wait for attendant");
 		rc.outOfPaper(printer);
 	}
 
 	@Override
 	public void outOfInk(IReceiptPrinter printer) {
 		isOutOfInk = true;
-		 System.out.println("SC out of ink");	
 		 rc.outOfInk(printer);
-		 blockStation();
+		 blockStation("Printer is out of ink or paper please wait for attendant");
 		// have the same functionality as low ink for now
 		 rc.outOfInk(printer);
 	}
-
+	
 	@Override
 	public void lowInk(IReceiptPrinter printer) {
-		System.out.println("SC low ink");
 		rc.lowInk(printer);
 	}
 
 	@Override
 	public void lowPaper(IReceiptPrinter printer) {
-		System.out.println("SC low paper");
 		rc.lowPaper(printer);
 	}
 
@@ -719,6 +757,8 @@ public class StationControl
 		// unblock station when enough paper is added, checks if theres enough ink
 		if(!isOutOfInk) {
 			unblockStation();
+			rc.paperAdded(printer);
+			// System.out.println("station unblocked paper added");
 		}
 	}
 
@@ -728,6 +768,8 @@ public class StationControl
 		// unblock station when enough ink is added, checks if theres enough paper
 		if(!isOutOfPaper) {
 			unblockStation();
+			rc.inkAdded(printer);
+			// System.out.println("station unblocked ink added");
 		}
 	}
 	
@@ -760,8 +802,7 @@ public class StationControl
 
 	@Override
 	public void bagDispensed(ReusableBagDispenser dispenser) {
-		// TODO Auto-generated method stub
-		
+		bagInStock--;
 	}
 
 	@Override
@@ -772,8 +813,18 @@ public class StationControl
 
 	@Override
 	public void bagsLoaded(ReusableBagDispenser dispenser, int count) {
-		// TODO Auto-generated method stub
-		
+		bagInStock++;
+	}
+	
+	public void printReceipt() {
+		for (StationControlListener l: listeners) {
+			l.triggerReceiptScreen(this);
+		}
+		rc.printItems();
+		rc.printTotalCost();
+		rc.printMembership();
+		rc.printDateTime();
+		rc.printThankyouMsg();
 	}
 
 }

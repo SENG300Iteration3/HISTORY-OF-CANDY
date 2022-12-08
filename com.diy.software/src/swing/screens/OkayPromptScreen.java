@@ -1,6 +1,6 @@
 package swing.screens;
 
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -11,12 +11,14 @@ import javax.swing.SwingConstants;
 import com.diy.software.controllers.StationControl;
 
 import swing.styling.GUI_Fonts;
+import swing.styling.GUI_JButton;
 import swing.styling.GUI_JLabel;
 import swing.styling.Screen;
 
 public class OkayPromptScreen extends Screen {
 	private JLabel promptLabel;
 	private JButton okayButton;
+	GUI_JButton printReceiptButton;
 
 	public OkayPromptScreen(final StationControl systemControl, String prompt, final boolean navigateToInitialScreen, boolean okay) {
 		super(systemControl);
@@ -25,6 +27,7 @@ public class OkayPromptScreen extends Screen {
 		promptLabel.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		promptLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		promptLabel.setPreferredSize(new Dimension(this.width - 200, 100));
+		promptLabel.setForeground(Color.BLACK);
 		this.addLayer(promptLabel, 0);
 
 		if(okay) {
@@ -41,5 +44,9 @@ public class OkayPromptScreen extends Screen {
 			});
 			this.addLayer(okayButton, 100);
 		}
+	}
+	
+	public JButton getOkayButton() {
+		return okayButton;
 	}
 }

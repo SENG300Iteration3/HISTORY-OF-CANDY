@@ -1,12 +1,6 @@
 package swing.screens;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
+import java.awt.*;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -16,7 +10,6 @@ import javax.swing.JTextField;
 import com.diy.software.controllers.MembershipControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.MembershipControlListener;
-import com.diy.software.listeners.StationControlListener;
 
 import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Fonts;
@@ -66,7 +59,7 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 		scanSwipeButton.addActionListener(mc);
 		scanSwipePanel.add(scanSwipeButton, gridConstraint);
 		
-		addLayer(scanSwipePanel, 0);
+		addLayer(scanSwipePanel, -80);
 
 		numberInputPanel = new GUI_JPanel();
 		numberInputPanel.setLayout(new GridBagLayout());
@@ -126,12 +119,12 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 		centerPanel.setLayout(new GridLayout(1, 0));
 
 		centerPanel.add(memberMssg);
-		addLayer(centerPanel, 10);
+		addLayer(centerPanel, 0);
 
 	}
 
 	private void initalizeTextField() {
-		numberEntry = new JTextField("MemberID".toUpperCase());
+		numberEntry = new JTextField();
 		numberEntry.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		numberEntry.setHorizontalAlignment(JLabel.CENTER);
 		numberEntry.setBorder(BorderFactory.createLineBorder(GUI_Color_Palette.DARK_BLUE, 10));
@@ -145,7 +138,7 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 		centerPanel.setLayout(new GridLayout(1, 0));
 
 		centerPanel.add(numberEntry);
-		addLayer(centerPanel, 0);
+		addLayer(centerPanel, -10);
 
 	}
 
@@ -170,6 +163,11 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 	@Override
 	public void welcomeMember(MembershipControl mc, String memberName) {
 		memberMssg.setText(memberName);
+		if(memberMssg.getText().contains("not found")) {
+			memberMssg.setForeground(Color.RED);
+		} else {
+			memberMssg.setForeground(Color.WHITE);
+		}
 	}
 
 
@@ -193,5 +191,25 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 		correctButton.setEnabled(false);
 		submitButton.setEnabled(false);
 		
+	}
+	
+	public JButton[] getNumberPadButtons() {
+		return numberPadButtons;
+	}
+	
+	public JButton getCancelButton() {
+		return cancelButton;
+	}
+	
+	public JButton getCorrectButton() {
+		return correctButton;
+	}
+	
+	public JButton getSubmitButton() {
+		return submitButton;
+	}
+	
+	public JButton getScanSwipeButton() {
+		return scanSwipeButton;
 	}
 }

@@ -84,6 +84,15 @@ public class TestPaymentControl {
 		assertTrue(pls.pt == PaymentType.Debit);
 	}
 	
+	@Test
+	public void testActionPerformedGiftcard() {
+		ActionEvent e = new ActionEvent(this, 0, "giftcard");
+		pc.addListener(pls);
+		assertFalse(pls.pt == PaymentType.GiftCard);
+		pc.actionPerformed(e);
+		assertTrue(pls.pt == PaymentType.GiftCard);
+	}
+	
 	
 	@Test
 	public void testActionPerformedDefault() {

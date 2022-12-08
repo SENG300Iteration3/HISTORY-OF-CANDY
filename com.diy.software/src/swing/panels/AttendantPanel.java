@@ -114,24 +114,31 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 	}
 
 	@Override
-	public void addPaperState() {
+	public void addTooMuchPaperState() {
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(false);
 		addPaperToPrinterButton.setEnabled(true);
 	}
 
 	@Override
-	public void addInkState() {
+	public void addTooMuchInkState() {
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(true);
 		addPaperToPrinterButton.setEnabled(false);
 	}
-
+	
 	@Override
-	public void printerNotLowState() {
+	public void printerNotLowInkState() {
 		approveAddedBagsButton.setEnabled(false);
 		addInkToPrinterButton.setEnabled(false);
 		addPaperToPrinterButton.setEnabled(false);
+		
+	}
+
+	@Override
+	public void printerNotLowPaperState() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -158,6 +165,11 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 	}
 
 	@Override
+	public void attendantApprovedItemRemoval(AttendantControl bc) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	public void lowInk(AttendantControl ac, String message) {
 		// TODO Auto-generated method stub
 	}
@@ -177,8 +189,9 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 		// TODO Auto-generated method stub
 	}
 
+
 	@Override
-	public void coinIsLowState(CoinStorageUnit unit, int amount) {
+	public void coinIsLowState(int amount) {
 		// TODO Auto-generated method stub
 	}
 
@@ -191,5 +204,57 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 	public void loggedIn(boolean isLoggedIn) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void itemBagged() {
+		approveNoBagButton.setEnabled(false);
+	}
+
+	public void triggerItemSearchScreen(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void exitTextSearchScreen(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void printerNotLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void banknotesInStorageLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void banknotesNotLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void coinsNotLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void stationShutDown(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void stationStartedUp(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -143,20 +143,26 @@ public class CustomerBagsPanel extends JPanel
 	}
 
 	@Override
-	public void addPaperState() {}
+	public void addTooMuchPaperState() {}
 	public void productSubtotalUpdated(ItemsControl ic) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void addInkState() {
+	public void addTooMuchInkState() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void printerNotLowState() {
+	public void printerNotLowInkState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void printerNotLowPaperState() {
 		// TODO Auto-generated method stub
 		
 	}
@@ -207,7 +213,7 @@ public class CustomerBagsPanel extends JPanel
 	}
 
 	@Override
-	public void coinIsLowState(CoinStorageUnit unit, int amount) {
+	public void coinIsLowState(int amount) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -224,6 +230,73 @@ public class CustomerBagsPanel extends JPanel
 
 	@Override
 	public void loggedIn(boolean isLoggedIn) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void attendantApprovedItemRemoval(AttendantControl bc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void awaitingAttendantToApproveItemRemoval(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void itemRemoved(ItemsControl itemsControl) {
+		
+	}
+	
+	public void itemBagged() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void banknotesInStorageLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void banknotesNotLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void coinsNotLowState() {
+	
+	}
+	public void triggerItemSearchScreen(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void exitTextSearchScreen(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void printerNotLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void stationShutDown(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void stationStartedUp(AttendantControl ac) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -2,6 +2,7 @@ package swing.panes;
 
 import com.diy.hardware.DoItYourselfStation;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -83,7 +84,8 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 
 	public static void configureDiItYourselfStationAR() {
 		DoItYourselfStation.configureBanknoteDenominations(new int[] { 100, 50, 20, 10, 5, 1 });
-		DoItYourselfStation.configureCoinDenominations(new long[] { 200, 100, 25, 10, 5, 1 });
+		DoItYourselfStation.configureCoinDenominations(new BigDecimal[] { new BigDecimal(2.00), new BigDecimal(1.00), 
+								new BigDecimal(.25), new BigDecimal(.10), new BigDecimal(.05), new BigDecimal(.01) });
 	}
 
 	private void addScreenToStack(Screen newScreen) {
@@ -135,7 +137,15 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 				AddOwnBagsPromptScreen screen = new AddOwnBagsPromptScreen(systemControl, 
 						"Please Place Your Bags In the Bagging Area");
 				addScreenToStack(screen);
-				
+			}else if (reason == "prevent") {
+				OkayPromptScreen screen = new OkayPromptScreen(systemControl, "Station Closed For Maintainence", true, false);
+				addScreenToStack(screen);
+			}else if (reason == "Printer is out of ink or paper please wait for attendant") {
+				OkayPromptScreen screen = new OkayPromptScreen(systemControl, reason, true, false);
+				addScreenToStack(screen);
+			}else if (reason == "shutdown") {
+				OkayPromptScreen screen = new OkayPromptScreen(systemControl, "Station Shut-down", true, false);
+				addScreenToStack(screen);
 			} else {
 				blockedPromptScreen = new BlockedPromptScreen(systemControl, reason);
 				addScreenToStack(blockedPromptScreen);
@@ -298,7 +308,7 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 
 	@Override
 	public void awaitingItemToBeRemoved(ItemsControl itemsControl, String updateMessage) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -311,6 +321,25 @@ public class CustomerStationPane implements StationControlListener, PaymentContr
 	@Override
 	public void productSubtotalUpdated(ItemsControl ic) {
 		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void awaitingAttendantToApproveItemRemoval(ItemsControl ic) {
+		okayPromptScreen = new OkayPromptScreen(sc, "Please Ask Attendant For Assistance In Removing An Item", false, false);
+		addScreenToStack(okayPromptScreen);
+	}
+
+	@Override
+	public void itemRemoved(ItemsControl itemsControl) {
+		triggerPanelBack(sc);
+		
+	}
+
+	@Override
+	public void triggerReceiptScreen(StationControl systemControl) {
+		ReceiptScreen screen = new ReceiptScreen(systemControl);
+		addScreenToStack(screen);
 		
 	}
 }
