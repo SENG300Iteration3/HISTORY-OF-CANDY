@@ -179,19 +179,6 @@ public class ItemsControlTest {
 		assertTrue(stub.available);
 	}
 
-<<<<<<< HEAD
-	// @Test
-	// public void testScanCurrentItem() {
-	// 	systemControl.customer.shoppingCart.add(item);
-	// 	systemControl.customer.selectNextItem();
-	// 	assertFalse(stub.bagging);
-
-	// 	while (!stub.bagging) {
-	// 		itemsControl.scanCurrentItem(true);
-	// 	}
-	// 	assertTrue(stub.bagging);
-	// }
-=======
 //	@Test
 //	public void testScanCurrentItem() {
 //		systemControl.customer.shoppingCart.add(item);
@@ -203,7 +190,6 @@ public class ItemsControlTest {
 //		}
 //		assertTrue(stub.bagging);
 //	}
->>>>>>> 2d2a8757714140397ba2a567a37e7c9a4606ec52
 
 	@Test
 	public void testScanCurrentItemScanFail() {
@@ -229,25 +215,6 @@ public class ItemsControlTest {
 		assertFalse(stub.selected);
 	}
 
-<<<<<<< HEAD
-	// @Test
-	// public void testPlaceItemOnScaleInTime() {
-
-	// 	systemControl.customer.shoppingCart.add(item);
-	// 	systemControl.customer.selectNextItem();
-	// 	assertFalse(stub.bagging);
-
-	// 	while (!stub.bagging) {
-	// 		itemsControl.scanCurrentItem(true);
-	// 	}
-	// 	assertTrue(stub.bagging);
-	// 	stub.bagging = true;
-	// 	stub.selected = true;
-	// 	itemsControl.placeItemOnBaggingArea();
-	// 	assertFalse(stub.bagging);
-	// 	assertFalse(stub.selected);
-	// }
-=======
 //	@Test
 //	public void testPlaceItemOnScaleInTime() {
 //
@@ -265,7 +232,6 @@ public class ItemsControlTest {
 //		assertFalse(stub.bagging);
 //		assertFalse(stub.selected);
 //	}
->>>>>>> 2d2a8757714140397ba2a567a37e7c9a4606ec52
 
 	@Test
 	public void testPlaceItemOnScaletoolight() {
@@ -353,7 +319,6 @@ public class ItemsControlTest {
 //		}
 //
 //	}
->>>>>>> 2d2a8757714140397ba2a567a37e7c9a4606ec52
 
 	@Test
 	public void testPlaceBulkyItemInCart() {
@@ -413,24 +378,6 @@ public class ItemsControlTest {
 
 	}
 
-<<<<<<< HEAD
-	// @Test
-	// public void testActionPerformedScan() {
-	// 	ActionEvent e = new ActionEvent(this, 0, "handheld scan");
-
-	// 	systemControl.customer.shoppingCart.add(item);
-
-	// 	systemControl.customer.shoppingCart.add(item);
-	// 	systemControl.customer.selectNextItem();
-	// 	assertFalse(stub.bagging);
-
-	// 	while (!stub.bagging) {
-	// 		itemsControl.actionPerformed(e);
-	// 	}
-	// 	assertTrue(stub.bagging);
-
-	// }
-=======
 //	@Test
 //	public void testActionPerformedScan() {
 //		ActionEvent e = new ActionEvent(this, 0, "handheld scan");
@@ -447,7 +394,6 @@ public class ItemsControlTest {
 //		assertTrue(stub.bagging);
 //
 //	}
->>>>>>> 2d2a8757714140397ba2a567a37e7c9a4606ec52
 
 	@Test
 	public void testActionPerformedPutBack() {
@@ -733,9 +679,6 @@ public class ItemsControlTest {
 		@Override
 		public void awaitingItemToBePlacedInScanningArea(StationControl sc) {
 			// TODO Auto-generated method stub
-<<<<<<< HEAD
-			
-=======
 
 		}
 
@@ -749,7 +692,6 @@ public class ItemsControlTest {
 		public void awaitingAttendantToApproveItemRemoval(ItemsControl ic) {
 			// TODO Auto-generated method stub
 
->>>>>>> 2d2a8757714140397ba2a567a37e7c9a4606ec52
 		}
 
 	}
