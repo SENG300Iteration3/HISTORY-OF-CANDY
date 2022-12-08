@@ -19,10 +19,10 @@ public class PaymentScreen extends Screen {
 		super(sc, "Select a payment method");
 
 		this.giftCardButton = makeCentralButton("Gift Card", this.width - 200, 100);
-		this.addLayer(giftCardButton, 0);
+		this.addLayer(giftCardButton, -130);
 
 		this.cashButton = makeCentralButton("Cash", this.width - 200, 100);
-		this.addLayer(cashButton, 0);
+		this.addLayer(cashButton, -15);
 
 		this.creditButton = makeCentralButton("Credit", this.width - 200, 100);
 		this.addLayer(creditButton, 0);
