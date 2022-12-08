@@ -211,4 +211,10 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void banknotesInStorageLowState() {
+		// TODO Auto-generated method stub
+		
+	}
 }
