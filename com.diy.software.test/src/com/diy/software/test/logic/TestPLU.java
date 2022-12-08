@@ -16,6 +16,8 @@ import com.diy.software.controllers.PLUCodeControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.PLUCodeControlListener;
+import com.diy.software.listeners.StationControlListener;
+import com.jimmyselectronics.opeechee.Card.CardData;
 
 import ca.powerutility.PowerGrid;
 
@@ -24,6 +26,7 @@ public class TestPLU {
   StationControl sc;
   PLUCodeControl pc;
   PLUCodeListenerStub pcls;
+	SystemControlStub ststub;
 
   @Before
   public void setup() {
@@ -33,6 +36,7 @@ public class TestPLU {
     sc = new StationControl();
     pc = new PLUCodeControl(sc);
     pcls = new PLUCodeListenerStub();
+		ststub = new SystemControlStub();
 
     fakeData.addProductAndBarcodeData();
     fakeData.addPLUCodedProduct();
@@ -179,14 +183,125 @@ public class TestPLU {
 			pc.actionPerformed(e);
 		  assertTrue(pcls.updated);
 	  }
+	
+		public class SystemControlStub implements StationControlListener {
+			boolean updated = false;
 
-		@Test
-	  public void test() {
-		  pc.addListener(pcls);
-		  ActionEvent e = new ActionEvent(this, 0, "correct");
-			pc.actionPerformed(e);
-		  assertTrue(pcls.updated);
-	  }
+			@Override
+			public void systemControlLocked(StationControl systemControl, boolean isLocked) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void systemControlLocked(StationControl systemControl, boolean isLocked, String reason) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void paymentHasBeenMade(StationControl systemControl, CardData cardData) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void paymentHasBeenCanceled(StationControl systemControl, CardData cardData, String reason) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void paymentsHaveBeenEnabled(StationControl systemControl) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void startMembershipCardInput(StationControl systemControl) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void membershipCardInputFinished(StationControl systemControl) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void membershipCardInputCanceled(StationControl systemControl, String reason) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void initiatePinInput(StationControl systemControl, String kind) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void triggerPanelBack(StationControl systemControl) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void triggerInitialScreen(StationControl systemControl) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void triggerPaymentWorkflow(StationControl systemControl) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void triggerMembershipWorkflow(StationControl systemControl) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void triggerPLUCodeWorkflow(StationControl systemControl) {
+				updated = true;
+				
+			}
+
+			@Override
+			public void triggerPurchaseBagsWorkflow(StationControl systemControl) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void noBagsInStock(StationControl systemControl) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void notEnoughBagsInStock(StationControl systemControl, int numBag) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void triggerBrowsingCatalog(StationControl systemControl) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void triggerReceiptScreen(StationControl systemControl) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		}
 	  
 	public class PLUCodeListenerStub implements PLUCodeControlListener {
 		String stubplu = "";
