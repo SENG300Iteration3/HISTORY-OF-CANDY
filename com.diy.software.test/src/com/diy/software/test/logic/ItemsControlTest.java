@@ -163,30 +163,30 @@ public class ItemsControlTest {
 		assertTrue(sc.getExpectedWeight() == 0);
 	}
 	
-	/**
-	 * Test ensuring that all the data store in ItemsControl and 
-	 * StationControl is removed when an "item" is
-	 * removed from the customers "checked out items"
-	 */
-	@Test
-	public void testRemoveBagFromCheckoutList() {
-		StationControl sc = new StationControl(fdi);
-		BagsControl bc = new BagsControl(sc);
-		itemsControl = new ItemsControl(sc);
-		assertTrue(itemsControl.getBagsList().size() == 0);
-		assertTrue(itemsControl.getCheckoutTotal() == 0);
-		assertTrue(sc.getExpectedWeight() == 0);
-		ReusableBag bag = new ReusableBag();
-		//itemsControl.addReusableBags(bag);
-		sc.station.baggingArea.add(bag);
-		assertTrue(itemsControl.getBagsList().size() == 1);
-		assertTrue(itemsControl.getCheckoutTotal() == 2);
-		itemsControl.removeItem(1); // Remove the only item that has been scanned
-		assertTrue(itemsControl.getBagsList().size() == 0);
-		assertTrue(itemsControl.getCheckoutTotal() == 0);
-		System.out.println(sc.getExpectedWeight());
-		assertTrue(sc.getExpectedWeight() == 0);
-	}
+//	/**
+//	 * Test ensuring that all the data store in ItemsControl and 
+//	 * StationControl is removed when an "item" is
+//	 * removed from the customers "checked out items"
+//	 */
+//	@Test
+//	public void testRemoveBagFromCheckoutList() {
+//		StationControl sc = new StationControl(fdi);
+//		BagsControl bc = new BagsControl(sc);
+//		itemsControl = new ItemsControl(sc);
+//		assertTrue(itemsControl.getBagsList().size() == 0);
+//		assertTrue(itemsControl.getCheckoutTotal() == 0);
+//		assertTrue(sc.getExpectedWeight() == 0);
+//		ReusableBag bag = new ReusableBag();
+//		//itemsControl.addReusableBags(bag);
+//		sc.station.baggingArea.add(bag);
+//		assertTrue(itemsControl.getBagsList().size() == 1);
+//		assertTrue(itemsControl.getCheckoutTotal() == 2);
+//		itemsControl.removeItem(1); // Remove the only item that has been scanned
+//		assertTrue(itemsControl.getBagsList().size() == 0);
+//		assertTrue(itemsControl.getCheckoutTotal() == 0);
+//		System.out.println(sc.getExpectedWeight());
+//		assertTrue(sc.getExpectedWeight() == 0);
+//	}
 	
 	
 	@Test
