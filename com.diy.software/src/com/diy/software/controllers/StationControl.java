@@ -368,6 +368,7 @@ public class StationControl
 					this.station.handheldScanner.enable();
 					this.station.mainScanner.enable();
 					this.station.cardReader.enable();
+					this.cc.enablePayments(); // Added this method for when adjusting banknotes/coins is finished.
 					for (StationControlListener l : listeners)
 						l.systemControlLocked(this, false);
 					isLocked = false;
