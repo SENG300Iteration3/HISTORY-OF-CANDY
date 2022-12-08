@@ -3,6 +3,7 @@ package com.diy.software.test.logic;
 import static org.junit.Assert.*;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 
 import org.junit.After;
 import org.junit.Before;
@@ -14,6 +15,7 @@ import com.diy.hardware.PLUCodedProduct;
 import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.external.ProductDatabases;
 import com.diy.software.controllers.AttendantControl;
+import com.diy.software.controllers.BagsControl;
 import com.diy.software.controllers.ItemsControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.fakedata.FakeDataInitializer;
@@ -24,6 +26,7 @@ import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.necchi.Numeral;
+import com.jimmyselectronics.svenden.ReusableBag;
 import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import ca.powerutility.PowerGrid;
@@ -66,6 +69,35 @@ public class ItemsControlTest {
 		systemControl.station.handheldScanner.turnOff();
 		systemControl.station.handheldScanner.unplug();
 	}
+
+	
+	/**
+	 * Test ensuring that the correct data is scraped from 
+	 * checkoutList and stored in the ArrayList<Tuple<String, Double>>
+	 * returned by getItemDescriptionList.
+	 */
+	@Test
+	public void testGetItemDescriptionList() {
+		StationControl sc = new StationControl(fdi);
+		BagsControl bc = new BagsControl(sc);
+		itemsControl = new ItemsControl(sc);
+		itemsControl.addItemToCheckoutList(fdi.getBarcodes()[0]);	// Adding the Barcode for "Can of Beans"
+		itemsControl.addItemToCheckoutList(fdi.getPLUCode()[2]);	// Adding the PLUCode for "Tomatoes"
+		itemsControl.addReusableBags(new ReusableBag());
+		ArrayList<Tuple<String, Double>> list = itemsControl.getItemDescriptionPriceList();
+		Tuple<String, Double> output1 = list.get(0);
+		Tuple<String, Double> output2 = list.get(1);
+		Tuple<String, Double> output3 = list.get(2);
+		assertTrue(list.size() == 3);
+		assertTrue(output1.x == "Can of Beans"); 
+		assertTrue(output2.x == "Tomatoes");
+		assertTrue(output3.x == "Reusable Bag");
+		assertTrue(output1.y == 2.0); 
+		System.out.println(output2.y);
+		assertTrue(output2.y == 2.868);
+		assertTrue(output3.y == 2.0);
+		}
+
 
 	@Test
 	public void testRemoveListener() {
