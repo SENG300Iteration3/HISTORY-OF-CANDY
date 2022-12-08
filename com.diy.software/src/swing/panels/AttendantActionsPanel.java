@@ -281,8 +281,8 @@ public class AttendantActionsPanel extends JPanel
 	public void attendantPermitStationUse(AttendantControl ac) {
 		stationBlocked = false;
 		
-		inkButton.setEnabled(false); 
-		paperButton.setEnabled(false); 
+//		inkButton.setEnabled(false); 
+//		paperButton.setEnabled(false); 
 		bagDispenserButton.setEnabled(false);
 		coinButton.setEnabled(false);
 		banknoteButton.setEnabled(false); 
