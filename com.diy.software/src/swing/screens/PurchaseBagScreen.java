@@ -102,8 +102,8 @@ public class PurchaseBagScreen extends Screen implements BagDispenserControlList
 	}
 	
 	private void initalizeMessageLabel() {
-		memberMssg = new GUI_JLabel("Number of bag you want to purchase");
-		memberMssg.setFont(GUI_Fonts.FRANKLIN_BOLD);
+		memberMssg = new GUI_JLabel("Number of bags you want to purchase");
+		memberMssg.setFont(new Font("Franklin Gothic", Font.BOLD, 22));
 		memberMssg.setHorizontalAlignment(JLabel.CENTER);
 
 		int width = 405;
