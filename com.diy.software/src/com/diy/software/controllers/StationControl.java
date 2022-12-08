@@ -6,7 +6,6 @@ import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.DoItYourselfStation;
 import com.diy.hardware.PLUCodedItem;
@@ -20,6 +19,7 @@ import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.PLUCodeControlListener;
 import com.diy.software.fakedata.GiftcardDatabase;
 import com.diy.software.listeners.StationControlListener;
+import com.diy.software.util.Tuple;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.EmptyException;
@@ -196,6 +196,7 @@ public class StationControl
 		station.plugIn();
 		station.turnOn();
 	}
+	
 	public void shutDown() {
 		ic.resetState();
 		ac.resetState(); // this method tells all listeners in ac to set themselves to their starting state. 
@@ -320,6 +321,7 @@ public class StationControl
 					this.station.handheldScanner.disable();
 					this.station.mainScanner.disable();
 					this.station.cardReader.disable();
+					this.cc.disablePayments(); // Added this method for when adjusting banknotes/coins.
 					for (StationControlListener l : listeners) {
 						l.systemControlLocked(this, true);
 					}
@@ -368,6 +370,7 @@ public class StationControl
 					this.station.handheldScanner.enable();
 					this.station.mainScanner.enable();
 					this.station.cardReader.enable();
+					this.cc.enablePayments(); // Added this method for when adjusting banknotes/coins is finished.
 					for (StationControlListener l : listeners)
 						l.systemControlLocked(this, false);
 					isLocked = false;
@@ -527,24 +530,30 @@ public class StationControl
 			
 			if(data.getType().equals(GiftcardDatabase.CompanyGiftCard)) {
 				if(amountOwed == 0) {
-					cc.paymentFailed();
+					cc.paymentFailed(true);
 					return;
 				}
 				
 				Double amountOnCard = GiftcardDatabase.giftcardMap.get(cardNumber);
 				Double dif = amountOnCard - amountOwed;
-				if(dif >= 0) {
-					GiftcardDatabase.giftcardMap.put(cardNumber, dif);
-					ic.updateCheckoutTotal(-amountOwed);
-					for (StationControlListener l : listeners) {
-						l.paymentHasBeenMade(this, data);
+				Double amountPlaced = Math.min(amountOwed, amountOnCard);
+				long holdNum = bank.authorizeHold(cardNumber, amountPlaced);
+				if(holdNum != -1L && bank.postTransaction(cardNumber, holdNum, amountPlaced)) {
+					if(dif >= 0) {
+						GiftcardDatabase.giftcardMap.put(cardNumber, dif);
+						ic.updateCheckoutTotal(-amountOwed);
+						for (StationControlListener l : listeners) {
+							l.paymentHasBeenMade(this, data);
+						}
+					}else {
+						GiftcardDatabase.giftcardMap.put(cardNumber, 0.0);
+						ic.updateCheckoutTotal(-amountOnCard);
 					}
-				}else {
-					GiftcardDatabase.giftcardMap.put(cardNumber, 0.0);
-					ic.updateCheckoutTotal(-amountOnCard);
-					//TODO: tell customer that their card wasn't enough maybe?
-				}
+					bank.releaseHold(cardNumber, holdNum);
 				cc.cashInserted();
+				}else {
+					cc.paymentFailed(false);
+				}
 				return;
 			}
 

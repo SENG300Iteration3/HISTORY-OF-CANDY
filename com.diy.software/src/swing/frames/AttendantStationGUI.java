@@ -3,6 +3,7 @@ package swing.frames;
 
 import javax.swing.JFrame;
 
+import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.PaneControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.PaneControlListener;
@@ -29,5 +30,9 @@ public class AttendantStationGUI  implements PaneControlListener {
   @Override
   public void clientSidePaneChanged(StationControl sc, int index) {
 	  stationPane.setTabIndex(index);
+  }
+  
+  public AttendantStationPane getStationPane() {
+	  return stationPane;
   }
 }

@@ -2,10 +2,6 @@ package swing.panes;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Container;
-import java.awt.FlowLayout;
-import java.awt.Panel;
-import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -19,15 +15,16 @@ import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import swing.screens.AttendantLoginScreen;
 import swing.screens.AttendantStationScreen;
-import swing.screens.RemoveItemScreen;
 import swing.styling.GUI_JFrame;
 import swing.styling.Screen;
+import swing.screens.TextSearchScreen;
 
 public class AttendantStationPane implements AttendantControlListener {
 	//It doesn't matter if these components are public
 	//because they can be accessed by getting the components inside the AttendantLoginScreen
 	public Component currentComponent;
 	public AttendantLoginScreen loginScreen;
+	public TextSearchScreen textScreen;
 	public JTabbedPane tabbedPane; 
 	public JFrame frame;
 	private PaneControl pc;
@@ -37,6 +34,7 @@ public class AttendantStationPane implements AttendantControlListener {
 		this.pc = pc;
 		
 		this.loginScreen = new AttendantLoginScreen(pc.getStationControls());
+		//this.textScreen = new TextSearchScreen(pc.getStationControls());
 		this.tabbedPane = new JTabbedPane();
 		int i = 1;
 		for (StationControl sc : pc.getStationControls()) {
@@ -130,13 +128,14 @@ public class AttendantStationPane implements AttendantControlListener {
 		if (isLoggedIn) {
 			changeComponents(tabbedPane);
 			
-			
 		}else if (currentComponent.equals(loginScreen.getRootPanel())){
 		
 			loginScreen.loginFail();
 		}else{
 			//logout
 			if (!isLoggedIn) {
+				
+				
 				loginScreen = new AttendantLoginScreen(pc.getStationControls());
 				changeComponents(loginScreen.getRootPanel());
 			}
@@ -199,12 +198,6 @@ public class AttendantStationPane implements AttendantControlListener {
 		//printReceiptButton.setEnabled(false);
 	}
 
-	@Override
-	public void coinIsLowState(CoinStorageUnit unit, int amount) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	public void setTabIndex(int index) {
 		tabbedPane.setSelectedIndex(index);
 		
@@ -222,6 +215,47 @@ public class AttendantStationPane implements AttendantControlListener {
 		
 	}
 	public void itemBagged() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void triggerItemSearchScreen(AttendantControl ac) {
+//		System.out.println("fired");
+//		this.changeComponents(textScreen.getRootPanel());
+	}
+
+	@Override
+	public void exitTextSearchScreen(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void banknotesInStorageLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void printerNotLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void coinIsLowState(int amount) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void banknotesNotLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void coinsNotLowState() {
 		// TODO Auto-generated method stub
 		
 	}

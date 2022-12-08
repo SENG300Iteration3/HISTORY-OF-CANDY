@@ -101,12 +101,12 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		listeners.remove(l);
 	}
 
+
 	public void addItemToCheckoutList(Object item) {
 		checkoutList.add(item);
 		refreshGui();
 	}
 
-	
 	public void addItemToCheckoutList(Barcode barcode, PriceLookUpCode pluCode) {
 		if (barcode == null) {
 			checkoutList.add(pluCode);
@@ -116,7 +116,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 		refreshGui();
 	}
-	
+
 	public void addScannedItemToCheckoutList(Barcode barcode) {
 		BarcodedProduct barcodedProduct = ProductDatabases.BARCODED_PRODUCT_DATABASE.get(barcode);
 		double price;
@@ -128,8 +128,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			System.err.println("Scanned item is not in product database!");
 		}
 	}
-	
-	
+
 	/**
 	 * Blocks the customers DIYStation and announces that
 	 * the customer wants to remove an item to any ItemsControl listeners.
@@ -218,7 +217,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				PriceLookUpCode pluCode = (PriceLookUpCode) this.checkoutList.get(index);
 				// getting the actual object that the customer had in his shopping cart and was subsequently added to the baggingArea
 				item = (PLUCodedItem) this.sc.pluCodedItems.get(pluCode);
-				weight = item.getWeight(); // When PLU coded items are made they will have to be added to pluCodedItems along with the PLU code
+				weight = item.getWeight();
 				price = ProductDatabases.PLU_PRODUCT_DATABASE.get(pluCode).getPrice() * weight / 1000;	
 			}
 			this.updateCheckoutTotal(-price);				// decrement price
@@ -264,7 +263,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	public ArrayList<Object> getCheckoutList() {
 		return checkoutList;
 	}
-	
 
 	public void updateCheckoutTotal(double amount) {
 		if (checkoutListTotal + amount >= 0)
@@ -283,7 +281,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		return checkoutListTotal;
 	}
 
-
 	private void refreshGui() {
 		for (ItemsControlListener l : listeners) {
 			l.itemsHaveBeenUpdated(this);
@@ -294,7 +291,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	/**
 	 * Picks up next item and if shopping cart is empty after, notifies
 	 * noMoreItemsAvail
-	 * 
+	 *
 	 * If the shoppingCart is empty at the start, ignores selecting next item and
 	 * instead notified noMoreItemsAvail
 	 */
@@ -358,13 +355,14 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 //			pluItemSelected();
 
 			double weight = weightofScannerTray - sc.getWeightOfScannerTray();
-			
+
+
 			System.out.println(weight + " Scale weight");
 
 			sc.setWeightOfScannerTray(weightofScannerTray);
 			sc.updateExpectedCheckoutWeight(weight);
 			sc.updateWeightOfLastItemAddedToBaggingArea(weight);
-			
+
 			// Maybe add this to the right of the item in the checkout list
 			System.out.println("Weight of item: " + weight);
 
@@ -414,7 +412,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	}
 
 	public void placeItemOnBaggingArea() {
-		if (currentItem instanceof BarcodedItem) {
 			scaleExpectedWeight = sc.weightOfLastItem;
 			weighSuccess = false;
 			baggingAreaTimerEnd = System.currentTimeMillis();
@@ -423,7 +420,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			if (random.nextDouble(0.0, 1.0) > PROBABILITY_OF_BAGGING_WRONG_ITEM) {
 				weighSuccess = true;
 				sc.customer.placeItemInBaggingArea();
-
+				sc.getAttendantControl().itemBagged();			// cancel no bag request if there is one
 			} else {
 				// simulation weight discrepancy
 				scaleReceivedWeight = wrongBaggedItem.getWeight();
@@ -443,17 +440,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				// if weighSuccess is still false after listeners have been called, we can show
 				// and alert showing a failed weigh-in if time permits.
 			}
-		} else {
-			sc.customer.placeItemInBaggingArea();
-			System.out.println("expected: " + sc.getExpectedWeight());
-			try {
-				System.out.println("actual: " + sc.station.baggingArea.getCurrentWeight());
-			} catch (OverloadException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
 	}
 
 	/**
@@ -518,6 +504,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	}
 
 	private void addItemByBrowsing(String strProductName) {
+
 		if (!isPLU) {
 			System.err.println("The currently selected item has no PLU code! Or there is no item selected!");
 			currentProductCode = null;
@@ -537,25 +524,28 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			// Check with product database and update inventory
 			Product product = findProduct(currentProductCode);
 			checkInventory(product);
-			
+		}catch (NullPointerSimulationException e) {
+
+			System.err.println("PLU code does not exist in the database");
+			throw new NullPointerException("PLU code does not exist in the database");
+		}
 			if(!isPLU) {
+
 				System.err.println("The currently selected item has no PLU code! Or there is no item selected!");
 				currentProductCode = null;
 				sc.goBackOnUI();;
 			} else if(expectedPLU.hashCode() != currentProductCode.hashCode()) {
+
 				System.err.println("You entered the wrong PLU code for the item!");
 				System.err.printf("The expected PLU code is %s\n", expectedPLU);
+				throw new NullPointerException("You entered the wrong PLU code for the item!");
 			} else {
 				inCatalog = false;
-				
 				// Signal scanning area to wait for item to be placed on
 				for (ItemsControlListener l : listeners)
 					l.awaitingItemToBePlacedInScanningArea(sc);
 			}
-			
-		}catch(NullPointerSimulationException e) {
-			System.err.println("PLU code does not exist in the database");
-		} 
+
 	}
 
 	@Override
@@ -610,7 +600,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 					weighItem();
 					break;
 				case "remove item":
-					System.out.println("Requesting item removal. Please wait for Assistance!");
+					System.out.println("Customer requests item removal");
 					requestRemoveItem();
 					break;
 				default:
@@ -666,7 +656,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	public ArrayList<ReusableBag> getBagsList() {
 		return this.bags;
 	}
-	
+
 	private void checkInventory(Product product) {
 		if (ProductDatabases.INVENTORY.containsKey(product) && ProductDatabases.INVENTORY.get(product) >= 1) {
 			ProductDatabases.INVENTORY.put(product, ProductDatabases.INVENTORY.get(product) - 1); // updates INVENTORY
@@ -686,10 +676,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			throw new NullPointerSimulationException();
 		}
 	}
-	
+
 	private PLUCodedProduct findProduct(PriceLookUpCode code) throws NullPointerSimulationException {
 		if(ProductDatabases.PLU_PRODUCT_DATABASE.containsKey(code)) {
-					return ProductDatabases.PLU_PRODUCT_DATABASE.get(code);        
+					return ProductDatabases.PLU_PRODUCT_DATABASE.get(code);
 			}
 		else {
 			// TODO: Inform customer station
@@ -700,7 +690,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 	/**
 	 * sets user message to announce weight on the indicated scale has changed
-	 * 
+	 *
 	 * @param scale         The scale where the event occurred.
 	 * @param weightInGrams The new weight.
 	 */
@@ -734,7 +724,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 					l.awaitingItemToBeSelected(this);
 			}
 		} else {
-			weightofScannerTray = weightInGrams;	
+			weightofScannerTray = weightInGrams;
 			addItemByPLU();
 		}
 	}
@@ -754,9 +744,13 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	public Item getCurrentItem() {
 		return currentItem;
 	}
-	
+
 	public void setCurrentProduct(PriceLookUpCode code) {
 		currentProductCode = code;
+	}
+	
+	public void setInCatalog(boolean b) {
+		inCatalog = b;
 	}
 
 	@Override
@@ -764,7 +758,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		// pass in plu input
 		PriceLookUpCode code = new PriceLookUpCode(pluCode);
 		setCurrentProduct(code);
-		
+
 		// next step: scanning area
 		pluItemSelected();
 	}
@@ -772,12 +766,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	@Override
 	public void pluErrorMessageUpdated(PLUCodeControl pcc, String errorMessage) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void pluHasBeenUpdated(PLUCodeControl pcc, String pluCode) {
 		// TODO Auto-generated method stub
-		
 	}
 }

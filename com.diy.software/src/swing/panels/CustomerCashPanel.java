@@ -146,11 +146,61 @@ public class CustomerCashPanel extends JPanel implements CashControlListener {
 	// TODO Auto-generated method stub
 	
   }
-  
+
   @Override
-  public void paymentFailed(CashControl cc) {
-	// TODO Auto-generated method stub
-	  
+  public void paymentFailed(CashControl cc, boolean a) {
+	  // TODO Auto-generated method stub
+	
   }
+
+	public JButton getDollar100() {
+		return dollar100;
+	}
+	
+	public JButton getDollar50() {
+		return dollar50;
+	}
+	
+	public JButton getDollar20() {
+		return dollar20;
+	}
+	
+	public JButton getDollar10() {
+		return dollar10;
+	}
+	
+	public JButton getDollar5() {
+		return dollar5;
+	}
+	
+	public JButton getDollar1() {
+		return dollar1;
+	}
+	
+	public JButton getToonie() {
+		return toonie;
+	}
+	
+	public JButton getLoonie() {
+		return loonie;
+	}
+	
+	public JButton getQuarter() {
+		return quarter;
+	}
+	
+	public JButton getDime() {
+		return dime;
+	}
+	
+	public JButton getNickel() {
+		return nickel;
+	}
+	
+	public JButton getPenny() {
+		return penny;
+	}
+  
+  
 
 }

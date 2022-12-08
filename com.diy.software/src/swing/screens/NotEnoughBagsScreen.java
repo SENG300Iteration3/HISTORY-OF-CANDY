@@ -45,4 +45,12 @@ public class NotEnoughBagsScreen extends Screen {
 		this.addLayer(askAttendantButton, 0);
 		
 	}
+	
+	public JButton getAddBagsButton() {
+		return addBagsButton;
+	}
+	
+	public JButton getAskAttendantButton() {
+		return askAttendantButton;
+	}
 }
