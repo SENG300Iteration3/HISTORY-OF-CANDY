@@ -265,8 +265,9 @@ public class BagDispenserControlTest {
 		bdc.actionPerformed(e); 
 		assertTrue(sc.getBagInStock() == 0);
 		
-		// load
-		sc.loadBags();
+		// attendant loads bag
+		e = new ActionEvent(this, 0, "addBag");
+		sc.getAttendantControl().actionPerformed(e);
 		assertTrue(sc.getBagInStock() == capacity);
 	}
 	
@@ -279,8 +280,9 @@ public class BagDispenserControlTest {
 		// purchase all bags in stock
 		assertTrue(sc.getBagInStock() == bagsInStock);
 		
-		// load
-		sc.loadBags();
+		// attendant loads bag
+		ActionEvent e = new ActionEvent(this, 0, "addBag");
+		sc.getAttendantControl().actionPerformed(e);
 		assertTrue(sc.getBagInStock() == bagsInStock);		// no bags added
 	}
 	
@@ -300,8 +302,9 @@ public class BagDispenserControlTest {
 		bdc.actionPerformed(e); 
 		assertTrue(sc.getBagInStock() == expected);
 		
-		// load bags to full capacity again
-		sc.loadBags();
+		// attendant loads bags to full capacity again
+		e = new ActionEvent(this, 0, "addBag");
+		sc.getAttendantControl().actionPerformed(e);
 		assertTrue(sc.getBagInStock() == capacity);
 	}
 	
