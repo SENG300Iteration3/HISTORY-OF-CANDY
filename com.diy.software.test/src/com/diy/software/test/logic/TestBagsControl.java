@@ -14,6 +14,7 @@ import com.diy.software.controllers.ItemsControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.BagsControlListener;
+import com.jimmyselectronics.Item;
 import com.jimmyselectronics.necchi.BarcodedItem;
 
 import ca.powerutility.PowerGrid;
@@ -24,11 +25,11 @@ public class TestBagsControl {
 	BagsListenerStub bls;
 	FakeDataInitializer fdi;
 	ItemsControl ic;
-	BarcodedItem item1;
-	BarcodedItem item2;
-	BarcodedItem item3;
-	BarcodedItem item4;
-	BarcodedItem[] items;
+	Item item1;
+	Item item2;
+	Item item3;
+	Item item4;
+	Item[] items;
 	
 	
 	@Before
@@ -37,7 +38,7 @@ public class TestBagsControl {
 		
 		fdi = new FakeDataInitializer();
 		fdi.addProductAndBarcodeData();
-		items = (BarcodedItem[])fdi.getItems();
+		items = fdi.getItems();
 		item1 = items[0];
 		item2 = items[1];
 		item3 = items[2];
@@ -118,13 +119,14 @@ public class TestBagsControl {
 		bc.addListener(bls);
 		double lastItemWeight = sc.getWeightOfLastItemAddedToBaggingArea();
 		double lastExpectedWeight = sc.getExpectedWeight();
-		double lastCheckoutListTotal = ic.getCheckoutTotal();
+
+		
 		
 		bc.placeBagsInBaggingArea();
 		
 		assertFalse(lastItemWeight == sc.getWeightOfLastItemAddedToBaggingArea());
 		assertFalse(lastExpectedWeight == sc.getExpectedWeight());
-		assertFalse(lastCheckoutListTotal == ic.getCheckoutTotal());
+
 	}
 	
 	@Test
@@ -160,22 +162,7 @@ public class TestBagsControl {
 		assertTrue(sc.station.cardReader.isDisabled());
 		assertTrue(bls.attendantVerifyBags);
 	}
-	
-	@Test
-	public void testActionPerformedPurchaseBags() {
-		bc.addListener(bls);
-		ActionEvent e =  new ActionEvent(this,0,"purchase bags");
-		double lastItemWeight = sc.getWeightOfLastItemAddedToBaggingArea();
-		double lastExpectedWeight = sc.getExpectedWeight();
-		double lastCheckoutListTotal = ic.getCheckoutTotal();
 		
-		bc.actionPerformed(e);
-		
-		assertFalse(lastItemWeight == sc.getWeightOfLastItemAddedToBaggingArea());
-		assertFalse(lastExpectedWeight == sc.getExpectedWeight());
-		assertFalse(lastCheckoutListTotal == ic.getCheckoutTotal());
-	}
-	
 	
 	@Test (expected = NullPointerException.class)
 	public void testActionPerformedNullEvent() {
@@ -235,6 +222,16 @@ public class TestBagsControl {
 	@After 
 	public void teardown() {
 		PowerGrid.reconnectToMains();
+		bc = null;
+		sc = null;
+		bls = null;
+		fdi = null;
+		ic = null;
+		item1 = null;
+		item2 = null;
+		item3 = null;
+		item4 = null;
+		items = null;
 	}
 	
 	
