@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.diy.hardware.PLUCodedItem;
+import com.diy.hardware.PriceLookUpCode;
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.ItemsControl;
 import com.diy.software.controllers.StationControl;
@@ -21,11 +22,14 @@ import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.StationControlListener;
 import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.abagnale.ReceiptPrinterND;
+import com.jimmyselectronics.necchi.Barcode;
+import com.jimmyselectronics.necchi.Numeral;
 import com.jimmyselectronics.opeechee.Card.CardData;
 import com.unitedbankingservices.TooMuchCashException;
 import com.unitedbankingservices.banknote.Banknote;
 import com.unitedbankingservices.coin.CoinStorageUnit;
 
+import ca.powerutility.NoPowerException;
 import ca.powerutility.PowerGrid;
 import ca.ucalgary.seng300.simulation.InvalidArgumentSimulationException;
 import ca.ucalgary.seng300.simulation.SimulationException;
@@ -93,6 +97,13 @@ public class TestAttendantControl {
 		assertFalse(als.isLoggedIn);
 	}
 
+	@Test
+	public void testLogout() {
+		ac.addListener(als);
+		ac.logout();
+		assertFalse(als.isLoggedIn);
+	}
+	
 	@Test
 	public void testUpdateWeightDescrepancyMessage() {
 		ac.addListener(als);
@@ -198,6 +209,25 @@ public class TestAttendantControl {
 		assertFalse(sc.station.cardReader.isDisabled());
 	}
 
+	@Test (expected = NoPowerException.class)
+	public void testShutDownStation() {
+		ac.addListener(als);
+		ac.shutDownStation();
+	}
+	
+	@Test
+	public void testRemoveItemSuccesful() {
+		ac.addListener(als);
+		ac.removeItemSuccesful();
+		assertTrue(als.itemRemoved);
+	}
+	
+	@Test
+	public void testRemoveItem() {
+		ac.addListener(als);
+		assertFalse(ac.removeItem(0));
+	}
+	
 	@Test
 	public void testActionPerformedNullEventName() {
 		ActionEvent e = new ActionEvent(this, 0, null);
@@ -372,12 +402,27 @@ public class TestAttendantControl {
 		assertTrue(als.stationPermitted);
 	}
 
+	@Test
+	public void testAddInk() {
+		ac.addListener(als);
+		ac.addInk(1000);
+		assertFalse(als.printerLowState);
+	}
+	
+	@Test
+	public void testAddPaper() {
+		ac.addListener(als);
+		ac.addPaper(100);
+		assertFalse(als.printerLowState);
+	}
+	
 	@After
 	public void teardown() {
 		PowerGrid.reconnectToMains();
 		rp.disable();
 		rp.turnOff();
 		rp.unplug();
+		
 	}
 
 	public class SystemControlListenerStub implements StationControlListener {
@@ -503,7 +548,8 @@ public class TestAttendantControl {
 		boolean attendantBags = false;
 		boolean attendantUse = false;
 		boolean banknoteAdjusted = false;
-		boolean lowState = false;
+		boolean printerLowState = false;
+		boolean paperLowState = false;
 		boolean addPaper = false;
 		boolean addInk = false;
 		public boolean noBagging = false;
@@ -511,6 +557,8 @@ public class TestAttendantControl {
 		boolean ini = false;
 		boolean stationPermitted = false;
 		boolean isLoggedIn = false;
+		boolean isPoweredOn = false;
+		boolean itemRemoved = false;
 
 		@Override
 		public void attendantApprovedBags(AttendantControl ac) {
@@ -544,7 +592,7 @@ public class TestAttendantControl {
 
 		@Override
 		public void printerNotLowState() {
-			lowState = true;
+			printerLowState = true;
 		}
 
 		@Override
@@ -607,8 +655,7 @@ public class TestAttendantControl {
 
 		@Override
 		public void attendantApprovedItemRemoval(AttendantControl bc) {
-			// TODO Auto-generated method stub
-			
+			itemRemoved = true;
 		}
 
 		@Override
@@ -661,13 +708,13 @@ public class TestAttendantControl {
 
 		@Override
 		public void stationShutDown(AttendantControl ac) {
-			// TODO Auto-generated method stub
+			isPoweredOn = false;
 			
 		}
 
 		@Override
 		public void stationStartedUp(AttendantControl ac) {
-			// TODO Auto-generated method stub
+			isPoweredOn = true;
 			
 		}
 	}
