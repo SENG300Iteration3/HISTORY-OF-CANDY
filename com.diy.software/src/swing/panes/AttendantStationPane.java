@@ -15,8 +15,6 @@ import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import swing.screens.AttendantLoginScreen;
 import swing.screens.AttendantStationScreen;
-import swing.styling.GUI_JFrame;
-import swing.styling.Screen;
 import swing.screens.TextSearchScreen;
 
 public class AttendantStationPane implements AttendantControlListener {

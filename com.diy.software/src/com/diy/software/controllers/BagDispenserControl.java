@@ -105,8 +105,4 @@ public class BagDispenserControl implements ActionListener {
 	public void addListener(BagDispenserControlListener l) {
 		listeners.add(l);
 	}
-	
-	public int getNumBag() {
-		return numBag;
-	}
 }

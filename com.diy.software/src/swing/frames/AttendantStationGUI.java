@@ -31,8 +31,4 @@ public class AttendantStationGUI  implements PaneControlListener {
   public void clientSidePaneChanged(StationControl sc, int index) {
 	  stationPane.setTabIndex(index);
   }
-  
-  public AttendantStationPane getStationPane() {
-	  return stationPane;
-  }
 }

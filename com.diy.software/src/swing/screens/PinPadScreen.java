@@ -148,22 +148,5 @@ public class PinPadScreen extends Screen implements PinPadControlListener {
 		/* Adding the panel to the window */
 		return pinPadButton;
 	}
-	
-	public JButton[] getPinpadButtons() {
-		return pinpadButtons;
-	}
-	
-	public JButton getCancelButton() {
-		return cancelButton;
-	}
-	
-	public JButton getCorrectButton() {
-		return correctButton;
-	}
-	
-	public JButton getSubmitButton() {
-		return submitButton;
-	}
-	
 
 }

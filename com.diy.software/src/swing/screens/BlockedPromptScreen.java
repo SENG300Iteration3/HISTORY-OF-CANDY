@@ -36,8 +36,4 @@ public class BlockedPromptScreen extends Screen {
 
 
 	}
-	
-	public GUI_JButton getRequestNoBaggingBtn() {
-		return requestNoBaggingBtn;
-	}
 }

@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
 import javax.swing.SwingConstants;
 
 import com.diy.software.controllers.MembershipControl;
@@ -39,10 +38,6 @@ public class PresentMembershipCardScreen extends Screen {
 			}
 		});
 		this.addLayer(backButton, 100);
-	}
-	
-	public JButton getbackButton() {
-		return backButton;
 	}
 
 }
