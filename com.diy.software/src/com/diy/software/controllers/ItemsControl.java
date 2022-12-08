@@ -266,6 +266,11 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				System.out.println(wrongBaggedItem);
 			}
 
+			if (baggingAreaTimerEnd - baggingAreaTimerStart > 10000) {
+				userMessage = "Please place item on scale!";
+				// not blocking station for now
+				// sc.blockStation();
+			}
 
 			if (!weighSuccess) {
 				// if weighSuccess is still false after listeners have been called, we can show
