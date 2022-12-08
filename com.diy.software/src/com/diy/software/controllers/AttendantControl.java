@@ -269,27 +269,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	}
 	
 	
-	
-	/**
-	 * Attendant adjusts the amount of coin used for change
-	 * Cash controller notifies if storage is low in order to use
-	 * 
-	 * @throws SimulationException
-	 * 			For loading or checking null coin
-	 * @throws TooMuchCashException
-	 * 			Too much cash is loaded onto the storage
-	 */
-	public void notifyListenerAdjustCoinForChange() throws SimulationException, TooMuchCashException {
-		boolean isLow = sc.getCashControl().coinInStorageLow(this.sc.station.coinStorage);
-		if (isLow) {
-			for (AttendantControlListener l : listeners)
-				l.coinIsLowState(this.sc.station.coinStorage.getCapacity());
-			System.out.println("Banknote storage needs to be refilled.");
-		} else {
-			System.out.println("Banknote storage does not need to be loaded for now.");
-		}
-	}
-	
+		
 	/**
 	 * fills up the coin slot and then signal cash controller that everything is okay
 	 *

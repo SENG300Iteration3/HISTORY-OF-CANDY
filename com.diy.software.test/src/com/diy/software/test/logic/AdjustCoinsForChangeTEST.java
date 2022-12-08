@@ -1,6 +1,9 @@
 package com.diy.software.test.logic;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 import java.util.Currency;
@@ -18,6 +21,7 @@ import com.unitedbankingservices.TooMuchCashException;
 import com.unitedbankingservices.coin.Coin;
 import com.unitedbankingservices.coin.CoinStorageUnit;
 
+import ca.powerutility.PowerGrid;
 import ca.ucalgary.seng300.simulation.SimulationException;
 
 public class AdjustCoinsForChangeTEST {
@@ -25,32 +29,31 @@ public class AdjustCoinsForChangeTEST {
 	CashControl cc;
 	AttendantControl ac;
 	CoinStorageUnit testUnit;
-	CoinStorageUnit emptyUnit;
 	Coin lCoin;
 	Coin tCoin;
 	Coin qCoin;
 	Coin dCoin;
 	Coin nCoin;
+	ACLS acls;
 	
 	
 	@Before
 	public void setup() throws SimulationException, TooMuchCashException {
+		PowerGrid.engageUninterruptiblePowerSource();
+		
+		acls = new ACLS();
 		sc = new StationControl();
 		cc = new CashControl(sc);
 		ac = new AttendantControl(sc);
 		
-	
-		testUnit = new CoinStorageUnit(50);
-		emptyUnit = new CoinStorageUnit(100);
+		ac.addListener(acls);
+		
 		
 		sc.station.plugIn();
 		sc.station.turnOn();
 		
-		testUnit.connect();
-		testUnit.activate();
+		testUnit = sc.station.coinStorage;
 		
-		emptyUnit.connect();
-		emptyUnit.activate();
 		
 		lCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(1.0));
 		tCoin = new Coin(Currency.getInstance("CAD"),BigDecimal.valueOf(2.0));
@@ -68,6 +71,7 @@ public class AdjustCoinsForChangeTEST {
 	
 	@After
 	public void takeDown() {
+		acls = null;
 		sc = null;
 		cc = null;
 		ac = null;
@@ -104,8 +108,77 @@ public class AdjustCoinsForChangeTEST {
 	 * No exception expected
 	 */
 	public void adjustCoinForChangeSuccessTest() throws SimulationException, TooMuchCashException {
-		ac.adjustCoinsForChange(emptyUnit, 20);
+		
+		ac.adjustCoinsForChange(testUnit.getCapacity());
+		
+		assertEquals(testUnit.getCapacity(), testUnit.getCoinCount());
+	}
 	
+	@Test
+	/**
+	 * This test will test if adjustCoinForChange functions as expected
+	 * Fails if no TooMuchCashException was thrown
+	 * TooMuchCashException expected
+	 */
+	public void adjustCoinForChangeTooMuchCashTest() {
+		try {
+			ac.adjustCoinsForChange(testUnit.getCapacity() + 20);
+			fail("TooMuchCashException should have been thrown");
+		} catch (TooMuchCashException e) {
+			assertEquals(0,0);
+		}
+		
+	}
+	
+	@Test
+	/**
+	 * This test will test if notifyListenerCoinForChange works as expected
+	 * Fails if coinIsLowCalled is false
+	 * No exception expected
+	 */
+	public void notifyListenerAdjustCoinForChangeTest() throws SimulationException, TooMuchCashException {
+		sc.station.coinStorage.unload();
+		assertFalse(acls.coinIsLowCalled);
+		ac.notifyListenerAdjustCoinForChange();
+		assertTrue(acls.coinIsLowCalled);
+	}
+	
+	@Test
+	/**
+	 * This test will test if notifyListenerAdjustCoinForChange works as expected
+	 * Fails if coinIsLowCalled is true
+	 * Test the case where the storage is currently full
+	 * No exception expected
+	 */
+	public void notifyListenerAdjustCoinForChangeFulLTest() throws SimulationException, TooMuchCashException {
+		assertFalse(acls.coinIsLowCalled);
+		ac.adjustCoinsForChange(testUnit.getCapacity());
+		ac.notifyListenerAdjustCoinForChange();
+		assertFalse(acls.coinIsLowCalled);
+	}
+	
+	@Test
+	/**
+	 * This test will test if coinInStorageLow works as expected
+	 * Fails if the return value is false
+	 * Test the case where a storage is low
+	 * no exceptions expected
+	 */
+	public void coinInStorageLowLowCaseTest() {
+		testUnit.unload();
+		assertTrue(cc.coinInStorageLow(testUnit));
+	}
+	
+	@Test
+	/**
+	 * This test will test if coinInStorageLow works as expected
+	 * Fails if the return value is true
+	 * Test the case where a storage is not low
+	 * No exceptions expected
+	 */
+	public void coinInStorageLowFullCaseTest() throws SimulationException, TooMuchCashException {
+		ac.adjustCoinsForChange(testUnit.getCapacity());
+		assertFalse(cc.coinInStorageLow(testUnit));
 	}
 	
 	
@@ -113,7 +186,9 @@ public class AdjustCoinsForChangeTEST {
 	
 	//Stub for attendantControlListner
 	class ACLS implements AttendantControlListener{
-
+		
+		boolean coinIsLowCalled = false;
+		
 		@Override
 		public void attendantApprovedBags(AttendantControl ac) {
 			// TODO Auto-generated method stub
@@ -163,12 +238,6 @@ public class AdjustCoinsForChangeTEST {
 		}
 
 		@Override
-		public void coinIsLowState(CoinStorageUnit unit, int amount) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
 		public void lowInk(AttendantControl ac, String message) {
 			// TODO Auto-generated method stub
 			
@@ -200,6 +269,37 @@ public class AdjustCoinsForChangeTEST {
 
 		@Override
 		public void loggedIn(boolean isLoggedIn) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void itemBagged() {
+			// TODO Auto-generated method stub
+			
+		}
+		
+
+		@Override
+		public void banknotesInStorageLowState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void coinIsLowState(int amount) {
+			coinIsLowCalled = true;
+			
+		}
+
+		@Override
+		public void banknotesNotLowState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void coinsNotLowState() {
 			// TODO Auto-generated method stub
 			
 		}
