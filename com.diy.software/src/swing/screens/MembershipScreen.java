@@ -1,7 +1,6 @@
 package swing.screens;
 
 import java.awt.*;
-import java.lang.reflect.Parameter;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;

@@ -91,16 +91,18 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 
 	public void startUpStation() {
 		sc.startUp();
+		//sc.unblockStation();
 		for (AttendantControlListener l : listeners) {
 			l.stationStartedUp(this);
 		}
 	}
 	
 	public void shutDownStation() {
-		sc.shutDown();
+		sc.blockStation("shutdown");
 		for (AttendantControlListener l : listeners) {
 			l.stationShutDown(this);
 		}
+		sc.shutDown();
 	}	
 	
 	public void resetState() {
