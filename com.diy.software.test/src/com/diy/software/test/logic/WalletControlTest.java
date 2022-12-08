@@ -45,6 +45,7 @@ public class WalletControlTest {
 		
 		FakeDataInitializer fdi = new FakeDataInitializer();
 		fdi.addCardData();
+		fdi.addFakeMembers();
 		sc = new StationControl(fdi);
 		wc = new WalletControl(sc); 
 		readStub = new ReaderStub();
