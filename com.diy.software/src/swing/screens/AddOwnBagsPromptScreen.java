@@ -21,7 +21,6 @@ public class AddOwnBagsPromptScreen extends Screen implements BagsControlListene
 		
 		promptLabel = new GUI_JLabel(message);
 		promptLabel.setFont(GUI_Fonts.FRANKLIN_BOLD);
-		promptLabel.setForeground(Color.BLACK);
 
 		this.addLayer(promptLabel, 0);
 

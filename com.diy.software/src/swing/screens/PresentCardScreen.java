@@ -1,6 +1,6 @@
 package swing.screens;
 
-import java.awt.*;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -26,7 +26,6 @@ public class PresentCardScreen extends Screen {
 		prompt.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		prompt.setHorizontalAlignment(SwingConstants.CENTER);
 		prompt.setPreferredSize(new Dimension(this.width - 200, 100));
-		prompt.setForeground(Color.BLACK);
 		this.addLayer(prompt, 0);
 
 		this.backButton = makeCentralButton("BACK", this.width - 200, 100);
