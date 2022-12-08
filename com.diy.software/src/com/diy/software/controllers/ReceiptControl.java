@@ -66,6 +66,12 @@ public class ReceiptControl implements ActionListener, ReceiptPrinterListener{
 		retreivedMemNum = -1; //indicates did not recive member number
 	}
 	
+	public void callTakeReceipt() {
+		for (ReceiptControlListener l : listeners) {
+			l.setTakeReceiptState(this);
+		}
+	}
+	
 	
 	/**
 	 * Finds what the contents of the receipt should be based on checked out items

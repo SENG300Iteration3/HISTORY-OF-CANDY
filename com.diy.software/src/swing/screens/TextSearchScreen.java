@@ -76,7 +76,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 	{
 		//Set up variables 
 		int panelWidth = 100;
-		int panelHeight  = 580;
+		int panelHeight  = 560;
 		
 		//Setting up the background panel
 		backgroundPanel = new GUI_JPanel();
@@ -85,13 +85,13 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 		backgroundPanel.setLayout(new GridBagLayout());
 		
 		//Adding the component to the Screen
-		this.addLayer(backgroundPanel,0);
+		this.addLayer(backgroundPanel,-60);
 	}
 	
 	private void initailizeSearchBar()
 	{
 		//Search bar set up variable
-		int seacrhBarHeight = 60;
+		int seacrhBarHeight = 50;
 		int seacrhBarWidth = 1100;
 		int insetSpace = 10;
 		
@@ -106,7 +106,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 		//Setting up grid Bag Constraints on the search bar
 		gridBagConstraints.gridx = 0;
 		gridBagConstraints.gridy = 0;
-		gridBagConstraints.insets = new Insets(20, 0, insetSpace, 0);
+		gridBagConstraints.insets = new Insets(-70, 0, insetSpace, 0);
 		
 		//Adding the component to the main Background
 		backgroundPanel.add(searchbar,gridBagConstraints);		
@@ -119,7 +119,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 		int searchResultHolderWidth = 1100;
 		int searchResultPanelHeight = 850;
 		int searchResultPanelWidth = 0; 
-		int insetSpace = 15;
+		int insetSpace = 0;
 		
 		//Setting up Search results holder
 		searchResultPanel = new GUI_JPanel();
@@ -169,7 +169,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 		//Setting up grid Bag Constraints on the search button
 		gridBagConstraints.gridx = 0;
 		gridBagConstraints.gridy = 3;
-		gridBagConstraints.insets = new Insets(20,0,0,0);
+		gridBagConstraints.insets = new Insets(10,0,0,0);
 		
 		//Adding the component to the main Background
 		backgroundPanel.add(searchButton, gridBagConstraints);
@@ -213,7 +213,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 		//Setting up grid Bag Constraints on the back button
 		gridBagConstraints.gridx = 0;
 		gridBagConstraints.gridy = 5;
-		gridBagConstraints.insets = new Insets(20 ,0,20,0);
+		gridBagConstraints.insets = new Insets(10 ,0,0,0);
 		
 		//Adding the component to the main Background
 		backgroundPanel.add(backButton, gridBagConstraints);

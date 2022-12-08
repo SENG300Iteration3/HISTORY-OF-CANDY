@@ -115,4 +115,8 @@ public interface AttendantControlListener {
 	public void exitTextSearchScreen(AttendantControl ac);
 
 	void printerNotLowState();
+	
+	public void stationShutDown(AttendantControl ac);
+	
+	public void stationStartedUp(AttendantControl ac);
 }
