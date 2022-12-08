@@ -288,7 +288,6 @@ public class ItemsControlTest {
 //		}
 //
 //	}
-
 //	@Test
 //	public void testPlaceItemRemoveLastItem() {
 //		systemControl.customer.shoppingCart.add(itemsControl.getWrongBaggedItem());

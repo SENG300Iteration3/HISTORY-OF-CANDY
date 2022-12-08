@@ -424,7 +424,7 @@ public class CustomerItemsPanel extends JPanel
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 	public void triggerItemSearchScreen(AttendantControl ac) {
 		// TODO Auto-generated method stub
 	}
@@ -509,7 +509,48 @@ public class CustomerItemsPanel extends JPanel
 	@Override
 	public void coinsNotLowState() {
 		// TODO Auto-generated method stub
-		
 	}
+
+	public JButton getSelectNextItemButton() {
+		return selectNextItemButton;
+	}
+
+	public JButton getMainScannerButton() {
+		return mainScannerButton;
+	}
+
+	public JButton getHandheldScannerButton() {
+		return handheldScannerButton;
+	}
+
+	public JButton getDeselectCurrentItemButton() {
+		return deselectCurrentItemButton;
+	}
+
+	public JButton getPlaceItemInBaggingAreaButton() {
+		return placeItemInBaggingAreaButton;
+	}
+
+	public JButton getPlaceItemInScanningAreaButton() {
+		return placeItemInScanningAreaButton;
+	}
+
+	public JButton getTakeReceiptButton() {
+		return takeReceiptButton;
+	}
+
+	public JButton getTakeIncompleteReceipt() {
+		return takeIncompleteReceipt;
+	}
+
+	public JLabel getWeightDescrepancyMessage() {
+		return weightDescrepancyMessage;
+	}
+
+	public JButton getItemWeight() {
+		return itemWeight;
+	}
+	
+	
 
 }

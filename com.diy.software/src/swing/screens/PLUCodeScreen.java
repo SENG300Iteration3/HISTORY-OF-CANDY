@@ -153,5 +153,21 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 		this.pluCode.setText(pluCode);
 
 	}
+	
+	public JButton[] getPluCodeButtons() {
+		return pluCodeButtons;
+	}
+	
+	public JButton getCancelButton() {
+		return cancelButton;
+	}
+	
+	public JButton getCorrectButton() {
+		return correctButton;
+	}
+	
+	public JButton getSubmitButton() {
+		return submitButton;
+	}
 
 }

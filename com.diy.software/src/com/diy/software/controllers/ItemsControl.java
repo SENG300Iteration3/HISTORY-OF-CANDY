@@ -748,6 +748,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	public void setCurrentProduct(PriceLookUpCode code) {
 		currentProductCode = code;
 	}
+	
+	public void setInCatalog(boolean b) {
+		inCatalog = b;
+	}
 
 	@Override
 	public void pluCodeEntered(PLUCodeControl pcc, String pluCode) {
