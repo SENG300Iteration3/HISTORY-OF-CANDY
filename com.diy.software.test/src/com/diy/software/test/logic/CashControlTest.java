@@ -383,11 +383,11 @@ public class CashControlTest {
 			lastReturnedCash = returnedCash;
 		}
 
-		@Override
-		public void paymentFailed(CashControl cc) {
-			cashRejected = true;
-			
-		}
+//		@Override
+//		public void paymentFailed(CashControl cc) {
+//			cashRejected = true;
+//			
+//		}
 
 		@Override
 		public void checkCashRejected(CashControl cc) {
