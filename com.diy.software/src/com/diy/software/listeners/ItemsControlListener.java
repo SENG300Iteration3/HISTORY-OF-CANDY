@@ -19,7 +19,13 @@ public interface ItemsControlListener {
 
 	public void awaitingItemToBeRemoved(ItemsControl itemsControl, String updateMessage);
 	
+	public void itemRemoved(ItemsControl itemsControl);
+	
 	public void itemsHaveBeenUpdated(ItemsControl ic);
 	
 	public void productSubtotalUpdated(ItemsControl ic);
+	
+	public void awaitingAttendantToApproveItemRemoval(ItemsControl ic);
+	
+
 }

@@ -1,3 +1,5 @@
+//Note: receipt related methods tested in receipt control test
+
 package com.diy.software.test.logic;
 
 import static org.junit.Assert.*;
@@ -115,22 +117,6 @@ public class TestAttendantControl {
 	}
 
 	@Test
-	public void testAddPaper() throws OverloadException {
-		ac.addListener(als);
-		assertFalse(als.lowState);
-		ac.addPaper();
-		assertTrue(als.lowState);
-	}
-
-	@Test
-	public void testAddInk() throws OverloadException {
-		ac.addListener(als);
-		assertFalse(als.lowState);
-		ac.addInk();
-		assertTrue(als.lowState);
-	}
-
-	@Test
 	public void testUpdateWeightDescrepancyMessage() {
 		ac.addListener(als);
 		assertFalse(als.testMsg.equals("test"));
@@ -164,40 +150,6 @@ public class TestAttendantControl {
 	// assertTrue(als.ini);
 	// }
 	//
-
-	@Test
-	public void testLowInk() {
-		ac.addListener(als);
-		assertFalse(als.addInk);
-		ac.lowInk(rp);
-		assertTrue(als.addInk);
-
-	}
-
-	@Test
-	public void testNoInk() {
-		ac.addListener(als);
-		assertFalse(als.addInk);
-		ac.outOfInk(rp);
-		assertTrue(als.addInk);
-
-	}
-
-	@Test
-	public void testLowPaper() {
-		ac.addListener(als);
-		assertFalse(als.addPaper);
-		ac.lowPaper(rp);
-		assertTrue(als.addPaper);
-	}
-
-	@Test
-	public void testOutOfPaper() {
-		ac.addListener(als);
-		assertFalse(als.addPaper);
-		ac.outOfPaper(rp);
-		assertTrue(als.addPaper);
-	}
 
 	@Test
 	public void testApproveBagsStationBlocked() {
@@ -287,44 +239,6 @@ public class TestAttendantControl {
 		assertFalse(als.getAttendantBags());
 	}
 
-	@Test(expected = OverloadException.class)
-	public void testAddInkOverload() throws OverloadException {
-		ac.addListener(als);
-		ac.addInk();
-		ac.addInk();
-		ac.addInk();
-		ac.addInk();
-		ac.addInk();
-		ac.addInk();
-
-	}
-
-	@Test(expected = OverloadException.class)
-	public void testAddPaperOverload() throws OverloadException {
-		ac.addListener(als);
-		ac.addPaper();
-		ac.addPaper();
-		ac.addPaper();
-	}
-
-	@Test
-	public void testActionPerformedAddInk() {
-		ActionEvent e = new ActionEvent(this, 0, "addInk");
-		ac.addListener(als);
-		assertFalse(als.lowState);
-		ac.actionPerformed(e);
-		assertTrue(als.lowState);
-	}
-
-	@Test
-	public void testActionPerformedAddPaper() {
-		ActionEvent e = new ActionEvent(this, 0, "addPaper");
-		ac.addListener(als);
-		assertFalse(als.lowState);
-		ac.actionPerformed(e);
-		assertTrue(als.lowState);
-	}
-
 	// FIXME: Need to rewrite - Anh
 	// @Test
 	// public void testApproveNoBaggingRequest() {
@@ -345,8 +259,9 @@ public class TestAttendantControl {
     	ac.addListener(als);
     	assertFalse(als.banknoteAdjusted);
     	ac.adjustBanknotesForChange();
-    	assertTrue(sc.station.banknoteStorage.getBanknoteCount() == 1000);
     	assertTrue(als.banknoteAdjusted);
+    	ac.loadBanknotesToStorage(this.sc.station.banknoteStorage);
+    	assertEquals(1000, sc.station.banknoteStorage.getBanknoteCount());
     }
     
     /*
@@ -364,9 +279,10 @@ public class TestAttendantControl {
     		sc.station.banknoteStorage.load(new Banknote(currency, 50));
     		sc.station.banknoteStorage.load(new Banknote(currency, 100));
     	}
-    	assertTrue(sc.station.banknoteStorage.getBanknoteCount() == 500);
+    	assertEquals(500, sc.station.banknoteStorage.getBanknoteCount());
     	ac.adjustBanknotesForChange();
     	assertFalse(sc.getCashControl().banknotesInStorageLow(sc.station.banknoteStorage));
+    	assertFalse(als.banknoteAdjusted);
     }
     
     /*
@@ -385,10 +301,11 @@ public class TestAttendantControl {
     		sc.station.banknoteStorage.load(new Banknote(currency, 50));
     		sc.station.banknoteStorage.load(new Banknote(currency, 100));
     	}
-    	assertTrue(sc.station.banknoteStorage.getBanknoteCount() == 50);
+    	assertEquals(50, sc.station.banknoteStorage.getBanknoteCount());
     	ac.adjustBanknotesForChange();
-    	assertTrue(sc.station.banknoteStorage.getBanknoteCount() == 1000);
     	assertTrue(als.banknoteAdjusted);
+    	ac.loadBanknotesToStorage(this.sc.station.banknoteStorage);
+    	assertEquals(1000, sc.station.banknoteStorage.getBanknoteCount());
     }
     
     /*
@@ -546,6 +463,24 @@ public class TestAttendantControl {
 
 		}
 
+		@Override
+		public void triggerPLUCodeWorkflow(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerBrowsingCatalog(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerReceiptScreen(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
+
 	}
 
 	public class AttendantListenerStub implements AttendantControlListener {
@@ -580,13 +515,13 @@ public class TestAttendantControl {
 		}
 
 		@Override
-		public void addPaperState() {
+		public void addTooMuchPaperState() {
 			addPaper = true;
 
 		}
 
 		@Override
-		public void addInkState() {
+		public void addTooMuchInkState() {
 			addInk = true;
 
 		}
@@ -594,7 +529,6 @@ public class TestAttendantControl {
 		@Override
 		public void printerNotLowState() {
 			lowState = true;
-
 		}
 
 		@Override
@@ -656,7 +590,55 @@ public class TestAttendantControl {
 		}
 
 		@Override
-		public void coinIsLowState(CoinStorageUnit unit, int amount) {
+		public void attendantApprovedItemRemoval(AttendantControl bc) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void itemBagged() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerItemSearchScreen(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void exitTextSearchScreen(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void printerNotLowInkState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void printerNotLowPaperState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void coinIsLowState(int amount) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void banknotesNotLowState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void coinsNotLowState() {
 			// TODO Auto-generated method stub
 			
 		}

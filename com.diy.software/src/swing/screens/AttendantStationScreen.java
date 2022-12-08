@@ -6,18 +6,24 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.BagsControl;
+import com.diy.software.controllers.ItemsControl;
 import com.diy.software.controllers.ReceiptControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
+import com.diy.software.listeners.ItemsControlListener;
 import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import swing.styling.GUI_Color_Palette;
@@ -27,7 +33,7 @@ import swing.styling.GUI_JLabel;
 import swing.styling.GUI_JPanel;
 import swing.styling.Screen;
 
-public class AttendantStationScreen extends Screen implements AttendantControlListener, BagsControlListener {
+public class AttendantStationScreen extends Screen implements AttendantControlListener, BagsControlListener, ItemsControlListener {
 
 	private StationControl sc;
 	private BagsControl bc;
@@ -38,6 +44,9 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	private static final int LABEL_WIDTH = 200;
 	private static final int LABEL_HEIGHT = 60;
 	private boolean cusAddedBags = false;
+
+	private GUI_JPanel removeItemPanel;
+	private JTextField removeItemTextField;
 	
 	GUI_JButton approveAddedBagsButton, approveNoBagging, startUpButton, shutDownButton, 
 				permitButton, preventButton, addItemButton, removeItemButton, logoutButton;
@@ -45,8 +54,11 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 				adjustCoinLabel, adjustBanknoteLabel;
 
 	private static String HeaderText = "Attendant Screen";
+	
+	private ArrayList<JPanel> panelStack;
+	private JPanel currentPanel;
 
-	public AttendantStationScreen(StationControl sc) {
+	public AttendantStationScreen(final StationControl sc) {
 		super(sc, HeaderText);
 		this.sc = sc;
 		bc = sc.getBagsControl();
@@ -54,6 +66,12 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 
 		ac = sc.getAttendantControl();
 		ac.addListener(this);
+		
+		sc.getItemsControl().addListener(this);
+		
+		currentPanel = centralPanel;
+		panelStack = new ArrayList<JPanel>();
+		panelStack.add(currentPanel);
 		
 		// Initialize attendant buttons
 		approveAddedBagsButton = initializeButton("Approve Added Bags", "approve added bags", cusAddedBags);
@@ -63,9 +81,41 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		permitButton = initializeButton("Permit station use", "permit_use", false);
 		preventButton = initializeButton("Prevent station use", "prevent_use", true);
 		addItemButton = initializeButton("Add item", "add", true);
-		removeItemButton = initializeButton("Remove item", "remove", true);
+		//removeItemButton = initializeButton("Remove item", "remove", true);
 		logoutButton = initializeButton("Logout", "logout", true);
 		
+		removeItemPanel = new GUI_JPanel();
+		removeItemPanel.setLayout(new GridLayout(2, 1));
+		
+		removeItemTextField = new JTextField();
+		removeItemTextField.setEditable(false);
+		removeItemTextField.setSize(new Dimension(width, height));
+		
+		removeItemButton = makeButton("Remove item");
+		removeItemButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				boolean success = false;
+				try {
+					success = ac.removeItem(Integer.parseInt(removeItemTextField.getText()));
+					removeItemTextField.setText("");
+				} catch (NumberFormatException e1) {
+					removeItemTextField.setText("Please Enter Valid Number");
+				}
+				
+				if(!success) {
+					removeItemTextField.setText("Invalid Item Number");
+				}
+			}
+		});
+		
+//		removeItemButton.addActionListener(ac);
+		removeItemButton.setPreferredSize(new Dimension(width, height));
+		removeItemButton.setEnabled(false);
+		
+		removeItemPanel.add(removeItemTextField);
+		removeItemPanel.add(removeItemButton);
+
 		// Initialize notifications labels
 		weightDescrepancyMssg = initializeLabel("Weight Discrepancy");
 		weightDisplayLabel = initializeLabel("Weight Display");
@@ -115,12 +165,13 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		panelGrid.gridx = 2;
 		buttonPanel.add(preventButton, panelGrid);
 		
-		panelGrid.gridx = 3;
-		buttonPanel.add(removeItemButton, panelGrid);
+		//panelGrid.gridx = 3;
+		//buttonPanel.add(removeItemPanel, panelGrid);
 		
 		buttonPanel.setPanelBorder(10, 10, 10, 10); 
 		buttonPanel.setBackground(GUI_Color_Palette.DARK_BLUE);
-		this.addLayer(buttonPanel, 150);
+		this.addLayer(buttonPanel, 50);
+		this.addLayer(removeItemPanel, 10);
 		this.addLayer(logoutButton, 10);
 	}
 	
@@ -220,24 +271,24 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		return button;
 	}
 
-	@Override
-	public void addPaperState() {
-		approveAddedBagsButton.setEnabled(false);
-		
-	}
-
-	@Override
-	public void addInkState() {
-		approveAddedBagsButton.setEnabled(false);
-		
-	}
-
-	@Override
-	public void printerNotLowState() {
-		approveAddedBagsButton.setEnabled(false);
-		inkLabel.setText("Ink status");
-		paperLabel.setText("Paper status");
-	}
+//	@Override
+//	public void addPaperState() {
+//		approveAddedBagsButton.setEnabled(false);
+//		
+//	}
+//
+//	@Override
+//	public void addInkState() {
+//		approveAddedBagsButton.setEnabled(false);
+//		
+//	}
+//
+//	@Override
+//	public void printerNotLowState() {
+//		approveAddedBagsButton.setEnabled(false);
+//		inkLabel.setText("Ink status");
+//		paperLabel.setText("Paper status");
+//	}
 
 	@Override
 	public void signalWeightDescrepancy(String updateMessage) {
@@ -315,11 +366,93 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 
 
 	@Override
-	public void itemBagged() {
-		approveNoBagging.setEnabled(false);
+	public void attendantApprovedItemRemoval(AttendantControl bc) {
+		// TODO Auto-generated method stub
+		
 	}
 
 
+	@Override
+	public void awaitingItemToBeSelected(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void itemWasSelected(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void awaitingItemToBePlacedInBaggingArea(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void awaitingItemToBePlacedInScanningArea(StationControl sc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void noMoreItemsAvailableInCart(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void itemsAreAvailableInCart(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void awaitingItemToBeRemoved(ItemsControl itemsControl, String updateMessage) {
+		removeItemButton.setEnabled(false);
+		removeItemTextField.setEditable(false);
+	}
+
+
+	@Override
+	public void itemsHaveBeenUpdated(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void productSubtotalUpdated(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void awaitingAttendantToApproveItemRemoval(ItemsControl ic) {
+		removeItemButton.setEnabled(true);
+		removeItemTextField.setEditable(true);
+		
+	}
+
+
+	@Override
+	public void itemRemoved(ItemsControl itemsControl) {
+		removeItemButton.setEnabled(false);
+		removeItemTextField.setEditable(false);
+	}
+		
+	public void itemBagged() {
+		approveNoBagging.setEnabled(false);
+	}
+	
 	@Override
 	public void banknotesInStorageLowState() {
 		adjustBanknoteLabel.setText("Banknotes low");
@@ -338,5 +471,78 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	public void coinsNotLowState() {
 		adjustCoinLabel.setText("Adjust Coins");
 		adjustBanknoteLabel.setBackground(GUI_Color_Palette.DARK_BROWN);
+	}
+	
+	@Override
+	public void triggerItemSearchScreen(AttendantControl ac) {
+		TextSearchScreen screen = new TextSearchScreen(sc, ac);
+		addScreenToStack(screen);
+	}
+	
+	private void addScreenToStack(Screen newScreen) {
+		addPanel(newScreen.getRootPanel());
+		panelStack.add(newScreen.getRootPanel());
+	}
+	
+	private void addPanel(JPanel newPanel) {
+		JPanel parent = (JPanel) currentPanel.getParent();
+		parent.remove(currentPanel);
+		currentPanel = newPanel;
+		parent.add(currentPanel);
+		parent.invalidate();
+		parent.validate();
+		parent.repaint();
+	}
+	
+	private void removePanelFromStack() {
+		JPanel parent = (JPanel) currentPanel.getParent();
+		parent.remove(currentPanel);
+		currentPanel = panelStack.get(panelStack.size() - 2);
+		parent.add(currentPanel);
+		parent.invalidate();
+		parent.validate();
+		parent.repaint();
+		panelStack.remove(panelStack.size() - 1);
+	}
+
+
+	@Override
+	public void exitTextSearchScreen(AttendantControl ac) {
+		removePanelFromStack();
+		
+	}
+
+
+	@Override
+	public void printerNotLowInkState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void printerNotLowPaperState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void addTooMuchInkState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void addTooMuchPaperState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void printerNotLowState() {
+		// TODO Auto-generated method stub
 	}
 }

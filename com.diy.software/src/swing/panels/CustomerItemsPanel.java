@@ -12,23 +12,26 @@ import com.diy.software.controllers.BagsControl;
 import com.diy.software.controllers.ItemsControl;
 import com.diy.software.controllers.ReceiptControl;
 import com.diy.software.controllers.StationControl;
+import com.diy.software.controllers.TextLookupControl;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.BagsControlListener;
 import com.diy.software.listeners.ItemsControlListener;
 import com.unitedbankingservices.coin.CoinStorageUnit;
 import com.diy.software.listeners.ReceiptControlListener;
+import com.diy.software.listeners.TextLookupControlListener;
 import com.unitedbankingservices.coin.CoinStorageUnit;
 
 public class CustomerItemsPanel extends JPanel
-		implements ItemsControlListener, AttendantControlListener, BagsControlListener, ReceiptControlListener {
+		implements ItemsControlListener, AttendantControlListener, BagsControlListener, ReceiptControlListener, TextLookupControlListener {
 
 	private static final long serialVersionUID = 1L;
 	private ItemsControl ic;
 	private AttendantControl ac;
 	private BagsControl bc;
 	private ReceiptControl rc;
+	private TextLookupControl tlc;
 	private boolean itemsAvailable;
-	JButton selectNextItemButton, mainScannerButton, handheldScannerButton, deselectCurrentItemButton, placeItemInBaggingAreaButton, placeItemInScanningAreaButton, itemWeight, takeReceiptButton;
+	JButton selectNextItemButton, mainScannerButton, handheldScannerButton, deselectCurrentItemButton, placeItemInBaggingAreaButton, placeItemInScanningAreaButton, itemWeight, takeReceiptButton, takeIncompleteReceipt;
 	GridBagConstraints buttonGrid = new GridBagConstraints();
 	JLabel weightDescrepancyMessage;
 
@@ -44,7 +47,10 @@ public class CustomerItemsPanel extends JPanel
 		bc.addListener(this);
 		
 		rc = sc.getReceiptControl();
-		rc.addListenerReceipt(this);
+		rc.addListener(this);
+		
+		tlc = sc.getAttendantControl().getTextLookupControl();
+		tlc.addListener(this);
 		
 		weightDescrepancyMessage = new JLabel();
 		
@@ -77,6 +83,11 @@ public class CustomerItemsPanel extends JPanel
 		takeReceiptButton.setActionCommand("takeReceipt");
 		takeReceiptButton.addActionListener(rc);
 		
+		takeIncompleteReceipt = new JButton("Take Incomplete Receipt");
+		takeIncompleteReceipt.setActionCommand("takeIncompleteReceipt");
+		takeIncompleteReceipt.addActionListener(rc);
+		
+		
 
 //		removeItemInBaggingAreaButton.setActionCommand("removeFromScale");
 //		removeItemInBaggingAreaButton.addActionListener(ic);
@@ -105,8 +116,11 @@ public class CustomerItemsPanel extends JPanel
 		buttonGrid.gridx = 6;
 		this.add(takeReceiptButton, buttonGrid);
 		
-		buttonGrid.gridy = 1;
 		buttonGrid.gridx = 7;
+		this.add(takeIncompleteReceipt, buttonGrid);
+		
+		buttonGrid.gridy = 1;
+		buttonGrid.gridx = 8;
 		this.add(weightDescrepancyMessage);
 		
 
@@ -120,6 +134,7 @@ public class CustomerItemsPanel extends JPanel
 		placeItemInBaggingAreaButton.setEnabled(false);
 		itemWeight.setEnabled(false);
 		takeReceiptButton.setEnabled(false);
+		takeIncompleteReceipt.setEnabled(false);
 	}
 
 	@Override
@@ -204,6 +219,15 @@ public class CustomerItemsPanel extends JPanel
 		placeItemInBaggingAreaButton.setEnabled(false);
 		itemWeight.setEnabled(false);
 	}
+	
+	@Override
+	public void awaitingAttendantToApproveItemRemoval(ItemsControl bc) {
+		selectNextItemButton.setEnabled(false);
+		mainScannerButton.setEnabled(false);
+		handheldScannerButton.setEnabled(false);
+		deselectCurrentItemButton.setEnabled(false);
+		placeItemInBaggingAreaButton.setEnabled(false);
+	}
 
 	@Override
 	public void attendantApprovedBags(AttendantControl ac) {
@@ -213,6 +237,15 @@ public class CustomerItemsPanel extends JPanel
 		deselectCurrentItemButton.setEnabled(false);
 		placeItemInBaggingAreaButton.setEnabled(false);
 		itemWeight.setEnabled(false);
+	}
+	
+	@Override 
+	public void attendantApprovedItemRemoval(AttendantControl bc) {
+		selectNextItemButton.setEnabled(itemsAvailable);
+		mainScannerButton.setEnabled(false);
+		handheldScannerButton.setEnabled(false);
+		deselectCurrentItemButton.setEnabled(false);
+		placeItemInBaggingAreaButton.setEnabled(false);
 	}
 
 	@Override
@@ -238,20 +271,29 @@ public class CustomerItemsPanel extends JPanel
 	}
 
 	@Override
-	public void addPaperState() {}
+	public void addTooMuchPaperState() {}
 	public void itemsHaveBeenUpdated(ItemsControl ic) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void addInkState() {
+	public void addTooMuchInkState() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void printerNotLowState() {}
+	public void printerNotLowInkState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void printerNotLowPaperState() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	// FIXME: Should this have @Override below it?
 	public void productSubtotalUpdated(ItemsControl ic) {
@@ -272,6 +314,12 @@ public class CustomerItemsPanel extends JPanel
 	@Override
 	public void initialState() {
 		// TODO Auto-generated method stub
+		selectNextItemButton.setEnabled(itemsAvailable);
+		mainScannerButton.setEnabled(false);
+		handheldScannerButton.setEnabled(false);
+		deselectCurrentItemButton.setEnabled(false);
+		placeItemInBaggingAreaButton.setEnabled(false);
+		takeReceiptButton.setEnabled(false);
 		
 	}
 
@@ -320,6 +368,7 @@ public class CustomerItemsPanel extends JPanel
 	@Override
 	public void setThankyouMessage(ReceiptControl rc, String dateTime) {
 		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -333,7 +382,18 @@ public class CustomerItemsPanel extends JPanel
 	}
 
 	@Override
-	public void coinIsLowState(int amount) {
+	public void setIncompleteReceiptState(ReceiptControl rc) {
+		takeIncompleteReceipt.setEnabled(true);
+		
+	}
+
+	@Override
+	public void setNoIncompleteReceiptState(ReceiptControl rc) {
+		takeIncompleteReceipt.setEnabled(false);		
+	}
+
+
+	public void coinIsLowState(CoinStorageUnit unit, int amount) {
 		// TODO Auto-generated method stub
 	}
 
@@ -349,13 +409,93 @@ public class CustomerItemsPanel extends JPanel
 	}
 
 	@Override
+	public void setMembership(ReceiptControl rc, String dateTime) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void itemRemoved(ItemsControl itemsControl) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	public void itemBagged() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void triggerItemSearchScreen(AttendantControl ac) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void exitTextSearchScreen(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void searchQueryWasEntered(TextLookupControl tlc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resultsWereFound(TextLookupControl tlc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void noResultsWereFound(TextLookupControl tlc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resultWasChosen(TextLookupControl tlc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void itemHasBeenAddedToCheckout(TextLookupControl tlc) {
+		selectNextItemButton.setEnabled(false);
+		mainScannerButton.setEnabled(false);
+		handheldScannerButton.setEnabled(false);
+		deselectCurrentItemButton.setEnabled(false);
+		placeItemInBaggingAreaButton.setEnabled(true);
+		itemWeight.setEnabled(false);
+		
+	}
+
+	@Override
+	public void itemHasBeenBagged(TextLookupControl tlc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void searchHasBeenCleared(TextLookupControl tlc) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void banknotesInStorageLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void printerNotLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void coinIsLowState(int amount) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -372,5 +512,4 @@ public class CustomerItemsPanel extends JPanel
 		
 	}
 
-	
 }

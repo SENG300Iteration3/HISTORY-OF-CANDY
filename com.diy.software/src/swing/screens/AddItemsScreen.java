@@ -1,6 +1,8 @@
 package swing.screens;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -11,6 +13,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import com.diy.software.util.Tuple;
+import com.jimmyselectronics.Item;
+import com.jimmyselectronics.necchi.Barcode;
+import com.jimmyselectronics.necchi.BarcodedItem;
+import com.jimmyselectronics.svenden.ReusableBag;
 
 import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Fonts;
@@ -18,7 +24,9 @@ import swing.styling.GUI_JButton;
 import swing.styling.GUI_JLabel;
 import swing.styling.GUI_JPanel;
 import swing.styling.Screen;
-
+import com.diy.hardware.PLUCodedItem;
+import com.diy.hardware.PriceLookUpCode;
+import com.diy.hardware.external.ProductDatabases;
 import com.diy.software.controllers.BagDispenserControl;
 import com.diy.software.controllers.BagsControl;
 import com.diy.software.controllers.ItemsControl;
@@ -28,9 +36,11 @@ import com.diy.software.listeners.BagsControlListener;
 import com.diy.software.listeners.ItemsControlListener;
 import com.diy.software.listeners.StationControlListener;
 
+
 public class AddItemsScreen extends Screen implements ItemsControlListener, BagsControlListener, BagDispenserControlListener {
-	private StationControl systemControl;
+	private StationControl sc;
 	private ItemsControl itemsControl;
+	
 	private BagsControl bc;
 	private BagDispenserControl bdc;
 
@@ -42,6 +52,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 	protected GUI_JButton requestNoBaggingBtn;
 	protected GUI_JButton addOwnBagsBtn;
 	protected GUI_JButton removeItemBtn;
+	protected GUI_JButton doneBtn;
 
 	protected GUI_JButton purchaseBagsBtn;
 	protected GUI_JButton addItemByPLUBtn;
@@ -50,18 +61,18 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 	private AddOwnBagsPromptScreen ownBagsPromptScreen;
 
 
-	public AddItemsScreen(StationControl systemControl) {
-		super(systemControl, "Self Checkout");
+	public AddItemsScreen(final StationControl sc) {
+		super(sc, "Self Checkout");
 		
-		this.systemControl = systemControl;
+		this.sc = sc;
 		
-		this.itemsControl = systemControl.getItemsControl();
-		this.itemsControl.addListener(this);
+		this.itemsControl = sc.getItemsControl();
+		itemsControl.addListener(this);
 		
-		bc = systemControl.getBagsControl();
+		bc = sc.getBagsControl();
 		bc.addListener(this);
 		
-		bdc = systemControl.getBagDispenserControl();
+		bdc = sc.getBagDispenserControl();
 		bdc.addListener(this);
 
 
@@ -149,7 +160,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		rightSidePanel.setBorder(new EmptyBorder(0, 40, 0, 0));
 
 
-		JPanel rightSidebuttonPanel = new JPanel(new GridLayout(4, 1));
+		JPanel rightSidebuttonPanel = new JPanel(new GridLayout(5, 1));
 		rightSidebuttonPanel.setPreferredSize(new Dimension(370, 400));
 
 		rightSidebuttonPanel.setBackground(GUI_Color_Palette.DARK_BLUE);
@@ -170,10 +181,25 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		JPanel thirdButtonPanel = new JPanel(new GridLayout());
 		this.addItemByPLUBtn = makeButton("Add Item by PLU", thirdButtonPanel);
 		rightSidebuttonPanel.add(thirdButtonPanel);
-
+		
 		JPanel fourthButtonPanel = new JPanel(new GridLayout());
 		this.removeItemBtn = makeButton("Remove Item", fourthButtonPanel);
 		rightSidebuttonPanel.add(fourthButtonPanel);
+		this.removeItemBtn.setActionCommand("remove item");
+		this.removeItemBtn.addActionListener(itemsControl);
+		removeItemBtn.setEnabled(false);
+		
+		JPanel fifthButtonPanel = new JPanel(new GridLayout());
+		doneBtn = makeButton("Print Receipt", fifthButtonPanel);
+		rightSidebuttonPanel.add(fifthButtonPanel);
+		doneBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				sc.printReceipt();
+			}
+		});
+		doneBtn.setEnabled(false);
+
 
 		this.addLayer(mainPanel, 0);
 
@@ -292,7 +318,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 
 	@Override
 	public void itemsHaveBeenUpdated(ItemsControl itemsControl) {
-		ArrayList<Tuple<String, Double>> checkoutList = itemsControl.getCheckoutList();
+		ArrayList<Tuple<String, Double>> checkoutList = itemsControl.getItemDescriptionPriceList();
 
 		String[] itemDescriptions = new String[checkoutList.size()];
 		double[] itemPrices = new double[checkoutList.size()];
@@ -303,7 +329,13 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		}
 		this.invalidateAllScannedItems();
 		for (int i = 0; i < itemDescriptions.length; i++) {
-			this.addScannedItem(itemDescriptions[i], itemPrices[i]);
+			this.addScannedItem(i+1 + " - " + itemDescriptions[i], itemPrices[i]);
+		}
+		
+		if(checkoutList.isEmpty()) {
+			removeItemBtn.setEnabled(false);
+		} else {
+			removeItemBtn.setEnabled(true);
 		}
 	}
 
@@ -311,6 +343,10 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 	public void productSubtotalUpdated(ItemsControl itemsControl) {
 		DecimalFormat df = new DecimalFormat("0.00");
 		subtotalLabel.setText("Subtotal: $" + df.format(itemsControl.getCheckoutTotal()));
+		
+		if(itemsControl.getCheckoutTotal()==0) {
+			doneBtn.setEnabled(true);
+		}
 	}
 
 	@Override
@@ -336,7 +372,12 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		
 	}
 
-	@Override
+
+	public void awaitingAttendantToApproveItemRemoval(ItemsControl ic) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	public void numberFieldHasBeenUpdated(BagDispenserControl bdp, String memberNumber) {
 		// TODO Auto-generated method stub
 		
@@ -347,4 +388,11 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void itemRemoved(ItemsControl itemsControl) {
+		// TODO Auto-generated method stub
+		
+	}
 }
+
