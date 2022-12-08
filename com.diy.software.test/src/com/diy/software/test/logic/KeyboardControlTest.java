@@ -11,8 +11,8 @@ import com.diy.software.listeners.KeyboardControlListener;
 import com.jimmyselectronics.nightingale.Keyboard;
 
 public class KeyboardControlTest extends KeyboardControl {
-	public KeyboardControlTest(Keyboard keyboard) {
-		super(keyboard);
+	public KeyboardControlTest() {
+		super(new Keyboard(Keyboard.WINDOWS_QWERTY));
 	}
 
 	KeyboardControl kc;

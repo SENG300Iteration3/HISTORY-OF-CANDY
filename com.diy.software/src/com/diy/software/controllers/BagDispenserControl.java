@@ -22,7 +22,7 @@ public class BagDispenserControl implements ActionListener {
 		this.listeners = new ArrayList<>();
 	}
 	
-	private void dispenseBag() {
+	public void dispenseBag() {
 		while(numBag > 0) {
 			try {
 				// add the dispensed bag to checkout item list
