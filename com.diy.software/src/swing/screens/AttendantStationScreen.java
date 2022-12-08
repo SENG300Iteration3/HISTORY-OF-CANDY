@@ -8,6 +8,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -54,6 +55,9 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	GUI_JButton printReceiptButton;
 
 	private static String HeaderText = "Attendant Screen";
+	
+	private ArrayList<JPanel> panelStack;
+	private JPanel currentPanel;
 
 	public AttendantStationScreen(final StationControl sc) {
 		super(sc, HeaderText);
@@ -65,6 +69,10 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		ac.addListener(this);
 		
 		sc.getItemsControl().addListener(this);
+		
+		currentPanel = centralPanel;
+		panelStack = new ArrayList<JPanel>();
+		panelStack.add(currentPanel);
 		
 		// Initialize attendant buttons
 		approveAddedBagsButton = initializeButton("Approve Added Bags", "approve added bags", cusAddedBags);
@@ -163,7 +171,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		
 		buttonPanel.setPanelBorder(10, 10, 10, 10); 
 		buttonPanel.setBackground(GUI_Color_Palette.DARK_BLUE);
-		this.addLayer(buttonPanel, 150);
+		this.addLayer(buttonPanel, 50);
 		this.addLayer(removeItemPanel, 10);
 		this.addLayer(logoutButton, 10);
 		
@@ -450,6 +458,51 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	public void itemBagged() {
 		approveNoBagging.setEnabled(false);
 	}
+	
+	@Override
+	public void triggerItemSearchScreen(AttendantControl ac) {
+		TextSearchScreen screen = new TextSearchScreen(sc, ac);
+		addScreenToStack(screen);
+	}
+	
+	private void addScreenToStack(Screen newScreen) {
+		addPanel(newScreen.getRootPanel());
+		panelStack.add(newScreen.getRootPanel());
+	}
+	
+	private void addPanel(JPanel newPanel) {
+		JPanel parent = (JPanel) currentPanel.getParent();
+		parent.remove(currentPanel);
+		currentPanel = newPanel;
+		parent.add(currentPanel);
+		parent.invalidate();
+		parent.validate();
+		parent.repaint();
+	}
+	
+	private void removePanelFromStack() {
+		JPanel parent = (JPanel) currentPanel.getParent();
+		parent.remove(currentPanel);
+		currentPanel = panelStack.get(panelStack.size() - 2);
+		parent.add(currentPanel);
+		parent.invalidate();
+		parent.validate();
+		parent.repaint();
+		panelStack.remove(panelStack.size() - 1);
+	}
+
+
+	@Override
+	public void exitTextSearchScreen(AttendantControl ac) {
+		removePanelFromStack();
+		
+	}
+
+
+	@Override
+	public void banknotesInStorageLowState() {
+	
+	}
 
 
 	@Override
@@ -481,7 +534,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 
 
 	@Override
-	public void banknotesInStorageLowState() {
+	public void printerNotLowState() {
 		// TODO Auto-generated method stub
 		
 	}
