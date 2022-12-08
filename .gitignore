@@ -5,3 +5,5 @@
 
 # Hardware project
 /com.diy.hardware_0.4
+
+*.class
