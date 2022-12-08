@@ -55,13 +55,17 @@ public class AttendantStationScreenTest {
 	
 	@Test
 	public void testShutdownButton() {
-		//TODO
+		screen.getShutDownButton().setEnabled(true);
+		screen.getShutDownButton().doClick();
+		assertFalse(sc.station.screen.isPluggedIn());
+		assertFalse(sc.station.screen.isPoweredUp());
 	}
 	
 	@Test
 	public void testApproveAddedBagsButton() {
+		screen.getApproveAddedBagsButton().setEnabled(true);
 		screen.getApproveAddedBagsButton().doClick();
-		assertTrue(aStub.initialState);
+		assertTrue(aStub.attendantApprovedBags);
 	}
 	
 	public class AttendantControlListenerStub implements AttendantControlListener {
@@ -71,10 +75,11 @@ public class AttendantStationScreenTest {
 		public boolean permitUse = true;
 		public boolean removeItemApproved = false;
 		public boolean initialState = false;
+		public boolean attendantApprovedBags = false;
 
 		@Override
 		public void attendantApprovedBags(AttendantControl ac) {
-			// TODO Auto-generated method stub
+			attendantApprovedBags = true;
 			
 		}
 

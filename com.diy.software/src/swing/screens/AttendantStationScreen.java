@@ -77,7 +77,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		approveAddedBagsButton = initializeButton("Approve Added Bags", "approve added bags", cusAddedBags);
 		approveNoBagging = initializeButton("Approve no bagging", "approve no bag", false);
 		startUpButton = initializeButton("Start up station", "startUp", true);
-		shutDownButton = initializeButton("Shut down station", "shutdown", true);
+		shutDownButton = initializeButton("Shut down station", "shutDown", true);
 		permitButton = initializeButton("Permit station use", "permit_use", false);
 		preventButton = initializeButton("Prevent station use", "prevent_use", true);
 		addItemButton = initializeButton("Add item", "add", true);
