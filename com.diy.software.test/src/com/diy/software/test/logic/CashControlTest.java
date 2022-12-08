@@ -298,6 +298,29 @@ public class CashControlTest {
 		}
 	}
 	
+	@Test
+	public void testBanknoteInStorageLow() throws SimulationException, TooMuchCashException {
+		for (int i = 0; i < 1; i++) {
+			sc.station.banknoteStorage.load(new Banknote(currency, 20));
+		}
+		assertTrue(cs.banknotesInStorageLow(sc.station.banknoteStorage));
+	}
+	
+	@Test
+	public void testBanknoteInStorageNotLow() throws SimulationException, TooMuchCashException {
+		for (int i = 0; i < 500; i++) {
+			sc.station.banknoteStorage.load(new Banknote(currency, 20));
+		}
+		assertFalse(cs.banknotesInStorageLow(sc.station.banknoteStorage));
+	}
+	
+	@Test
+	public void testBanknoteInStorageAtThreshold() throws SimulationException, TooMuchCashException {
+		for (int i = 0; i < 50; i++) {
+			sc.station.banknoteStorage.load(new Banknote(currency, 20));
+		}
+		assertTrue(cs.banknotesInStorageLow(sc.station.banknoteStorage));
+	}
 	
 	public class BanknoteValidatorObserverStub implements CashControlListener, BanknoteValidatorObserver{
 		
