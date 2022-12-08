@@ -14,6 +14,7 @@ import com.diy.software.controllers.ItemsControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.BagsControlListener;
+import com.jimmyselectronics.Item;
 import com.jimmyselectronics.necchi.BarcodedItem;
 
 import ca.powerutility.PowerGrid;
@@ -24,11 +25,11 @@ public class TestBagsControl {
 	BagsListenerStub bls;
 	FakeDataInitializer fdi;
 	ItemsControl ic;
-	BarcodedItem item1;
-	BarcodedItem item2;
-	BarcodedItem item3;
-	BarcodedItem item4;
-	BarcodedItem[] items;
+	Item item1;
+	Item item2;
+	Item item3;
+	Item item4;
+	Item[] items;
 	
 	
 	@Before
