@@ -526,24 +526,30 @@ public class StationControl
 			
 			if(data.getType().equals(GiftcardDatabase.CompanyGiftCard)) {
 				if(amountOwed == 0) {
-					cc.paymentFailed();
+					cc.paymentFailed(true);
 					return;
 				}
 				
 				Double amountOnCard = GiftcardDatabase.giftcardMap.get(cardNumber);
 				Double dif = amountOnCard - amountOwed;
-				if(dif >= 0) {
-					GiftcardDatabase.giftcardMap.put(cardNumber, dif);
-					ic.updateCheckoutTotal(-amountOwed);
-					for (StationControlListener l : listeners) {
-						l.paymentHasBeenMade(this, data);
+				Double amountPlaced = Math.min(amountOwed, amountOnCard);
+				long holdNum = bank.authorizeHold(cardNumber, amountPlaced);
+				if(holdNum != -1L && bank.postTransaction(cardNumber, holdNum, amountPlaced)) {
+					if(dif >= 0) {
+						GiftcardDatabase.giftcardMap.put(cardNumber, dif);
+						ic.updateCheckoutTotal(-amountOwed);
+						for (StationControlListener l : listeners) {
+							l.paymentHasBeenMade(this, data);
+						}
+					}else {
+						GiftcardDatabase.giftcardMap.put(cardNumber, 0.0);
+						ic.updateCheckoutTotal(-amountOnCard);
 					}
-				}else {
-					GiftcardDatabase.giftcardMap.put(cardNumber, 0.0);
-					ic.updateCheckoutTotal(-amountOnCard);
-					//TODO: tell customer that their card wasn't enough maybe?
-				}
+					bank.releaseHold(cardNumber, holdNum);
 				cc.cashInserted();
+				}else {
+					cc.paymentFailed(false);
+				}
 				return;
 			}
 
