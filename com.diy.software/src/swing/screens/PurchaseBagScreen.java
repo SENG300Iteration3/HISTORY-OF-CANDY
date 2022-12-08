@@ -106,7 +106,7 @@ public class PurchaseBagScreen extends Screen implements BagDispenserControlList
 		centerPanel.setLayout(new GridLayout(1, 0));
 
 		centerPanel.add(bagMessage);
-		addLayer(centerPanel, 10);
+		addLayer(centerPanel, 0);
 
 	}
 
