@@ -457,4 +457,56 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		// TODO Auto-generated method stub
 		
 	}
+
+
+	public JTextField getRemoveItemTextField() {
+		return removeItemTextField;
+	}
+
+
+	public GUI_JButton getApproveAddedBagsButton() {
+		return approveAddedBagsButton;
+	}
+
+
+	public GUI_JButton getStartUpButton() {
+		return startUpButton;
+	}
+
+
+	public GUI_JButton getShutDownButton() {
+		return shutDownButton;
+	}
+
+
+	public GUI_JButton getPermitButton() {
+		return permitButton;
+	}
+
+
+	public GUI_JButton getPreventButton() {
+		return preventButton;
+	}
+
+
+	public GUI_JButton getAddItemButton() {
+		return addItemButton;
+	}
+
+
+	public GUI_JButton getRemoveItemButton() {
+		return removeItemButton;
+	}
+
+
+	public GUI_JButton getLogoutButton() {
+		return logoutButton;
+	}
+
+
+	public GUI_JButton getPrintReceiptButton() {
+		return printReceiptButton;
+	}
+	
+	
 }
