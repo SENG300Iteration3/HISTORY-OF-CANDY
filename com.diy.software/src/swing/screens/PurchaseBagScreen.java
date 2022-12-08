@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionListener;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 
@@ -15,15 +13,8 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import com.diy.software.controllers.BagDispenserControl;
-import com.diy.software.controllers.MembershipControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.BagDispenserControlListener;
-import com.diy.software.listeners.MembershipControlListener;
-import com.diy.software.listeners.StationControlListener;
-import com.jimmyselectronics.AbstractDevice;
-import com.jimmyselectronics.AbstractDeviceListener;
-import com.jimmyselectronics.svenden.ReusableBagDispenser;
-import com.jimmyselectronics.svenden.ReusableBagDispenserListener;
 
 import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Fonts;
@@ -43,7 +34,7 @@ public class PurchaseBagScreen extends Screen implements BagDispenserControlList
 	private JButton submitButton = createNumberPadButton(">");
 
 	private JTextField numberEntry;
-	private JLabel memberMssg = new JLabel("");
+	private JLabel bagMessage = new JLabel("");
 	GUI_JPanel numberInputPanel;
 
 	private static String HeaderText = "Purchase Reusable Bags";
@@ -102,9 +93,9 @@ public class PurchaseBagScreen extends Screen implements BagDispenserControlList
 	}
 	
 	private void initalizeMessageLabel() {
-		memberMssg = new GUI_JLabel("Number of bags you want to purchase");
-		memberMssg.setFont(new Font("Franklin Gothic", Font.BOLD, 22));
-		memberMssg.setHorizontalAlignment(JLabel.CENTER);
+		bagMessage = new GUI_JLabel("Number of bags you want to purchase");
+		bagMessage.setFont(new Font("Franklin Gothic", Font.BOLD, 22));
+		bagMessage.setHorizontalAlignment(JLabel.CENTER);
 
 		int width = 405;
 		int height = 50;
@@ -114,7 +105,7 @@ public class PurchaseBagScreen extends Screen implements BagDispenserControlList
 		centerPanel.setPreferredSize(new Dimension(width, height));
 		centerPanel.setLayout(new GridLayout(1, 0));
 
-		centerPanel.add(memberMssg);
+		centerPanel.add(bagMessage);
 		addLayer(centerPanel, 10);
 
 	}
