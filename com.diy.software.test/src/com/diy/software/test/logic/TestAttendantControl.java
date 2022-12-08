@@ -410,10 +410,24 @@ public class TestAttendantControl {
 	}
 	
 	@Test
+	public void testAddInkTooMuch() {
+		ac.addListener(als);
+		ac.addInk(10000000);
+		assertTrue(als.addInk);
+	}
+	
+	@Test
 	public void testAddPaper() {
 		ac.addListener(als);
 		ac.addPaper(100);
 		assertFalse(als.printerLowState);
+	}
+	
+	@Test
+	public void testAddPaperTooMuch() {
+		ac.addListener(als);
+		ac.addPaper(10000000);
+		assertTrue(als.addPaper);
 	}
 	
 	@After
