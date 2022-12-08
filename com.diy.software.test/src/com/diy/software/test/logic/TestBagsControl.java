@@ -38,7 +38,7 @@ public class TestBagsControl {
 		
 		fdi = new FakeDataInitializer();
 		fdi.addProductAndBarcodeData();
-		items = (BarcodedItem[])fdi.getItems();
+		items = fdi.getItems();
 		item1 = items[0];
 		item2 = items[1];
 		item3 = items[2];
