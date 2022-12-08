@@ -101,6 +101,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 		searchbar.setHorizontalAlignment(JLabel.CENTER);
 		searchbar.setBorder(emptyBorder);
 		searchbar.setPreferredSize(new Dimension(seacrhBarWidth,seacrhBarHeight));		
+		searchbar.setEditable(false);
 		
 		//Setting up grid Bag Constraints on the search bar
 		gridBagConstraints.gridx = 0;
@@ -178,6 +179,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
+				clearSearchResults();
 				tlc.findProduct(searchbar.getText());
 				searchResultPanel.repaint();
 				searchResultPanel.revalidate();
