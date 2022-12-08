@@ -153,6 +153,9 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		refreshGui();
 	}
 	
+	/**
+	 * notifies registered ItemsControlListeners when an has been removed
+	 */
 	public void notifyItemRemoved() {
 		for (ItemsControlListener l : listeners){
 			l.itemRemoved(this);
@@ -188,7 +191,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	 * @param index 
 	 * 			The item number displayed on screen which you want to remove
 	 * @return
-	 * 		True if the index is within . False otherwise.
+	 * 		True if the index is within range (i.e. items or bags exist to be remove) 
+	 * 		False otherwise.
 	 */
 	public boolean removeItem(int index) {
 		double weight;
@@ -229,10 +233,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			//sc.goToInitialScreenOnUI();
 			return true;
 		}
-		else {
-			return false;
-		}
-
+		return false;
 	}
 	
 	public ArrayList<Tuple<String, Double>> getItemDescriptionPriceList() {
@@ -297,6 +298,11 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	 * instead notified noMoreItemsAvail
 	 */
 	public void pickupNextItem() {
+		if (sc.customer.shoppingCart.size() == 0) {
+			for (ItemsControlListener l : listeners)
+				l.noMoreItemsAvailableInCart(this);
+			return;
+		}
 		try {
 			// TODO: Find another way to do this
 			this.currentItem = sc.customer.shoppingCart.get(sc.customer.shoppingCart.size() - 1);
@@ -318,9 +324,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 					l.noMoreItemsAvailableInCart(this);
 			}
 		} catch (NoSuchElementException e) {
-			// next item does not exist
-			for (ItemsControlListener l : listeners)
-				l.noMoreItemsAvailableInCart(this);
+			System.err.println(e.getMessage());
 		}
 	}
 
@@ -344,8 +348,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	}
 
 	public boolean addItemByPLU() {
+		if (currentProductCode == null) {
+			return false;
+		}
 		try {
-
 			PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(currentProductCode);
 			double price;
 
@@ -391,9 +397,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 	}
 
-	public boolean getIsPLU() {
-		return isPLU;
-	}
 
 	// TODO: scanItem now differtiates between using handheldScanner and mainScanner
 	// ALSO: note that a new weight area called scanningArea exists now to grab
@@ -445,6 +448,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 	/**
 	 * Weighs the item before entering the plu code.
+	 * 	Prints error message if the item on the scale is a barcodedItem
+	 *  (don't need to weigh barcoded items)
 	 */
 	public void weighItem() {
 		if(isPLU) {
