@@ -191,7 +191,7 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 
 
 	@Override
-	public void coinIsLowState(CoinStorageUnit unit, int amount) {
+	public void coinIsLowState(int amount) {
 		// TODO Auto-generated method stub
 	}
 
@@ -208,8 +208,7 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 
 	@Override
 	public void itemBagged() {
-		// TODO Auto-generated method stub
-		
+		approveNoBagButton.setEnabled(false);
 	}
 
 	public void triggerItemSearchScreen(AttendantControl ac) {
@@ -224,13 +223,25 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 	}
 
 	@Override
+	public void printerNotLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
 	public void banknotesInStorageLowState() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void printerNotLowState() {
+	public void banknotesNotLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void coinsNotLowState() {
 		// TODO Auto-generated method stub
 		
 	}

@@ -412,8 +412,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	}
 
 	public void placeItemOnBaggingArea() {
-
-		if (currentItem instanceof BarcodedItem) {
 			scaleExpectedWeight = sc.weightOfLastItem;
 			weighSuccess = false;
 			baggingAreaTimerEnd = System.currentTimeMillis();
@@ -422,7 +420,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			if (random.nextDouble(0.0, 1.0) > PROBABILITY_OF_BAGGING_WRONG_ITEM) {
 				weighSuccess = true;
 				sc.customer.placeItemInBaggingArea();
-
+				sc.getAttendantControl().itemBagged();			// cancel no bag request if there is one
 			} else {
 				// simulation weight discrepancy
 				scaleReceivedWeight = wrongBaggedItem.getWeight();
@@ -442,17 +440,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 				// if weighSuccess is still false after listeners have been called, we can show
 				// and alert showing a failed weigh-in if time permits.
 			}
-		} else {
-			sc.customer.placeItemInBaggingArea();
-			System.out.println("expected: " + sc.getExpectedWeight());
-			try {
-				System.out.println("actual: " + sc.station.baggingArea.getCurrentWeight());
-			} catch (OverloadException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
 	}
 
 	/**
