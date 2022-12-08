@@ -152,8 +152,8 @@ public class TestMain {
 
 		assertTrue(ic.getCheckoutTotal() == product.getPrice());
 
-		bc.placePurchasedBagsInBaggingArea();
-		controller.bagItem();
+		bc.placeBagsInBaggingArea();
+		controller.bagItem(bitem);
 
 		assertTrue(ic.getCheckoutTotal() == product.getPrice() + bc.getArbitraryBagPrice());
 	}
@@ -168,8 +168,9 @@ public class TestMain {
 
 		assertTrue(controller.getExpectedWeight() == product.getExpectedWeight());
 
-		bc.placePurchasedBagsInBaggingArea();
-		controller.bagItem();
+
+		bc.placeBagsInBaggingArea();
+		controller.bagItem(bitem);
 
 		controller.updateExpectedCheckoutWeight(bc.getArbitraryBagWeight(), false);
 
@@ -1051,6 +1052,12 @@ public class TestMain {
 
 		@Override
 		public void triggerBrowsingCatalog(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerReceiptScreen(StationControl systemControl) {
 			// TODO Auto-generated method stub
 			
 		}

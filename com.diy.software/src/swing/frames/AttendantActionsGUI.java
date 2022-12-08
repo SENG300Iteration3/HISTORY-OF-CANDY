@@ -16,14 +16,14 @@ import swing.styling.GUI_JFrame;
 
 public class AttendantActionsGUI implements PaneControlListener {
   private PaneControl pc;
-  private GUI_JFrame frame = new GUI_JFrame("Attendant Actions", GUI_Constants.SCREEN_WIDTH, GUI_Constants.SCREEN_HEIGHT - 120);
+  private GUI_JFrame frame = new GUI_JFrame("Attendant Actions", GUI_Constants.SCREEN_WIDTH, GUI_Constants.SCREEN_HEIGHT - 250);
   private JTabbedPane tabbedPane = new JTabbedPane();
 
   public AttendantActionsGUI(PaneControl pc) {
     this.pc = pc;
     this.pc.addListener(this);
     frame.setVisible(true);
-    frame.setLocation(1024, 1024);
+    frame.setLocation(640, 960);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.getContentPane().add(tabbedPane , BorderLayout.CENTER);
 
@@ -44,5 +44,9 @@ public class AttendantActionsGUI implements PaneControlListener {
   @Override
   public void clientSidePaneChanged(StationControl sc, int index) {
 		tabbedPane.setSelectedIndex(index);
+  }
+  
+  public JTabbedPane getTabbedPane() {
+	  return tabbedPane;
   }
 }
