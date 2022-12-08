@@ -245,4 +245,16 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void stationShutDown(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void stationStartedUp(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
 }
