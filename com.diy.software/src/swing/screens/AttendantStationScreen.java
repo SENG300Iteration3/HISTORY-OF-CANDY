@@ -531,4 +531,11 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		// TODO Auto-generated method stub
 		
 	}
+
+
+	@Override
+	public void printerNotLowState() {
+		// TODO Auto-generated method stub
+		
+	}
 }
