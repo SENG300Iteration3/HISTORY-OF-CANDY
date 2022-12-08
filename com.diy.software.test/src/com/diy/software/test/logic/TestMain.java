@@ -150,11 +150,9 @@ public class TestMain {
 		customer.selectNextItem();
 		customer.scanItem(true);
 
-		assertTrue(ic.getCheckoutTotal() == product.getPrice());
-
+		assertTrue(ic.getCheckoutTotal() == product.getPrice())
 		bc.placePurchasedBagsInBaggingArea();
 		controller.bagItem();
-
 		assertTrue(ic.getCheckoutTotal() == product.getPrice() + bc.getArbitraryBagPrice());
 	}
 
@@ -1051,6 +1049,12 @@ public class TestMain {
 
 		@Override
 		public void triggerBrowsingCatalog(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerReceiptScreen(StationControl systemControl) {
 			// TODO Auto-generated method stub
 			
 		}

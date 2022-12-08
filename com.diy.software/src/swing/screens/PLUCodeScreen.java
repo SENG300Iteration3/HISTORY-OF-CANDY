@@ -23,7 +23,7 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 	private static String HeaderText = "PLU Code";
 
 	JLabel message = new JLabel("");
-	GUI_JLabel pluCode;
+	JTextField pluCode;
 
 	public PLUCodeScreen(StationControl sc) {
 		super(sc, HeaderText);
@@ -94,7 +94,7 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 
 	private void initializeTextField() {
 
-		pluCode = new GUI_JLabel("PLU code".toUpperCase());
+		pluCode = new JTextField();
 		pluCode.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		pluCode.setHorizontalAlignment(JLabel.CENTER);
 		pluCode.setBorder(BorderFactory.createLineBorder(GUI_Color_Palette.DARK_BLUE, 10));
@@ -152,6 +152,22 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 	public void pluHasBeenUpdated(PLUCodeControl pcc, String pluCode) {
 		this.pluCode.setText(pluCode);
 
+	}
+	
+	public JButton[] getPluCodeButtons() {
+		return pluCodeButtons;
+	}
+	
+	public JButton getCancelButton() {
+		return cancelButton;
+	}
+	
+	public JButton getCorrectButton() {
+		return correctButton;
+	}
+	
+	public JButton getSubmitButton() {
+		return submitButton;
 	}
 
 }

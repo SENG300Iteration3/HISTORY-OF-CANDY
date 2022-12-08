@@ -26,9 +26,10 @@ public class AttendantActionsPanel extends JPanel
 	private AttendantControl ac; 
 	private BagsControl bc;
 	private ReceiptControl rc;
-	private boolean stationBlocked = true; // FIXME: Testing now. Should be false to start
+	private boolean stationBlocked = false;
+	private boolean isLoggedIn = false;
 	
-	JButton inkButton, paperButton, bagDispenserButton, coinButton, banknoteButton, outOfOrderButton;
+	JButton inkButton, paperButton, bagDispenserButton, coinButton, banknoteButton;
 	GridBagConstraints buttonGrid = new GridBagConstraints();
 
 	public AttendantActionsPanel(StationControl sc) {
@@ -50,7 +51,6 @@ public class AttendantActionsPanel extends JPanel
 		coinButton = initializeButton("Refill Coin Dispenser", "addCoin");
 		banknoteButton = initializeButton("Refill Banknote Dispenser", "addBanknote");
 		bagDispenserButton = initializeButton("Refill Bag Dispenser", "addBag");
-		outOfOrderButton = initializeButton("Out Of Order", "outOfOrder");
 		
 		this.setLayout(new GridBagLayout());
  
@@ -70,10 +70,8 @@ public class AttendantActionsPanel extends JPanel
 		buttonGrid.gridx = 4;
 		this.add(bagDispenserButton, buttonGrid);
 		
-		buttonGrid.gridx = 5;
-		this.add(outOfOrderButton, buttonGrid);
-		
-		bagDispenserButton.setEnabled(true);		// attendant should be able to load bags anytime they want to
+//		bagDispenserButton.setEnabled(true);		// attendant should be able to load bags anytime they want to
+													// I thought you need to block a station before you change it?
 		
 //		Can add messages here
 //		buttonGrid.gridy = 1;
@@ -128,12 +126,6 @@ public class AttendantActionsPanel extends JPanel
 	@Override
 	public void attendantApprovedBags(AttendantControl ac) {
 	
-	}
-
-	@Override
-	public void attendantPreventUse(AttendantControl ac) {
-		// TODO Auto-generated method stub
-		stationBlocked = true;
 	}
 
 	@Override
@@ -260,6 +252,17 @@ public class AttendantActionsPanel extends JPanel
 	@Override
 	public void setNoReceiptState(ReceiptControl rc) {
 	}
+	
+	@Override
+	public void attendantPreventUse(AttendantControl ac) {
+		stationBlocked = true;
+		
+		inkButton.setEnabled(true); 
+		paperButton.setEnabled(true); 
+		bagDispenserButton.setEnabled(true);
+		coinButton.setEnabled(true);
+		banknoteButton.setEnabled(true);
+	}
 
 	@Override
 	public void setIncompleteReceiptState(ReceiptControl rc) {
@@ -273,13 +276,13 @@ public class AttendantActionsPanel extends JPanel
 
 
 	public void attendantPermitStationUse(AttendantControl ac) {
-		// TODO Auto-generated method stub
-	}
-	
-	@Override
-	public void coinIsLowState(CoinStorageUnit unit, int amount) {
-		// TODO Auto-generated method stub
+		stationBlocked = false;
 		
+		inkButton.setEnabled(false); 
+		paperButton.setEnabled(false); 
+		bagDispenserButton.setEnabled(false);
+		coinButton.setEnabled(false);
+		banknoteButton.setEnabled(false); 
 	}
 
 	@Override
@@ -293,7 +296,7 @@ public class AttendantActionsPanel extends JPanel
 	@Override
 	public void loggedIn(boolean isLoggedIn) {
 		// TODO Auto-generated method stub
-		
+		this.isLoggedIn = isLoggedIn;
 	}
 	@Override
 	public void attendantApprovedItemRemoval(AttendantControl bc) {
@@ -326,14 +329,43 @@ public class AttendantActionsPanel extends JPanel
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void printerNotLowState() {
+		// TODO Auto-generated method stub
+		
+	}
 	@Override
 	public void banknotesInStorageLowState() {
+		// TODO Auto-generated method stub
+		if(stationBlocked && isLoggedIn) banknoteButton.setEnabled(true);
+	}
+	
+	
+	@Override
+	public void coinIsLowState(int amount) {
+		if(stationBlocked && isLoggedIn) coinButton.setEnabled(true);
+	}
+
+	@Override
+	public void banknotesNotLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void coinsNotLowState() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void printerNotLowState() {
+	public void stationShutDown(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void stationStartedUp(AttendantControl ac) {
 		// TODO Auto-generated method stub
 		
 	}

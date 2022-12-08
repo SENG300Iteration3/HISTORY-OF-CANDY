@@ -48,7 +48,7 @@ public class AttendantKeyboardPanel extends JPanel implements KeyboardControlLis
 	private static final String[] END_OF_ROW = new String[] {"Delete", "Backspace", "\\ |", "Enter", "PgDn", "Right Arrow"};
 	private static final int NUM_ROWS = END_OF_ROW.length;
 	private static final JPanel[] KEY_ROWS = new JPanel[NUM_ROWS];
-	private static final int KEYBOARD_HEIGHT = 500;
+	private static final int KEYBOARD_HEIGHT = 400;
 
 	private Map<String, JButton> keyBtnMap = new HashMap<>();
 	private JPanel keyboardContainer;
@@ -142,7 +142,7 @@ public class AttendantKeyboardPanel extends JPanel implements KeyboardControlLis
 		final GUI_JButton keyBtn = new GUI_JButton();
 		keyBtn.setText(label.replace(" Arrow", "").replace("FnLock ", "")); // Remove unnecessary text
 		keyBtn.setFont(GUI_Fonts.SMALL_BOLD);
-		keyBtn.setPreferredSize(new Dimension(width, 60));
+		keyBtn.setPreferredSize(new Dimension(width, 50));
 		keyBtn.setMargin(new Insets(0, 0, 0, 0));
 		keyBtn.setBorder(BorderFactory.createLineBorder(GUI_Color_Palette.DARK_BLUE, 4));
 		keyBtn.setActionCommand("KEY_PRESS: " + key);
@@ -246,12 +246,6 @@ public class AttendantKeyboardPanel extends JPanel implements KeyboardControlLis
 	}
 
 	@Override
-	public void coinIsLowState(CoinStorageUnit unit, int amount) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void loggedIn(boolean isLoggedIn) {
 		// TODO Auto-generated method stub
 		
@@ -307,6 +301,36 @@ public class AttendantKeyboardPanel extends JPanel implements KeyboardControlLis
 
 	@Override
 	public void printerNotLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void coinIsLowState(int amount) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void banknotesNotLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void coinsNotLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void stationShutDown(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void stationStartedUp(AttendantControl ac) {
 		// TODO Auto-generated method stub
 		
 	}

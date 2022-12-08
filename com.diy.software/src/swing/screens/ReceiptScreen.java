@@ -65,6 +65,8 @@ public class ReceiptScreen extends Screen implements ReceiptControlListener{
 			public void actionPerformed(ActionEvent e) {
 				systemControl.goToInitialScreenOnUI();
 				//TODO: Resetting the station
+				systemControl.getItemsControl().resetState();
+				systemControl.getReceiptControl().callTakeReceipt();
 			}
 		});
 		this.addLayer(okayButton, 100);
@@ -120,7 +122,6 @@ public class ReceiptScreen extends Screen implements ReceiptControlListener{
 
 	@Override
 	public void setTakeReceiptState(ReceiptControl rc) {
-		// TODO Auto-generated method stub
 		
 	}
 
