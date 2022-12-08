@@ -347,9 +347,9 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		
 		if(subtotalLabel.getText().equals("Subtotal: $0.00")) {
 			System.out.println(subtotalLabel.getText());
-			doneBtn.setEnabled(false);
-		}else {
 			doneBtn.setEnabled(true);
+		}else {
+			doneBtn.setEnabled(false);
 		}
 	}
 
