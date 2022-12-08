@@ -69,7 +69,6 @@ public class CashControlTest {
 		this.currency = Currency.getInstance("CAD");
 				
 		cs.addListener(bns);
-		cs.paymentFailed();
 	}
 
 	@Test
@@ -270,6 +269,30 @@ public class CashControlTest {
 	}
 
 	@Test
+	public void testBanknotesInStorageLow() throws SimulationException, TooMuchCashException {
+		for (int i = 0; i < 1; i++) {
+			sc.station.banknoteStorage.load(new Banknote(currency, 1));
+		}
+		assertTrue(cs.banknotesInStorageLow(sc.station.banknoteStorage));
+	}
+	
+	@Test
+	public void testBanknotesInStorageNotLow() throws SimulationException, TooMuchCashException {
+		for (int i = 0; i < 100; i++) {
+			sc.station.banknoteStorage.load(new Banknote(currency, 1));
+		}
+		assertFalse(cs.banknotesInStorageLow(sc.station.banknoteStorage));
+	}
+	
+	@Test
+	public void testBanknotesInStorageAtThreshold() throws SimulationException, TooMuchCashException {
+		for (int i = 0; i < 50; i++) {
+			sc.station.banknoteStorage.load(new Banknote(currency, 1));
+		}
+		assertTrue(cs.banknotesInStorageLow(sc.station.banknoteStorage));
+	}
+	
+	@Test
 	public void testActionPerformed() {
 		try {
 			ActionEvent e = new ActionEvent(this, 0, "d 123");
@@ -385,6 +408,12 @@ public class CashControlTest {
 			if(returnedCash != 0.0) {
 				lastReturnedCash = returnedCash;
 			}
+		}
+
+		@Override
+		public void paymentFailed(CashControl cc, boolean a) {
+			// TODO Auto-generated method stub
+			
 		}
 	}
 }
