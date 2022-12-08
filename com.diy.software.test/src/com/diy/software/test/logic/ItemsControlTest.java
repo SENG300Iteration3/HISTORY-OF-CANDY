@@ -48,6 +48,7 @@ public class ItemsControlTest {
 
 		fdi = new FakeDataInitializer();
 		fdi.addProductAndBarcodeData();
+		fdi.addPLUCodedProduct();
 		systemControl = new StationControl();
 		itemsControl = new ItemsControl(systemControl);
 		stub = new StubItemsControl();
@@ -165,6 +166,48 @@ public class ItemsControlTest {
 		assertTrue(sc.getExpectedWeight() == 0);
 	}
 	
+	/**
+	 * Should print error
+	 */
+	@Test
+	public void testWeightItemBarcodedItem() {
+		StationControl sc = new StationControl(fdi);
+		itemsControl = sc.getItemsControl();		
+		BarcodedItem item = fdi.getBarcodedItems()[2];    		
+		itemsControl.setCurrentProductCode(fdi.getPLUCodes()[2]);
+		sc.station.scanningArea.add(item);
+		itemsControl.weighItem();
+	}
+	
+	/**
+	 * Will add the item to the scanning area
+	 * Scanning area should return proper weight
+	 * with some variance due to scale sensitivity
+	 */
+	@Test
+	public void testWeightItemPLUCodedItem() {
+		StationControl sc = new StationControl(fdi);
+		itemsControl = sc.getItemsControl();		
+		PLUCodedItem item = new PLUCodedItem(fdi.getPLUCode()[0], 10);
+		try {
+			System.out.println(sc.station.scanningArea.getCurrentWeight());
+			assertTrue(sc.station.scanningArea.getCurrentWeight() < 1); // to account for scale sensitivity (or lack thereof)
+		} catch (OverloadException e) {
+			e.printStackTrace();
+		}
+		itemsControl.setCurrentItem(item);
+		itemsControl.setIsPLU(true);
+		itemsControl.weighItem();
+		try {
+			System.out.println(sc.station.scanningArea.getCurrentWeight());
+			assertTrue(sc.station.scanningArea.getCurrentWeight() >= 10); // to account for scale sensitivity (or lack thereof)
+		} catch (OverloadException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
 	
 	/**
 	 * Should return false when scale has no weight on it
@@ -243,6 +286,7 @@ public class ItemsControlTest {
 		assertTrue(itemsControl.getCheckoutTotal() == 0);
 	}
 	
+
 	
 	@Test
 	public void testPlaceItemOnScaletoolight() {
@@ -310,8 +354,32 @@ public class ItemsControlTest {
 		assertFalse(stub2.bagging);
 		assertFalse(stub2.selected);
 	}
-
+	
+	/*
+	 * Listener test
+	 */
 	@Test
+	public void testRequestRemoveItem() {
+		assertFalse(stub.removeRequest);
+		itemsControl.requestRemoveItem();
+		assertTrue(stub.removeRequest);
+	}
+	
+	/*
+	 * Listener test
+	 */
+	@Test
+	public void testNotifyItemRemoved() {
+		assertFalse(stub.itemRemoveTriggered);
+		itemsControl.notifyItemRemoved();
+		assertTrue(stub.itemRemoveTriggered);
+	}
+	
+	@Test
+	/**
+	 * awaitingAttendantToApproveItemRemoval method should be
+	 * triggered in stub.
+	 */
 	public void testPickupNextItemNull() {
 		assertTrue(stub.available);
 		itemsControl.pickupNextItem();
@@ -608,6 +676,17 @@ public class ItemsControlTest {
 	}
 
 
+	@Test
+	public void testAddPLUToAddItemToCheckoutList() {
+		assertTrue(itemsControl.getCheckoutList().size() == 0);
+		itemsControl.addItemToCheckoutList(null, fdi.getPLUCode()[0]);
+		assertTrue(itemsControl.getCheckoutList().size() == 1);
+	}
+	
+	@Test
+	public void testGetWrongBaggedItem() {
+		assertTrue(itemsControl.getWrongBaggedItem().getWeight() == 235);
+	}
 
 	@Test
 	public void testaddScannedItemToCheckoutListNull() {
@@ -716,6 +795,8 @@ public class ItemsControlTest {
 		boolean available = true;
 		boolean selected = false;
 		boolean bagging = false;
+		boolean removeRequest = false;
+		boolean itemRemoveTriggered = false;
 		public boolean itemsHaveBeenUpdated = false;
 		public boolean productSubtotalUpdated = false;
 		public boolean removeItem = false;
@@ -775,13 +856,13 @@ public class ItemsControlTest {
 
 		@Override
 		public void itemRemoved(ItemsControl itemsControl) {
-			// TODO Auto-generated method stub
+			itemRemoveTriggered = true;
 
 		}
 
 		@Override
 		public void awaitingAttendantToApproveItemRemoval(ItemsControl ic) {
-			// TODO Auto-generated method stub
+			removeRequest = true;
 
 		}
 

@@ -152,6 +152,9 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		refreshGui();
 	}
 	
+	/**
+	 * notifies registered ItemsControlListeners when an has been removed
+	 */
 	public void notifyItemRemoved() {
 		for (ItemsControlListener l : listeners){
 			l.itemRemoved(this);
@@ -444,6 +447,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 	/**
 	 * Weighs the item before entering the plu code.
+	 * 	Prints error message if the item on the scale is a barcodedItem
+	 *  (don't need to weigh barcoded items)
 	 */
 	public void weighItem() {
 		if(isPLU) {
