@@ -187,7 +187,8 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	 * @param index 
 	 * 			The item number displayed on screen which you want to remove
 	 * @return
-	 * 		True if the index is within . False otherwise.
+	 * 		True if the index is within range (i.e. items or bags exist to be remove) 
+	 * 		False otherwise.
 	 */
 	public boolean removeItem(int index) {
 		double weight;
@@ -228,10 +229,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			//sc.goToInitialScreenOnUI();
 			return true;
 		}
-		else {
-			return false;
-		}
-
+		return false;
 	}
 	
 	public ArrayList<Tuple<String, Double>> getItemDescriptionPriceList() {

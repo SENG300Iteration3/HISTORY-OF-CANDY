@@ -22,7 +22,7 @@ public class BagDispenserControl implements ActionListener {
 		this.listeners = new ArrayList<>();
 	}
 	
-	private void dispenseBag() {
+	public void dispenseBag() {
 		while(numBag > 0) {
 			try {
 				// add the dispensed bag to checkout item list
@@ -87,9 +87,11 @@ public class BagDispenserControl implements ActionListener {
 				}
 				break;
 			case "submit":
-				numBag = Integer.parseInt(input); 
-				if(numBag > 0) {
-					checkBagInStock();
+				if(input != "") {
+					numBag = Integer.parseInt(input); 
+					if(numBag > 0) {
+						checkBagInStock();
+					}
 				}
 				break;
 			case "dispense remaining":
