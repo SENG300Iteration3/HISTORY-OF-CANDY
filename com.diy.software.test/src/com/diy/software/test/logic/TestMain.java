@@ -58,7 +58,7 @@ public class TestMain {
 	BagsControl bc;
 	ItemsControl ic;
 	PinPadControl ppc;
-	ArrayList<Tuple<String, Double>> checkoutList;
+	ArrayList<Object> checkoutList;
 	double checkoutListTotal;
 	double weightOfLastItem;
 	double expectedWeight;
