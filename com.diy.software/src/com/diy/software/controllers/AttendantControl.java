@@ -73,10 +73,6 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 	public void addListener(AttendantControlListener l) {
 		listeners.add(l);
 	}
-
-	public void removeListener(AttendantControlListener l) {
-		listeners.remove(l);
-	}
 	
 	public TextLookupControl getTextLookupControl() {
 		return tlc;

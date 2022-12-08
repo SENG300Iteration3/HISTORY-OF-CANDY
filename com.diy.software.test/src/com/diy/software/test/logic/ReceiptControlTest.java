@@ -98,7 +98,6 @@ public class ReceiptControlTest {
 	
 	@After
 	public void teardown() {
-		ac.removeListener(acl);
 		rp.disable();
 		rp.turnOff();
 		rp.unplug();
@@ -788,6 +787,30 @@ public class ReceiptControlTest {
 
 		@Override
 		public void loggedIn(boolean isLoggedIn) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void banknotesInStorageLowState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerItemSearchScreen(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void exitTextSearchScreen(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void printerNotLowState() {
 			// TODO Auto-generated method stub
 			
 		}

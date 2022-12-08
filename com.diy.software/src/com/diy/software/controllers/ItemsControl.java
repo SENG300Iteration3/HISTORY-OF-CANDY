@@ -299,19 +299,15 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		try {
 			// TODO: Find another way to do this
 			this.currentItem = sc.customer.shoppingCart.get(sc.customer.shoppingCart.size() - 1);
-			isPLU = currentItem.getClass() == PLUCodedItem.class;
+			isPLU = currentItem instanceof PLUCodedItem;
 			if(isPLU) {
 				expectedPLU = ((PLUCodedItem)currentItem).getPLUCode();
 			}
 
 			sc.customer.selectNextItem();
-			if (currentItem instanceof PLUCodedItem) {
-				for (ItemsControlListener l : listeners)
-					l.itemWasSelected(this);
-			} else {
-				for (ItemsControlListener l : listeners)
-					l.itemWasSelected(this);
-			}
+			for (ItemsControlListener l : listeners)
+				l.itemWasSelected(this);
+			
 			if (sc.customer.shoppingCart.size() == 0) {
 				for (ItemsControlListener l : listeners)
 					l.noMoreItemsAvailableInCart(this);
@@ -356,13 +352,14 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 			double weight = weightofScannerTray - sc.getWeightOfScannerTray();
 
-
 			System.out.println(weight + " Scale weight");
 
 			sc.setWeightOfScannerTray(weightofScannerTray);
 			sc.updateExpectedCheckoutWeight(weight);
 			sc.updateWeightOfLastItemAddedToBaggingArea(weight);
-
+			sc.weightOfLastItem = weight;
+ 
+//			System.out.println(sc.weightOfLastItem);
 			// Maybe add this to the right of the item in the checkout list
 			System.out.println("Weight of item: " + weight);
 
@@ -419,13 +416,13 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 			// simulating a 40% chance of putting wrong item on the scale
 			if (random.nextDouble(0.0, 1.0) > PROBABILITY_OF_BAGGING_WRONG_ITEM) {
 				weighSuccess = true;
-				sc.customer.placeItemInBaggingArea();
+				sc.bagItem();
 				sc.getAttendantControl().itemBagged();			// cancel no bag request if there is one
 			} else {
 				// simulation weight discrepancy
 				scaleReceivedWeight = wrongBaggedItem.getWeight();
 				removedWrongBaggedItem = false;
-				sc.customer.placeItemInBaggingArea();
+				sc.bagItem();
 				sc.station.baggingArea.add(wrongBaggedItem);
 				System.out.println(wrongBaggedItem);
 			}
@@ -528,12 +525,11 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 
 			System.err.println("PLU code does not exist in the database");
 			throw new NullPointerException("PLU code does not exist in the database");
-		}
+		}			
 			if(!isPLU) {
-
 				System.err.println("The currently selected item has no PLU code! Or there is no item selected!");
 				currentProductCode = null;
-				sc.goBackOnUI();;
+				sc.goBackOnUI();
 			} else if(expectedPLU.hashCode() != currentProductCode.hashCode()) {
 
 				System.err.println("You entered the wrong PLU code for the item!");
