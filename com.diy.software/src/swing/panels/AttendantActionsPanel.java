@@ -360,5 +360,26 @@ public class AttendantActionsPanel extends JPanel
 		// TODO Auto-generated method stub
 		
 	}
+	
+
+	public JButton getInkButton() {
+		return inkButton;
+	}
+	
+	public JButton getPaperButton() {
+		return paperButton;
+	}
+	
+	public JButton getBagDispenserButton() {
+		return bagDispenserButton;
+	}
+	
+	public JButton getCoinButton() {
+		return coinButton;
+	}
+	
+	public JButton getBanknoteButton() {
+		return banknoteButton;
+	}
 }
 
