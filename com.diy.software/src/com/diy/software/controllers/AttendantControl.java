@@ -32,7 +32,6 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 	private StationControl sc;
 	private ItemsControl ic;
 	private ArrayList<AttendantControlListener> listeners;
-	private CoinStorageUnit unit;
 	private Currency currency;
 	private TextLookupControl tlc;
 	private KeyboardControl kc;
@@ -336,7 +335,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 		sc.getCashControl().banknotesLoaded(unit);
 		sc.getCashControl().enablePayments();
 	}
-	
+
 	/**
 	 * fills up the coin slot and then signal cash controller that everything is okay
 	 *
@@ -437,7 +436,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 		}
 		return count;
 	}
-	
+
 
 	/**
 	 * based on the button clicked, the switch controls the GUI to react to user
