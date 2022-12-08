@@ -1,6 +1,6 @@
 package swing.screens;
 
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -27,6 +27,7 @@ public class OkayPromptScreen extends Screen {
 		promptLabel.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		promptLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		promptLabel.setPreferredSize(new Dimension(this.width - 200, 100));
+		promptLabel.setForeground(Color.BLACK);
 		this.addLayer(promptLabel, 0);
 
 		if(okay) {

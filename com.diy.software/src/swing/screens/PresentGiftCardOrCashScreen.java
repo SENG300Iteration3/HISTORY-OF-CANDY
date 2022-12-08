@@ -1,6 +1,6 @@
 package swing.screens;
 
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -96,8 +96,10 @@ public class PresentGiftCardOrCashScreen extends Screen implements CashControlLi
 	public void cashInserted(CashControl cc) {
 		if (isGiftCard) {
 			this.prompt.setText("Please swipe gift card. Total remaining: $" + fix(systemControl.getItemsControl().getCheckoutTotal()));
+			prompt.setForeground(Color.BLACK);
 		} else {
 			this.prompt.setText("Please insert $" + fix(systemControl.getItemsControl().getCheckoutTotal()));
+			prompt.setForeground(Color.BLACK);
 		}
 	}
 	
