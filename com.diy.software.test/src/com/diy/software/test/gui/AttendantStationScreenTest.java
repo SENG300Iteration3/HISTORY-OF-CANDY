@@ -48,24 +48,53 @@ public class AttendantStationScreenTest {
 	@Test
 	public void testStartUpButton() {
 		sc.station.unplug();
+		screen.getStartUpButton().setEnabled(true);
 		screen.getStartUpButton().doClick();
-		assertTrue(sc.station.screen.isPluggedIn());
-		assertTrue(sc.station.screen.isPoweredUp());
+		assertTrue(aStub.startup);
 	}
 	
 	@Test
 	public void testShutdownButton() {
 		screen.getShutDownButton().setEnabled(true);
 		screen.getShutDownButton().doClick();
-		assertFalse(sc.station.screen.isPluggedIn());
-		assertFalse(sc.station.screen.isPoweredUp());
+		assertTrue(aStub.shutdown);
+	}
+	
+	@Test
+	public void testPermitButton() {
+		screen.getPermitButton().setEnabled(true);
+		screen.getPermitButton().doClick();
+		assertFalse(sc.station.handheldScanner.isDisabled());
+		
+	}
+	
+	@Test
+	public void testPreventButton() {
+		sc.station.handheldScanner.disable();
+		screen.getPreventButton().setEnabled(true);
+		screen.getPreventButton().doClick();
+		assertTrue(sc.station.handheldScanner.isDisabled());
+	}
+	
+	@Test
+	public void testAddItemButton() {
+		screen.getAddItemButton().doClick();
+		assertTrue(aStub.triggerTextSearch);
+	}
+	
+	@Test
+	public void testRemoveItemButton() {
+		
+	}
+	
+	@Test
+	public void testLogoutButton() {
+		
 	}
 	
 	@Test
 	public void testApproveAddedBagsButton() {
-		screen.getApproveAddedBagsButton().setEnabled(true);
-		screen.getApproveAddedBagsButton().doClick();
-		assertTrue(aStub.attendantApprovedBags);
+		
 	}
 	
 	public class AttendantControlListenerStub implements AttendantControlListener {
@@ -76,6 +105,9 @@ public class AttendantStationScreenTest {
 		public boolean removeItemApproved = false;
 		public boolean initialState = false;
 		public boolean attendantApprovedBags = false;
+		public boolean shutdown = false;
+		public boolean startup = false;
+		public boolean triggerTextSearch = false;
 
 		@Override
 		public void attendantApprovedBags(AttendantControl ac) {
@@ -211,7 +243,7 @@ public class AttendantStationScreenTest {
 
 		@Override
 		public void triggerItemSearchScreen(AttendantControl ac) {
-			// TODO Auto-generated method stub
+			triggerTextSearch = true;
 			
 		}
 
@@ -223,13 +255,13 @@ public class AttendantStationScreenTest {
 
 		@Override
 		public void stationShutDown(AttendantControl ac) {
-			// TODO Auto-generated method stub
+			shutdown = true;
 			
 		}
 
 		@Override
 		public void stationStartedUp(AttendantControl ac) {
-			// TODO Auto-generated method stub
+			startup = true;
 			
 		}
 		
