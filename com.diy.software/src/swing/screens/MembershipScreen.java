@@ -66,7 +66,7 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 		scanSwipeButton.addActionListener(mc);
 		scanSwipePanel.add(scanSwipeButton, gridConstraint);
 		
-		addLayer(scanSwipePanel, 0);
+		addLayer(scanSwipePanel, -150);
 
 		numberInputPanel = new GUI_JPanel();
 		numberInputPanel.setLayout(new GridBagLayout());
@@ -126,7 +126,7 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 		centerPanel.setLayout(new GridLayout(1, 0));
 
 		centerPanel.add(memberMssg);
-		addLayer(centerPanel, 10);
+		addLayer(centerPanel, -40);
 
 	}
 
