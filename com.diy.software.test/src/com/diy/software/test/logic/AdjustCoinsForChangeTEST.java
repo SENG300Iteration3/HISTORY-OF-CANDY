@@ -201,17 +201,7 @@ public class AdjustCoinsForChangeTEST {
 			
 		}
 
-		@Override
-		public void addPaperState() {
-			// TODO Auto-generated method stub
-			
-		}
 
-		@Override
-		public void addInkState() {
-			// TODO Auto-generated method stub
-			
-		}
 
 		@Override
 		public void printerNotLowState() {
