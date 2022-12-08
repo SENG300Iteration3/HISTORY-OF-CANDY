@@ -132,5 +132,11 @@ public class AttendantControlStub implements AttendantControlListener{
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void printerNotLowState() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }
