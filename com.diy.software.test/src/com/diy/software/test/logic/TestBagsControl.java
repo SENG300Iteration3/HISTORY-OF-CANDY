@@ -236,6 +236,16 @@ public class TestBagsControl {
 	@After 
 	public void teardown() {
 		PowerGrid.reconnectToMains();
+		bc = null;
+		sc = null;
+		bls = null;
+		fdi = null;
+		ic = null;
+		item1 = null;
+		item2 = null;
+		item3 = null;
+		item4 = null;
+		items = null;
 	}
 	
 	
