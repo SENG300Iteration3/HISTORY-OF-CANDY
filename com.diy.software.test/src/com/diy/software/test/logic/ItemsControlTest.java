@@ -9,12 +9,17 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.diy.software.util.Tuple;
+import com.diy.hardware.PLUCodedItem;
+import com.diy.hardware.PLUCodedProduct;
+import com.diy.hardware.PriceLookUpCode;
+import com.diy.hardware.external.ProductDatabases;
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.ItemsControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.AttendantControlListener;
 import com.diy.software.listeners.ItemsControlListener;
+import com.jimmyselectronics.Item;
 import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodedItem;
@@ -22,12 +27,13 @@ import com.jimmyselectronics.necchi.Numeral;
 import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import ca.powerutility.PowerGrid;
+import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
 
 public class ItemsControlTest {
 	ItemsControl itemsControl;
 	StationControl systemControl;
 	StubItemsControl stub;
-	BarcodedItem item;
+	Item item;
 	Barcode barcode;
 	FakeDataInitializer fdi;
 	Tuple<String, Double> itemTuple;
@@ -173,6 +179,7 @@ public class ItemsControlTest {
 		assertTrue(stub.available);
 	}
 
+<<<<<<< HEAD
 	// @Test
 	// public void testScanCurrentItem() {
 	// 	systemControl.customer.shoppingCart.add(item);
@@ -184,6 +191,19 @@ public class ItemsControlTest {
 	// 	}
 	// 	assertTrue(stub.bagging);
 	// }
+=======
+//	@Test
+//	public void testScanCurrentItem() {
+//		systemControl.customer.shoppingCart.add(item);
+//		systemControl.customer.selectNextItem();
+//		assertFalse(stub.bagging);
+//
+//		while (!stub.bagging) {
+//			itemsControl.scanCurrentItem(true);
+//		}
+//		assertTrue(stub.bagging);
+//	}
+>>>>>>> 2d2a8757714140397ba2a567a37e7c9a4606ec52
 
 	@Test
 	public void testScanCurrentItemScanFail() {
@@ -209,6 +229,7 @@ public class ItemsControlTest {
 		assertFalse(stub.selected);
 	}
 
+<<<<<<< HEAD
 	// @Test
 	// public void testPlaceItemOnScaleInTime() {
 
@@ -226,6 +247,25 @@ public class ItemsControlTest {
 	// 	assertFalse(stub.bagging);
 	// 	assertFalse(stub.selected);
 	// }
+=======
+//	@Test
+//	public void testPlaceItemOnScaleInTime() {
+//
+//		systemControl.customer.shoppingCart.add(item);
+//		systemControl.customer.selectNextItem();
+//		assertFalse(stub.bagging);
+//
+//		while (!stub.bagging) {
+//			itemsControl.scanCurrentItem(true);
+//		}
+//		assertTrue(stub.bagging);
+//		stub.bagging = true;
+//		stub.selected = true;
+//		itemsControl.placeItemOnBaggingArea();
+//		assertFalse(stub.bagging);
+//		assertFalse(stub.selected);
+//	}
+>>>>>>> 2d2a8757714140397ba2a567a37e7c9a4606ec52
 
 	@Test
 	public void testPlaceItemOnScaletoolight() {
@@ -255,12 +295,35 @@ public class ItemsControlTest {
 
 	}
 
-	@Test
-	public void testPlaceItemWrongItem() {
-		BarcodedItem heavyItem = new BarcodedItem(new Barcode(new Numeral[] { Numeral.one }), 100.0);
-		systemControl.customer.shoppingCart.add(heavyItem);
-		systemControl.customer.selectNextItem();
+//	@Test
+//	public void testPlaceItemWrongItem() {
+//		BarcodedItem heavyItem = new BarcodedItem(new Barcode(new Numeral[] { Numeral.one }), 100.0);
+//		systemControl.customer.shoppingCart.add(heavyItem);
+//		systemControl.customer.selectNextItem();
+//
+//		systemControl.updateExpectedCheckoutWeight(100.0);
+//		stub.removeItem = false;
+//		while (!stub.removeItem) {
+//			itemsControl.placeItemOnBaggingArea();
+//			if (!stub.removeItem) {
+//				systemControl.station.baggingArea.remove(heavyItem);
+//				systemControl.customer.shoppingCart.add(heavyItem);
+//				systemControl.customer.selectNextItem();
+//			}
+//		}
+//
+//		assertFalse(systemControl.expectedWeightMatchesActualWeight(100));
+//
+//		try {
+//			assertTrue(systemControl.station.baggingArea.getCurrentWeight() >= itemsControl.getWrongBaggedItem().getWeight());
+//			assertTrue(
+//					systemControl.station.baggingArea.getCurrentWeight() - 1 <= itemsControl.getWrongBaggedItem().getWeight());
+//		} catch (OverloadException e) {
+//		}
+//
+//	}
 
+<<<<<<< HEAD
 		systemControl.updateExpectedCheckoutWeight(100.0);
 		stub.removeItem = false;
 		while (!stub.removeItem) {
@@ -309,6 +372,39 @@ public class ItemsControlTest {
 		}
 
 	}
+=======
+//	@Test
+//	public void testPlaceItemRemoveLastItem() {
+//		systemControl.customer.shoppingCart.add(itemsControl.getWrongBaggedItem());
+//		systemControl.customer.selectNextItem();
+//<<<<<<< HEAD
+//		
+//		itemsControl.placeItemOnBaggingArea();
+//		
+//		
+//=======
+//
+//		itemsControl.placeItemOnScale();
+//
+//>>>>>>> 2ca2c2d2fc7b8db7130ff9c97edf79962864bd32
+//		try {
+//			System.out.println(systemControl.station.baggingArea.getCurrentWeight());
+//			assertTrue(systemControl.station.baggingArea.getCurrentWeight() >= itemsControl.getWrongBaggedItem().getWeight());
+//		} catch (OverloadException e) {
+//		}
+//		stub.selected = true;
+//		stub.bagging = true;
+//
+//		itemsControl.removeLastBaggedItem();
+//		assertFalse(stub.selected);
+//		assertFalse(stub.bagging);
+//		try {
+//			assertTrue(systemControl.station.baggingArea.getCurrentWeight() <= 1);
+//		} catch (OverloadException e) {
+//		}
+//
+//	}
+>>>>>>> 2d2a8757714140397ba2a567a37e7c9a4606ec52
 
 	@Test
 	public void testPlaceBulkyItemInCart() {
@@ -368,6 +464,7 @@ public class ItemsControlTest {
 
 	}
 
+<<<<<<< HEAD
 	// @Test
 	// public void testActionPerformedScan() {
 	// 	ActionEvent e = new ActionEvent(this, 0, "handheld scan");
@@ -384,6 +481,24 @@ public class ItemsControlTest {
 	// 	assertTrue(stub.bagging);
 
 	// }
+=======
+//	@Test
+//	public void testActionPerformedScan() {
+//		ActionEvent e = new ActionEvent(this, 0, "handheld scan");
+//
+//		systemControl.customer.shoppingCart.add(item);
+//
+//		systemControl.customer.shoppingCart.add(item);
+//		systemControl.customer.selectNextItem();
+//		assertFalse(stub.bagging);
+//
+//		while (!stub.bagging) {
+//			itemsControl.actionPerformed(e);
+//		}
+//		assertTrue(stub.bagging);
+//
+//	}
+>>>>>>> 2d2a8757714140397ba2a567a37e7c9a4606ec52
 
 	@Test
 	public void testActionPerformedPutBack() {
@@ -483,7 +598,7 @@ public class ItemsControlTest {
 		assertTrue(stub.itemsHaveBeenUpdated);
 		assertTrue(stub.productSubtotalUpdated);
 
-		output = itemsControl.getCheckoutList().get(0);
+		output = (Tuple<String, Double>) itemsControl.getCheckoutList().get(0);
 		assertTrue(output.x.equals("Can of Beans"));
 		assertTrue(output.y == (double) 2);
 	}
@@ -501,7 +616,7 @@ public class ItemsControlTest {
 		assertTrue(stub.itemsHaveBeenUpdated);
 		assertTrue(stub.productSubtotalUpdated);
 
-		output = itemsControl.getCheckoutList().get(0);
+		output = (Tuple<String, Double>) itemsControl.getCheckoutList().get(0);
 		assertTrue(output.x.equals("Can of Beans"));
 		assertTrue(output.y == (double) 2);
 		assertTrue(itemsControl.getCheckoutTotal() == (double) 2);
@@ -551,6 +666,64 @@ public class ItemsControlTest {
 	public void testOutOfOverload() {
 		itemsControl.outOfOverload(systemControl.station.baggingArea);
 		assertTrue(itemsControl.userMessage.equals("Excessive weight removed, continue scanning"));
+	}
+
+	@Test(expected = NullPointerSimulationException.class)
+	public void testAddPLUCodedItemByBrowsing() {
+		PriceLookUpCode pcode = new PriceLookUpCode("4444");
+		PLUCodedProduct pcp = new PLUCodedProduct(pcode, "Durian", 9);
+		PLUCodedItem pitem = new PLUCodedItem(pcode, 200);
+		ProductDatabases.PLU_PRODUCT_DATABASE.put(pcode, pcp);
+		ProductDatabases.INVENTORY.put(pcp, 10);
+
+		itemsControl.setCurrentItem(pitem);
+		itemsControl.setIsPLU(true);
+		itemsControl.setCurrentProductCode(pcode);
+		itemsControl.setExpectedPLU(pcode);
+
+		// Flip Switch to Enter Catalog Browsing Code
+		ActionEvent e = new ActionEvent(this, 0, "catalog");
+		itemsControl.actionPerformed(e);
+
+		e = new ActionEvent(this, 0, "Durian");
+		itemsControl.actionPerformed(e);
+		assertFalse(itemsControl.getInCatalog());
+	}
+
+	@Test
+	public void testAddPLUCodedItemNotInProductDatabaseByBrowsing() {
+		itemsControl.setIsPLU(true);
+
+		// Flip Switch to Enter Catalog Browsing Code
+		ActionEvent e = new ActionEvent(this, 0, "catalog");
+		itemsControl.actionPerformed(e);
+
+		e = new ActionEvent(this, 0, "Strawberry");
+		itemsControl.actionPerformed(e);
+		assertTrue(itemsControl.getInCatalog());
+	}
+
+	@Test
+	public void testAddNonPLUCodedItemItemByBrowsing() {
+		// Flip Switch to Enter Catalog Browsing Code
+		ActionEvent e = new ActionEvent(this, 0, "catalog");
+		itemsControl.actionPerformed(e);
+
+		e = new ActionEvent(this, 0, "Can of Beans");
+		itemsControl.actionPerformed(e);
+		assertFalse(itemsControl.getInCatalog());
+	}
+
+	@Test
+	public void testCancelCatalog() {
+		// Flip Switch to Enter Catalog Browsing Code
+		ActionEvent e = new ActionEvent(this, 0, "catalog");
+		itemsControl.actionPerformed(e);
+		assertTrue(itemsControl.getInCatalog());
+
+		e = new ActionEvent(this, 0, "cancel catalog");
+		itemsControl.actionPerformed(e);
+		assertFalse(itemsControl.getInCatalog());
 	}
 
 	public class StubItemsControl implements ItemsControlListener {
@@ -611,7 +784,23 @@ public class ItemsControlTest {
 		@Override
 		public void awaitingItemToBePlacedInScanningArea(StationControl sc) {
 			// TODO Auto-generated method stub
+<<<<<<< HEAD
 			
+=======
+
+		}
+
+		@Override
+		public void itemRemoved(ItemsControl itemsControl) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void awaitingAttendantToApproveItemRemoval(ItemsControl ic) {
+			// TODO Auto-generated method stub
+
+>>>>>>> 2d2a8757714140397ba2a567a37e7c9a4606ec52
 		}
 
 	}
@@ -638,13 +827,13 @@ public class ItemsControlTest {
 		}
 
 		@Override
-		public void addPaperState() {
+		public void addTooMuchPaperState() {
 			addPaper = true;
 
 		}
 
 		@Override
-		public void addInkState() {
+		public void addTooMuchInkState() {
 			addInk = true;
 
 		}
@@ -715,9 +904,27 @@ public class ItemsControlTest {
 		}
 
 		@Override
+<<<<<<< HEAD
 		public void itemBagged() {
 			// TODO Auto-generated method stub
 			
+=======
+		public void attendantApprovedItemRemoval(AttendantControl bc) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void itemBagged() {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void banknotesInStorageLowState() {
+			// TODO Auto-generated method stub
+
+>>>>>>> 2d2a8757714140397ba2a567a37e7c9a4606ec52
 		}
 	}
 }

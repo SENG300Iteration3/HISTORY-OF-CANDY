@@ -10,7 +10,7 @@ public interface ReceiptControlListener {
 	public void outOfInkOrPaper(ReceiptControl rc, String message);
 	
 	/**
-	 * used to pass a list of checked out items
+	 * used to pass a single checked out item
 	 */
 	public void setCheckedoutItems(ReceiptControl rc, String message);
 	
@@ -22,12 +22,17 @@ public interface ReceiptControlListener {
 	/**
 	 * used to pass the date and time receipt is printed
 	 */
+	public void setMembership(ReceiptControl rc, String dateTime);
+	
+	/**
+	 * used to pass the date and time receipt is printed
+	 */
 	public void setDateandTime(ReceiptControl rc, String dateTime);
 	
 	/**
 	 * thank you message
 	 */
-	public void setThankyouMessage(ReceiptControl rc, String dateTime);
+	public void setThankyouMessage(ReceiptControl rc, String thankyou);
 	
 	/**
 	 * successfully printed receipt and activates take receipt button
@@ -38,6 +43,17 @@ public interface ReceiptControlListener {
 	 * turn off take receipt button 
 	 */
 	public void setNoReceiptState(ReceiptControl rc);
+	
+	/**
+	 * simulate customer action of taking a incomplete receipt because the printer ran out of ink or paper so the printer can
+	 * print a complete receipt
+	 */
+	public void setIncompleteReceiptState(ReceiptControl rc);
+	
+	/**
+	 * incomplete receipt has been taken, turn the customer actions button off
+	 */
+	public void setNoIncompleteReceiptState(ReceiptControl rc);
 	
 	
 }

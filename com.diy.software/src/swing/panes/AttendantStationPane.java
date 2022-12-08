@@ -19,20 +19,22 @@ import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import swing.screens.AttendantLoginScreen;
 import swing.screens.AttendantStationScreen;
+import swing.screens.RemoveItemScreen;
 import swing.styling.GUI_JFrame;
 import swing.styling.Screen;
 
 public class AttendantStationPane implements AttendantControlListener {
-
 	//It doesn't matter if these components are public
 	//because they can be accessed by getting the components inside the AttendantLoginScreen
 	public Component currentComponent;
 	public AttendantLoginScreen loginScreen;
-	public JTabbedPane tabbedPane;
+	public JTabbedPane tabbedPane; 
 	public JFrame frame;
+	private PaneControl pc;
 	
 	public AttendantStationPane(PaneControl pc, JFrame frame) {
 		this.frame = frame;
+		this.pc = pc;
 		
 		this.loginScreen = new AttendantLoginScreen(pc.getStationControls());
 		this.tabbedPane = new JTabbedPane();
@@ -69,20 +71,45 @@ public class AttendantStationPane implements AttendantControlListener {
 	}
 
 	@Override
-	public void addPaperState() {
-		// TODO Auto-generated method stub
-		
+	public void addTooMuchPaperState() {
+		//approveAddedBagsButton.setEnabled(false);
+//		addInkToPrinterButton.setEnabled(false);
+//		addPaperToPrinterButton.setEnabled(true);
 	}
 
-	@Override
-	public void addInkState() {
-		// TODO Auto-generated method stub
-		
-	}
+//	@Override
+//	public void addPaperState() {
+//		// TODO Auto-generated method stub
+//		
+//	}
 
 	@Override
-	public void printerNotLowState() {
-		// TODO Auto-generated method stub
+	public void addTooMuchInkState() {
+		//approveAddedBagsButton.setEnabled(false);
+//		addInkToPrinterButton.setEnabled(true);
+//		addPaperToPrinterButton.setEnabled(false);
+	}
+	
+//	@Override
+//	public void addInkState() {
+//		// TODO Auto-generated method stub
+//		
+//	}
+
+	@Override
+	public void printerNotLowInkState() {
+		//approveAddedBagsButton.setEnabled(false);
+		//addInkToPrinterButton.setEnabled(false);
+		//addPaperToPrinterButton.setEnabled(false);
+		//inkLabel.setText("Ink good");
+		//paperLabel.setText("Paper status");
+		//printReceiptButton.setEnabled(true);
+	}
+	
+	@Override
+	public void printerNotLowPaperState() {
+		//paperLabel.setText("Paper good");
+		//printReceiptButton.setEnabled(true);
 		
 	}
 
@@ -92,11 +119,11 @@ public class AttendantStationPane implements AttendantControlListener {
 		
 	}
 
-	@Override
-	public void initialState() {
-		// TODO Auto-generated method stub
-		
-	}
+//	@Override
+//	public void initialState() {
+//		// TODO Auto-generated method stub
+//		
+//	}
 
 	@Override
 	public void loggedIn(boolean isLoggedIn) {
@@ -109,6 +136,10 @@ public class AttendantStationPane implements AttendantControlListener {
 			loginScreen.loginFail();
 		}else{
 			//logout
+			if (!isLoggedIn) {
+				loginScreen = new AttendantLoginScreen(pc.getStationControls());
+				changeComponents(loginScreen.getRootPanel());
+			}
 		}
 		
 	}
@@ -126,6 +157,23 @@ public class AttendantStationPane implements AttendantControlListener {
 	}
 
 	@Override
+	public void initialState() {
+		//approveAddedBagsButton.setEnabled(false);
+//		addInkToPrinterButton.setEnabled(false);
+//		addPaperToPrinterButton.setEnabled(false);	
+		//approveNoBagging.setEnabled(false);
+		//weightDescrepancyMssg.setText("");
+		
+	}
+	
+	public static void main(String args[]) {
+		StationControl sc = new StationControl();
+		//AttendantStationPane ap = new AttendantStationPane(sc);
+		//ap.openInNewJFrame();
+	}
+
+
+	@Override
 	public void lowInk(AttendantControl ac, String message) {
 		// TODO Auto-generated method stub
 		
@@ -139,14 +187,16 @@ public class AttendantStationPane implements AttendantControlListener {
 
 	@Override
 	public void outOfInk(AttendantControl ac, String message) {
-		// TODO Auto-generated method stub
-		
+		//inkLabel.setText(message);
+		//inkLabel.setBackground(GUI_Color_Palette.RED_BROWN);
+		//printReceiptButton.setEnabled(false);
 	}
 
 	@Override
 	public void outOfPaper(AttendantControl ac, String message) {
-		// TODO Auto-generated method stub
-		
+		//paperLabel.setText(message);
+		//paperLabel.setBackground(GUI_Color_Palette.RED_BROWN);
+		//printReceiptButton.setEnabled(false);
 	}
 
 	@Override
@@ -167,6 +217,10 @@ public class AttendantStationPane implements AttendantControlListener {
 	}
 
 	@Override
+	public void attendantApprovedItemRemoval(AttendantControl bc) {
+		// TODO Auto-generated method stub
+		
+	}
 	public void itemBagged() {
 		// TODO Auto-generated method stub
 		

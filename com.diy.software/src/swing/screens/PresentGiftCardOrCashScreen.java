@@ -162,7 +162,7 @@ public class PresentGiftCardOrCashScreen extends Screen implements CashControlLi
 			}
 			double returnedCash = 0;
 			for(Coin i : c) {
-				returnedCash += ((double)i.getValue())/100.0;
+				returnedCash += i.getValue().doubleValue();
 			}
 			if(b != null) {
 				returnedCash += b.getValue();
@@ -185,7 +185,7 @@ public class PresentGiftCardOrCashScreen extends Screen implements CashControlLi
 			}
 			double returnedCash = 0;
 			for(Coin i : c) {
-				returnedCash += ((double)i.getValue())/100.0;
+				returnedCash += i.getValue().doubleValue();
 			}
 			if(b != null) {
 				for(Banknote i : b) {
@@ -199,9 +199,13 @@ public class PresentGiftCardOrCashScreen extends Screen implements CashControlLi
 	}
 	
 	@Override
-	  public void paymentFailed(CashControl cc) {
+	  public void paymentFailed(CashControl cc, boolean a) {
 		if (isGiftCard) {
-			this.prompt.setText("Payment failed: No cost associated with current transaction");
+			if(a) {
+				this.prompt.setText("Payment failed: No cost associated with current transaction");
+			}else {
+				this.prompt.setText("Payment failed: GiftCard is out of money");
+			}
 		}
 		  
 	  }
