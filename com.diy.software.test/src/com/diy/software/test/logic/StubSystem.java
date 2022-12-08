@@ -104,7 +104,7 @@ public class StubSystem implements StationControlListener{
 
 	@Override
 	public void triggerPurchaseBagsWorkflow(StationControl systemControl) {
-		// TODO Auto-generated method stub
+		triggerPaymentWorkflow = true;
 		
 	}
 
