@@ -23,7 +23,7 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 	private static String HeaderText = "PLU Code";
 
 	JLabel message = new JLabel("");
-	GUI_JLabel pluCode;
+	JTextField pluCode;
 
 	public PLUCodeScreen(StationControl sc) {
 		super(sc, HeaderText);
@@ -94,7 +94,7 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 
 	private void initializeTextField() {
 
-		pluCode = new GUI_JLabel("PLU code".toUpperCase());
+		pluCode = new JTextField();
 		pluCode.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		pluCode.setHorizontalAlignment(JLabel.CENTER);
 		pluCode.setBorder(BorderFactory.createLineBorder(GUI_Color_Palette.DARK_BLUE, 10));
@@ -132,10 +132,8 @@ public class PLUCodeScreen extends Screen implements PLUCodeControlListener {
 
 	@Override
 	public void pluCodeEntered(PLUCodeControl pcc, String pluCode) {
-		this.pluCode.setText("PLU CODE");
 
 		//to give proper formatting for when an invalid code is given and then fixed. previously the code would keep the error message on screen instead of resetting font properly
-		//TODO: how to deal with incorrect plu code given for selected item (how would the system know the correct one?)
 		message.setText(("Enter the item's PLU code".toUpperCase()));
 		message.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		message.setForeground(GUI_Color_Palette.WHITE);
