@@ -1,15 +1,12 @@
 package swing.panes;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 
 import com.diy.software.controllers.StationControl;
 
-//import swing.panels.CustomerBagsPanel;
-import swing.panels.CustomerItemsPanel;
-import swing.panels.CustomerWalletPanel;
-import swing.styling.GUI_Color_Palette;
 import swing.panels.AttendantActionsPanel;
-import swing.panels.CustomerCashPanel;
+import swing.panels.AttendantKeyboardPanel;
+import swing.styling.GUI_Color_Palette;
 
 public class AttendantActionsPane {
 
@@ -19,6 +16,7 @@ public class AttendantActionsPane {
 	int height = 200;
 
 	AttendantActionsPanel aaPanel;
+	AttendantKeyboardPanel keyboardPanel;
 	
 	public AttendantActionsPane(StationControl sc) {
 		this.sc = sc;
@@ -27,6 +25,9 @@ public class AttendantActionsPane {
 		container.setBackground(GUI_Color_Palette.LIGHT_BLUE);
 		aaPanel = new AttendantActionsPanel(sc);
 		container.add(aaPanel);
+		
+		keyboardPanel = new AttendantKeyboardPanel(sc);
+		container.add(keyboardPanel);
 	}
 
 	public JPanel getRootPanel() {

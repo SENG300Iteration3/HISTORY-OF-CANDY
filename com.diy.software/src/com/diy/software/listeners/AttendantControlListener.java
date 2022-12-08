@@ -99,4 +99,9 @@ public interface AttendantControlListener {
 
 	public void loggedIn(boolean isLoggedIn);
 
+	public void triggerItemSearchScreen(AttendantControl ac);
+	
+	public void exitTextSearchScreen(AttendantControl ac);
+
+	void printerNotLowState();
 }
