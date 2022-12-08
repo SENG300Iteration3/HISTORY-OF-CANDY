@@ -527,7 +527,7 @@ public class ItemsControlTest {
 	@Test
 	public void testBarcodeScanned() {
 		assertFalse(stub.bagging);
-		itemsControl.barcodeScanned(systemControl.station.handheldScanner, fdi.getBarcodes()[0]);
+		itemsControl.barcodeScanned(systemControl.station.handheldScanner, new Barcode(new Numeral[] { Numeral.one, Numeral.two, Numeral.three, Numeral.four }));
 		assertTrue(stub.bagging);
 	}
 
@@ -604,16 +604,16 @@ public class ItemsControlTest {
 
 	}
 
-//	@Test
-//	public void testActionPerformedRemove() {
-//		
-//		ActionEvent e = new ActionEvent(this, 0, "removeFromScale");
-//		AttendantListenerStub als = new AttendantListenerStub();
-//		systemControl.getAttendantControl().addListener(als);
-//		als.noBagging = false;
-//		itemsControl.actionPerformed(e);
-//		assertTrue(als.noBagging);
-//	}
+	@Test
+	public void testActionPerformedRemove() {
+		ActionEvent e = new ActionEvent(this, 0, "remove item");
+		systemControl.getItemsControl().addListener(stub);
+
+		stub.removeRequest = false;
+		itemsControl.actionPerformed(e);
+		assertTrue(stub.removeRequest);
+
+	}
 
 	@Test
 	public void testActionPerformedPay() {
@@ -863,7 +863,7 @@ public class ItemsControlTest {
 		@Override
 		public void awaitingAttendantToApproveItemRemoval(ItemsControl ic) {
 			removeRequest = true;
-
+			bagging = true;
 		}
 
 	}
