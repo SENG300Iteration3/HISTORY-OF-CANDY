@@ -292,9 +292,10 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 		if (isLow) {
 			for (AttendantControlListener l : listeners)
 				l.coinIsLowState(this.sc.station.coinStorage.getCapacity());
-			System.out.println("Banknote storage needs to be refilled.");
+				System.out.println("Coin is low");
+			System.out.println("Coin storage needs to be refilled.");
 		} else {
-			System.out.println("Banknote storage does not need to be loaded for now.");
+			System.out.println("Coin storage does not need to be loaded for now.");
 		}
 	}
 	
@@ -440,7 +441,10 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 				
 		//notify cash controller that the unit has been filled
 		sc.getCashControl().coinsLoaded(unit);
-		
+
+		for (AttendantControlListener l : listeners)
+			l.coinsNotLowState();
+			
 		//re enable system
 		sc.getCashControl().enablePayments();
 		
@@ -538,6 +542,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 				case "prevent_use":
 					attendantNotifications = ("Preventing use on station for maintenance");
 					preventStationUse();
+					break;
 				case "startUp":
 					System.out.println("Station has been started up");
 					startUpStation();

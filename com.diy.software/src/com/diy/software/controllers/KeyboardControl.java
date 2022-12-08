@@ -40,7 +40,6 @@ public class KeyboardControl implements ActionListener, KeyboardListener {
 		for (KeyboardControlListener l : listeners) {
 			l.keyboardInputCompleted(this, this.text);
 		}
-		clearText();
 	}
 	
 	// Supports functionality for letters, numbers, symbols, backspace, delete, L/R
@@ -74,7 +73,7 @@ public class KeyboardControl implements ActionListener, KeyboardListener {
 		}
 	}
 	
-	private void clearText() {
+	public void clearText() {
 		this.text = "";
 		this.pointer = 0;
 	}

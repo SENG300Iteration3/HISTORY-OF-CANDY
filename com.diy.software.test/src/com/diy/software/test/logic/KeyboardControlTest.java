@@ -8,8 +8,13 @@ import org.junit.Test;
 
 import com.diy.software.controllers.KeyboardControl;
 import com.diy.software.listeners.KeyboardControlListener;
+import com.jimmyselectronics.nightingale.Keyboard;
 
 public class KeyboardControlTest extends KeyboardControl {
+	public KeyboardControlTest(Keyboard keyboard) {
+		super(keyboard);
+	}
+
 	KeyboardControl kc;
 	KeyboardControlStub kcStub;
 
