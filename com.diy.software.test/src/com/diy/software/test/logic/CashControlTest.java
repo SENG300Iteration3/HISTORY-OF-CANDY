@@ -69,7 +69,6 @@ public class CashControlTest {
 		this.currency = Currency.getInstance("CAD");
 				
 		cs.addListener(bns);
-		cs.paymentFailed();
 	}
 
 	@Test
@@ -361,7 +360,7 @@ public class CashControlTest {
 		}
 
 		@Override
-		public void paymentFailed(CashControl cc) {
+		public void paymentFailed(CashControl cc, boolean a) {
 			cashRejected = true;
 			
 		}

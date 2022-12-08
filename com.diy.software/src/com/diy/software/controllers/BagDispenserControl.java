@@ -76,6 +76,7 @@ public class BagDispenserControl implements ActionListener {
 				sc.startPurchaseBagsWorkflow();
 				break;
 			case "cancel":
+				resetInput();
 				sc.goBackOnUI();
 				break;
 			case "correct":

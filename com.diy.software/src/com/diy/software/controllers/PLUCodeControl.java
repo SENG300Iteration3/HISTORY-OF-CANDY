@@ -1,5 +1,6 @@
 package com.diy.software.controllers;
 
+import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
 import com.diy.hardware.PriceLookUpCode;
 import com.diy.software.listeners.PLUCodeControlListener;
 
@@ -61,6 +62,10 @@ public class PLUCodeControl implements ActionListener {
 					for (PLUCodeControlListener l: listeners)
 						l.pluErrorMessageUpdated(this, exc.getMessage());
 					break;
+				} catch (NullPointerException exc) {
+					System.err.println(exc.getMessage());
+					for (PLUCodeControlListener l: listeners)
+						l.pluErrorMessageUpdated(this, exc.getMessage());
 				}
 			default:
 				break;

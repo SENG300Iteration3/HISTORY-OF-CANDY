@@ -246,13 +246,19 @@ public class AttendantKeyboardPanel extends JPanel implements KeyboardControlLis
 	}
 
 	@Override
-	public void coinIsLowState(CoinStorageUnit unit, int amount) {
+	public void loggedIn(boolean isLoggedIn) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void loggedIn(boolean isLoggedIn) {
+	public void triggerItemSearchScreen(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void exitTextSearchScreen(AttendantControl ac) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -270,19 +276,49 @@ public class AttendantKeyboardPanel extends JPanel implements KeyboardControlLis
 	}
 
 	@Override
+	public void printerNotLowInkState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void printerNotLowPaperState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addTooMuchInkState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addTooMuchPaperState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
 	public void printerNotLowState() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void addInkState() {
+	public void coinIsLowState(int amount) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void addPaperState() {
+	public void banknotesNotLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void coinsNotLowState() {
 		// TODO Auto-generated method stub
 		
 	}

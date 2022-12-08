@@ -146,11 +146,11 @@ public class CustomerCashPanel extends JPanel implements CashControlListener {
 	// TODO Auto-generated method stub
 	
   }
-  
+
   @Override
-  public void paymentFailed(CashControl cc) {
-	// TODO Auto-generated method stub
-	  
+  public void paymentFailed(CashControl cc, boolean a) {
+	  // TODO Auto-generated method stub
+	
   }
 
 	public JButton getDollar100() {

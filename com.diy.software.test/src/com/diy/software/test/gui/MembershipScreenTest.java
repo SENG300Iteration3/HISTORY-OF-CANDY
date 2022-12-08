@@ -241,6 +241,12 @@ public class MembershipScreenTest {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public void triggerReceiptScreen(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 

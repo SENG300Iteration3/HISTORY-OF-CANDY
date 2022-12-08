@@ -167,6 +167,12 @@ public class OkayPromptScreenTest {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public void triggerReceiptScreen(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 

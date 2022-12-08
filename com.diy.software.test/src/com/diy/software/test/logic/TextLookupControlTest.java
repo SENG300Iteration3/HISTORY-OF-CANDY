@@ -353,12 +353,6 @@ public class TextLookupControlTest {
 		}
 
 		@Override
-		public void coinIsLowState(CoinStorageUnit unit, int amount) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
 		public void loggedIn(boolean isLoggedIn) {
 			// TODO Auto-generated method stub
 			
@@ -414,6 +408,24 @@ public class TextLookupControlTest {
 
 		@Override
 		public void banknotesInStorageLowState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void coinIsLowState(int amount) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void banknotesNotLowState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void coinsNotLowState() {
 			// TODO Auto-generated method stub
 			
 		}

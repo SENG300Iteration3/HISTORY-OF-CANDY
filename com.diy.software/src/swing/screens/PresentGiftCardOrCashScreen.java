@@ -199,9 +199,13 @@ public class PresentGiftCardOrCashScreen extends Screen implements CashControlLi
 	}
 	
 	@Override
-	  public void paymentFailed(CashControl cc) {
+	  public void paymentFailed(CashControl cc, boolean a) {
 		if (isGiftCard) {
-			this.prompt.setText("Payment failed: No cost associated with current transaction");
+			if(a) {
+				this.prompt.setText("Payment failed: No cost associated with current transaction");
+			}else {
+				this.prompt.setText("Payment failed: GiftCard is out of money");
+			}
 		}
 		  
 	  }

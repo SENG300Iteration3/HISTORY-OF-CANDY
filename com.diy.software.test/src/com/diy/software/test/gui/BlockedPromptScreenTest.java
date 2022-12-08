@@ -99,18 +99,6 @@ public class BlockedPromptScreenTest {
 		}
 
 		@Override
-		public void addInkState() {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void addPaperState() {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
 		public void signalWeightDescrepancy(String updateMessage) {
 			// TODO Auto-generated method stub
 			
@@ -129,12 +117,6 @@ public class BlockedPromptScreenTest {
 
 		@Override
 		public void attendantPermitStationUse(AttendantControl ac) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void coinIsLowState(CoinStorageUnit unit, int amount) {
 			// TODO Auto-generated method stub
 			
 		}
@@ -159,6 +141,60 @@ public class BlockedPromptScreenTest {
 
 		@Override
 		public void banknotesInStorageLowState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void printerNotLowInkState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void printerNotLowPaperState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void addTooMuchInkState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void addTooMuchPaperState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void coinIsLowState(int amount) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void banknotesNotLowState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void coinsNotLowState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerItemSearchScreen(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void exitTextSearchScreen(AttendantControl ac) {
 			// TODO Auto-generated method stub
 			
 		}

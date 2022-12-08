@@ -1,6 +1,8 @@
 package swing.screens;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -48,8 +50,10 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 	public GUI_JButton payBtn;
 	public GUI_JButton memberBtn;
 	
+	public GUI_JButton requestNoBaggingBtn;
 	public GUI_JButton addOwnBagsBtn;
 	public GUI_JButton removeItemBtn;
+	public GUI_JButton doneBtn;
 
 	public GUI_JButton purchaseBagsBtn;
 	public GUI_JButton addItemByPLUBtn;
@@ -58,7 +62,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 	private AddOwnBagsPromptScreen ownBagsPromptScreen;
 
 
-	public AddItemsScreen(StationControl sc) {
+	public AddItemsScreen(final StationControl sc) {
 		super(sc, "Self Checkout");
 		
 		this.sc = sc;
@@ -157,7 +161,7 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		rightSidePanel.setBorder(new EmptyBorder(0, 40, 0, 0));
 
 
-		JPanel rightSidebuttonPanel = new JPanel(new GridLayout(4, 1));
+		JPanel rightSidebuttonPanel = new JPanel(new GridLayout(5, 1));
 		rightSidebuttonPanel.setPreferredSize(new Dimension(370, 400));
 
 		rightSidebuttonPanel.setBackground(GUI_Color_Palette.DARK_BLUE);
@@ -185,6 +189,17 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 		this.removeItemBtn.setActionCommand("remove item");
 		this.removeItemBtn.addActionListener(itemsControl);
 		removeItemBtn.setEnabled(false);
+		
+		JPanel fifthButtonPanel = new JPanel(new GridLayout());
+		doneBtn = makeButton("Print Receipt", fifthButtonPanel);
+		rightSidebuttonPanel.add(fifthButtonPanel);
+		doneBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				sc.printReceipt();
+			}
+		});
+		doneBtn.setEnabled(false);
 
 
 		this.addLayer(mainPanel, 0);
@@ -329,6 +344,10 @@ public class AddItemsScreen extends Screen implements ItemsControlListener, Bags
 	public void productSubtotalUpdated(ItemsControl itemsControl) {
 		DecimalFormat df = new DecimalFormat("0.00");
 		subtotalLabel.setText("Subtotal: $" + df.format(itemsControl.getCheckoutTotal()));
+		
+		if(itemsControl.getCheckoutTotal()==0) {
+			doneBtn.setEnabled(true);
+		}
 	}
 
 	@Override

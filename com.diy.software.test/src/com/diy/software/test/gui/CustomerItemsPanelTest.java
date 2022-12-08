@@ -19,7 +19,6 @@ import swing.panels.CustomerItemsPanel;
 import swing.screens.AddItemsScreen;
 import swing.screens.AddOwnBagsPromptScreen;
 import swing.screens.BlockedPromptScreen;
-import swing.screens.RemoveItemScreen;
 
 public class CustomerItemsPanelTest {
 
@@ -32,7 +31,6 @@ public class CustomerItemsPanelTest {
 
 	AddItemsScreen addItemsScreen;
 	AddOwnBagsPromptScreen addOwnBagsPromptScreen;
-	RemoveItemScreen removeItemScreen;
 	AttendantControl ac;
 
 	BagControllerStub bcStub;
@@ -158,8 +156,6 @@ public class CustomerItemsPanelTest {
 		panel.getItemWeight().doClick();
 		panel.getPlaceItemInBaggingAreaButton().doClick();
 
-
-		removeItemScreen = new RemoveItemScreen(sc, ac);
 		addItemsScreen = new AddItemsScreen(sc);
 		addItemsScreen.removeItemBtn.doClick();
 		assertTrue(icStub.awaitingAttendant);
@@ -296,16 +292,6 @@ public class CustomerItemsPanelTest {
 		}
 
 		@Override
-		public void addInkState() {
-
-		}
-
-		@Override
-		public void addPaperState() {
-
-		}
-
-		@Override
 		public void signalWeightDescrepancy(String updateMessage) {
 
 		}
@@ -336,13 +322,62 @@ public class CustomerItemsPanelTest {
 		}
 
 		@Override
-		public void coinIsLowState(CoinStorageUnit unit, int amount) {
+		public void loggedIn(boolean isLoggedIn) {
 
 		}
 
 		@Override
-		public void loggedIn(boolean isLoggedIn) {
+		public void printerNotLowInkState() {
+			// TODO Auto-generated method stub
+			
+		}
 
+		@Override
+		public void printerNotLowPaperState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void addTooMuchInkState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void addTooMuchPaperState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void coinIsLowState(int amount) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void banknotesNotLowState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void coinsNotLowState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerItemSearchScreen(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void exitTextSearchScreen(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
 		}
 	}
 

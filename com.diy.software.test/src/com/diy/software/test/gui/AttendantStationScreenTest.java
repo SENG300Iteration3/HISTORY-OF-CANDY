@@ -121,18 +121,6 @@ public class AttendantStationScreenTest {
 		}
 
 		@Override
-		public void addInkState() {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void addPaperState() {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
 		public void signalWeightDescrepancy(String updateMessage) {
 			// TODO Auto-generated method stub
 			
@@ -169,14 +157,62 @@ public class AttendantStationScreenTest {
 		}
 
 		@Override
-		public void coinIsLowState(CoinStorageUnit unit, int amount) {
+		public void loggedIn(boolean isLoggedIn) {
+			this.isLoggedIn = isLoggedIn;
+			
+		}
+
+		@Override
+		public void printerNotLowInkState() {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void loggedIn(boolean isLoggedIn) {
-			this.isLoggedIn = isLoggedIn;
+		public void printerNotLowPaperState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void addTooMuchInkState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void addTooMuchPaperState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void coinIsLowState(int amount) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void banknotesNotLowState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void coinsNotLowState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerItemSearchScreen(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void exitTextSearchScreen(AttendantControl ac) {
+			// TODO Auto-generated method stub
 			
 		}
 		

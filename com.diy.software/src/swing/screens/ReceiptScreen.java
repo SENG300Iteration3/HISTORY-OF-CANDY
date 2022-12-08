@@ -129,4 +129,16 @@ public class ReceiptScreen extends Screen implements ReceiptControlListener{
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void setIncompleteReceiptState(ReceiptControl rc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setNoIncompleteReceiptState(ReceiptControl rc) {
+		// TODO Auto-generated method stub
+		
+	}
 }

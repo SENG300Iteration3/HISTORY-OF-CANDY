@@ -78,12 +78,6 @@ public class StubSystem implements StationControlListener{
 	}
 
 	@Override
-	public void systemControlLocked(StationControl systemControl, boolean isLocked, String reason) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void startMembershipCardInput(StationControl systemControl) {
 		membershipCardInput = true;
 		
@@ -102,8 +96,14 @@ public class StubSystem implements StationControlListener{
 	}
 
 	@Override
+	public void systemControlLocked(StationControl systemControl, boolean isLocked, String reason) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
 	public void triggerPurchaseBagsWorkflow(StationControl systemControl) {
-		triggerPurchaseBagsWorkflow = true;
+		// TODO Auto-generated method stub
 		
 	}
 
@@ -128,6 +128,12 @@ public class StubSystem implements StationControlListener{
 	@Override
 	public void triggerBrowsingCatalog(StationControl systemControl) {
 		triggerCatalogWorkflow = true;
+		
+	}
+
+	@Override
+	public void triggerReceiptScreen(StationControl systemControl) {
+		// TODO Auto-generated method stub
 		
 	}
 	
