@@ -398,6 +398,7 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 		return isLow;
 	}
 	
+
 	/**
 	 * Checks if this coin storage is low
 	 * @param unit
