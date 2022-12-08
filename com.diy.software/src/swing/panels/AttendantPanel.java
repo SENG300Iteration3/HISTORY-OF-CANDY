@@ -208,8 +208,7 @@ public class AttendantPanel extends JPanel implements AttendantControlListener, 
 
 	@Override
 	public void itemBagged() {
-		// TODO Auto-generated method stub
-		
+		approveNoBagButton.setEnabled(false);
 	}
 
 	@Override
