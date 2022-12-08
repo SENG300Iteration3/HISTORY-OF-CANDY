@@ -156,6 +156,8 @@ public class StationControl
 	public StationControl(FakeDataInitializer fakeData) {
 		this();
 		this.fakeData = fakeData;
+		fakeData.addProductAndBarcodeData();
+		fakeData.addPLUCodedProduct();
 
 		// for (Card c: this.fakeData.getCards()) customer.wallet.cards.add(c);
 		// for (Item i: this.fakeData.getItems()) customer.shoppingCart.add(i);
@@ -171,9 +173,9 @@ public class StationControl
 			else if (i instanceof PLUCodedItem) {
 				PLUCodedItem item = (PLUCodedItem) i;
 				this.pluCodedItems.put(item.getPLUCode(), i);
-				customer.shoppingCart.add(i);	
+				customer.shoppingCart.add(i);
 			}
-		}
+		}		
 	}
 
 	/**

@@ -3,17 +3,20 @@ package com.diy.software.test.logic;
 import static org.junit.Assert.*;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.diy.software.util.Tuple;
+import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.PLUCodedItem;
 import com.diy.hardware.PLUCodedProduct;
 import com.diy.hardware.PriceLookUpCode;
 import com.diy.hardware.external.ProductDatabases;
 import com.diy.software.controllers.AttendantControl;
+import com.diy.software.controllers.BagsControl;
 import com.diy.software.controllers.ItemsControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.fakedata.FakeDataInitializer;
@@ -24,6 +27,7 @@ import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.necchi.Barcode;
 import com.jimmyselectronics.necchi.BarcodedItem;
 import com.jimmyselectronics.necchi.Numeral;
+import com.jimmyselectronics.svenden.ReusableBag;
 import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import ca.powerutility.PowerGrid;
@@ -67,6 +71,124 @@ public class ItemsControlTest {
 		systemControl.station.handheldScanner.unplug();
 	}
 
+	
+	/**
+	 * Test ensuring that the correct data is scraped from 
+	 * checkoutList and stored in the ArrayList<Tuple<String, Double>>
+	 * returned by getItemDescriptionList.
+	 */
+	@Test
+	public void testGetItemDescriptionList() {
+		StationControl sc = new StationControl(fdi);
+		itemsControl = sc.getItemsControl();
+		itemsControl.addItemToCheckoutList(fdi.getBarcodes()[0]);	// Adding the Barcode for "Can of Beans"
+		itemsControl.addItemToCheckoutList(fdi.getPLUCode()[2]);	// Adding the PLUCode for "Tomatoes"
+		System.out.println(sc.pluCodedItems.size());
+		itemsControl.addReusableBags(new ReusableBag());
+		ArrayList<Tuple<String, Double>> list = itemsControl.getItemDescriptionPriceList();
+		Tuple<String, Double> output1 = list.get(0);
+		Tuple<String, Double> output2 = list.get(1);
+		Tuple<String, Double> output3 = list.get(2);
+		assertTrue(list.size() == 3);
+		assertTrue(output1.x == "Can of Beans"); 
+		assertTrue(output2.x == "Tomatoes");
+		assertTrue(output3.x == "Reusable Bag");
+		assertTrue(output1.y == 2.0); 
+		assertTrue(output2.y == 2.868);
+		assertTrue(output3.y == 2.0);
+		}
+	
+	/**
+	 * Test ensuring that no data is created when no items 
+	 * and no bags have been checked out.
+	 */
+	@Test
+	public void testGetEmptyItemDescriptionList() {
+		StationControl sc = new StationControl(fdi);
+		BagsControl bc = new BagsControl(sc);
+		itemsControl = new ItemsControl(sc);
+		ArrayList<Tuple<String, Double>> list = itemsControl.getItemDescriptionPriceList();
+		assertTrue(list.size() == 0);
+		}
+	
+	/**
+	 * Test ensuring that all the data store in ItemsControl and 
+	 * StationControl is removed when an "item" is
+	 * removed from the customers "checked out items"
+	 */
+	@Test
+	public void testRemoveBarcodedItem() {
+		StationControl sc = new StationControl(fdi);
+		itemsControl = sc.getItemsControl();		
+		BarcodedItem item = fdi.getBarcodedItems()[0];    		// item is a "Can of Beans"
+		BarcodedProduct product = fdi.getBarcodedProducts()[0];
+		assertTrue(itemsControl.getCheckoutList().size() == 0);
+		assertTrue(itemsControl.getCheckoutTotal() == 0);
+		assertTrue(sc.getExpectedWeight() == 0);
+		while(!sc.station.mainScanner.scan(item));	
+		sc.station.baggingArea.add(item);
+		assertTrue(itemsControl.getCheckoutList().size() == 1);
+		assertTrue(itemsControl.getCheckoutTotal() == product.getPrice());
+		assertTrue(sc.getExpectedWeight() == item.getWeight());
+		itemsControl.removeItem(1); // Remove the only item that has been scanned
+		assertTrue(itemsControl.getCheckoutList().size() == 0);
+		assertTrue(itemsControl.getCheckoutTotal() == 0);
+		assertTrue(sc.getExpectedWeight() == 0);
+	}
+
+
+	/**
+	 * Test ensuring that all the data store in ItemsControl and 
+	 * StationControl is removed when an "item" is
+	 * removed from the customers "checked out items"
+	 */
+	@Test
+	public void testRemovePLUCodedItem() {
+		StationControl sc = new StationControl(fdi);
+		itemsControl = sc.getItemsControl();		
+		PLUCodedItem item = fdi.getPLUItem()[2];    		// item is a "Can of Beans"
+		PLUCodedProduct product = fdi.getPLUProducts()[2];
+		assertTrue(itemsControl.getCheckoutList().size() == 0);
+		assertTrue(itemsControl.getCheckoutTotal() == 0);
+		assertTrue(sc.getExpectedWeight() == 0);
+		itemsControl.setCurrentProductCode(fdi.getPLUCodes()[2]);
+		sc.station.scanningArea.add(item);
+		sc.station.baggingArea.add(item);
+		assertTrue(itemsControl.getCheckoutList().size() == 1);
+		assertTrue(itemsControl.getCheckoutTotal() == product.getPrice() * item.getWeight() / 1000);
+		assertTrue(sc.getExpectedWeight() == item.getWeight());
+		itemsControl.removeItem(1); // Remove the only item that has been scanned
+		assertTrue(itemsControl.getCheckoutList().size() == 0);
+		assertTrue(itemsControl.getCheckoutTotal() == 0);
+		assertTrue(sc.getExpectedWeight() == 0);
+	}
+	
+	/**
+	 * Test ensuring that all the data store in ItemsControl and 
+	 * StationControl is removed when an "item" is
+	 * removed from the customers "checked out items"
+	 */
+	@Test
+	public void testRemoveBagFromCheckoutList() {
+		StationControl sc = new StationControl(fdi);
+		BagsControl bc = new BagsControl(sc);
+		itemsControl = new ItemsControl(sc);
+		assertTrue(itemsControl.getBagsList().size() == 0);
+		assertTrue(itemsControl.getCheckoutTotal() == 0);
+		assertTrue(sc.getExpectedWeight() == 0);
+		ReusableBag bag = new ReusableBag();
+		//itemsControl.addReusableBags(bag);
+		sc.station.baggingArea.add(bag);
+		assertTrue(itemsControl.getBagsList().size() == 1);
+		assertTrue(itemsControl.getCheckoutTotal() == 2);
+		itemsControl.removeItem(1); // Remove the only item that has been scanned
+		assertTrue(itemsControl.getBagsList().size() == 0);
+		assertTrue(itemsControl.getCheckoutTotal() == 0);
+		System.out.println(sc.getExpectedWeight());
+		assertTrue(sc.getExpectedWeight() == 0);
+	}
+	
+	
 	@Test
 	public void testRemoveListener() {
 		stub.bagging = true;
