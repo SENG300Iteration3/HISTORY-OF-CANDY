@@ -31,6 +31,7 @@ public class MembershipControl implements ActionListener {
 		tempMembershipMap = sc.fakeData.getMembershipMap();
 		if (tempMembershipMap.containsKey(memberShipNumber)) {
 			this.memberName = tempMembershipMap.get(memberShipNumber);
+			validMembershipNumber = memberShipNumber;
 			for (MembershipControlListener l : listeners) {
 				l.welcomeMember(this, "Welcome! " + memberName);
 				l.disableMembershipInput(this);
