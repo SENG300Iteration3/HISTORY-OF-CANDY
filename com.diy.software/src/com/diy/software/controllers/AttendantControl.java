@@ -542,6 +542,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener,
 				case "prevent_use":
 					attendantNotifications = ("Preventing use on station for maintenance");
 					preventStationUse();
+					break;
 				case "startUp":
 					System.out.println("Station has been started up");
 					startUpStation();
