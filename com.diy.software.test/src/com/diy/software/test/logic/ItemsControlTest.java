@@ -784,12 +784,6 @@ public class ItemsControlTest {
 		}
 
 		@Override
-		public void coinIsLowState(CoinStorageUnit unit, int amount) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
 		public void loggedIn(boolean isLoggedIn) {
 			// TODO Auto-generated method stub
 
