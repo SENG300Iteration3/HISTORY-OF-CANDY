@@ -42,6 +42,9 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 	private GUI_JPanel backgroundPanel;
 	private JTextField searchbar;
 	private GUI_JPanel searchResultPanel;
+	private GUI_JButton searchButton;
+	private GUI_JButton backButton;
+	private ArrayList<GUI_JButton> itemButtonList;
 	
 	private GridBagConstraints gridBagConstraints = new GridBagConstraints();
 	Border emptyBorder = BorderFactory.createEmptyBorder();
@@ -56,6 +59,8 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 		super(sc, headerTitle);
 		
 		this.ac = ac;
+		
+		itemButtonList = new ArrayList<GUI_JButton>();
 		
 		// Initializing all GUI Components
 		initalizeSearchAreaBackground();
@@ -160,7 +165,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 		int searchButtonWidth = 350;
 		
 		//Setting up  the search button
-		GUI_JButton searchButton = new GUI_JButton("Search".toUpperCase());
+		searchButton = new GUI_JButton("Search".toUpperCase());
 		searchButton.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		searchButton.setPreferredSize(new Dimension(searchButtonWidth, searchButtonHeight));
 		searchButton.setLayout(new BorderLayout());
@@ -194,7 +199,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 		int searchButtonWidth = 130;
 		
 		//Setting up  the back button
-		GUI_JButton backButton = new GUI_JButton("Back".toUpperCase());
+		backButton = new GUI_JButton("Back".toUpperCase());
 		backButton.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		backButton.setPreferredSize(new Dimension(searchButtonWidth, searchButtonHeight));
 		backButton.setLayout(new BorderLayout());
@@ -236,6 +241,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 				tlc.addProduct(index);
 			}
 		});
+		itemButtonList.add(itemButton);
 		
 		//Setting up and adding the total label
 		GUI_JLabel totalLabel = new GUI_JLabel(itemName.toUpperCase());
@@ -263,16 +269,6 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 	{
 		return "$" + String.format("%.2f", dollarAmount);
 	}
-	
-	/*Just for testing */
-	public static void main(String[] args) 
-	{
-		StationControl stationControl = new StationControl();
-		AttendantControl attendantControl = new AttendantControl(stationControl);
-		TextSearchScreen testGui = new TextSearchScreen(stationControl, attendantControl);
-		testGui.openInNewJFrame();
-	}
-
 
 	@Override
 	public void searchQueryWasEntered(TextLookupControl tlc) {
@@ -337,4 +333,24 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 	@Override
 	public void itemHasBeenAddedToCheckout(TextLookupControl tlc) {
 	}
+
+	public JTextField getSearchbar() {
+		return searchbar;
+	}
+
+	public GUI_JButton getSearchButton() {
+		return searchButton;
+	}
+
+	public GUI_JButton getBackButton() {
+		return backButton;
+	}
+
+	public ArrayList<GUI_JButton> getItemButtonList() {
+		return itemButtonList;
+	}
+	
+	
+	
+	
 }
