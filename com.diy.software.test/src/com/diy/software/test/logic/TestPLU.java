@@ -1,8 +1,9 @@
 package com.diy.software.test.logic;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
+import java.awt.event.ActionEvent;
 import java.util.Set;
 
 import org.junit.Before;
@@ -11,23 +12,27 @@ import org.junit.Test;
 import com.diy.hardware.PLUCodedProduct;
 import com.diy.hardware.Product;
 import com.diy.hardware.external.ProductDatabases;
+import com.diy.software.controllers.PLUCodeControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.fakedata.FakeDataInitializer;
-import com.jimmyselectronics.necchi.Barcode;
-import com.jimmyselectronics.necchi.Numeral;
+import com.diy.software.listeners.PLUCodeControlListener;
 
 import ca.powerutility.PowerGrid;
 
 public class TestPLU {
   FakeDataInitializer fakeData;
-  StationControl controller;
+  StationControl sc;
+  PLUCodeControl pc;
+  PLUCodeListenerStub pcls;
 
   @Before
   public void setup() {
     PowerGrid.engageUninterruptiblePowerSource();
 
     fakeData = new FakeDataInitializer();
-    controller = new StationControl();
+    sc = new StationControl();
+    pc = new PLUCodeControl(sc);
+    pcls = new PLUCodeListenerStub();
 
     fakeData.addProductAndBarcodeData();
     fakeData.addPLUCodedProduct();
@@ -35,25 +40,90 @@ public class TestPLU {
 
   @Test
   public void testPLUDatabasePopulationWithInventory() {
-    ArrayList<Boolean> check = new ArrayList<>();
+	boolean check = false;
     int counter = 0;
+    Set<Product> products = ProductDatabases.INVENTORY.keySet();
+    
     for(PLUCodedProduct product : ProductDatabases.PLU_PRODUCT_DATABASE.values()) {
-      check.add(false);
-      Set<Product> products = ProductDatabases.INVENTORY.keySet();
       for(Product item : products) {
-        if(item.hashCode() == product.getPLUCode().hashCode()) {
-          check.remove(counter);
-          check.add(counter, true);
-          System.out.println("True");
+    	  // check if PLU item is in the inventory
+        if(item.hashCode() == product.hashCode()) {
+          check = true;
         }
-        System.out.println("False");
       }
       counter++;
     }
-    ArrayList<Boolean> temp = new ArrayList<>();
-    for(Barcode barcode : ProductDatabases.BARCODED_PRODUCT_DATABASE.keySet()) {
-      temp.add(true);
-    }
-    assertTrue(check.equals(temp));
+    assertTrue(check);
   }
+  
+	  @Test
+	  public void testAddListener() {
+		assertFalse(pcls.updated);
+		
+		pc.addListener(pcls);
+		
+		assertFalse(pcls.updated);
+	  }
+  
+	  @Test
+	  public void testRemoveListener() {
+		assertFalse(pcls.updated);
+		
+		pc.removeListener(pcls);
+		
+		assertFalse(pcls.updated);
+	  }
+	  
+		@Test 
+		public void testActionPerformedCorrectPLUInput() {
+			pc.addListener(pcls);
+			ActionEvent e = new ActionEvent(this, 0, "PLU_INPUT_BUTTON: 1234");
+			assertFalse(pcls.updated);
+			assertFalse(pcls.stubplu.equals("1234"));
+			
+			pc.actionPerformed(e);
+			
+			assertTrue(pcls.updated);
+			assertTrue(pcls.stubplu.equals("1234"));
+		}
+		
+		  @Test
+		  public void testActionPerformedIncorrectPLUInput() {
+			  pc.addListener(pcls);
+			  ActionEvent e = new ActionEvent(this, 0, "PLU_INPUT_BUTTON: 1234");
+		  }
+	  
+	  @Test
+	  public void testCancelButton() {
+		  pc.addListener(pcls);
+		  ActionEvent e = new ActionEvent(this, 0, "PLU_INPUT_BUTTON: 1234");
+	  }
+	  
+  
+	public class PLUCodeListenerStub implements PLUCodeControlListener {
+		String stubplu = "";
+		boolean updated = false;
+		String pluerr = "";
+
+		@Override
+		public void pluHasBeenUpdated(PLUCodeControl pcc, String pluCode) {
+			// TODO Auto-generated method stub
+			updated = true;
+			stubplu = pluCode;
+		}
+
+		@Override
+		public void pluCodeEntered(PLUCodeControl pcc, String pluCode) {
+			// TODO Auto-generated method stub
+			updated = true;
+			stubplu = pluCode;
+		}
+
+		@Override
+		public void pluErrorMessageUpdated(PLUCodeControl pcc, String errorMessage) {
+			// TODO Auto-generated method stub
+			updated = true;
+			pluerr = errorMessage;
+		}
+	}
 }
