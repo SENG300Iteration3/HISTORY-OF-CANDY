@@ -27,14 +27,9 @@ public interface AttendantControlListener {
 	public void lowPaper(AttendantControl ac, String message);
 	
 	/**
-	 * changes GUI state to match printer with not low ink
+	 * changes GUI state to match printer with not low ink and not low paper
 	 */
-	public void printerNotLowInkState();
-	
-	/**
-	 * changes GUI state to match printer with not low paper
-	 */
-	public void printerNotLowPaperState();
+	public void printerNotLowState();
 	
 	/**
 	 * used to notify out of ink state
@@ -47,14 +42,14 @@ public interface AttendantControlListener {
 	public void outOfPaper(AttendantControl ac, String message);
 	
 	/**
-	 * when attendant adds too much ink, simulate not being able to put in anymore ink by turning off refill ink button
+	 * allowing attendant to add ink to the printer when the printer is out or low on ink 
 	 */
-	public void addTooMuchInkState();
+	public void addInkState();
 	
 	/**
-	 * when attendant adds too much paper, simulate not being able to put in anymore paper by turning off refill paper button
+	 * allowing attendant to add paper to the printer when the printer is out or low on paper
 	 */
-	public void addTooMuchPaperState();
+	public void addPaperState();
 	
 	/**
 	 * changes GUI to show weight discrepancy message
@@ -77,10 +72,6 @@ public interface AttendantControlListener {
 	 */
 	public void initialState();
 	
-	/*
-	 * allows attendant to load banknotes to storage when amount of banknotes is low
-	 */
-	public void banknotesInStorageLowState();
 
 	/** 
 	 * attendant permits customer station use
@@ -99,4 +90,5 @@ public interface AttendantControlListener {
 
 	public void loggedIn(boolean isLoggedIn);
 
+		
 }

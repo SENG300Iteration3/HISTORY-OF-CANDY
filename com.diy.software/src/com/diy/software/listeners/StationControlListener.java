@@ -119,6 +119,4 @@ public interface StationControlListener {
 
 	void triggerBrowsingCatalog(StationControl systemControl);
 	
-	void triggerReceiptScreen(StationControl systemControl);
-	
 }

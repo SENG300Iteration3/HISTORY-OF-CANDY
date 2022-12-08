@@ -270,24 +270,24 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		return button;
 	}
 
-//	@Override
-//	public void addPaperState() {
-//		approveAddedBagsButton.setEnabled(false);
-//		
-//	}
-//
-//	@Override
-//	public void addInkState() {
-//		approveAddedBagsButton.setEnabled(false);
-//		
-//	}
-//
-//	@Override
-//	public void printerNotLowState() {
-//		approveAddedBagsButton.setEnabled(false);
-//		inkLabel.setText("Ink status");
-//		paperLabel.setText("Paper status");
-//	}
+	@Override
+	public void addPaperState() {
+		approveAddedBagsButton.setEnabled(false);
+		
+	}
+
+	@Override
+	public void addInkState() {
+		approveAddedBagsButton.setEnabled(false);
+		
+	}
+
+	@Override
+	public void printerNotLowState() {
+		approveAddedBagsButton.setEnabled(false);
+		inkLabel.setText("Ink status");
+		paperLabel.setText("Paper status");
+	}
 
 	@Override
 	public void signalWeightDescrepancy(String updateMessage) {
@@ -449,33 +449,5 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		
 	public void itemBagged() {
 		approveNoBagging.setEnabled(false);
-	}
-
-
-	@Override
-	public void printerNotLowInkState() {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void printerNotLowPaperState() {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void addTooMuchInkState() {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void addTooMuchPaperState() {
-		// TODO Auto-generated method stub
-		
 	}
 }

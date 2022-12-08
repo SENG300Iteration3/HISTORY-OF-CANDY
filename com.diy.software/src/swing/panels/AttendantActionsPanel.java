@@ -43,7 +43,7 @@ public class AttendantActionsPanel extends JPanel
 		bc.addListener(this);
 		
 		rc = sc.getReceiptControl();
-		rc.addListener(this);
+		rc.addListenerReceipt(this);
 
 		inkButton = initializeButton("Refill Ink Dispenser", "addInk");
 		paperButton = initializeButton("Refill Paper Dispenser", "addPaper");
@@ -80,12 +80,7 @@ public class AttendantActionsPanel extends JPanel
 //		buttonGrid.gridx = 3;
 //		this.add(Label);
 //		
-		initialState();
-		// inkButton.setEnabled(false);
-		// paperButton.setEnabled(false);
-		// bagDispenserButton.setEnabled(false);
 	}
-	
 	private JButton initializeButton(String msg, String command) {
 		JButton button =  new JButton(msg);
 		button.setActionCommand(command);
@@ -148,8 +143,8 @@ public class AttendantActionsPanel extends JPanel
 	}
 
 	@Override
-	public void addTooMuchPaperState() {
-		paperButton.setEnabled(false);
+	public void addPaperState() {
+		if(stationBlocked) paperButton.setEnabled(true);
 	}
 	
 	public void itemsHaveBeenUpdated(ItemsControl ic) {
@@ -158,31 +153,20 @@ public class AttendantActionsPanel extends JPanel
 	}
 
 	@Override
-	public void addTooMuchInkState() {
+	public void addInkState() {
+		if (stationBlocked) inkButton.setEnabled(true);
+	}
+
+	@Override
+	public void printerNotLowState() {
+		// FIXME: This is called when ink is refilled and paper is refilled, may need to be split up.
+		// In future, buttons should be disabled when the system is not blocked (permit station use) + this.
+		// Also thinking that this should be called when the paper and ink is completely full.
+		// Technically if an ink dispenser goes from 10% to 70% full it would be out of a low state, but you should still have option to add more ink to station.
 		inkButton.setEnabled(false);
-	}
-
-	@Override
-	public void printerNotLowInkState() {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void printerNotLowPaperState() {
-		// TODO Auto-generated method stub
+		paperButton.setEnabled(false);
 	}
 	
-	// replaced
-//	@Override
-//	public void printerNotLowState() {
-//		// FIXME: This is called when ink is refilled and paper is refilled, may need to be split up.
-//		// In future, buttons should be disabled when the system is not blocked (permit station use) + this.
-//		// Also thinking that this should be called when the paper and ink is completely full.
-//		// Technically if an ink dispenser goes from 10% to 70% full it would be out of a low state, but you should still have option to add more ink to station.
-//		inkButton.setEnabled(false);
-//		paperButton.setEnabled(false);
-//	}
-//	
 	@Override
 	public void productSubtotalUpdated(ItemsControl ic) {
 		// TODO Auto-generated method stub
@@ -202,30 +186,27 @@ public class AttendantActionsPanel extends JPanel
 	@Override
 	public void initialState() {
 		// TODO Auto-generated method stub
-		inkButton.setEnabled(true);
-		paperButton.setEnabled(true);
-		bagDispenserButton.setEnabled(false);
 		
 	}
 
 	@Override
 	public void lowInk(AttendantControl ac, String message) {
-		inkButton.setEnabled(true);
+		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void lowPaper(AttendantControl ac, String message) {
-		paperButton.setEnabled(true);
+		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void outOfInk(AttendantControl ac, String message) {
-		inkButton.setEnabled(true);
+		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void outOfPaper(AttendantControl ac, String message) {
-		paperButton.setEnabled(true);
+		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -265,16 +246,6 @@ public class AttendantActionsPanel extends JPanel
 	}
 
 	@Override
-	public void setIncompleteReceiptState(ReceiptControl rc) {
-
-	}
-
-	@Override
-	public void setNoIncompleteReceiptState(ReceiptControl rc) {
-		
-	}
-
-
 	public void attendantPermitStationUse(AttendantControl ac) {
 		// TODO Auto-generated method stub
 	}
@@ -285,10 +256,6 @@ public class AttendantActionsPanel extends JPanel
 		
 	}
 
-	@Override
-	public void setMembership(ReceiptControl rc, String dateTime) {
-	}
-	
 	@Override
 	public void awaitingItemToBePlacedInScanningArea(StationControl sc) {
 	}
@@ -319,4 +286,3 @@ public class AttendantActionsPanel extends JPanel
 		
 	}
 }
-

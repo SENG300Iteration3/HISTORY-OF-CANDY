@@ -11,14 +11,12 @@ import javax.swing.SwingConstants;
 import com.diy.software.controllers.StationControl;
 
 import swing.styling.GUI_Fonts;
-import swing.styling.GUI_JButton;
 import swing.styling.GUI_JLabel;
 import swing.styling.Screen;
 
 public class OkayPromptScreen extends Screen {
 	private JLabel promptLabel;
 	private JButton okayButton;
-	GUI_JButton printReceiptButton;
 
 	public OkayPromptScreen(final StationControl systemControl, String prompt, final boolean navigateToInitialScreen, boolean okay) {
 		super(systemControl);

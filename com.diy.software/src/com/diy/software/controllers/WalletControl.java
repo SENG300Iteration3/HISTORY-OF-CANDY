@@ -237,8 +237,7 @@ public class WalletControl implements ActionListener, CardReaderListener {
 	public void cardRemoved(CardReader reader) {
 		for (WalletControlListener l : listeners)
 			l.cardWithPinRemoved(this);
-		
-		//sc.getPinPadControl().exitPinPad();
+		sc.getPinPadControl().exitPinPad();
 	}
 
 	@Override

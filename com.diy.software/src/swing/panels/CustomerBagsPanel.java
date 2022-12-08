@@ -143,26 +143,20 @@ public class CustomerBagsPanel extends JPanel
 	}
 
 	@Override
-	public void addTooMuchPaperState() {}
+	public void addPaperState() {}
 	public void productSubtotalUpdated(ItemsControl ic) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void addTooMuchInkState() {
+	public void addInkState() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void printerNotLowInkState() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void printerNotLowPaperState() {
+	public void printerNotLowState() {
 		// TODO Auto-generated method stub
 		
 	}
