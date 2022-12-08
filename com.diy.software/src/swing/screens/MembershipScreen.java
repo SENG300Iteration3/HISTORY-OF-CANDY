@@ -1,7 +1,6 @@
 package swing.screens;
 
 import java.awt.*;
-import java.lang.reflect.Parameter;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -11,7 +10,6 @@ import javax.swing.JTextField;
 import com.diy.software.controllers.MembershipControl;
 import com.diy.software.controllers.StationControl;
 import com.diy.software.listeners.MembershipControlListener;
-import com.diy.software.listeners.StationControlListener;
 
 import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Fonts;

@@ -23,7 +23,7 @@ public class AttendantActionsGUI implements PaneControlListener {
     this.pc = pc;
     this.pc.addListener(this);
     frame.setVisible(true);
-    frame.setLocation(640, 960);
+    frame.setLocation(0, 0);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.getContentPane().add(tabbedPane , BorderLayout.CENTER);
 

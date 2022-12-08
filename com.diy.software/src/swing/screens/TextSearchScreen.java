@@ -183,6 +183,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 				tlc.findProduct(searchbar.getText());
 				searchResultPanel.repaint();
 				searchResultPanel.revalidate();
+				kc.clearText();
 			}
 		});
 	}
@@ -204,6 +205,7 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
+				kc.clearText();
 				ac.exitTextSearch();
 			}
 		});
@@ -310,6 +312,11 @@ public class TextSearchScreen extends Screen implements KeyboardControlListener,
 
 	@Override
 	public void keyboardInputCompleted(KeyboardControl kc, String text) {
+		clearSearchResults();
+		tlc.findProduct(searchbar.getText());
+		searchResultPanel.repaint();
+		searchResultPanel.revalidate();
+		kc.clearText();
 	}
 
 	@Override
