@@ -19,7 +19,6 @@ import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import swing.screens.AttendantLoginScreen;
 import swing.screens.AttendantStationScreen;
-import swing.screens.RemoveItemScreen;
 import swing.styling.GUI_JFrame;
 import swing.styling.Screen;
 

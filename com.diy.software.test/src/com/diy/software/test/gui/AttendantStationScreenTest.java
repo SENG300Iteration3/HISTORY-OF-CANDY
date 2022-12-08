@@ -20,6 +20,7 @@ public class AttendantStationScreenTest {
 	FakeDataInitializer fdi;
 	StationControl sc;
 	AttendantStationScreen screen;
+	AttendantControlListenerStub aStub;
 
 	@Before
 	public void setUp() throws Exception {
@@ -32,9 +33,12 @@ public class AttendantStationScreenTest {
 		fdi.addPLUCodedProduct();
 		fdi.addProductAndBarcodeData();
 		
-		sc = new StationControl();
+		sc = new StationControl(fdi);
 		
 		screen = new AttendantStationScreen(sc);
+		
+		aStub = new AttendantControlListenerStub();
+		sc.getAttendantControl().addListener(aStub);
 	}
 
 	@After
@@ -42,19 +46,31 @@ public class AttendantStationScreenTest {
 	}
 
 	@Test
-	public void testStartUp() {
+	public void testStartUpButton() {
 		sc.station.unplug();
 		screen.getStartUpButton().doClick();
 		assertTrue(sc.station.screen.isPluggedIn());
 		assertTrue(sc.station.screen.isPoweredUp());
 	}
 	
-	public class AttendantStationListenerStub implements AttendantControlListener {
+	@Test
+	public void testShutdownButton() {
+		//TODO
+	}
+	
+	@Test
+	public void testApproveAddedBagsButton() {
+		screen.getApproveAddedBagsButton().doClick();
+		assertTrue(aStub.initialState);
+	}
+	
+	public class AttendantControlListenerStub implements AttendantControlListener {
 		
 		public boolean isLoggedIn = false;
 		public boolean bagsApproved = false;
 		public boolean permitUse = true;
 		public boolean removeItemApproved = false;
+		public boolean initialState = false;
 
 		@Override
 		public void attendantApprovedBags(AttendantControl ac) {
@@ -136,7 +152,7 @@ public class AttendantStationScreenTest {
 
 		@Override
 		public void initialState() {
-			// TODO Auto-generated method stub
+			initialState = true;
 			
 		}
 
