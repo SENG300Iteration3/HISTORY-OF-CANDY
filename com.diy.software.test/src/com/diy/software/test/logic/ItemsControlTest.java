@@ -610,7 +610,7 @@ public class ItemsControlTest {
 		assertFalse(itemsControl.getInCatalog());
 	}
 
-	@Test
+	@Test 
 	public void testCancelCatalog() {
 		// Flip Switch to Enter Catalog Browsing Code
 		ActionEvent e = new ActionEvent(this, 0, "catalog");
@@ -811,6 +811,30 @@ public class ItemsControlTest {
 		public void banknotesInStorageLowState() {
 			// TODO Auto-generated method stub
 
+		}
+
+		@Override
+		public void printerNotLowInkState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void printerNotLowPaperState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerItemSearchScreen(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void exitTextSearchScreen(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
 		}
 	}
 }

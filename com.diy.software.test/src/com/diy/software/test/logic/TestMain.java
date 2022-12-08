@@ -153,7 +153,7 @@ public class TestMain {
 		assertTrue(ic.getCheckoutTotal() == product.getPrice());
 
 		bc.placePurchasedBagsInBaggingArea();
-		controller.bagItem(bitem);
+		controller.bagItem();
 
 		assertTrue(ic.getCheckoutTotal() == product.getPrice() + bc.getArbitraryBagPrice());
 	}
@@ -169,7 +169,7 @@ public class TestMain {
 		assertTrue(controller.getExpectedWeight() == product.getExpectedWeight());
 
 		bc.placePurchasedBagsInBaggingArea();
-		controller.bagItem(bitem);
+		controller.bagItem();
 
 		controller.updateExpectedCheckoutWeight(bc.getArbitraryBagWeight(), false);
 
@@ -424,7 +424,7 @@ public class TestMain {
 		customer.selectNextItem();
 		customer.scanItem(true);
 		
-		controller.bagItem(fakeData.getItems()[0]);
+		controller.bagItem();
 		assertTrue(itemInScale);
 	}
 

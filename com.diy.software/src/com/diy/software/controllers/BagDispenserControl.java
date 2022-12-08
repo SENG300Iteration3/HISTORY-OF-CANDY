@@ -87,9 +87,11 @@ public class BagDispenserControl implements ActionListener {
 				}
 				break;
 			case "submit":
-				numBag = Integer.parseInt(input); 
-				if(numBag > 0) {
-					checkBagInStock();
+				if(input != "") {
+					numBag = Integer.parseInt(input); 
+					if(numBag > 0) {
+						checkBagInStock();
+					}
 				}
 				break;
 			case "dispense remaining":
