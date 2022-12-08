@@ -35,6 +35,7 @@ import com.jimmyselectronics.virgilio.ElectronicScaleListener;
 
 import ca.ucalgary.seng300.simulation.InvalidArgumentSimulationException;
 import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
+import swing.styling.KioskAudio;
 
 public class ItemsControl implements ActionListener, BarcodeScannerListener, ElectronicScaleListener, PLUCodeControlListener {
 	private StationControl sc;
@@ -572,10 +573,12 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 					break;
 				case "main scan":
 					System.out.println("Customer uses main scanner to scan next item");
+					sc.kioskAudio.playBarcodeScannedSound();
 					scanCurrentItem(false);
 					break;
 				case "handheld scan":
 					System.out.println("Customer uses handheld scanner to scan next item");
+					sc.kioskAudio.playBarcodeScannedSound();
 					scanCurrentItem(true);
 					break;
 				case "enter plu":
