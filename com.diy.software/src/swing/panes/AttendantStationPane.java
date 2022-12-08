@@ -196,6 +196,12 @@ public class AttendantStationPane implements AttendantControlListener {
 		//printReceiptButton.setEnabled(false);
 	}
 
+	@Override
+	public void coinIsLowState(CoinStorageUnit unit, int amount) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	public void setTabIndex(int index) {
 		tabbedPane.setSelectedIndex(index);
 		
@@ -236,24 +242,6 @@ public class AttendantStationPane implements AttendantControlListener {
 
 	@Override
 	public void printerNotLowState() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void coinIsLowState(int amount) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void banknotesNotLowState() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void coinsNotLowState() {
 		// TODO Auto-generated method stub
 		
 	}

@@ -120,7 +120,7 @@ public class TestBagsControl {
 		double lastExpectedWeight = sc.getExpectedWeight();
 		double lastCheckoutListTotal = ic.getCheckoutTotal();
 		
-		bc.placeBagsInBaggingArea();
+		bc.placePurchasedBagsInBaggingArea();
 		
 		assertFalse(lastItemWeight == sc.getWeightOfLastItemAddedToBaggingArea());
 		assertFalse(lastExpectedWeight == sc.getExpectedWeight());

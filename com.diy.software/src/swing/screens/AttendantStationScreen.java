@@ -52,6 +52,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 				permitButton, preventButton, addItemButton, removeItemButton, logoutButton;
 	GUI_JLabel 	weightDisplayLabel, weightDescrepancyMssg, inkLabel, paperLabel,
 				adjustCoinLabel, adjustBanknoteLabel;
+	GUI_JButton printReceiptButton;
 
 	private static String HeaderText = "Attendant Screen";
 	
@@ -173,6 +174,12 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		this.addLayer(buttonPanel, 50);
 		this.addLayer(removeItemPanel, 10);
 		this.addLayer(logoutButton, 10);
+		
+//		// FIXME: Used for testing. Remove before submission.
+//		this.printReceiptButton = makeCentralButton("PRINT RECEIPT", this.width - 200, 25);
+//		printReceiptButton.setActionCommand("printReceipt");
+//		printReceiptButton.addActionListener(systemControl.getReceiptControl());
+//		this.addLayer(printReceiptButton, 0);
 	}
 	
 	
@@ -345,9 +352,8 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 
 
 	@Override
-	public void coinIsLowState(int amount) {
-		adjustBanknoteLabel.setText("Coins low");
-		adjustBanknoteLabel.setBackground(GUI_Color_Palette.RED_BROWN);
+	public void coinIsLowState(CoinStorageUnit unit, int amount) {
+		// TODO Auto-generated method stub
 	}
 
 
@@ -454,26 +460,6 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	}
 	
 	@Override
-	public void banknotesInStorageLowState() {
-		adjustBanknoteLabel.setText("Banknotes low");
-		adjustBanknoteLabel.setBackground(GUI_Color_Palette.RED_BROWN);
-	}
-
-
-	@Override
-	public void banknotesNotLowState() {
-		adjustBanknoteLabel.setText("Adjust Banknote");
-		adjustBanknoteLabel.setBackground(GUI_Color_Palette.DARK_BROWN);
-	}
-
-
-	@Override
-	public void coinsNotLowState() {
-		adjustCoinLabel.setText("Adjust Coins");
-		adjustBanknoteLabel.setBackground(GUI_Color_Palette.DARK_BROWN);
-	}
-	
-	@Override
 	public void triggerItemSearchScreen(AttendantControl ac) {
 		TextSearchScreen screen = new TextSearchScreen(sc, ac);
 		addScreenToStack(screen);
@@ -514,6 +500,12 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 
 
 	@Override
+	public void banknotesInStorageLowState() {
+	
+	}
+
+
+	@Override
 	public void printerNotLowInkState() {
 		// TODO Auto-generated method stub
 		
@@ -544,5 +536,6 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	@Override
 	public void printerNotLowState() {
 		// TODO Auto-generated method stub
+		
 	}
 }
