@@ -75,7 +75,7 @@ public class TestPLU {
 	  }
 	  
 		@Test 
-		public void testActionPerformedCorrectPLUInput() {
+		public void testActionPerformedPLUInput() {
 			pc.addListener(pcls);
 			ActionEvent e = new ActionEvent(this, 0, "PLU_INPUT_BUTTON: 1234");
 			assertFalse(pcls.updated);
@@ -88,18 +88,61 @@ public class TestPLU {
 		}
 		
 		  @Test
-		  public void testActionPerformedIncorrectPLUInput() {
+		  public void testActionPerformedBadPLUInput() {
 			  pc.addListener(pcls);
-			  ActionEvent e = new ActionEvent(this, 0, "PLU_INPUT_BUTTON: 1234");
+			  ActionEvent e = new ActionEvent(this, 0, "1234");
+			  assertFalse(pcls.updated);
+			  
+			  pc.actionPerformed(e);
+			  
+			  assertFalse(pcls.updated);
+			assertFalse(pcls.stubplu.equals("1234"));
 		  }
 	  
 	  @Test
-	  public void testCancelButton() {
+	  public void testActionPerformedCancelButton() {
 		  pc.addListener(pcls);
-		  ActionEvent e = new ActionEvent(this, 0, "PLU_INPUT_BUTTON: 1234");
+		  ActionEvent e = new ActionEvent(this, 0, "cancel");
+		  assertFalse(pcls.updated);
+		  
+		  pc.actionPerformed(e);
+		  
+		  assertTrue(pcls.stubplu.equals(""));
 	  }
 	  
-  
+	  @Test
+	  public void testActionPerformedPLUCorrect() {
+		  pc.addListener(pcls);
+		  ActionEvent e = new ActionEvent(this, 0, "correct");
+		  assertFalse(pcls.updated);
+		  
+		  pc.actionPerformed(e);
+		  
+		  assertTrue(pcls.stubplu.equals(""));
+	  }
+	  
+	  @Test
+	  public void testActionPerformedPLUSubmitInvalid() {
+		  pc.addListener(pcls);
+		  ActionEvent e = new ActionEvent(this, 0, "submit");
+		  assertFalse(pcls.updated);
+		  
+		  pc.actionPerformed(e);
+		  
+		  assertTrue(pcls.stubplu.equals(""));
+	  }
+	  
+	  @Test
+	  public void testActionPerformedPLUSubmit() {
+		  pc.addListener(pcls);
+		  ActionEvent e = new ActionEvent(this, 0, "submit");
+		  assertFalse(pcls.updated);
+		  
+		  pc.actionPerformed(e);
+		  
+		  assertTrue(pcls.stubplu.equals(""));
+	  }
+	  
 	public class PLUCodeListenerStub implements PLUCodeControlListener {
 		String stubplu = "";
 		boolean updated = false;
