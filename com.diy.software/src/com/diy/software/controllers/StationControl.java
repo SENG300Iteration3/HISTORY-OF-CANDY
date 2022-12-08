@@ -6,7 +6,6 @@ import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.DoItYourselfStation;
 import com.diy.hardware.PLUCodedItem;
@@ -20,6 +19,7 @@ import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.PLUCodeControlListener;
 import com.diy.software.fakedata.GiftcardDatabase;
 import com.diy.software.listeners.StationControlListener;
+import com.diy.software.util.Tuple;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.EmptyException;
@@ -194,6 +194,7 @@ public class StationControl
 		station.plugIn();
 		station.turnOn();
 	}
+	
 	public void shutDown() {
 		ic.resetState();
 		ac.resetState(); // this method tells all listeners in ac to set themselves to their starting state. 

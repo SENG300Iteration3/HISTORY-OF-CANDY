@@ -20,24 +20,6 @@ public class AttendantControlStub implements AttendantControlListener{
 		
 	}
 
-//	@Override
-//	public void addPaperState() {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//
-//	@Override
-//	public void addInkState() {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//
-//	@Override
-//	public void printerNotLowState() {
-//		// TODO Auto-generated method stub
-//		
-//	}
-
 	@Override
 	public void signalWeightDescrepancy(String updateMessage) {
 		// TODO Auto-generated method stub
@@ -116,6 +98,18 @@ public class AttendantControlStub implements AttendantControlListener{
 	}
 
 	@Override
+	public void triggerItemSearchScreen(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void exitTextSearchScreen(AttendantControl ac) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
 	public void printerNotLowInkState() {
 		// TODO Auto-generated method stub
 		
@@ -135,6 +129,12 @@ public class AttendantControlStub implements AttendantControlListener{
 
 	@Override
 	public void addTooMuchPaperState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void printerNotLowState() {
 		// TODO Auto-generated method stub
 		
 	}
