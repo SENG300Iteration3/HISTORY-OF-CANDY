@@ -2,6 +2,9 @@ package com.diy.software.test.gui;
 
 import static org.junit.Assert.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,9 +56,36 @@ public class ReceiptScreenTest {
 	}
 	
 	@Test
-	public void testPrintReciept() {
+	public void testPrintRecieptItemsNoItems() {
 		sc.getReceiptControl().printItems();
 		assertEquals("", screen.receiptTextArea.getText());
+	}
+	
+	@Test
+	public void testPrintRecieptBalance() {
+		sc.getReceiptControl().printTotalCost();
+		assertEquals("Total: $0.0\n", screen.receiptTextArea.getText());
+	}
+	
+	@Test
+	public void testPrintMembershipNoMembers() {
+		sc.getReceiptControl().printMembership();
+		assertEquals("", screen.receiptTextArea.getText());
+	}
+	
+	@Test
+	public void testPrintDateTime() {
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");  
+	    Date date = new Date();  
+	    String expected = formatter.format(date) + "\n";
+		sc.getReceiptControl().printDateTime();
+		assertEquals(expected, screen.receiptTextArea.getText());
+	}
+	
+	@Test
+	public void testPrintThankyouMessageNotMembers() {
+		sc.getReceiptControl().printThankyouMsg();
+		assertEquals("Thank you for shopping with us!\n", screen.receiptTextArea.getText());
 	}
 
 }

@@ -137,13 +137,6 @@ public class ReceiptScreen extends Screen implements ReceiptControlListener{
 
 	public JButton getOkayButton() {
 		return okayButton;
-	}
-
-	public JTextArea getReceiptTextArea() {
-		return receiptTextArea;
-	}
-	
-	
-	
+	}	
 	
 }
