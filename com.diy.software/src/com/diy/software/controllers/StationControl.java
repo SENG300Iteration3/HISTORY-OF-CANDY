@@ -319,6 +319,7 @@ public class StationControl
 					this.station.handheldScanner.disable();
 					this.station.mainScanner.disable();
 					this.station.cardReader.disable();
+					this.cc.disablePayments(); // Added this method for when adjusting banknotes/coins.
 					for (StationControlListener l : listeners) {
 						l.systemControlLocked(this, true);
 					}
@@ -367,6 +368,7 @@ public class StationControl
 					this.station.handheldScanner.enable();
 					this.station.mainScanner.enable();
 					this.station.cardReader.enable();
+					this.cc.enablePayments(); // Added this method for when adjusting banknotes/coins is finished.
 					for (StationControlListener l : listeners)
 						l.systemControlLocked(this, false);
 					isLocked = false;

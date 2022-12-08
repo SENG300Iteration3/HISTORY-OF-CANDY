@@ -213,7 +213,7 @@ public class CustomerBagsPanel extends JPanel
 	}
 
 	@Override
-	public void coinIsLowState(CoinStorageUnit unit, int amount) {
+	public void coinIsLowState(int amount) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -256,6 +256,22 @@ public class CustomerBagsPanel extends JPanel
 		
 	}
 
+	@Override
+	public void banknotesInStorageLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void banknotesNotLowState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void coinsNotLowState() {
+	
+	}
 	public void triggerItemSearchScreen(AttendantControl ac) {
 		// TODO Auto-generated method stub
 		
@@ -263,12 +279,6 @@ public class CustomerBagsPanel extends JPanel
 
 	@Override
 	public void exitTextSearchScreen(AttendantControl ac) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void banknotesInStorageLowState() {
 		// TODO Auto-generated method stub
 		
 	}
