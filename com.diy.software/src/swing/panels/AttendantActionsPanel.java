@@ -81,7 +81,7 @@ public class AttendantActionsPanel extends JPanel
 		initialState();
 		// inkButton.setEnabled(false);
 		// paperButton.setEnabled(false);
-		// bagDispenserButton.setEnabled(false);
+		 bagDispenserButton.setEnabled(true);
 	}
 	
 	private JButton initializeButton(String msg, String command) {
