@@ -12,6 +12,7 @@ import org.junit.Before;
 
 import org.junit.Test;
 
+import com.diy.hardware.PLUCodedItem;
 import com.diy.software.controllers.AttendantControl;
 import com.diy.software.controllers.ItemsControl;
 import com.diy.software.controllers.StationControl;
@@ -46,11 +47,15 @@ public class TestAttendantControl {
 
 		// FakeDataInitializer fdi = new FakeDataInitializer();
 		// fdi.addProductAndBarcodeData();
-		sc = new StationControl();
-		ic = new ItemsControl(sc);
-		ac = new AttendantControl(sc);
+		FakeDataInitializer db = new FakeDataInitializer();
+		db.addPLUCodedProduct();
+		db.addProductAndBarcodeData();
+		sc = new StationControl(db);
+		ic = sc.getItemsControl();
+		ac = sc.getAttendantControl();
 		als = new AttendantListenerStub();
 		scl = new SystemControlListenerStub();
+		ac.addListener(als);
 		rp = sc.station.printer;
 		rp.register(ac);
 		rp.plugIn();
@@ -59,34 +64,6 @@ public class TestAttendantControl {
 		rp.enable();
     
     this.currency = Currency.getInstance("CAD");
-	}
-
-	@Test
-	public void testAddListener() {
-		als.attendantBags = false;
-		ac.approveBagsAdded();
-		assertFalse(als.attendantBags);
-
-		ac.addListener(als);
-
-		als.attendantBags = false;
-		ac.approveBagsAdded();
-		assertTrue(als.attendantBags);
-	}
-
-	@Test
-	public void testRemoveListener() {
-		ac.addListener(als);
-
-		als.attendantBags = false;
-		ac.approveBagsAdded();
-		assertTrue(als.attendantBags);
-
-		ac.removeListener(als);
-
-		als.attendantBags = false;
-		ac.approveBagsAdded();
-		assertFalse(als.attendantBags);
 	}
 
 	@Test
@@ -124,32 +101,71 @@ public class TestAttendantControl {
 		assertTrue(als.testMsg.equals("test"));
 	}
 
-	// FIXME: Need to rewrite - Anh
-	// @Test (expected = InvalidArgumentSimulationException.class)
-	// public void testRemoveLastBaggedItemNoItem() {
-	// ac.addListener(als);
-	// assertFalse(als.ini);
-	// ac.removeLastBaggedItem();
-	// }
-
 	@Test
-	public void testActionPerformedNoBagging() {
-		ActionEvent e = new ActionEvent(this, 0, "no_bagging");
-
+	public void testNoBaggingPLUItem() {
+		double expectedWeight = sc.getExpectedWeight();
+		boolean found = false;
+		while(!found) { 
+			ic.pickupNextItem();
+			if(!ic.getIsPLU()) {
+				ActionEvent e = new ActionEvent(this, 0, "main scanner");
+				ic.actionPerformed(e);
+			}else {
+				expectedWeight = sc.getExpectedWeight();
+				PLUCodedItem item = (PLUCodedItem) ic.getCurrentItem();
+				ActionEvent e = new ActionEvent(this, 0, "PLU_INPUT_BUTTON: " + item.getPLUCode());
+				sc.getPLUCodeControl().actionPerformed(e);
+				e = new ActionEvent(this, 0, "submit");
+				sc.getPLUCodeControl().actionPerformed(e);
+				sc.station.scanningArea.add(item);
+				ic.placeItemOnBaggingArea();
+				found = true;
+			} 
+		}
+		
+		// request for do not bag selected item
+		ActionEvent e = new ActionEvent(this, 0, "request no bag");
 		ac.actionPerformed(e);
-		assertFalse(als.noBagging);
+		assertTrue(als.noBagging);
+		
+		// attendant approves
+		e = new ActionEvent(this, 0, "approve no bag");
+		ac.actionPerformed(e);
+		assertTrue(sc.getExpectedWeight() == expectedWeight);	// the expected weight is reset
 	}
 
-	// @Test
-	// public void testRemoveLastBaggedItemWithItem() {
-	// ac.addListener(als);
-	// assertFalse(als.ini);
-	// Item wbi = new Item(235) {};
-	// sc.station.scale.add(wbi);
-	// ac.removeLastBaggedItem();
-	// assertTrue(als.ini);
-	// }
-	//
+	@Test
+	public void testNoBaggingBarcodedItem() {
+		double expectedWeight = 0;
+		boolean found = false;
+		while(!found) { 
+			ic.pickupNextItem();
+			if(!ic.getIsPLU()) {
+				ActionEvent e = new ActionEvent(this, 0, "main scanner");
+				ic.actionPerformed(e);
+				found = true;
+			}else {
+				expectedWeight = sc.getExpectedWeight();
+				PLUCodedItem item = (PLUCodedItem) ic.getCurrentItem();
+				ActionEvent e = new ActionEvent(this, 0, "PLU_INPUT_BUTTON: " + item.getPLUCode());
+				sc.getPLUCodeControl().actionPerformed(e);
+				e = new ActionEvent(this, 0, "submit");
+				sc.getPLUCodeControl().actionPerformed(e);
+				sc.station.scanningArea.add(item);
+				ic.placeItemOnBaggingArea();
+			} 
+		}
+		
+		// request for do not bag selected item
+		ActionEvent e = new ActionEvent(this, 0, "request no bag");
+		ac.actionPerformed(e);
+		assertTrue(als.noBagging);
+		
+		// attendant approves
+		e = new ActionEvent(this, 0, "approve no bag");
+		ac.actionPerformed(e);
+		assertTrue(sc.getExpectedWeight() == expectedWeight);	// the expected weight is reset
+	}
 
 	@Test
 	public void testApproveBagsStationBlocked() {

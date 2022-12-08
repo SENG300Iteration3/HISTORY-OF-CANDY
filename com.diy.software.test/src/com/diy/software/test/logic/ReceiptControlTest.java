@@ -98,7 +98,6 @@ public class ReceiptControlTest {
 	
 	@After
 	public void teardown() {
-		ac.removeListener(acl);
 		rp.disable();
 		rp.turnOff();
 		rp.unplug();
@@ -841,7 +840,6 @@ public class ReceiptControlTest {
 			// TODO Auto-generated method stub
 			
 		}
-	}
 
 	public class StationControlListenerStub implements StationControlListener {
 

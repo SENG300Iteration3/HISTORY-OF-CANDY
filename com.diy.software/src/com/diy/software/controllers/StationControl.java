@@ -109,8 +109,8 @@ public class StationControl
 	 * hardware with the DIYStation.
 	 */
 	public StationControl() {
-		customer = new Customer();
 		station = new DoItYourselfStation();
+		customer = new Customer();
 		customer.useStation(station);
 		
 		ic = new ItemsControl(this);
@@ -182,7 +182,7 @@ public class StationControl
 			}
 		}		
 	}
-
+	
 	/**
 	 * Registers a Listener for SystemControlListener
 	 */
@@ -586,9 +586,8 @@ public class StationControl
 	/**
 	 * Add item to electronic scale
 	 * 
-	 * @param itemToBag item to be added
 	 */
-	public void bagItem(Item itemToBag) {
+	public void bagItem() {
 		customer.placeItemInBaggingArea();
 		this.unblockStation();
 	}
