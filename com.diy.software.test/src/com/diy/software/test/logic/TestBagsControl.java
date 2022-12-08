@@ -162,22 +162,7 @@ public class TestBagsControl {
 		assertTrue(sc.station.cardReader.isDisabled());
 		assertTrue(bls.attendantVerifyBags);
 	}
-	
-	@Test
-	public void testActionPerformedPurchaseBags() {
-		bc.addListener(bls);
-		ActionEvent e =  new ActionEvent(this,0,"purchase bags");
-		double lastItemWeight = sc.getWeightOfLastItemAddedToBaggingArea();
-		double lastExpectedWeight = sc.getExpectedWeight();
-		double lastCheckoutListTotal = ic.getCheckoutTotal();
 		
-		bc.actionPerformed(e);
-		
-		assertFalse(lastItemWeight == sc.getWeightOfLastItemAddedToBaggingArea());
-		assertFalse(lastExpectedWeight == sc.getExpectedWeight());
-		assertFalse(lastCheckoutListTotal == ic.getCheckoutTotal());
-	}
-	
 	
 	@Test (expected = NullPointerException.class)
 	public void testActionPerformedNullEvent() {
