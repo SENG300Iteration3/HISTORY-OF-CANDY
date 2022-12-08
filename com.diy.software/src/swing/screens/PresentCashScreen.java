@@ -136,7 +136,7 @@ public class PresentCashScreen extends Screen implements CashControlListener {
 		}
 		double returnedCash = 0;
 		for(Coin i : c) {
-			returnedCash += i.getValue().doubleValue()/100.0;
+			returnedCash += ((double)i.getValue())/100.0;
 		}
 		if(b != null) {
 			returnedCash += b.getValue();
@@ -155,7 +155,7 @@ public class PresentCashScreen extends Screen implements CashControlListener {
 		}
 		double returnedCash = 0;
 		for(Coin i : c) {
-			returnedCash += i.getValue().doubleValue()/100.0;
+			returnedCash += ((double)i.getValue())/100.0;
 		}
 		if(b != null) {
 			for(Banknote i : b) {
