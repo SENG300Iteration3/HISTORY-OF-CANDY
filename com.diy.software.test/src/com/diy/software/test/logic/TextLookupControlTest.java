@@ -429,6 +429,18 @@ public class TextLookupControlTest {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public void stationShutDown(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void stationStartedUp(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
+		}
     }
 	
 }

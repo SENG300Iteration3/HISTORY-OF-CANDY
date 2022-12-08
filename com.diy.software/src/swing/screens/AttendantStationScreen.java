@@ -84,6 +84,8 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		//removeItemButton = initializeButton("Remove item", "remove", true);
 		logoutButton = initializeButton("Logout", "logout", true);
 		
+		startUpButton.setEnabled(false);
+		
 		removeItemPanel = new GUI_JPanel();
 		removeItemPanel.setLayout(new GridLayout(2, 1));
 		
@@ -589,5 +591,21 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	@Override
 	public void printerNotLowState() {
 		// TODO Auto-generated method stub
+	}
+
+
+	@Override
+	public void stationShutDown(AttendantControl ac) {
+		shutDownButton.setEnabled(false);
+		startUpButton.setEnabled(true);
+		
+	}
+
+
+	@Override
+	public void stationStartedUp(AttendantControl ac) {
+		shutDownButton.setEnabled(true);
+		startUpButton.setEnabled(false);
+		
 	}
 }
