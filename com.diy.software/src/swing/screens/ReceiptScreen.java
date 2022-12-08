@@ -71,14 +71,6 @@ public class ReceiptScreen extends Screen implements ReceiptControlListener{
 		});
 		this.addLayer(okayButton, 100);
 	}
-	
-	public static void main(String[] args) {
-		StationControl stationControl = new StationControl();
-		AttendantControl attendantControl = new AttendantControl(stationControl);
-		ReceiptScreen test = new ReceiptScreen(stationControl);
-		test.receiptTextArea.setText("aaa\naaaa\naaa\n");
-		test.openInNewJFrame();
-	}
 
 	@Override
 	public void outOfInkOrPaper(ReceiptControl rc, String message) {
@@ -142,4 +134,16 @@ public class ReceiptScreen extends Screen implements ReceiptControlListener{
 		// TODO Auto-generated method stub
 		
 	}
+
+	public JButton getOkayButton() {
+		return okayButton;
+	}
+
+	public JTextArea getReceiptTextArea() {
+		return receiptTextArea;
+	}
+	
+	
+	
+	
 }
