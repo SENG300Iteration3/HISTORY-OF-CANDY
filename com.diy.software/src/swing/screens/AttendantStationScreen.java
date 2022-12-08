@@ -50,7 +50,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	
 	GUI_JButton approveAddedBagsButton, approveNoBagging, startUpButton, shutDownButton, 
 				permitButton, preventButton, addItemButton, removeItemButton, logoutButton;
-	GUI_JLabel 	weightDisplayLabel, weightDescrepancyMssg, inkLabel, paperLabel,
+	GUI_JLabel 	weightDisplayLabel, errorMssg, inkLabel, paperLabel,
 				adjustCoinLabel, adjustBanknoteLabel;
 
 	private static String HeaderText = "Attendant Screen";
@@ -119,7 +119,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		removeItemPanel.add(removeItemButton);
 
 		// Initialize notifications labels
-		weightDescrepancyMssg = initializeLabel("Weight Discrepancy");
+		errorMssg = initializeLabel("Error Display");
 		weightDisplayLabel = initializeLabel("Weight Display");
 		inkLabel = initializeLabel("Ink status");
 		paperLabel = initializeLabel("Paper status");
@@ -130,7 +130,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		GUI_JPanel notificationPanel = new GUI_JPanel();
 		notificationPanel.setLayout(new GridLayout(1, 6));
 		
-		notificationPanel.add(weightDescrepancyMssg);
+		notificationPanel.add(errorMssg);
 		notificationPanel.add(weightDisplayLabel);
 		notificationPanel.add(inkLabel);
 		notificationPanel.add(paperLabel);
@@ -294,7 +294,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 
 	@Override
 	public void signalWeightDescrepancy(String updateMessage) {
-		weightDescrepancyMssg.setText(updateMessage);
+		errorMssg.setText(updateMessage);
 		
 	}
 
@@ -308,7 +308,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	public void initialState() {
 		approveAddedBagsButton.setEnabled(false);
 		approveNoBagging.setEnabled(false);
-		weightDescrepancyMssg.setText("");
+		errorMssg.setText("");
 	}
 	
 	public static void main(String args[]) {
@@ -562,14 +562,14 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 
 	@Override
 	public void printerNotLowInkState() {
-		// TODO Auto-generated method stub
+		inkLabel.setText("Ink Good");
 		
 	}
 
 
 	@Override
 	public void printerNotLowPaperState() {
-		// TODO Auto-generated method stub
+		paperLabel.setText("Paper good");
 		
 	}
 
