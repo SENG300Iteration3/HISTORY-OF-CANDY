@@ -475,6 +475,12 @@ public class TestAttendantControl {
 			
 		}
 
+		@Override
+		public void triggerReceiptScreen(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
+
 	}
 
 	public class AttendantListenerStub implements AttendantControlListener {
@@ -584,12 +590,6 @@ public class TestAttendantControl {
 		}
 
 		@Override
-		public void coinIsLowState(CoinStorageUnit unit, int amount) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
 		public void attendantApprovedItemRemoval(AttendantControl bc) {
 			// TODO Auto-generated method stub
 			
@@ -597,6 +597,60 @@ public class TestAttendantControl {
 
 		@Override
 		public void itemBagged() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerItemSearchScreen(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void exitTextSearchScreen(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void printerNotLowInkState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void printerNotLowPaperState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void coinIsLowState(int amount) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void banknotesNotLowState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void coinsNotLowState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void stationShutDown(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void stationStartedUp(AttendantControl ac) {
 			// TODO Auto-generated method stub
 			
 		}

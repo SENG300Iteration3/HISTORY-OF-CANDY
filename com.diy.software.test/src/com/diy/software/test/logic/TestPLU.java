@@ -164,6 +164,21 @@ public class TestPLU {
 		  
 		  assertTrue(pcls.stubplu.equals(""));
 	  }
+
+		@Test
+	  public void testPluUpdate() {
+		  pc.addListener(pcls);
+		  ActionEvent e = new ActionEvent(this, 0, "correct");
+			pc.actionPerformed(e);
+		  assertTrue(pcls.updated);
+	  }
+		@Test
+	  public void testCode() {
+		  pc.addListener(pcls);
+		  ActionEvent e = new ActionEvent(this, 0, "correct");
+			pc.actionPerformed(e);
+		  assertTrue(pcls.updated);
+	  }
 	  
 	public class PLUCodeListenerStub implements PLUCodeControlListener {
 		String stubplu = "";

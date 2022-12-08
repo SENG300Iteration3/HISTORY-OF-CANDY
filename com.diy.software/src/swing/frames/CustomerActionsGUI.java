@@ -22,7 +22,7 @@ public class CustomerActionsGUI implements PaneControlListener {
     this.pc = pc;
     this.pc.addListener(this);
     frame.setVisible(true);
-    frame.setLocation(640, 745);
+    frame.setLocation(640, 720);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.getContentPane().add(tabbedPane , BorderLayout.CENTER);
 
@@ -44,4 +44,10 @@ public class CustomerActionsGUI implements PaneControlListener {
   public void clientSidePaneChanged(StationControl sc, int index) {
 		tabbedPane.setSelectedIndex(index);
   }
+
+	public JTabbedPane getTabbedPane() {
+		return tabbedPane;
+	}
+
+  
 }

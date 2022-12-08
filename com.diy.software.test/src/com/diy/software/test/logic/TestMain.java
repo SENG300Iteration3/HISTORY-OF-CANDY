@@ -152,7 +152,11 @@ public class TestMain {
 
 		assertTrue(ic.getCheckoutTotal() == product.getPrice());
 
+<<<<<<< HEAD
 		// bc.placePurchasedBagsInBaggingArea();
+=======
+		bc.placeBagsInBaggingArea();
+>>>>>>> d9a659bcdb920e21592c85b742eb33244ae4ba54
 		controller.bagItem(bitem);
 
 		assertTrue(ic.getCheckoutTotal() == product.getPrice() + bc.getArbitraryBagPrice());
@@ -168,7 +172,11 @@ public class TestMain {
 
 		assertTrue(controller.getExpectedWeight() == product.getExpectedWeight());
 
+<<<<<<< HEAD
 		// bc.placePurchasedBagsInBaggingArea();
+=======
+		bc.placeBagsInBaggingArea();
+>>>>>>> d9a659bcdb920e21592c85b742eb33244ae4ba54
 		controller.bagItem(bitem);
 
 		controller.updateExpectedCheckoutWeight(bc.getArbitraryBagWeight(), false);
@@ -1054,6 +1062,15 @@ public class TestMain {
 			// TODO Auto-generated method stub
 			
 		}
+<<<<<<< HEAD
+=======
+
+		@Override
+		public void triggerReceiptScreen(StationControl systemControl) {
+			// TODO Auto-generated method stub
+			
+		}
+>>>>>>> d9a659bcdb920e21592c85b742eb33244ae4ba54
 		
 	}
 	

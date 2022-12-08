@@ -15,7 +15,9 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import com.diy.software.controllers.AttendantControl;
+import com.diy.software.controllers.KeyboardControl;
 import com.diy.software.controllers.StationControl;
+import com.diy.software.listeners.KeyboardControlListener;
 
 import swing.styling.GUI_Color_Palette;
 import swing.styling.GUI_Fonts;
@@ -24,7 +26,7 @@ import swing.styling.GUI_JLabel;
 import swing.styling.GUI_JPanel;
 import swing.styling.Screen;
 
-public class AttendantLoginScreen extends Screen implements ActionListener {
+public class AttendantLoginScreen extends Screen implements ActionListener, KeyboardControlListener {
 	
 	//It doesn't matter if these components are public
 	//because they can be accessed by getting the components inside the AttendantLoginScreen
@@ -38,6 +40,7 @@ public class AttendantLoginScreen extends Screen implements ActionListener {
 	private int width = 450;
 	private int height = 50;
 	private int overallMargin = 10;
+	private KeyboardControl kc;
 	
 	private static String HeaderText = "Attendant Login Screen".toUpperCase();
 	
@@ -46,8 +49,9 @@ public class AttendantLoginScreen extends Screen implements ActionListener {
 		
 		super.rootPanel.setOpaque(true);
 		super.rootPanel.setBackground(GUI_Color_Palette.WHITE);
-		
 		ac = stationControls.get(0).getAttendantControl();
+		kc = ac.getKeyboardControl();
+		kc.addListener(this);
 		
 		centerPanel = new GUI_JPanel();
 		centerPanel.setBackground(GUI_Color_Palette.DARK_BLUE);
@@ -109,9 +113,12 @@ public class AttendantLoginScreen extends Screen implements ActionListener {
 		loginInfo = new JTextField();
 		loginInfo.setFont(GUI_Fonts.FRANKLIN_BOLD);
 		loginInfo.setHorizontalAlignment(JLabel.CENTER);
-		loginInfo.addActionListener(this);
 		loginInfo.setBorder(BorderFactory.createLineBorder(GUI_Color_Palette.DARK_BLUE, 10));
-
+		
+		loginInfo.setEditable(false);
+		loginInfo.getCaret().setVisible(true);
+		loginInfo.setFocusable(true);
+		//loginInfo.addKeyListener(kc);
 
 		centerPanel.add(loginInfo, 1);
 		
@@ -120,5 +127,25 @@ public class AttendantLoginScreen extends Screen implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		ac.login(loginInfo.getText());
+		kc.clearText();
+	}
+
+	@Override
+	public void keyboardInputRecieved(KeyboardControl kc, String text, String key, int pointerPosition) {
+		// Very important check to only update the text field when the attendant is viewing this screen
+		if (this.rootPanel.getParent() != null) {
+			loginInfo.setText(text);
+			loginInfo.requestFocus();
+			loginInfo.setCaretPosition(pointerPosition);
+		}
+	}
+
+	@Override
+	public void keyboardInputCompleted(KeyboardControl kc, String text) {
+		if (this.rootPanel.getParent() != null) {
+			ac.login(text);
+			loginInfo.setText("");
+			kc.clearText();
+		}
 	}
 }

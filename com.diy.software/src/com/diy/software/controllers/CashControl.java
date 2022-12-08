@@ -265,6 +265,9 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 		try {
 			if (c.startsWith("d")) {
 				Banknote banknote = new Banknote(Currency.getInstance("CAD"), Long.parseLong(c.split(" ")[1]));
+				sc.getAttendantControl().notifyListenerAdjustCoinForChange();
+				sc.getAttendantControl().adjustBanknotesForChange();
+				System.out.println("bank note clicked");
 				if (!sc.station.banknoteInput.isDisabled()) {
 					sc.station.banknoteInput.receive(banknote);
 				} else {
@@ -272,6 +275,9 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 				}
 			} else if (c.startsWith("c")) {
 				Coin coin = new Coin(Currency.getInstance("CAD"), new BigDecimal(c.split(" ")[1]));
+				sc.getAttendantControl().notifyListenerAdjustCoinForChange();
+				sc.getAttendantControl().adjustBanknotesForChange();
+				System.out.println("coin clicked");
 				if (!sc.station.coinSlot.isDisabled()) {
 					sc.station.coinSlot.receive(coin);
 				} else {
@@ -392,6 +398,23 @@ public class CashControl implements BanknoteValidatorObserver, CoinValidatorObse
 		boolean isLow = false;
 		//count is less than 1/20 of the capacity
 		if (unit.getBanknoteCount() <= (unit.getCapacity()/20)) {
+			isLow = true;
+		}
+		return isLow;
+	}
+	
+	/**
+	 * Checks if this coin storage is low
+	 * @param unit
+	 * 	the unit to check
+	 * @return
+	 * 		a boolean to when the storage is low on coins
+	 * 		true for yes, false otherwise
+	 */
+	public boolean coinInStorageLow(CoinStorageUnit unit) {
+		boolean isLow = false;
+		//count is less than 1/20 of the capacity
+		if (unit.getCoinCount() <= (unit.getCapacity()/20)) {
 			isLow = true;
 		}
 		return isLow;

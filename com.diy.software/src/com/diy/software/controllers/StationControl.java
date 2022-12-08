@@ -6,7 +6,6 @@ import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.diy.software.util.Tuple;
 import com.diy.hardware.BarcodedProduct;
 import com.diy.hardware.DoItYourselfStation;
 import com.diy.hardware.PLUCodedItem;
@@ -20,6 +19,7 @@ import com.diy.software.fakedata.FakeDataInitializer;
 import com.diy.software.listeners.PLUCodeControlListener;
 import com.diy.software.fakedata.GiftcardDatabase;
 import com.diy.software.listeners.StationControlListener;
+import com.diy.software.util.Tuple;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.EmptyException;
@@ -46,6 +46,7 @@ import com.unitedbankingservices.coin.Coin;
 
 import ca.powerutility.NoPowerException;
 import ca.ucalgary.seng300.simulation.NullPointerSimulationException;
+import swing.styling.KioskAudio;
 
 /**
  * SystemControl is a class that acts as an intermediary between listeners
@@ -95,10 +96,13 @@ public class StationControl
 	private int bagInStock;
 	private PLUCodeControl pcc;
 
-	
+
 	// used for receipt listeners
 	boolean isOutOfPaper = false;
 	boolean isOutOfInk = false;
+
+	//Set up kiosk Audio
+	KioskAudio kioskAudio;
 	/**
 	 * Constructor for the SystemControl class. Instantiates an object of type
 	 * DoItYourselfStation as well as a set of listeners which are registered to the
@@ -125,6 +129,7 @@ public class StationControl
 		station.reusableBagDispenser.register(this);
 		rc = new ReceiptControl(this);
 		
+		kioskAudio = new KioskAudio();
 
 		startUp();
 		
@@ -193,13 +198,14 @@ public class StationControl
 	public void startUp() {
 		station.plugIn();
 		station.turnOn();
-	}
-	public void shutDown() {
+		
 		ic.resetState();
-		ac.resetState(); // this method tells all listeners in ac to set themselves to their starting state. 
-						 // Might want to put it in startUp. 
+		ac.resetState();
 		rc.resetState();
 		cc.resetState();
+	}
+	
+	public void shutDown() {
 		
 		station.unplug();
 		station.turnOff();
@@ -318,6 +324,7 @@ public class StationControl
 					this.station.handheldScanner.disable();
 					this.station.mainScanner.disable();
 					this.station.cardReader.disable();
+					this.cc.disablePayments(); // Added this method for when adjusting banknotes/coins.
 					for (StationControlListener l : listeners) {
 						l.systemControlLocked(this, true);
 					}
@@ -366,6 +373,7 @@ public class StationControl
 					this.station.handheldScanner.enable();
 					this.station.mainScanner.enable();
 					this.station.cardReader.enable();
+					this.cc.enablePayments(); // Added this method for when adjusting banknotes/coins is finished.
 					for (StationControlListener l : listeners)
 						l.systemControlLocked(this, false);
 					isLocked = false;
@@ -405,6 +413,7 @@ public class StationControl
 	}
 
 	public void askForPin(String kind) {
+		kioskAudio.usePinPadSound();
 		for (StationControlListener l : listeners)
 			l.initiatePinInput(this, kind);
 	}
@@ -682,7 +691,7 @@ public class StationControl
 			}
 			membershipInput = false;
 			wc.membershipCardInputCanceled();
-		} 
+		}
 	}
 				
 	public void addReusableBag(ReusableBag lastDispensedReusableBag) {		

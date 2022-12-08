@@ -6,16 +6,17 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
-import java.util.Scanner;
-import java.util.HashMap;
-import java.util.Objects;
+import com.diy.hardware.AttendantStation;
 import com.diy.software.listeners.AttendantControlListener;
-import com.diy.software.listeners.MembershipControlListener;
 import com.jimmyselectronics.AbstractDevice;
 import com.jimmyselectronics.AbstractDeviceListener;
 import com.jimmyselectronics.OverloadException;
 import com.jimmyselectronics.abagnale.IReceiptPrinter;
 import com.jimmyselectronics.abagnale.ReceiptPrinterListener;
+import com.jimmyselectronics.nightingale.Key;
+import com.jimmyselectronics.nightingale.KeyListener;
+import com.jimmyselectronics.nightingale.Keyboard;
+import com.jimmyselectronics.nightingale.KeyboardListener;
 import com.jimmyselectronics.abagnale.ReceiptPrinterND;
 import com.unitedbankingservices.TooMuchCashException;
 import com.unitedbankingservices.banknote.Banknote;
@@ -25,18 +26,37 @@ import com.unitedbankingservices.coin.CoinStorageUnit;
 
 import ca.ucalgary.seng300.simulation.SimulationException;
 
-public class AttendantControl implements ActionListener, ReceiptPrinterListener {
+public class AttendantControl implements ActionListener, ReceiptPrinterListener, KeyboardListener, KeyListener {
 
+	public AttendantStation station;
 	private StationControl sc;
 	private ItemsControl ic;
 	private ArrayList<AttendantControlListener> listeners;
-	private CoinStorageUnit unit;
 	private Currency currency;
+	private TextLookupControl tlc;
+	private KeyboardControl kc;
+	private String attendantNotifications;
 	private int MAXIMUM_INK = 0;
-	String attendantNotifications;
 	
 	public static final ArrayList<String> logins = new ArrayList<String>();
-	
+
+	public AttendantControl(StationControl sc) {
+		this.sc = sc;
+		this.station = new AttendantStation();
+		this.listeners = new ArrayList<>();
+		
+		this.currency = Currency.getInstance("CAD");
+		
+		station.keyboard.register(this);
+		
+		station.plugIn();
+		station.turnOn();
+		
+		tlc = new TextLookupControl(this, this.sc);
+		kc = new KeyboardControl(station.keyboard);
+		ic = sc.getItemsControl();
+	}
+
 	public void login(String password) {
 		for (AttendantControlListener l : listeners) {
 			l.loggedIn(logins.contains(password));
@@ -49,21 +69,16 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		}
 	}
 
-
-	public AttendantControl(StationControl sc) {
-		this.sc = sc;
-		this.ic = sc.getItemsControl();
-		this.listeners = new ArrayList<>();
-
-		this.currency = Currency.getInstance("CAD");
-	}
-
 	public void addListener(AttendantControlListener l) {
 		listeners.add(l);
 	}
 
 	public void removeListener(AttendantControlListener l) {
 		listeners.remove(l);
+	}
+	
+	public TextLookupControl getTextLookupControl() {
+		return tlc;
 	}
 	
 	// allow attendant to enable customer station use after it has been suspended
@@ -76,10 +91,17 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 
 	public void startUpStation() {
 		sc.startUp();
+		//sc.unblockStation();
+		for (AttendantControlListener l : listeners) {
+			l.stationStartedUp(this);
+		}
 	}
 	
-	// TODO shutDown and Reset can be deleted if not used
 	public void shutDownStation() {
+		sc.blockStation("shutdown");
+		for (AttendantControlListener l : listeners) {
+			l.stationShutDown(this);
+		}
 		sc.shutDown();
 	}	
 	
@@ -173,10 +195,10 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 				l.signalWeightDescrepancy("Added too much ink!");
 				l.addTooMuchInkState();
 			}
-			addInk(ReceiptPrinterND.MAXIMUM_INK - sc.getReceiptControl().currentInkCount); //add maximum amount of ink possible that doesn't cause overload
+			addInk(ReceiptPrinterND.MAXIMUM_INK - sc.getReceiptControl().currentInkCount - 1); //add maximum amount of ink possible that doesn't cause overload
 			
 		}
-		if(sc.getReceiptControl().currentInkCount <= sc.getReceiptControl().paperLowThreshold) {
+		if(sc.getReceiptControl().currentInkCount >= sc.getReceiptControl().inkLowThreshold) {
 			for (AttendantControlListener l : listeners)
 				l.printerNotLowInkState();
 		}
@@ -202,9 +224,9 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 				l.signalWeightDescrepancy("Added too much paper!");
 				l.addTooMuchPaperState();
 			}
-			addPaper(ReceiptPrinterND.MAXIMUM_PAPER - sc.getReceiptControl().currentPaperCount); //add maximum amount of paper possible that doesn't cause overload
+			addPaper(ReceiptPrinterND.MAXIMUM_PAPER - sc.getReceiptControl().currentPaperCount - 1); //add maximum amount of paper possible that doesn't cause overload
 		}
-		if(sc.getReceiptControl().currentPaperCount <= sc.getReceiptControl().paperLowThreshold) {
+		if(sc.getReceiptControl().currentPaperCount >= sc.getReceiptControl().paperLowThreshold) {
 			for (AttendantControlListener l : listeners) {
 				l.printerNotLowPaperState();
 			}
@@ -256,6 +278,27 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		}
 	}
 	
+	/**
+	 * Attendant adjusts the amount of coin used for change
+	 * Cash controller notifies if storage is low in order to use
+	 * 
+	 * @throws SimulationException
+	 * 			For loading or checking null coin
+	 * @throws TooMuchCashException
+	 * 			Too much cash is loaded onto the storage
+	 */
+	public void notifyListenerAdjustCoinForChange() throws SimulationException, TooMuchCashException {
+		boolean isLow = sc.getCashControl().coinInStorageLow(this.sc.station.coinStorage);
+		if (isLow) {
+			for (AttendantControlListener l : listeners)
+				l.coinIsLowState(this.sc.station.coinStorage.getCapacity());
+				System.out.println("Coin is low");
+			System.out.println("Coin storage needs to be refilled.");
+		} else {
+			System.out.println("Coin storage does not need to be loaded for now.");
+		}
+	}
+	
 	/*
 	 * Refills banknote storage if it is low
 	 * 
@@ -274,7 +317,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		int totalFifties = unit.getCapacity()/5;
 		int totalHundreds = unit.getCapacity()/5;
 
-		sc.getCashControl().disablePayments();
+//		sc.getCashControl().disablePayments();
 		List<Banknote> unloadedBanknotes = unit.unload();
 		sc.getCashControl().banknotesUnloaded(unit);	
 		
@@ -319,9 +362,15 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		}
 				
 		sc.getCashControl().banknotesLoaded(unit);
-		sc.getCashControl().enablePayments();
+		
+		for (AttendantControlListener l : listeners)
+			l.banknotesNotLowState();
+		
+//		sc.getCashControl().enablePayments();
 	}
 	
+	
+		
 	/**
 	 * fills up the coin slot and then signal cash controller that everything is okay
 	 *
@@ -392,7 +441,10 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 				
 		//notify cash controller that the unit has been filled
 		sc.getCashControl().coinsLoaded(unit);
-		
+
+		for (AttendantControlListener l : listeners)
+			l.coinsNotLowState();
+			
 		//re enable system
 		sc.getCashControl().enablePayments();
 		
@@ -422,6 +474,7 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 		}
 		return count;
 	}
+	
 	
 
 	/**
@@ -453,11 +506,10 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 					break;
 				case "addCoin": 
 					//TODO:
-					
+					adjustCoinsForChange(sc.getStation().coinStorage.getCapacity());
 					break;
-				case "addBanknote": 
-					//TODO:
-					
+				case "addBanknote":
+					loadBanknotesToStorage(sc.getStation().banknoteStorage);
 					break;
 				case "addBag": 
 					sc.loadBags();
@@ -467,12 +519,19 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 					System.out.println("request no bag");
 					noBagRequest();
 					break;
-
+				case "printReceipt":
+					//attendantNotifications = ("approved no bagging request");
+					System.out.println("AC print receipt");
+					sc.getReceiptControl().printItems();
+					sc.getReceiptControl().printTotalCost();
+					sc.getReceiptControl().printMembership();
+					sc.getReceiptControl().printDateTime();
+					sc.getReceiptControl().printThankyouMsg();		
+					break;
 				case "adjustBanknotesForChange":
 					attendantNotifications = ("Checking if banknotes in storage need to be adjusted");
 					adjustBanknotesForChange();
-					// TODO
-					// temporary delete later when button is moved
+					break;
 				case "approve no bag":
 					approveNoBagRequest();
 					break;
@@ -483,21 +542,20 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 				case "prevent_use":
 					attendantNotifications = ("Preventing use on station for maintenance");
 					preventStationUse();
+					break;
 				case "startUp":
 					System.out.println("Station has been started up");
 					startUpStation();
 					break;
 				case "shutDown":
-					//TODO:
-					// not sure if it was needed from merge conflict commented out
-					// System.out.println("Station has been shut down");
-					// shutDownStation();
+					shutDownStation();
+					 System.out.println("Station has been shut down");
 					break;
 				case "add":
-					//TODO:
+					textSearch();
 					break;
 				case "remove":
-					//TODO:
+					textSearch();
 					break;
 				case "logout":
 					logout();
@@ -509,6 +567,22 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 			
 		}
 		
+	}
+	
+	public void textSearch() {
+		for (AttendantControlListener l : listeners) {
+			l.triggerItemSearchScreen(this);
+		}
+	}
+	
+	public void exitTextSearch() {
+		for (AttendantControlListener l : listeners) {
+			l.exitTextSearchScreen(this);
+		}
+	}
+	
+	public KeyboardControl getKeyboardControl() {
+		return kc;
 	}
 
 	@Override
@@ -582,5 +656,29 @@ public class AttendantControl implements ActionListener, ReceiptPrinterListener 
 	public void noBagRequest() {
 		for (AttendantControlListener l : listeners)
 			l.noBagRequest();
+	}
+
+	@Override
+	public void pressed(Key k) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void released(Key k) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyPressed(Keyboard keyboard, String label) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyReleased(Keyboard keyboard, String label) {
+		// TODO Auto-generated method stub
+		
 	}
 }

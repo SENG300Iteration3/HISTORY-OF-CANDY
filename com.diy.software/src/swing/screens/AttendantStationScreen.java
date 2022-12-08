@@ -8,6 +8,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -49,11 +50,13 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	
 	GUI_JButton approveAddedBagsButton, approveNoBagging, startUpButton, shutDownButton, 
 				permitButton, preventButton, addItemButton, removeItemButton, logoutButton;
-	GUI_JLabel 	weightDisplayLabel, weightDescrepancyMssg, inkLabel, paperLabel,
+	GUI_JLabel 	weightDisplayLabel, errorMssg, inkLabel, paperLabel,
 				adjustCoinLabel, adjustBanknoteLabel;
-	GUI_JButton printReceiptButton;
 
 	private static String HeaderText = "Attendant Screen";
+	
+	private ArrayList<JPanel> panelStack;
+	private JPanel currentPanel;
 
 	public AttendantStationScreen(final StationControl sc) {
 		super(sc, HeaderText);
@@ -66,16 +69,22 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		
 		sc.getItemsControl().addListener(this);
 		
+		currentPanel = centralPanel;
+		panelStack = new ArrayList<JPanel>();
+		panelStack.add(currentPanel);
+		
 		// Initialize attendant buttons
 		approveAddedBagsButton = initializeButton("Approve Added Bags", "approve added bags", cusAddedBags);
 		approveNoBagging = initializeButton("Approve no bagging", "approve no bag", false);
 		startUpButton = initializeButton("Start up station", "startUp", true);
-		shutDownButton = initializeButton("Shut down station", "shutdown", true);
+		shutDownButton = initializeButton("Shut down station", "shutDown", true);
 		permitButton = initializeButton("Permit station use", "permit_use", false);
 		preventButton = initializeButton("Prevent station use", "prevent_use", true);
 		addItemButton = initializeButton("Add item", "add", true);
 		//removeItemButton = initializeButton("Remove item", "remove", true);
 		logoutButton = initializeButton("Logout", "logout", true);
+		
+		startUpButton.setEnabled(false);
 		
 		removeItemPanel = new GUI_JPanel();
 		removeItemPanel.setLayout(new GridLayout(2, 1));
@@ -110,7 +119,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		removeItemPanel.add(removeItemButton);
 
 		// Initialize notifications labels
-		weightDescrepancyMssg = initializeLabel("Weight Discrepancy");
+		errorMssg = initializeLabel("Error Display");
 		weightDisplayLabel = initializeLabel("Weight Display");
 		inkLabel = initializeLabel("Ink status");
 		paperLabel = initializeLabel("Paper status");
@@ -121,7 +130,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		GUI_JPanel notificationPanel = new GUI_JPanel();
 		notificationPanel.setLayout(new GridLayout(1, 6));
 		
-		notificationPanel.add(weightDescrepancyMssg);
+		notificationPanel.add(errorMssg);
 		notificationPanel.add(weightDisplayLabel);
 		notificationPanel.add(inkLabel);
 		notificationPanel.add(paperLabel);
@@ -163,15 +172,9 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 		
 		buttonPanel.setPanelBorder(10, 10, 10, 10); 
 		buttonPanel.setBackground(GUI_Color_Palette.DARK_BLUE);
-		this.addLayer(buttonPanel, 150);
+		this.addLayer(buttonPanel, 50);
 		this.addLayer(removeItemPanel, 10);
 		this.addLayer(logoutButton, 10);
-		
-//		// FIXME: Used for testing. Remove before submission.
-//		this.printReceiptButton = makeCentralButton("PRINT RECEIPT", this.width - 200, 25);
-//		printReceiptButton.setActionCommand("printReceipt");
-//		printReceiptButton.addActionListener(systemControl.getReceiptControl());
-//		this.addLayer(printReceiptButton, 0);
 	}
 	
 	
@@ -291,7 +294,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 
 	@Override
 	public void signalWeightDescrepancy(String updateMessage) {
-		weightDescrepancyMssg.setText(updateMessage);
+		errorMssg.setText(updateMessage);
 		
 	}
 
@@ -305,7 +308,7 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	public void initialState() {
 		approveAddedBagsButton.setEnabled(false);
 		approveNoBagging.setEnabled(false);
-		weightDescrepancyMssg.setText("");
+		errorMssg.setText("");
 	}
 	
 	public static void main(String args[]) {
@@ -344,8 +347,9 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 
 
 	@Override
-	public void coinIsLowState(CoinStorageUnit unit, int amount) {
-		// TODO Auto-generated method stub
+	public void coinIsLowState(int amount) {
+		adjustCoinLabel.setText("Coins low");
+		adjustBanknoteLabel.setBackground(GUI_Color_Palette.RED_BROWN);
 	}
 
 
@@ -452,16 +456,120 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	}
 
 
+	public JTextField getRemoveItemTextField() {
+		return removeItemTextField;
+	}
+
+
+	public GUI_JButton getApproveAddedBagsButton() {
+		return approveAddedBagsButton;
+	}
+
+
+	public GUI_JButton getStartUpButton() {
+		return startUpButton;
+	}
+
+
+	public GUI_JButton getShutDownButton() {
+		return shutDownButton;
+	}
+
+
+	public GUI_JButton getPermitButton() {
+		return permitButton;
+	}
+
+
+	public GUI_JButton getPreventButton() {
+		return preventButton;
+	}
+
+
+	public GUI_JButton getAddItemButton() {
+		return addItemButton;
+	}
+
+
+	public GUI_JButton getRemoveItemButton() {
+		return removeItemButton;
+	}
+
+
+	public GUI_JButton getLogoutButton() {
+		return logoutButton;
+	}
+	
+	@Override
+	public void banknotesInStorageLowState() {
+		adjustBanknoteLabel.setText("Banknotes low");
+		adjustBanknoteLabel.setBackground(GUI_Color_Palette.RED_BROWN);
+	}
+
+
+	@Override
+	public void banknotesNotLowState() {
+		adjustBanknoteLabel.setText("Adjust Banknote");
+		adjustBanknoteLabel.setBackground(GUI_Color_Palette.DARK_BROWN);
+	}
+
+
+	@Override
+	public void coinsNotLowState() {
+		adjustCoinLabel.setText("Adjust Coins");
+		adjustCoinLabel.setBackground(GUI_Color_Palette.DARK_BROWN);
+	}
+	
+	@Override
+	public void triggerItemSearchScreen(AttendantControl ac) {
+		TextSearchScreen screen = new TextSearchScreen(sc, ac);
+		addScreenToStack(screen);
+	}
+	
+	private void addScreenToStack(Screen newScreen) {
+		addPanel(newScreen.getRootPanel());
+		panelStack.add(newScreen.getRootPanel());
+	}
+	
+	private void addPanel(JPanel newPanel) {
+		JPanel parent = (JPanel) currentPanel.getParent();
+		parent.remove(currentPanel);
+		currentPanel = newPanel;
+		parent.add(currentPanel);
+		parent.invalidate();
+		parent.validate();
+		parent.repaint();
+	}
+	
+	private void removePanelFromStack() {
+		JPanel parent = (JPanel) currentPanel.getParent();
+		parent.remove(currentPanel);
+		currentPanel = panelStack.get(panelStack.size() - 2);
+		parent.add(currentPanel);
+		parent.invalidate();
+		parent.validate();
+		parent.repaint();
+		panelStack.remove(panelStack.size() - 1);
+	}
+
+
+	@Override
+	public void exitTextSearchScreen(AttendantControl ac) {
+		removePanelFromStack();
+		
+	}
+
+
 	@Override
 	public void printerNotLowInkState() {
-		// TODO Auto-generated method stub
+		inkLabel.setText("Ink Good");
 		
 	}
 
 
 	@Override
 	public void printerNotLowPaperState() {
-		// TODO Auto-generated method stub
+		paperLabel.setText("Paper good");
 		
 	}
 
@@ -476,6 +584,28 @@ public class AttendantStationScreen extends Screen implements AttendantControlLi
 	@Override
 	public void addTooMuchPaperState() {
 		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void printerNotLowState() {
+		// TODO Auto-generated method stub
+	}
+
+
+	@Override
+	public void stationShutDown(AttendantControl ac) {
+		shutDownButton.setEnabled(false);
+		startUpButton.setEnabled(true);
+		
+	}
+
+
+	@Override
+	public void stationStartedUp(AttendantControl ac) {
+		shutDownButton.setEnabled(true);
+		startUpButton.setEnabled(false);
 		
 	}
 }

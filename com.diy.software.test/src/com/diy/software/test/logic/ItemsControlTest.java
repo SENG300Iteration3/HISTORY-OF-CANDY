@@ -322,57 +322,6 @@ public class ItemsControlTest {
 //		}
 //
 //	}
-
-<<<<<<< HEAD
-		systemControl.updateExpectedCheckoutWeight(100.0);
-		stub.removeItem = false;
-		while (!stub.removeItem) {
-			itemsControl.placeItemOnBaggingArea();
-			if (!stub.removeItem) {
-				systemControl.station.baggingArea.remove(heavyItem);
-				systemControl.customer.shoppingCart.add(heavyItem);
-				systemControl.customer.selectNextItem();
-			}
-		}
-
-		assertFalse(systemControl.expectedWeightMatchesActualWeight(100));
-
-		try {
-			assertTrue(systemControl.station.baggingArea.getCurrentWeight() >= itemsControl.getWrongBaggedItem().getWeight());
-			assertTrue(
-					systemControl.station.baggingArea.getCurrentWeight() - 1 <= itemsControl.getWrongBaggedItem().getWeight());
-		} catch (OverloadException e) {
-		}
-
-	}
-
-	@Test
-	public void testPlaceItemRemoveLastItem() {
-		systemControl.customer.shoppingCart.add(itemsControl.getWrongBaggedItem());
-		systemControl.customer.selectNextItem();
-		
-		itemsControl.placeItemOnBaggingArea();
-		
-		
-
-		try {
-			System.out.println(systemControl.station.baggingArea.getCurrentWeight());
-			assertTrue(systemControl.station.baggingArea.getCurrentWeight() >= itemsControl.getWrongBaggedItem().getWeight());
-		} catch (OverloadException e) {
-		}
-		stub.selected = true;
-		stub.bagging = true;
-
-		itemsControl.removeLastBaggedItem();
-		assertFalse(stub.selected);
-		assertFalse(stub.bagging);
-		try {
-			assertTrue(systemControl.station.baggingArea.getCurrentWeight() <= 1);
-		} catch (OverloadException e) {
-		}
-
-	}
-=======
 //	@Test
 //	public void testPlaceItemRemoveLastItem() {
 //		systemControl.customer.shoppingCart.add(itemsControl.getWrongBaggedItem());
@@ -892,23 +841,12 @@ public class ItemsControlTest {
 		}
 
 		@Override
-		public void coinIsLowState(CoinStorageUnit unit, int amount) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
 		public void loggedIn(boolean isLoggedIn) {
 			// TODO Auto-generated method stub
 
 		}
 
 		@Override
-<<<<<<< HEAD
-		public void itemBagged() {
-			// TODO Auto-generated method stub
-			
-=======
 		public void attendantApprovedItemRemoval(AttendantControl bc) {
 			// TODO Auto-generated method stub
 
@@ -924,7 +862,60 @@ public class ItemsControlTest {
 		public void banknotesInStorageLowState() {
 			// TODO Auto-generated method stub
 
->>>>>>> 2d2a8757714140397ba2a567a37e7c9a4606ec52
+		}
+
+		@Override
+		public void printerNotLowInkState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void printerNotLowPaperState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void coinIsLowState(int amount) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void banknotesNotLowState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void coinsNotLowState() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void triggerItemSearchScreen(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void exitTextSearchScreen(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void stationShutDown(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void stationStartedUp(AttendantControl ac) {
+			// TODO Auto-generated method stub
+			
 		}
 	}
 }

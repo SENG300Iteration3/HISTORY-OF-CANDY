@@ -19,7 +19,7 @@ public class PaymentScreen extends Screen {
 		super(sc, "Select a payment method");
 
 		this.giftCardButton = makeCentralButton("Gift Card", this.width - 200, 100);
-		this.addLayer(giftCardButton, 0);
+		this.addLayer(giftCardButton, -100);
 
 		this.cashButton = makeCentralButton("Cash", this.width - 200, 100);
 		this.addLayer(cashButton, 0);
@@ -45,7 +45,26 @@ public class PaymentScreen extends Screen {
 		creditButton.addActionListener(pc);
 		debitButton.addActionListener(pc);
 		cancelButton.addActionListener(pc);
+	}
 
+	public GUI_JButton getGiftCardButton() {
+		return giftCardButton;
+	}
+
+	public GUI_JButton getCashButton() {
+		return cashButton;
+	}
+
+	public GUI_JButton getCreditButton() {
+		return creditButton;
+	}
+
+	public GUI_JButton getDebitButton() {
+		return debitButton;
+	}
+
+	public GUI_JButton getCancelButton() {
+		return cancelButton;
 	}
 
 }
