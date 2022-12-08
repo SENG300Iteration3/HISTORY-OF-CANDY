@@ -1,12 +1,7 @@
 package swing.screens;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
+import java.awt.*;
+import java.lang.reflect.Parameter;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -170,6 +165,11 @@ public class MembershipScreen extends Screen implements MembershipControlListene
 	@Override
 	public void welcomeMember(MembershipControl mc, String memberName) {
 		memberMssg.setText(memberName);
+		if(memberMssg.getText().contains("not found")) {
+			memberMssg.setForeground(Color.RED);
+		} else {
+			memberMssg.setForeground(Color.WHITE);
+		}
 	}
 
 
