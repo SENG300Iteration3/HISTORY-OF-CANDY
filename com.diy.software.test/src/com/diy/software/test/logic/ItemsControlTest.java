@@ -69,6 +69,8 @@ public class ItemsControlTest {
 		systemControl.station.handheldScanner.disable();
 		systemControl.station.handheldScanner.turnOff();
 		systemControl.station.handheldScanner.unplug();
+		systemControl = null;
+		itemsControl = null;
 	}
 
 	
@@ -146,7 +148,7 @@ public class ItemsControlTest {
 	public void testRemovePLUCodedItem() {
 		StationControl sc = new StationControl(fdi);
 		itemsControl = sc.getItemsControl();		
-		PLUCodedItem item = fdi.getPLUItem()[2];    		// item is a "Can of Beans"
+		PLUCodedItem item = fdi.getPLUItem()[2];    		
 		PLUCodedProduct product = fdi.getPLUProducts()[2];
 		assertTrue(itemsControl.getCheckoutList().size() == 0);
 		assertTrue(itemsControl.getCheckoutTotal() == 0);
@@ -163,6 +165,31 @@ public class ItemsControlTest {
 		assertTrue(sc.getExpectedWeight() == 0);
 	}
 	
+	
+	/**
+	 * Should return false when scale has no weight on it
+	 * but PLU code is set and addItemByPLU is called.
+	 */
+	@Test
+	public void testAddItemByPLUNoWeightOnScale() {
+		StationControl sc = new StationControl(fdi);
+		itemsControl = sc.getItemsControl();		
+		assertTrue(sc.getExpectedWeight() == 0);
+		itemsControl.setCurrentProductCode(fdi.getPLUCodes()[2]);
+		assertFalse(itemsControl.addItemByPLU());
+	}
+	
+	/**
+	 * Should return false and print error when scale has no weight on it
+	 * but PLU code is set to null and addItemByPLU is called.
+	 */
+	@Test
+	public void testAddItemByPLUNull() {
+		StationControl sc = new StationControl(fdi);
+		itemsControl = sc.getItemsControl();		
+		itemsControl.setExpectedPLU(null);
+		assertFalse(itemsControl.addItemByPLU());
+	}
 	
 	
 	/**
@@ -218,6 +245,33 @@ public class ItemsControlTest {
 	
 	
 	@Test
+	public void testPlaceItemOnScaletoolight() {
+		BarcodedItem lightItem = new BarcodedItem(new Barcode(new Numeral[] { Numeral.one }), 0.01);
+		systemControl.customer.shoppingCart.add(lightItem);
+		systemControl.customer.selectNextItem();
+		stub.bagging = true;
+		stub.selected = true;
+		boolean loop = true;
+
+		while (loop) {
+			itemsControl.placeItemOnBaggingArea();
+			try {
+				if (systemControl.station.baggingArea.getCurrentWeight() >= 1.123
+						&& systemControl.station.baggingArea.getCurrentWeight() <= 1.123 + 0.1) {
+					itemsControl.removeLastBaggedItem();
+					stub.bagging = true;
+					stub.selected = true;
+				} else {
+					loop = false;
+				}
+			} catch (OverloadException e) {
+			}
+		}
+		assertTrue(stub.bagging);
+		assertTrue(stub.selected);
+	}
+	
+	@Test
 	public void testRemoveListener() {
 		stub.bagging = true;
 		stub.selected = true;
@@ -256,17 +310,6 @@ public class ItemsControlTest {
 		assertFalse(stub2.bagging);
 		assertFalse(stub2.selected);
 	}
-
-	// FIXME: need to rewrite - Anh
-	// @Test
-	// public void testRequestNoBagging() {
-	// AttendantListenerStub als = new AttendantListenerStub();
-	// systemControl.getAttendantControl().addListener(als);
-	//
-	// als.noBagging = false;
-	// itemsControl.requestNoBagging();
-	// assertTrue(als.noBagging);
-	// }
 
 	@Test
 	public void testPickupNextItemNull() {
@@ -383,92 +426,9 @@ public class ItemsControlTest {
 //		assertFalse(stub.selected);
 //	}
 
-	@Test
-	public void testPlaceItemOnScaletoolight() {
-		BarcodedItem lightItem = new BarcodedItem(new Barcode(new Numeral[] { Numeral.one }), 0.01);
-		systemControl.customer.shoppingCart.add(lightItem);
-		systemControl.customer.selectNextItem();
-		stub.bagging = true;
-		stub.selected = true;
-		boolean loop = true;
+	
 
-		while (loop) {
-			itemsControl.placeItemOnBaggingArea();
-			try {
-				if (systemControl.station.baggingArea.getCurrentWeight() >= 1.123
-						&& systemControl.station.baggingArea.getCurrentWeight() <= 1.123 + 0.1) {
-					itemsControl.removeLastBaggedItem();
-					stub.bagging = true;
-					stub.selected = true;
-				} else {
-					loop = false;
-				}
-			} catch (OverloadException e) {
-			}
-		}
-		assertTrue(stub.bagging);
-		assertTrue(stub.selected);
 
-	}
-
-//	@Test
-//	public void testPlaceItemWrongItem() {
-//		BarcodedItem heavyItem = new BarcodedItem(new Barcode(new Numeral[] { Numeral.one }), 100.0);
-//		systemControl.customer.shoppingCart.add(heavyItem);
-//		systemControl.customer.selectNextItem();
-//
-//		systemControl.updateExpectedCheckoutWeight(100.0);
-//		stub.removeItem = false;
-//		while (!stub.removeItem) {
-//			itemsControl.placeItemOnBaggingArea();
-//			if (!stub.removeItem) {
-//				systemControl.station.baggingArea.remove(heavyItem);
-//				systemControl.customer.shoppingCart.add(heavyItem);
-//				systemControl.customer.selectNextItem();
-//			}
-//		}
-//
-//		assertFalse(systemControl.expectedWeightMatchesActualWeight(100));
-//
-//		try {
-//			assertTrue(systemControl.station.baggingArea.getCurrentWeight() >= itemsControl.getWrongBaggedItem().getWeight());
-//			assertTrue(
-//					systemControl.station.baggingArea.getCurrentWeight() - 1 <= itemsControl.getWrongBaggedItem().getWeight());
-//		} catch (OverloadException e) {
-//		}
-//
-//	}
-//	@Test
-//	public void testPlaceItemRemoveLastItem() {
-//		systemControl.customer.shoppingCart.add(itemsControl.getWrongBaggedItem());
-//		systemControl.customer.selectNextItem();
-//<<<<<<< HEAD
-//		
-//		itemsControl.placeItemOnBaggingArea();
-//		
-//		
-//=======
-//
-//		itemsControl.placeItemOnScale();
-//
-//>>>>>>> 2ca2c2d2fc7b8db7130ff9c97edf79962864bd32
-//		try {
-//			System.out.println(systemControl.station.baggingArea.getCurrentWeight());
-//			assertTrue(systemControl.station.baggingArea.getCurrentWeight() >= itemsControl.getWrongBaggedItem().getWeight());
-//		} catch (OverloadException e) {
-//		}
-//		stub.selected = true;
-//		stub.bagging = true;
-//
-//		itemsControl.removeLastBaggedItem();
-//		assertFalse(stub.selected);
-//		assertFalse(stub.bagging);
-//		try {
-//			assertTrue(systemControl.station.baggingArea.getCurrentWeight() <= 1);
-//		} catch (OverloadException e) {
-//		}
-//
-//	}
 
 	@Test
 	public void testPlaceBulkyItemInCart() {
@@ -499,7 +459,7 @@ public class ItemsControlTest {
 	@Test
 	public void testBarcodeScanned() {
 		assertFalse(stub.bagging);
-		itemsControl.barcodeScanned(systemControl.station.handheldScanner, null);
+		itemsControl.barcodeScanned(systemControl.station.handheldScanner, fdi.getBarcodes()[0]);
 		assertTrue(stub.bagging);
 	}
 
@@ -576,17 +536,16 @@ public class ItemsControlTest {
 
 	}
 
-	@Test
-	public void testActionPerformedRemove() {
-		ActionEvent e = new ActionEvent(this, 0, "removeFromScale");
-		AttendantListenerStub als = new AttendantListenerStub();
-		systemControl.getAttendantControl().addListener(als);
-
-		als.noBagging = false;
-		itemsControl.actionPerformed(e);
-		assertTrue(als.noBagging);
-
-	}
+//	@Test
+//	public void testActionPerformedRemove() {
+//		
+//		ActionEvent e = new ActionEvent(this, 0, "removeFromScale");
+//		AttendantListenerStub als = new AttendantListenerStub();
+//		systemControl.getAttendantControl().addListener(als);
+//		als.noBagging = false;
+//		itemsControl.actionPerformed(e);
+//		assertTrue(als.noBagging);
+//	}
 
 	@Test
 	public void testActionPerformedPay() {
@@ -648,25 +607,7 @@ public class ItemsControlTest {
 		assertTrue(output.y == (double) 2);
 	}
 
-	@Test
-	public void testaddScannedItemToCheckoutList() {
-		Tuple<String, Double> output;
 
-		assertTrue(itemsControl.getCheckoutList().size() == 0);
-		assertFalse(itemsControl.getCheckoutTotal() == (double) 2);
-
-		assertFalse(stub.itemsHaveBeenUpdated);
-		assertFalse(stub.productSubtotalUpdated);
-		itemsControl.addScannedItemToCheckoutList(barcode);
-		assertTrue(stub.itemsHaveBeenUpdated);
-		assertTrue(stub.productSubtotalUpdated);
-
-		output = (Tuple<String, Double>) itemsControl.getCheckoutList().get(0);
-		assertTrue(output.x.equals("Can of Beans"));
-		assertTrue(output.y == (double) 2);
-		assertTrue(itemsControl.getCheckoutTotal() == (double) 2);
-
-	}
 
 	@Test
 	public void testaddScannedItemToCheckoutListNull() {
@@ -713,7 +654,7 @@ public class ItemsControlTest {
 		assertTrue(itemsControl.userMessage.equals("Excessive weight removed, continue scanning"));
 	}
 
-	@Test(expected = NullPointerSimulationException.class)
+	@Test
 	public void testAddPLUCodedItemByBrowsing() {
 		PriceLookUpCode pcode = new PriceLookUpCode("4444");
 		PLUCodedProduct pcp = new PLUCodedProduct(pcode, "Durian", 9);

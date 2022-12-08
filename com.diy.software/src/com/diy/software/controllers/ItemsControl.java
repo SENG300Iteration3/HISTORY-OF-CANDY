@@ -294,6 +294,11 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	 * instead notified noMoreItemsAvail
 	 */
 	public void pickupNextItem() {
+		if (sc.customer.shoppingCart.size() == 0) {
+			for (ItemsControlListener l : listeners)
+				l.noMoreItemsAvailableInCart(this);
+			return;
+		}
 		try {
 			// TODO: Find another way to do this
 			this.currentItem = sc.customer.shoppingCart.get(sc.customer.shoppingCart.size() - 1);
@@ -315,9 +320,7 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 					l.noMoreItemsAvailableInCart(this);
 			}
 		} catch (NoSuchElementException e) {
-			// next item does not exist
-			for (ItemsControlListener l : listeners)
-				l.noMoreItemsAvailableInCart(this);
+			System.err.println(e.getMessage());
 		}
 	}
 
@@ -341,8 +344,10 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 	}
 
 	public boolean addItemByPLU() {
+		if (currentProductCode == null) {
+			return false;
+		}
 		try {
-
 			PLUCodedProduct product = ProductDatabases.PLU_PRODUCT_DATABASE.get(currentProductCode);
 			double price;
 
@@ -388,9 +393,6 @@ public class ItemsControl implements ActionListener, BarcodeScannerListener, Ele
 		}
 	}
 
-	public boolean getIsPLU() {
-		return isPLU;
-	}
 
 	// TODO: scanItem now differtiates between using handheldScanner and mainScanner
 	// ALSO: note that a new weight area called scanningArea exists now to grab
